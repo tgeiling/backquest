@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
+import 'package:game_levels_scrolling_map/model/point_model.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -99,6 +101,79 @@ class Footer extends StatelessWidget {
   }
 }
 
+class MapVerticalExample extends StatefulWidget {
+  const MapVerticalExample({Key? key}) : super(key: key);
+
+  @override
+  State<MapVerticalExample> createState() => _MapVerticalExampleState();
+}
+
+class _MapVerticalExampleState extends State<MapVerticalExample> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+          child: GameLevelsScrollingMap.scrollable(
+        imageUrl: "assets/map.jpg",
+        direction: Axis.vertical,
+        reverseScrolling: true,
+        pointsPositionDeltaX: 25,
+        pointsPositionDeltaY: 25,
+        svgUrl: 'assets/map1.svg',
+        points: points,
+      )), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  @override
+  void initState() {
+    fillTestData();
+  }
+
+  List<PointModel> points = [];
+
+  void fillTestData() {
+    for (int i = 0; i < 16; i++) {
+      points.add(PointModel(16, testWidget(i)));
+    }
+  }
+
+  Widget testWidget(int order) {
+    return InkWell(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            "assets/map_point.png",
+            fit: BoxFit.fitWidth,
+            width: 90,
+          ),
+          Text("$order",
+              style: const TextStyle(color: Colors.white, fontSize: 30))
+        ],
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text("Point $order"),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: const Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -114,10 +189,7 @@ class MyHomePage extends StatelessWidget {
           Icon(Icons.menu),
         ],
       ),
-      body: Center(
-          child: Text(
-        'Hello World',
-      )),
+      body: MapVerticalExample(),
       bottomNavigationBar: Footer(),
     );
   }
