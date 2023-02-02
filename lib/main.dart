@@ -48,7 +48,7 @@ class _ScoringState extends State<Scoring> {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Text("001"),
+        Text("002"),
         Container(
           width: 40,
           height: 100,
