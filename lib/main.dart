@@ -15,18 +15,24 @@ Map<int, Color> color = {
   900: Color.fromRGBO(64, 154, 181, 1),
 };
 
-void main() => runApp(MyApp());
+void main() {
+  return runApp(MyApp());
+}
 
+final scakey = new GlobalKey<_MyStatefulWidgetState>();
+
+/// This Widget is the main application widget.
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  static const String _title = 'Flutter Code Sample';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hello World Demo Application',
+      title: _title,
       theme: ThemeData(
         primarySwatch: MaterialColor(0xFF409AB5, color),
       ),
-      home: MyHomePage(title: 'Home page'),
+      home: MyStatefulWidget(key: scakey),
     );
   }
 }
@@ -76,17 +82,50 @@ class IconRow extends StatefulWidget {
 }
 
 class _IconRowState extends State<IconRow> {
+  _MyStatefulWidgetState qwe = _MyStatefulWidgetState();
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Image.asset('assets/homeIcon.png'),
-        Image.asset('assets/bookIcon.png'),
-        Image.asset('assets/trophyIcon.png'),
-        Image.asset('assets/userIcon.png'),
-      ],
-    );
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              scakey.currentState!._onItemTapped(0);
+            },
+            child: Image.asset(
+              'assets/homeIcon.png',
+              fit: BoxFit.cover, // Fixes border issues
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              scakey.currentState!._onItemTapped(1);
+            }, // Image tapped
+            child: Image.asset(
+              'assets/bookIcon.png',
+              fit: BoxFit.cover, // Fixes border issues
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              scakey.currentState!._onItemTapped(2);
+            }, // Image tapped
+            child: Image.asset(
+              'assets/trophyIcon.png',
+              fit: BoxFit.cover, // Fixes border issues
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              scakey.currentState!._onItemTapped(3);
+            }, // Image tapped
+            child: Image.asset(
+              'assets/userIcon.png',
+              fit: BoxFit.cover, // Fixes border issues
+            ),
+          ),
+        ]);
   }
 }
 
@@ -174,13 +213,35 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class MyStatefulWidget extends StatefulWidget {
+  MyStatefulWidget({required Key key}) : super(key: key);
+
+  @override
+  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  int _selectedIndex = 0;
+
+  final scaKey = new GlobalKey<_MyStatefulWidgetState>();
+
+  List<Widget> _widgetOptions = <Widget>[
+    MapVerticalExample(),
+    PageTwo(),
+    PageThree(),
+    PageFour(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaKey,
       appBar: AppBar(
         leading: Image.asset('assets/bqlogo2.jpeg'),
         leadingWidth: 250,
@@ -189,8 +250,52 @@ class MyHomePage extends StatelessWidget {
           Icon(Icons.menu),
         ],
       ),
-      body: MapVerticalExample(),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: Footer(),
+    );
+  }
+}
+
+class PageTwo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ElevatedButton(
+        child: Text('Go page 1'),
+        onPressed: () {
+          scakey.currentState!._onItemTapped(1);
+        },
+      ),
+    );
+  }
+}
+
+class PageThree extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ElevatedButton(
+        child: Text('Go page 2'),
+        onPressed: () {
+          scakey.currentState!._onItemTapped(1);
+        },
+      ),
+    );
+  }
+}
+
+class PageFour extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ElevatedButton(
+        child: Text('Go page 3'),
+        onPressed: () {
+          scakey.currentState!._onItemTapped(2);
+        },
+      ),
     );
   }
 }
