@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
+import 'videos.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -227,7 +228,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   List<Widget> _widgetOptions = <Widget>[
     MapVerticalExample(),
-    PageTwo(),
+    Levels(),
     PageThree(),
     PageFour(),
   ];
@@ -246,28 +247,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         leading: Image.asset('assets/bqlogo2.jpeg'),
         leadingWidth: 250,
         title: Scoring(),
-        actions: [
-          Icon(Icons.menu),
-        ],
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: Footer(),
-    );
-  }
-}
-
-class PageTwo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: ElevatedButton(
-        child: Text('Go page 1'),
-        onPressed: () {
-          scakey.currentState!._onItemTapped(1);
-        },
-      ),
     );
   }
 }

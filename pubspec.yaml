@@ -36,6 +36,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   game_levels_scrolling_map: ^0.0.7
+  video_player: ^2.2.18
+  chewie: ^1.4.0
+  video_thumbnail: ^0.5.3
+  path_provider: ^2.0.12
 
 dev_dependencies:
   flutter_test:
@@ -66,3 +70,4 @@ flutter:
     - assets/map.svg
     - assets/map1.svg
     - assets/map_point.png
+    - assets/videos/
