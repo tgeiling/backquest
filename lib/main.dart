@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
 import 'videos.dart';
+import 'trophy.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -71,12 +72,7 @@ class _ScoringState extends State<Scoring> {
 }
 
 class IconRow extends StatefulWidget {
-  const IconRow({
-    super.key,
-    this.activeItem = false,
-  });
-
-  final bool activeItem;
+  const IconRow({super.key});
 
   @override
   State<IconRow> createState() => _IconRowState();
@@ -154,7 +150,7 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
     return Scaffold(
       body: Container(
           child: GameLevelsScrollingMap.scrollable(
-        imageUrl: "assets/map.jpg",
+        imageUrl: "assets/map.png",
         direction: Axis.vertical,
         reverseScrolling: true,
         pointsPositionDeltaX: 25,
@@ -229,7 +225,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   List<Widget> _widgetOptions = <Widget>[
     MapVerticalExample(),
     Levels(),
-    PageThree(),
+    TrophyGrid(),
     PageFour(),
   ];
 

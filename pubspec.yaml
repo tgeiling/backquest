@@ -64,9 +64,11 @@ flutter:
     - assets/trophyIcon.png
     - assets/userIcon.png
     - assets/fireIcon.png
+    - assets/map.png
     - assets/map.jpg
     - assets/map.svg
     - assets/map1.svg
     - assets/map_point.png
     - assets/videos/
     - assets/thumbnails/
+    - assets/achivements/

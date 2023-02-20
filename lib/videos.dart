@@ -25,19 +25,19 @@ List<Map<String, dynamic>> _levelList = [
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VideoPlayerView(
-          path: 'assets/videos/level_1/2_1.mp4',
+          path: 'assets/videos/level_1/1_1.mp4',
           text: "2_1",
           description: "Never gonna give you up never gonna let you down",
           overlay: Thumbnail('assets/thumbnails/level_1/1_1.jpeg'),
         ),
         VideoPlayerView(
-          path: 'assets/videos/level_1/2_2.mp4',
+          path: 'assets/videos/level_1/1_2.mp4',
           text: "2_2",
           description: "Never gonna give you up never gonna let you down",
           overlay: Thumbnail('assets/thumbnails/level_1/1_2.jpg'),
         ),
         VideoPlayerView(
-          path: 'assets/videos/level_1/2_3.mp4',
+          path: 'assets/videos/level_1/1_3.mp4',
           text: "2_3",
           description: "Never gonna give you up never gonna let you down",
           overlay: Thumbnail('assets/thumbnails/level_1/1_3.jpg'),
@@ -83,22 +83,22 @@ List<Map<String, dynamic>> _levelList = [
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VideoPlayerView(
-          path: 'assets/videos/level_2/3_1.mp4',
+          path: 'assets/videos/level_3/3_1.mp4',
           text: "2_1",
           description: "Never gonna give you up never gonna let you down",
-          overlay: Thumbnail('assets/thumbnails/level_2/3_1.jpg'),
+          overlay: Thumbnail('assets/thumbnails/level_3/3_1.jpg'),
         ),
         VideoPlayerView(
-          path: 'assets/videos/level_2/3_2.mp4',
+          path: 'assets/videos/level_3/3_2.mp4',
           text: "2_2",
           description: "Never gonna give you up never gonna let you down",
-          overlay: Thumbnail('assets/thumbnails/level_2/3_2.jpg'),
+          overlay: Thumbnail('assets/thumbnails/level_3/3_2.jpg'),
         ),
         VideoPlayerView(
-          path: 'assets/videos/level_2/3_3.mp4',
+          path: 'assets/videos/level_3/3_3.mp4',
           text: "2_3",
           description: "Never gonna give you up never gonna let you down",
-          overlay: Thumbnail('assets/thumbnails/level_2/3_3.png'),
+          overlay: Thumbnail('assets/thumbnails/level_3/3_3.png'),
         ),
       ],
     ),
@@ -118,10 +118,6 @@ class _LevelsState extends State<Levels> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('Flutter Expansion Panel List Demo'),
-      ),
       body: SingleChildScrollView(
         child: ExpansionPanelList(
           elevation: 3,
@@ -176,7 +172,7 @@ class VideoPlayerView extends StatefulWidget {
 }
 
 class _VideoPlayerViewState extends State<VideoPlayerView> {
-  late VideoPlayerController videoPlayerController;
+  VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
 
   bool isClicked = false;
@@ -187,10 +183,10 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: false),
     );
 
-    await videoPlayerController.initialize();
+    await videoPlayerController!.initialize();
 
     chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
+      videoPlayerController: videoPlayerController!,
       autoPlay: false,
       looping: false,
     );
@@ -199,7 +195,6 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
 
   @override
   void initState() {
-    initializeVideo();
     super.initState();
   }
 
@@ -207,7 +202,6 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
   Widget build(BuildContext context) {
     if (isClicked == false) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 200,
@@ -222,6 +216,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                 child: widget.overlay,
                 onTap: () {
                   setState(() {
+                    initializeVideo();
                     isClicked = true;
                   });
                 }),
@@ -232,26 +227,22 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
     }
     if (chewieController == null) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 50,
+            alignment: Alignment.center,
+            height: 100,
             width: 50,
-            margin: const EdgeInsets.only(top: 50.0, bottom: 100.0),
+            margin: const EdgeInsets.only(top: 100.0, bottom: 100.0),
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
                   MaterialColor(0xFF409AB5, color)),
             ),
           ),
-          Text(
-            widget.text,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+          VideoText(widget.text, widget.description)
         ],
       );
     }
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           height: 200,
@@ -273,7 +264,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
 
   @override
   void dispose() {
-    videoPlayerController.dispose();
+    videoPlayerController?.dispose();
     chewieController?.dispose();
     super.dispose();
   }
