@@ -38,6 +38,7 @@ dependencies:
   game_levels_scrolling_map: ^0.0.7
   video_player: ^2.2.18
   chewie: ^1.4.0
+  giff_dialog: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +66,8 @@ flutter:
     - assets/userIcon.png
     - assets/fireIcon.png
     - assets/map.png
+    - assets/levelmap.png
+    - assets/levelmap.svg
     - assets/map.jpg
     - assets/map.svg
     - assets/map1.svg
@@ -72,3 +75,7 @@ flutter:
     - assets/videos/
     - assets/thumbnails/
     - assets/achivements/
+    - assets/gifs/1.gif
+    - assets/gifs/2.gif
+    - assets/gifs/3.gif
+    - assets/gifs/4.gif

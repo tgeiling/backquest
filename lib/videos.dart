@@ -1,3 +1,5 @@
+library videos;
+
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
@@ -17,28 +19,85 @@ Map<int, Color> color = {
   900: Color.fromRGBO(64, 154, 181, 1),
 };
 
+List<Map<String, dynamic>> _videoList = [
+  {
+    'path': 'assets/videos/level_1/1_1.mp4',
+    'text': "1_1",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_1/1_1.jpeg'),
+  },
+  {
+    'path': 'assets/videos/level_1/1_2.mp4',
+    'text': "1_2",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_1/1_2.jpg'),
+  },
+  {
+    'path': 'assets/videos/level_1/1_3.mp4',
+    'text': "1_3",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_1/1_3.jpg'),
+  },
+  {
+    'path': 'assets/videos/level_2/2_1.mp4',
+    'text': "2_1",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_2/2_1.jpg'),
+  },
+  {
+    'path': 'assets/videos/level_2/2_2.mp4',
+    'text': "2_2",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_2/2_2.jpg'),
+  },
+  {
+    'path': 'assets/videos/level_2/2_3.mp4',
+    'text': "2_3",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_2/2_3.jpeg'),
+  },
+  {
+    'path': 'assets/videos/level_3/3_1.mp4',
+    'text': "3_1",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_3/3_1.jpeg'),
+  },
+  {
+    'path': 'assets/videos/level_3/3_2.mp4',
+    'text': "3_2",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_3/3_2.jpeg'),
+  },
+  {
+    'path': 'assets/videos/level_3/3_3.mp4',
+    'text': "3_3",
+    'description': "Never gonna give you up never gonna let you down",
+    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.jpeg'),
+  },
+];
+
 List<Map<String, dynamic>> _levelList = [
   {
     'id': 1,
-    'title': 'Level 1',
+    'title': 'oberer Rücken',
     'description': Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VideoPlayerView(
-          path: 'assets/videos/level_1/1_1.mp4',
-          text: "2_1",
-          description: "Never gonna give you up never gonna let you down",
-          overlay: Thumbnail('assets/thumbnails/level_1/1_1.jpeg'),
+          path: _videoList[0]['path'],
+          text: _videoList[0]['text'],
+          description: _videoList[0]['description'],
+          overlay: _videoList[0]['overlay'],
         ),
         VideoPlayerView(
           path: 'assets/videos/level_1/1_2.mp4',
-          text: "2_2",
+          text: "1_2",
           description: "Never gonna give you up never gonna let you down",
           overlay: Thumbnail('assets/thumbnails/level_1/1_2.jpg'),
         ),
         VideoPlayerView(
           path: 'assets/videos/level_1/1_3.mp4',
-          text: "2_3",
+          text: "1_3",
           description: "Never gonna give you up never gonna let you down",
           overlay: Thumbnail('assets/thumbnails/level_1/1_3.jpg'),
         ),
@@ -49,7 +108,7 @@ List<Map<String, dynamic>> _levelList = [
   },
   {
     'id': 2,
-    'title': 'Level 2',
+    'title': 'mittlerer Rücken',
     'description': Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,7 +137,7 @@ List<Map<String, dynamic>> _levelList = [
   },
   {
     'id': 3,
-    'title': 'Level 3',
+    'title': 'unterer Rücken',
     'description': Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,6 +165,10 @@ List<Map<String, dynamic>> _levelList = [
     'isPlayed': false
   }
 ];
+
+getVideoList() {
+  return _videoList;
+}
 
 class Levels extends StatefulWidget {
   const Levels({Key? key}) : super(key: key);
@@ -323,6 +386,45 @@ class Thumbnail extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
+    );
+  }
+}
+
+class FullView extends StatelessWidget {
+  const FullView(
+      {super.key,
+      required this.path,
+      required this.text,
+      required this.description,
+      required this.overlay});
+
+  final String path;
+  final String text;
+  final String description;
+  final Widget overlay;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(text),
+      ),
+      body: Column(children: [
+        Center(
+          child: VideoPlayerView(
+            path: path,
+            text: "",
+            description: description,
+            overlay: overlay,
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Go back!'),
+        ),
+      ]),
     );
   }
 }

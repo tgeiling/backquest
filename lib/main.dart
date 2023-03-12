@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
-import 'videos.dart';
+import 'package:giff_dialog/giff_dialog.dart';
+import 'videos.dart' as videos;
 import 'trophy.dart';
+import 'videos.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -17,13 +19,14 @@ Map<int, Color> color = {
   900: Color.fromRGBO(64, 154, 181, 1),
 };
 
+List<Map<String, dynamic>> _videoList = videos.getVideoList();
+
 void main() {
   return runApp(MyApp());
 }
 
 final scakey = new GlobalKey<_MyStatefulWidgetState>();
 
-/// This Widget is the main application widget.
 class MyApp extends StatelessWidget {
   static const String _title = 'Flutter Code Sample';
 
@@ -150,12 +153,12 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
     return Scaffold(
       body: Container(
           child: GameLevelsScrollingMap.scrollable(
-        imageUrl: "assets/map.png",
+        imageUrl: "assets/levelmap.png",
         direction: Axis.vertical,
         reverseScrolling: true,
         pointsPositionDeltaX: 25,
         pointsPositionDeltaY: 25,
-        svgUrl: 'assets/map1.svg',
+        svgUrl: 'assets/levelmap.svg',
         points: points,
       )), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -169,44 +172,62 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
   List<PointModel> points = [];
 
   void fillTestData() {
-    for (int i = 0; i < 16; i++) {
-      points.add(PointModel(16, testWidget(i)));
+    for (int i = 1; i < 100; i++) {
+      points.add(PointModel(100, testWidget(i)));
     }
   }
 
   Widget testWidget(int order) {
     return InkWell(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            "assets/map_point.png",
-            fit: BoxFit.fitWidth,
-            width: 90,
-          ),
-          Text("$order",
-              style: const TextStyle(color: Colors.white, fontSize: 30))
-        ],
-      ),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Text("Point $order"),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: const Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+              "assets/map_point.png",
+              fit: BoxFit.fitWidth,
+              width: 90,
+            ),
+            Container(
+              padding: const EdgeInsets.only(bottom: 33.0),
+              child: Text("$order",
+                  style: const TextStyle(color: Colors.white, fontSize: 26)),
+            )
+          ],
+        ),
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (_) => AssetGiffDialog(
+                    image: Image.asset(
+                      "assets/gifs/$order.gif",
+                      fit: BoxFit.fitWidth,
+                      width: 90,
+                    ),
+                    title: Text(
+                      _videoList[order]['text'],
+                      style: TextStyle(
+                          fontSize: 22.0, fontWeight: FontWeight.w600),
+                    ),
+                    description: Text(
+                      _videoList[order]['description'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(),
+                    ),
+                    entryAnimation: EntryAnimation.top,
+                    onOkButtonPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FullView(
+                                  path: _videoList[order]['path'],
+                                  text: _videoList[order]['text'],
+                                  description: _videoList[order]['description'],
+                                  overlay: _videoList[order]['overlay'],
+                                )),
+                      );
+                    },
+                  ));
+        });
   }
 }
 
@@ -224,7 +245,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   List<Widget> _widgetOptions = <Widget>[
     MapVerticalExample(),
-    Levels(),
+    videos.Levels(),
     TrophyGrid(),
     PageFour(),
   ];
