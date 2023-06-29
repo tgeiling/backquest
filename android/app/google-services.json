@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "225457756064",
+    "project_id": "backquest-68ea5",
+    "storage_bucket": "backquest-68ea5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225457756064:android:9c330f1e1a0cb4f931f6c5",
+        "android_client_info": {
+          "package_name": "com.example.backquest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "225457756064-mipqhtvbivjahusb0cnerme06g0tph25.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwLbzrB8QGt-mTc0n2klUttTEgXcR2EQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "225457756064-mipqhtvbivjahusb0cnerme06g0tph25.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "225457756064-cenqcq7f3r717vduepp40l2qj3bu2o3n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.backquest"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

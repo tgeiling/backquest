@@ -1,10 +1,22 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'data_provider.dart';
+import 'firebase_options.dart';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
 import 'package:giff_dialog/giff_dialog.dart';
 import 'videos.dart' as videos;
+import 'users.dart';
 import 'trophy.dart';
 import 'videos.dart';
+import 'form.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -21,8 +33,15 @@ Map<int, Color> color = {
 
 List<Map<String, dynamic>> _videoList = videos.getVideoList();
 
-void main() {
-  return runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  return runApp(
+    ChangeNotifierProvider(
+      create: (context) => FirebaseService(),
+      child: MyApp(),
+    ),
+  );
 }
 
 final scakey = new GlobalKey<_MyStatefulWidgetState>();
@@ -55,21 +74,53 @@ class Scoring extends StatefulWidget {
 }
 
 class _ScoringState extends State<Scoring> {
+  late String value;
+  late bool check;
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Text("002"),
-        Container(
-          width: 40,
-          height: 100,
-          decoration: BoxDecoration(
-              image: new DecorationImage(
-            alignment: Alignment.centerLeft,
-            image: new AssetImage('assets/fireIcon.png'),
-          )),
-        )
-      ],
+    final firebaseService = Provider.of<FirebaseService>(context);
+    return StreamBuilder<Map<String, dynamic>>(
+      stream: firebaseService.getUserDataStream(),
+      builder: (context, snapshot) {
+        print('Connection State: ${snapshot.connectionState}');
+        print('Data: ${snapshot.data}');
+
+        if (snapshot.hasData) {
+          final userData = snapshot.data!;
+
+          var totalLevels = userData['totalLevels'];
+          if (totalLevels is int) {
+            check = totalLevels >= 10;
+          } else if (totalLevels is String) {
+            check = int.parse(totalLevels) >= 10;
+          }
+
+          value = check
+              ? "0${userData['totalLevels']}"
+              : "00${userData['totalLevels']}";
+
+          return Row(
+            children: <Widget>[
+              Text("00${userData['totalLevels'] ?? 0}"),
+              Container(
+                width: 40,
+                height: 100,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    alignment: Alignment.centerLeft,
+                    image: AssetImage('assets/fireIcon.png'),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }
@@ -112,7 +163,7 @@ class _IconRowState extends State<IconRow> {
               scakey.currentState!._onItemTapped(2);
             }, // Image tapped
             child: Image.asset(
-              'assets/trophyIcon.png',
+              'assets/formIcon.png',
               fit: BoxFit.cover, // Fixes border issues
             ),
           ),
@@ -148,6 +199,9 @@ class MapVerticalExample extends StatefulWidget {
 }
 
 class _MapVerticalExampleState extends State<MapVerticalExample> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseService? firebaseService;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,69 +220,182 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
 
   @override
   void initState() {
-    fillTestData();
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      firebaseService = Provider.of<FirebaseService>(context, listen: false);
+      fillTestData();
+    });
   }
+}
 
-  List<PointModel> points = [];
+List<PointModel> points = [];
 
-  void fillTestData() {
-    for (int i = 1; i < 100; i++) {
-      points.add(PointModel(100, testWidget(i)));
-    }
+void fillTestData() {
+  for (int i = 1; i < 26; i++) {
+    points.add(PointModel(26, testWidget(i)));
   }
+}
 
-  Widget testWidget(int order) {
-    return InkWell(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.asset(
-              "assets/map_point.png",
-              fit: BoxFit.fitWidth,
-              width: 90,
+Widget testWidget(int order) {
+  return Consumer<FirebaseService>(builder: (context, firebaseService, _) {
+    return StreamBuilder<Map<String, dynamic>>(
+      stream: firebaseService.getLevelDataStream(),
+      builder: (context, snapshot) {
+        print('Connection State: ${snapshot.connectionState}');
+        print('Data: ${snapshot.data}');
+
+        if (snapshot.hasData) {
+          final levelData = snapshot.data!;
+          int totalLevels = 3;
+
+          levelData.forEach((key, value) {
+            if (value == true) {
+              totalLevels++;
+            }
+          });
+
+          // Decrease the value of order by one
+          int decreasedOrder = order - 1;
+          bool complete = levelData['level$order'] ?? false;
+          bool locked = order > totalLevels;
+
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (!snapshot.hasError) {
+              //firebaseService.refreshData();
+            } else {
+              // Connection error occurred
+
+              // Check if it's a network connectivity issue
+              if (snapshot.error is SocketException) {
+                firebaseService.refreshData();
+              } else {
+                // Handle other types of connection errors
+              }
+            }
+          }
+
+          return InkWell(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  complete
+                      ? "assets/map_point_green.png"
+                      : locked
+                          ? "assets/map_point_locked.png" // Image for locked state
+                          : "assets/map_point.png",
+                  fit: BoxFit.fitWidth,
+                  width: 90,
+                ),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 33.0),
+                  child: Text(
+                    "$order",
+                    style: const TextStyle(color: Colors.white, fontSize: 26),
+                  ),
+                )
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.only(bottom: 33.0),
-              child: Text("$order",
-                  style: const TextStyle(color: Colors.white, fontSize: 26)),
-            )
-          ],
-        ),
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (_) => AssetGiffDialog(
-                    image: Image.asset(
-                      "assets/gifs/$order.gif",
-                      fit: BoxFit.fitWidth,
-                      width: 90,
+            onTap: () {
+              if (!locked) {
+                showDialog(
+                  context: context,
+                  builder: (_) => Dialog(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Image.asset(
+                            "assets/gifs/$order.gif",
+                            fit: BoxFit.fitWidth,
+                            width: 300,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            _videoList[decreasedOrder]['text'],
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: SizedBox(
+                            height: 250.0,
+                            child: SingleChildScrollView(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  _videoList[decreasedOrder]['description'],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 18.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                            height:
+                                16.0), // Additional spacing between description and buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // Close the dialog
+                                },
+                                child: Text('Cancel'),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FullView(
+                                        order: decreasedOrder,
+                                        path: _videoList[decreasedOrder]
+                                            ['path'],
+                                        text: _videoList[decreasedOrder]
+                                            ['text'],
+                                        description: _videoList[decreasedOrder]
+                                            ['description'],
+                                        overlay: _videoList[decreasedOrder]
+                                            ['overlay'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text('OK'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    title: Text(
-                      _videoList[order]['text'],
-                      style: TextStyle(
-                          fontSize: 22.0, fontWeight: FontWeight.w600),
-                    ),
-                    description: Text(
-                      _videoList[order]['description'],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(),
-                    ),
-                    entryAnimation: EntryAnimation.top,
-                    onOkButtonPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FullView(
-                                  path: _videoList[order]['path'],
-                                  text: _videoList[order]['text'],
-                                  description: _videoList[order]['description'],
-                                  overlay: _videoList[order]['overlay'],
-                                )),
-                      );
-                    },
-                  ));
-        });
-  }
+                  ),
+                );
+              }
+            },
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  });
 }
 
 class MyStatefulWidget extends StatefulWidget {
@@ -241,13 +408,14 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
 
-  final scaKey = new GlobalKey<_MyStatefulWidgetState>();
+  final scaKey = GlobalKey<_MyStatefulWidgetState>();
+  bool isLoggedIn = false;
 
   List<Widget> _widgetOptions = <Widget>[
     MapVerticalExample(),
     videos.Levels(),
-    TrophyGrid(),
-    PageFour(),
+    FeedbackFormWidget(),
+    UserTabWidget()
   ];
 
   void _onItemTapped(int index) {
@@ -258,44 +426,235 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final firebaseService = Provider.of<FirebaseService>(context);
+
+    if (firebaseService.user != null) {
+      return Scaffold(
+        key: scaKey,
+        appBar: AppBar(
+          leading: Image.asset('assets/bqlogo2.jpeg'),
+          leadingWidth: 250,
+          title: Scoring(),
+        ),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: _widgetOptions,
+        ),
+        bottomNavigationBar: Footer(),
+      );
+    }
+    return LoginPage();
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String? _verificationMessage;
+  String? _errorMessage;
+
+  bool _isRegistration = false;
+
+  Future<void> _signInWithEmailAndPassword() async {
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      setState(() {
+        _verificationMessage = 'Login successful.';
+        _errorMessage = null;
+      });
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _verificationMessage = null;
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _registerWithEmailAndPassword() async {
+    try {
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      final String userId = userCredential.user!.uid;
+
+      await _firestore.collection('Userdata').doc(userId).set({
+        'Age': _ageController.text,
+        'Firstname': _firstNameController.text,
+        'Lastname': _lastNameController.text,
+        'totalLevels': 0,
+      });
+
+      Map<String, dynamic> levels = {};
+      for (int i = 1; i <= 30; i++) {
+        levels['level$i'] = false;
+      }
+
+      await _firestore.collection('Leveldata').doc(userId).set(levels);
+
+      setState(() {
+        _verificationMessage =
+            'Registration successful. Please login with your new account.';
+        _errorMessage = null;
+        _isRegistration = false;
+      });
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _verificationMessage = null;
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _switchForm() {
+    setState(() {
+      _isRegistration = !_isRegistration;
+      _verificationMessage = null;
+      _errorMessage = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      key: scaKey,
       appBar: AppBar(
-        leading: Image.asset('assets/bqlogo2.jpeg'),
-        leadingWidth: 250,
-        title: Scoring(),
+        title: Text(_isRegistration ? 'Registration' : 'Login'),
+        leading: _isRegistration
+            ? IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: _switchForm,
+              )
+            : null,
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: Footer(),
-    );
-  }
-}
-
-class PageThree extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: ElevatedButton(
-        child: Text('Go page 2'),
-        onPressed: () {
-          scakey.currentState!._onItemTapped(1);
-        },
-      ),
-    );
-  }
-}
-
-class PageFour extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: ElevatedButton(
-        child: Text('Go page 3'),
-        onPressed: () {
-          scakey.currentState!._onItemTapped(2);
-        },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Email",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Bitte gebe deine E-Mail ein';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.0),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Passwort",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Bitte gebe dein Passwort ein';
+                  }
+                  return null;
+                },
+              ),
+              if (_isRegistration) ...[
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Vorname",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte gebe deinen Vornamen ein';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Nachname",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte gebe deinen Nachnamen ein';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: _ageController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Alter",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte gebe dein Alter ein';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _isRegistration
+                    ? _registerWithEmailAndPassword
+                    : _signInWithEmailAndPassword,
+                child: Text(_isRegistration ? 'Registrieren' : 'Login'),
+              ),
+              SizedBox(height: 16.0),
+              if (!_isRegistration)
+                ElevatedButton(
+                  onPressed: _switchForm,
+                  child: Text('Registrieren'),
+                ),
+              if (_verificationMessage != null)
+                Text(
+                  _verificationMessage!,
+                  style: TextStyle(
+                    color: Colors.green,
+                  ),
+                ),
+              if (_errorMessage != null)
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
