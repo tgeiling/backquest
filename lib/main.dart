@@ -301,63 +301,78 @@ Widget testWidget(int order) {
                 showDialog(
                   context: context,
                   builder: (_) => Dialog(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Image.asset(
-                            "assets/gifs/$order.gif",
-                            fit: BoxFit.fitWidth,
-                            width: 300,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10.0,
+                            offset: Offset(0, 4),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            _videoList[decreasedOrder]['text'],
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.w600),
-                            textAlign: TextAlign.center,
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.asset(
+                                "assets/gifs/$order.gif",
+                                fit: BoxFit.cover,
+                                width: 300,
+                                height: 200,
+                              ),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: SizedBox(
-                            height: 250.0,
-                            child: SingleChildScrollView(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  _videoList[decreasedOrder]['description'],
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 18.0),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              _videoList[decreasedOrder]['text'],
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(height: 16.0),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: SizedBox(
+                              height: 250.0,
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(
+                                    _videoList[decreasedOrder]['description'],
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(fontSize: 18.0),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                            height:
-                                16.0), // Additional spacing between description and buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: TextButton(
+                          SizedBox(height: 16.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pop(context); // Close the dialog
+                                  Navigator.pop(context);
                                 },
                                 child: Text('Cancel'),
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: ElevatedButton(
+                              SizedBox(width: 16.0),
+                              ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
@@ -378,10 +393,10 @@ Widget testWidget(int order) {
                                 },
                                 child: Text('OK'),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

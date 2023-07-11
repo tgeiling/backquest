@@ -32,11 +32,13 @@ List<Map<String, dynamic>> _videoList = [
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834199066/rendition/720p/file.mp4?loc=external&signature=7ccaddbc42656a8dabed22fd305723431732333803baa30812e0ef827ee38028',
     'text': "Der Anfang deiner Rückengesundheit: Schritt für Schritt",
-    'description':
-        "Willkommen bei BackQuest, deinem persönlichen Begleiter auf dem Weg zu einem gesunden Rücken! Mache mit diesem Video den ersten Schritt und entscheide dich für eine positive Veränderung. " +
-            "Dieses Video ist der Beginn einer neuen Gewohnheit. Ich weiß, dass es nicht immer einfach ist, aber sei geduldig mit dir selbst. Jeder kleine Fortschritt ist ein Schritt in die richtige Richtung. " +
-            "Manchmal wenn wir einen neuen Weg in unserem Leben einschlagen wollen fühlt es sich an als würden wir in tiefem Schlamm laufen. Der unsere Schuhe mit jedem Schritt schwerer werden lässt und jeder Schritt mehr Anstrengung kostet. Gerade dann lohnt es sich aufzuschauen, manchmal sieht man erst dann dass es noch einen anderen Weg gibt. " +
-            "BackQuest – Der einfache Weg zur Rückengesundheit",
+    'description': "Willkommen bei BackQuest, deinem persönlichen Begleiter auf dem Weg zu einem gesunden Rücken! Mache mit diesem Video den ersten Schritt und entscheide dich für eine positive Veränderung. " +
+        "Denke bitte daran das hier ist nur unsere erste Testversion und ist noch weit von der Vision entfernt, die wir eines Tages erreichen wollen. Dafür brauchen wir DICH! " +
+        "Mit deinem Feedback, deinen Erfahrungen und deinen Wünschen können wir eine einzigartige App entwickeln um so viel Menschen wie möglich zu helfen! " +
+        "Dieses Video ist der Beginn einer neuen Gewohnheit. Ich weiß, dass es nicht immer einfach ist, aber sei geduldig mit dir selbst. Jeder kleine Fortschritt ist ein Schritt in die richtige Richtung." +
+        "Manchmal wenn wir einen neuen Weg in unserem Leben einschlagen wollen, fühlt es sich an als würden wir in tiefem Schlamm laufen. Unsere Schuhe werden mit jedem Schritt schwerer und jeder Schritt kostet mehr Anstrengung. " +
+        "Gerade dann lohnt es sich aufzuschauen, manchmal sieht man erst dann dass es noch einen anderen Weg gibt." +
+        "BackQuest – Der einfache Weg zur Rückengesundheit",
     'overlay': Thumbnail('assets/thumbnails/level_1/1_1.jpeg'),
   },
   {
@@ -49,7 +51,8 @@ List<Map<String, dynamic>> _videoList = [
     'overlay': Thumbnail('assets/thumbnails/level_1/1_2.jpg'),
   },
   {
-    'path': 'assets/videos/level_1/1_3.mp4',
+    'path':
+        'https://player.vimeo.com/progressive_redirect/playback/842179506/rendition/720p/file.mp4?loc=external&signature=0f91f0270a14634eb0e75118f5cf1588c5197ed87fb401fdb55a05d786382717',
     'text': "Roll dich gesund",
     'description':
         "Bereit für ein Abenteuer, das deinen Rücken stärkt und dich von Schmerzen befreit? In diesem Video lernst du die faszinierende Welt des Baby Rollings kennen, einer Methode zur Prävention von Rückenschmerzen. Es basiert auf der Bewegungsentwicklung von Säuglingen und Kleinkindern, die das Rollen erlernen, um ihre motorischen Fähigkeiten zu entwickeln. " +
@@ -130,74 +133,151 @@ List<Map<String, dynamic>> _videoList = [
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834170796/rendition/720p/file.mp4?loc=external&signature=d01fd0500cd3594b0f3cb62aef6642f9d7ffbeb93d3e6f950827c8ffed9ab49a',
-    'text': "2_1",
-    'description':
-        "Herzlichen Glückwunsch! Du hast die erste Stufe der motorischen Entwicklung gemeistert und begibst dich nun in eine neue Phase. Es wird Zeit sich ein Stockwerk nach oben zu Bewegen und den Vierfüßlerstand zu meistern. " +
-            "Während du dich auf diese neue Etappe vorbereitest, möchten wir dich ermutigen, das Gelernte anzuwenden und deine Fortschritte zu feiern. Deine Körperbeherrschung und motorischen Fähigkeiten werden immer besser. " +
-            "Mach weiter so!",
+    'text': "Krabbeln für eine starke Core-Stabilität und Antirotation",
+    'description': "In der Anfangsentspannung lernst du ab jetzt die gleichmäßige Bewegung des Zwerchfells (Bauchatmung) und des Brustkorbs." +
+        "Danach kommst du aus dem Vierfüßlerstand ins Krabbeln." +
+        "Sind Arm und Hand gleichzeitig in der Luft muss deine Rumpfmuskulatur arbeiten um dich stabil zu Halten." +
+        "Dabei wird die Antirotation deiner Rumpfmuskulatur gekräftigt." +
+        "Bereite dich darauf vor, deine Core-Muskulatur zu stärken und die Antirotation zu meistern! " +
+        "Erfahre, wie das Krabbeln nicht nur deine koordinativen Fähigkeiten verbessert, sondern auch gezielt auf die Stärkung deiner Rumpfmuskulatur abzielt. " +
+        "Tauche ein in eine Welt des dynamischen Zusammenspiels von Bauch- und Rückenmuskeln, um unerwünschte Rotationen zu verhindern und deine Core-Stabilität zu maximieren." +
+        "Lass uns gemeinsam krabbeln und die Grundlage für eine gesunde und stabile Körperhaltung schaffen",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834694810/rendition/720p/file.mp4?loc=external&signature=50e709051251e35f284ba73d67c35d9a8547a7615dff76a69b72129ab794f76b',
-    'text': "2_2",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Höre auf deinen Körper!",
+    'description': "Du mobilisierst deine Handgelenke, um sie beweglich und stark zu halten." +
+        "Achte darauf die Schultern weg von den Ohren zu ziehen." +
+        "Lasse deinen Atem auch in der Dehnung weiter fließen." +
+        "Schmerz ist nur ein Signal deines Körpers und muss NICHT zwangsläufig auf eine Verletzung hinweisen. Deshalb wollen wir dir helfen, dieses Signal zu verstehen und die richtigen Maßnahmen zu ergreifen." +
+        "Schmerz kann auch ein Weg deines Körpers sein dir mitzuteilen, dass der umliegende Bereich verspannt ist und nach mehr Bewegung ruft." +
+        "Denke immer daran: Schmerz ist nicht dein Feind ist, sondern ein Wegweiser zu einem gesünderen und beweglicheren Körper." +
+        "Mit den richtigen Mobilisationsübungen kannst du deine Rückenschmerzen reduzieren und dich wieder frei und energiegeladen fühlen." +
+        "Also, worauf wartest du? Klicke jetzt auf Play und entdecke die transformative Kraft der Mobilisationsübungen!",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834697298/rendition/720p/file.mp4?loc=external&signature=7a038d31756b419cd3322d5fabee05f186cf77787a62f045b7a41d8f527c9c10',
-    'text': "2_3",
-    'description': "Never gonna give you up never gonna let you down",
+    'text':
+        "Die Geheimnisse des Körper-Zusammenspiels enthüllt: Das Regional Interdependence Model",
+    'description': "Du arbeitest an der Beweglichkeit deiner Hüfte und Brustwirbelsäule (BWS). " +
+        "Beide sind nach dem Regional Interdependence Modell von großer Bedeutung bei der Prävention von Rückenschmerzen. " +
+        "Achte beim Einzelellbogenstütz (3. Übung) darauf den Bauchnabel zur Wirbelsäule zu ziehen, um den unteren Rücken zu entlasten." +
+        "Hey du! Bist du es leid, immer nur Symptome zu behandeln, ohne die eigentliche Ursache deiner Schmerzen zu finden? Dann haben wir etwas Aufregendes für dich! " +
+        "Schluss mit der traditionellen Herangehensweise, bei der nur der schmerzende Bereich behandelt wird! " +
+        "Die Lösung kann möglicherweise in einer ganz anderen Region deines Körpers liegen. Klingt verrückt, oder? Aber es ist wahr!" +
+        "Lass uns ein Beispiel geben: Hast du schon einmal Schmerzen im unteren Rücken gehabt? " +
+        "Nun, nach dem Regional Interdependence Model könnten die eigentlichen Probleme in deiner Hüfte, der Brustwirbelsäule oder im Schultergürtel liegen. " +
+        "Unglaublich, oder? Dein Körper ist ein Meister der Kompensation, und manchmal versucht er, Dysfunktionen in anderen Bereichen auszugleichen, was dann zu Schmerzen an unerwarteten Stellen führt." +
+        "Alle Videos zielen darauf ab, nicht nur die Symptome zu lindern, sondern auch die zugrunde liegenden Ursachen anzugehen. " +
+        "Mit gezielten Bewegungs- und Stabilisationsübungen und Entspannungstechniken wirst du den Körper-Zusammenhang auf eine ganz neue Art und Weise erleben." +
+        "Also, schnapp dir deinen Lieblingsplatz, drück auf Play und lass uns gemeinsam die faszinierende Welt des Körper-Zusammenspiels erkunden! " +
+        "Befreie dich von den Fesseln der traditionellen Behandlungsansätze und entdecke das Regional Interdependence Model für dich selbst.",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834174282/rendition/720p/file.mp4?loc=external&signature=76a45c181958e2952e4ed4e308c3eb3330384d6651e01f8825290af73521a129',
-    'text': "2_4",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Starke Handgelenke: Die Geheimwaffe gegen Verletzungen",
+    'description': "Du setzt wieder den Fokus auf die Handgelenke." +
+        "Erst kräftigend mit der Hüftdrehung im Bärenhalt – lerne dich auf einer Hand zu stabilisieren!" +
+        "Danach mobilisierst du deine Handgelenke – achte darauf die Schultern weg von den Ohren fallen zu lassen!" +
+        "Bist du bereit, deine Handgelenke zu stärken und Verletzungen vorzubeugen? " +
+        "Tauche ein in die faszinierende Welt der Handgelenksgesundheit und entdecke die Vorteile der Handgelenksgymnastik. Wir zeigen dir, wie du Flexibilität, Stabilität und Kraft deiner Handgelenke verbessern kannst. " +
+        "Gemeinsam stärken wir die Muskulatur rund um die Handgelenke und sorgen für eine bessere Durchblutung, um Nährstoffe effizienter zu transportieren und Verletzungsrisiken zu minimieren." +
+        "Erfahre, wie Handgelenksgymnastik Überlastungsschäden vorbeugen kann, insbesondere für diejenigen, die häufig am Computer arbeiten oder repetitive Handbewegungen ausführen." +
+        "Dann komm mit uns auf diese spannende Reise und mach dich bereit für starke und gesunde Handgelenke!",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834178314/rendition/720p/file.mp4?loc=external&signature=4b1cd078f73715c70aef6738fa0a1f1e2ad63800490a752fd632d80e1cb24e27',
-    'text': "2_5",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Starke Schulterblätter für eine kraftvolle und gesunde Schulter",
+    'description': "Du setzt den Fokus auf die Bewegung deiner Schulterblätter." +
+        "Im PushUp+ lernst du deine Schulterblätter aktiv anzusteuern." +
+        "Das gelernte überträgst du dann im Herabschauenden Hund in eine andere Bewegungsebene." +
+        "Ein starkes Schulterblatt ist der Schlüssel zu einer leistungsfähigen und verletzungsfreien Schulter." +
+        "Entdecke effektive Übungen und Techniken, um deine Schulterblattmuskulatur zu stärken und die optimale Ausrichtung des Arms zu erreichen. " +
+        "Erfahre, wie du unerwünschte Kompensationsbewegungen vermeidest und die Belastung auf Muskeln und Sehnen reduzierst. " +
+        "Mit einer starken und funktionalen Schulterblattmuskulatur bist du bereit, deine sportlichen Ziele zu erreichen und Verletzungen vorzubeugen. " +
+        "Bist du bereit, dein Schulterblatt auf das nächste Level zu bringen?",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834182013/rendition/720p/file.mp4?loc=external&signature=d48b455115b96f5456c69fa739379bea2d6f635e7944caa9e57b9743ee233a4b',
-    'text': "2_6",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Die versteckte Verbindung unser Füße zu Rückenschmerzen",
+    'description': "Du lernst deine Hüfte besser anzusteuern und zu stabilisieren." +
+        "Anschließend arbeitest du an der Mobilität und Kraft deiner Füße." +
+        "Besonders deiner Plantarfaszie – auf den Unterseiten der Füße." +
+        "Die haben nach dem Regional Interdepenence Modell einen direkten Einfluss auf Rückenschmerzen." +
+        "Entdecke die versteckte Verbindung zwischen der hinteren Kette deines Körpers und der Plantarfaszie in deinen Füßen für einen starken und schmerzfreien Rücken." +
+        "Erfahre mehr über die Auswirkungen einer verhärteten oder verkürzten Plantarfaszie auf die gesamte hintere Kette und wie dies zu Rückenschmerzen führen kann. " +
+        "Lerne gezielte Übungen und Mobilisationstechniken kennen, um deine Körperhaltung zu verbessern, die Flexibilität zu steigern und Rückenschmerzen zu reduzieren." +
+        "Lerne mehr über effektive Strategien, um deine Wirbelsäule zu entlasten!",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834185765/rendition/720p/file.mp4?loc=external&signature=a3782acb43f626a0230536755a0dd0991c05ffba28dbdef057b7920b1c8ed351',
-    'text': "2_7",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Warum gibt es so wenig statisches Dehnen in den Videos?",
+    'description': "Du arbeitest im Seitsitz an der Mobilität deiner Hüfte." +
+        "Achte auf langsame und gleichmäßige Bewgeungen." +
+        "Anschließend noch an der Mobilität und Stabilität im Schultergürtel mit dem Herabschauenden Hund." +
+        "Schiebe dabei dein Gesäß zur Decke und den Brustkorb zu den Knien." +
+        "Entfessle deine Beweglichkeit - Das Geheimnis der Mobility! " +
+        "Willst du deinen Körper in vollem Umfang bewegen können? Möchtest du deine Beweglichkeit verbessern und gleichzeitig stabil und kontrolliert agieren? Dann ist es Zeit für Mobility!" +
+        "Mobility ist mehr als nur einfaches Dehnen. Kurz gesagt ist Mobility= Flexibilität (passiv) + motorische Kontrolle (aktiv) + Kraft. " +
+        "Es ist ein aktiver Ansatz, der es dir ermöglicht, Bewegungseinschränkungen zu identifizieren und zu überwinden. Gemeinsam werden wir gezielte Mobilisationsübungen durchführen, die deine Gelenke und umliegenden Strukturen auf sanfte und doch effektive Weise mobilisieren. " +
+        "Du wirst spüren, wie deine Beweglichkeit Schritt für Schritt zunimmt und du deinen Körper in vollen Zügen genießen kannst." +
+        "Der große Vorteil von Mobility gegenüber statischem Dehnen liegt in der Nachhaltigkeit und Übertragbarkeit auf den Sport. Du wirst nicht nur flexibler, sondern auch stabiler und kontrollierter in deinen Bewegungen. " +
+        "Dein Nervensystem wird aktiviert und deine sensorische Wahrnehmung geschult, so dass du eine bessere Körperkontrolle entwickelst und Verletzungsrisiken minimierst.",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834189198/rendition/720p/file.mp4?loc=external&signature=5c6a59cd918e123538058e8d7e81f59b976f2b5acc76594a27f4e5a4a360704f',
-    'text': "2_8",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Die Landkarten der Bewegung",
+    'description': "Nun wechselt du im Seitsitz die Positionen – leite die Bewegung aus dem Knie zuerst ein." +
+        "Denke daran den Atem weiter fließen zu lassen." +
+        "Beim Aufrotieren der Brustwirbelsäule folgt dein Blick der Hand durch die ganze Bewegung." +
+        "Schon seit unseren Kindesbeinen speichert unser Gehirn alle Bewegungsmuster. Ob Krabbeln, gehen oder greifen. " +
+        "Das Ganze können wir uns vorstellen wie Straßen. Wird eine Bewegung nur ein paar Mal ausgeführt entsteht ein Trampelpfad durch eine dicht bewachsene Wiese. ",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834192567/rendition/720p/file.mp4?loc=external&signature=adb2f230f7c11b513fd96d5a86e48308aeebf7dfdd6f89279b3b299344a1d1e0',
-    'text': "2_9",
-    'description': "Never gonna give you up never gonna let you down",
+    'text': "Die einzig „richtige“ Sitzposition ist immer die nächste!",
+    'description': "Im Toten Käfer (Übung 2) kräftigst du deine Rumpfmusukaltur – ziehe dabei den Bauchnabel zur Wirbelsäule." +
+        "Anschließend lockerst du dich beim Baby Rolling (Übung 3) – achte darauf die Beine locker zu lassen!" +
+        "Nach eine Vorbereitung der Handgelenke kräftigst du deine einarmige Stützkraft." +
+        "Lange wurde erzählt, dass wir immer in einer perfekt gerade Körperhaltung sitzen, müssten um Rückenschmerzen vorzubeugen. " +
+        "In neueren Forschungen zeigt sich aber, dass unsere Körperhaltung einen viel kleineren Einfluss auf Schmerzen hat als bisher angenommen." +
+        "Der menschliche Körper ist für Bewegung gemacht - er sehnt sich nach Veränderung und Variation. Wenn wir lange Stunden in einer starren Sitzposition verharren, fühlen sich unsere Muskeln und Gelenke eingeschränkt und steif an. " +
+        "Unser Körper schreit förmlich nach Bewegung, um die Spannung zu lösen und die Durchblutung zu fördern. " +
+        "Die Lösung liegt in der Vielfalt und Bewegung! Indem wir regelmäßig unsere Sitzposition verändern, aufstehen, uns dehnen und kleine Bewegungspausen einlegen, geben wir unserem Körper genau das, was er braucht - Abwechslung und Entlastung. " +
+        "Unser Körper wird es uns danken, indem er geschmeidiger und flexibler wird. " +
+        "Bereit, deinen Körper zu befreien und ihm die Variation zu geben, nach der er sich sehnt? " +
+        "Dann schnapp dir deinen Stuhl, finde bequeme Kleidung und lass uns gemeinsam einen Schritt in Richtung eines bewegten und schmerzfreien Lebens machen.",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834195887/rendition/720p/file.mp4?loc=external&signature=fbe59575c124e4b9a00e49619e82925656ae1478912e7d2c0423bb4562f39787',
     'text': "2_10",
-    'description': "Never gonna give you up never gonna let you down",
+    'description': "Du hast die zweite Stufe nun so gut wie geschafft." +
+        "Der Fokus liegt nochmal auf der Bewegung deiner Schulterblätter und der Stabilität im Schultergürtel." +
+        "Zum Abschluss mobilisierst du noch deine Brustwirbelsäule (BWS) – der Blick folgt deinem Ellbogen in der ganzen Bewegung." +
+        "Herzlichen Glückwunsch!" +
+        "Du hast erfolgreich das Ende der ersten Testversion erreicht und ich möchte dir meinen aufrichtigen Glückwunsch aussprechen! Du hast kontinuierlich an deiner Rückenschmerzprävention gearbeitet und bist auf dem richtigen Weg zu einem gesunden und schmerzfreien Rücken." +
+        "Während dieser ersten Etappe hast du wertvolles Wissen über deinen Körper und verschiedene Übungen erlangt. Du hast gelernt, wie wichtig es ist, deinem Rücken regelmäßig Aufmerksamkeit zu schenken und ihn durch gezielte Übungen zu stärken. Dein Engagement und deine Ausdauer sind bewundernswert, und ich bin stolz darauf, dass du bis hierhin gekommen bist." +
+        "Aber das ist erst der Anfang! In den kommenden Wochen werden wir nach und nach neue Trainings-, Wissens- und Entspannungsinhalte einführen, um deine Rückenschmerzprävention noch effektiver und abwechslungsreicher zu gestalten. Du darfst dich auf spannende und neue Herausforderungen freuen, die dich dabei unterstützen, deinen Rücken weiter zu stärken und deine Flexibilität zu verbessern. " +
+        "Aber wir hören nicht nur bei den Inhalten auf. Wir möchten deine Erfahrung mit unserer App kontinuierlich verbessern und auf deine Bedürfnisse eingehen. Daher freuen wir uns immer über dein Feedback! Teile uns mit, wie dir die bisherigen Übungen, Wissenstexte und Entspannungsinhalte gefallen haben. Lass uns wissen, welche neuen Features du dir wünschst und wie wir deine Trainingsroutine noch besser gestalten können." +
+        "Vielen Dank im Voraus! Mit deiner Hilfe können wir gemeinsam etwas besonderes erschaffen! ",
     'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
   },
 ];
@@ -534,25 +614,30 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
           Container(
             height: 200,
             width: 800,
-            margin: const EdgeInsets.only(top: 50.0, bottom: 50.0),
+            margin: const EdgeInsets.symmetric(vertical: 50.0),
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 153, 152, 152),
               border: Border.all(
-                  width: 2, color: Color.fromARGB(255, 153, 152, 152)),
+                width: 2,
+                color: Color.fromARGB(255, 153, 152, 152),
+              ),
+              borderRadius: BorderRadius.circular(8.0),
             ),
             child: InkWell(
-                child: widget.overlay,
-                onTap: () {
-                  setState(() {
-                    initializeVideo();
-                    isClicked = true;
-                  });
-                }),
+              child: widget.overlay,
+              onTap: () {
+                setState(() {
+                  initializeVideo();
+                  isClicked = true;
+                });
+              },
+            ),
           ),
-          VideoText(widget.text, widget.description)
+          VideoText(widget.text, widget.description),
         ],
       );
     }
+
     if (chewieController == null) {
       return Column(
         children: [
@@ -560,32 +645,37 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
             alignment: Alignment.center,
             height: 100,
             width: 50,
-            margin: const EdgeInsets.only(top: 100.0, bottom: 100.0),
+            margin: const EdgeInsets.symmetric(vertical: 100.0),
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
-                  MaterialColor(0xFF409AB5, color)),
+                MaterialColor(0xFF409AB5, color),
+              ),
             ),
           ),
-          VideoText(widget.text, widget.description)
+          VideoText(widget.text, widget.description),
         ],
       );
     }
+
     return Column(
       children: [
         Container(
           height: 200,
           width: 800,
-          margin: const EdgeInsets.only(top: 50.0, bottom: 50.0),
+          margin: const EdgeInsets.symmetric(vertical: 50.0),
           decoration: BoxDecoration(
             color: Color.fromARGB(255, 153, 152, 152),
-            border:
-                Border.all(width: 2, color: Color.fromARGB(255, 153, 152, 152)),
+            border: Border.all(
+              width: 2,
+              color: Color.fromARGB(255, 153, 152, 152),
+            ),
+            borderRadius: BorderRadius.circular(8.0),
           ),
           child: Chewie(
             controller: chewieController!,
           ),
         ),
-        VideoText(widget.text, widget.description)
+        VideoText(widget.text, widget.description),
       ],
     );
   }
