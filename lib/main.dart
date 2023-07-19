@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -17,6 +18,8 @@ import 'users.dart';
 import 'trophy.dart';
 import 'videos.dart';
 import 'form.dart';
+import 'package:video_player/video_player.dart';
+
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -411,6 +414,82 @@ Widget testWidget(int order) {
       },
     );
   });
+}
+
+//Video tracker um zu erkennen ob der Nutzer das Video geguckt hat.
+
+class VideoPlayerScreen extends StatefulWidget {
+  final String videoUrl;
+  
+  VideoPlayerScreen({required this.videoUrl});
+
+  @override
+  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
+}
+
+class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
+  VideoPlayerController? _videoPlayerController;
+  bool _videoCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideoPlayer();
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeVideoPlayer() async {
+    _videoPlayerController = VideoPlayerController.network(widget.videoUrl)
+      ..initialize().then((_) {
+        setState(() {});
+      });
+    _videoPlayerController?.addListener(_videoPlayerListener);
+  }
+
+  void _videoPlayerListener() {
+    if (_videoPlayerController!.value.position >= _videoPlayerController!.value.duration) {
+      _videoCompleted = true;
+
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_videoPlayerController != null && _videoPlayerController!.value.isInitialized) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Video Player'),
+        ),
+        body: Column(
+          children: [
+            AspectRatio(
+              aspectRatio: _videoPlayerController!.value.aspectRatio,
+              child: VideoPlayer(_videoPlayerController!),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_videoCompleted) {
+            
+                } else {
+            
+                }
+              },
+              child: Text(_videoCompleted ? 'Continue' : 'Retry'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+  }
 }
 
 class MyStatefulWidget extends StatefulWidget {
