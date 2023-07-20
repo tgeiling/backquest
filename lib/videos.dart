@@ -39,7 +39,7 @@ List<Map<String, dynamic>> _videoList = [
         "Manchmal wenn wir einen neuen Weg in unserem Leben einschlagen wollen, fühlt es sich an als würden wir in tiefem Schlamm laufen. Unsere Schuhe werden mit jedem Schritt schwerer und jeder Schritt kostet mehr Anstrengung. " +
         "Gerade dann lohnt es sich aufzuschauen, manchmal sieht man erst dann dass es noch einen anderen Weg gibt." +
         "BackQuest – Der einfache Weg zur Rückengesundheit",
-    'overlay': Thumbnail('assets/thumbnails/level_1/1_1.jpeg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_1.gif'),
   },
   {
     'path':
@@ -48,7 +48,7 @@ List<Map<String, dynamic>> _videoList = [
     'description':
         "Wie du im letzten Video gemerkt hast starten wir am Anfang oft mit einer kurzen Atemmethode. Gönn dir damit eine wohlverdiente Auszeit vom Alltagsstress und schenke dir und deinem Rücken einen Moment der Ruhe. " +
             "Aktiviere damit dein parasympathisches Nervensystem. Spüre, wie der Stress von dir abfällt und eine Atmosphäre von Ruhe und Gelassenheit sich in dir ausbreitet. Erst entspannt entfalten die folgenden Dehn- und Mobilisationsübungen ihr ganzes Potenzial. ",
-    'overlay': Thumbnail('assets/thumbnails/level_1/1_2.jpg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_2.gif'),
   },
   {
     'path':
@@ -57,7 +57,7 @@ List<Map<String, dynamic>> _videoList = [
     'description':
         "Bereit für ein Abenteuer, das deinen Rücken stärkt und dich von Schmerzen befreit? In diesem Video lernst du die faszinierende Welt des Baby Rollings kennen, einer Methode zur Prävention von Rückenschmerzen. Es basiert auf der Bewegungsentwicklung von Säuglingen und Kleinkindern, die das Rollen erlernen, um ihre motorischen Fähigkeiten zu entwickeln. " +
             "Leider haben viele Erwachsene verlernt sich ohne die Kraft ihrer Beine zu rollen. Versuche die Bewegung nur über die Bewegung deiner Arme einzuleiten und spüre, wie deine Rumpfmuskulatur die Bewegung weiter überträgt. Deine Körperwahrnehmung, Koordination und Wohlbefinden sich verbessern. ",
-    'overlay': Thumbnail('assets/thumbnails/level_1/1_3.jpg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_3.gif'),
   },
   {
     'path':
@@ -68,7 +68,7 @@ List<Map<String, dynamic>> _videoList = [
         "Bereit, deinen Körper auf ein neues Level der Beweglichkeit zu bringen? In diesem Video erfährst du alles über das Prinzip der proximalen Stabilität für distale Mobilität. " +
             "Dieses grundlegende Konzept der Sport- und Physiotherapie besagt, dass eine stabile und kontrollierte Rumpfmuskulatur (proximale Stabilität) die Vorraussetung schafft, dass die Muskeln und Gelenke in den entfernten Körperregionen (distale Mobilität) frei und effizient arbeiten können. " +
             "Stärke deinen Kern und erlebe die Freude an einem geschmeidigen und beweglichen Körper!",
-    'overlay': Thumbnail('assets/thumbnails/level_2/2_1.jpg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_4.gif'),
   },
   {
     'path':
@@ -78,7 +78,7 @@ List<Map<String, dynamic>> _videoList = [
         "Bist du bereit, deinen Rücken zu befreien und dich von Verspannungen zu lösen? In diesem Video zeigen wir dir, wie du Faszienrollen ganz ohne Rolle verwenden kannst – mit einfachen Bodenübungen für deinen Rücken. " +
             "Du brauchst keine teure Ausrüstung, denn der Boden wird zu deinem besten Freund. Wir führen dich durch eine Reihe von gezielten Übungen, bei denen du deinen Körper sanft auf dem Boden bewegst, um deine Faszien zu stimulieren und Verspannungen zu lösen. " +
             "Spüre, wie sich dein Rücken mit jedem Atemzug freier und leichter anfühlt. Sei dabei und entdecke die Kraft des Bodens für eine junge und bewegliche Wirbelsäule! ",
-    'overlay': Thumbnail('assets/thumbnails/level_2/2_2.jpg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_5.gif'),
   },
   {
     'path':
@@ -87,7 +87,7 @@ List<Map<String, dynamic>> _videoList = [
     'description':
         "Indem du deinen Bauchnabel zur Wirbelsäule ziehst, spannst du die tief liegende Bauchmuskulatur, insbesondere den Transversus Abdominis, an. Diese Muskulatur fungiert als eine Art natürlicher Korsett um die Wirbelsäule herum. Durch die Aktivierung des Transversus Abdominis wird die intraabdominale Druckerzeugung erhöht, was zu einer besseren Stabilität der Wirbelsäule führt. " +
             "Die sogenannte „Bracing“- Technik wird eingesetzt um die Stabilität und Ausrichtung der Wirbelsäule während einer Übung zu verbessern. Du wirst lernen, wie du die korrekte Ausrichtung deines Beckens unterstützt und eine neutrale Wirbelsäulenposition förderst, um übermäßige Belastungen und Kompensationen zu vermeiden. ",
-    'overlay': Thumbnail('assets/thumbnails/level_2/2_3.jpeg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_6.gif'),
   },
   {
     'path':
@@ -98,7 +98,7 @@ List<Map<String, dynamic>> _videoList = [
             "Studien zeigen, dass während Kraftübungen die Bracing-Technik entscheidend ist. Doch wir wissen auch, dass Menschen mit Rückenschmerzen oft einen überspannten Körper haben und es ihnen schwerfällt, loszulassen. Deshalb ist es von großer Bedeutung, das Gleichgewicht zwischen Anspannen und Loslassen zu finden. " +
             "Unser Ziel ist es, dir zu zeigen, dass ein gesunder Rücken nicht nur von körperlicher Stärke, sondern auch von der Fähigkeit abhängt, loszulassen und zu entspannen. Finde die Balance zwischen Anspannen und Loslassen, um deinem Rücken eine optimale Unterstützung zu bieten und deinen Alltag mit Leichtigkeit zu meistern. " +
             "P.S. Videoqualität wird nach der ersten Minute besser. ",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_1.jpg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_7.gif'),
   },
   {
     'path':
@@ -108,7 +108,7 @@ List<Map<String, dynamic>> _videoList = [
         "Entdecke den Joint-by-Joint Ansatz und lerne, wie die Mobilität der Hüfte eine wichtige Rolle bei der Prävention von Rückenschmerzen spielt. In diesem Video tauchen wir in die faszinierende Welt der Gelenke ein und zeigen dir, wie du deine Hüfte mobilisieren kannst, um deinen Rücken zu stärken. " +
             "Der Joint-by-Joint Ansatz betont die unterschiedlichen Anforderungen an die Gelenke unseres Körpers. Insbesondere benötigt die Hüfte eine gute Mobilität, während die Lendenwirbelsäule (LWS) eher stabile Eigenschaften aufweisen sollte. Wenn die Hüftmobilität eingeschränkt ist, versucht die LWS diese Einschränkung zu kompensieren, indem sie sich übermäßig bewegt. Diese Überlastung kann zu Rückenschmerzen führen. " +
             "Bist du bereit, die Rolle deiner Hüfte bei der Prävention von Rückenschmerzen zu erkunden? Dann komm mit uns auf diese spannende Reise zur Mobilität und Stabilität. Lass uns deine Hüfte befreien und deinem Rücken eine solide Basis geben! ",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_2.jpg'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_8.gif'),
   },
   {
     'path':
@@ -118,7 +118,7 @@ List<Map<String, dynamic>> _videoList = [
     'description':
         "Stell dir vor, dein Körper ist wie ein Haus und Rückenschmerzen sind wie ein schrillender Rauchmelder. Du könntest versucht sein, den Alarm einfach abzustellen, aber was ist mit der eigentlichen Ursache des Problems? " +
             "Wenn wir Schmerzen im Rücken verspüren, ist es wie der Alarm, der auf eine Verletzung oder ein anderes Problem hinweist. Es ist wichtig, den Schmerz nicht einfach zu ignorieren oder oberflächlich zu behandeln. Stell dir vor du schmierst eine Schmerzsalbe auf deinen Rücken oder nimmst einfach nur Schmerzmedikamente ein ohne die Hüfte oder deinen Schultergürtel zu untersuchen. Das wäre so, als würdest du die Batterie aus dem Rauchmelder entfernen, anstatt nach der eigentlichen Ursache des Alarms zu suchen. ",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_9.gif'),
   },
   {
     'path':
@@ -128,7 +128,7 @@ List<Map<String, dynamic>> _videoList = [
         "Herzlichen Glückwunsch! Du hast die erste Stufe der motorischen Entwicklung gemeistert und begibst dich nun in eine neue Phase. Es wird Zeit sich ein Stockwerk nach oben zu Bewegen und den Vierfüßlerstand zu meistern. " +
             "Während du dich auf diese neue Etappe vorbereitest, möchten wir dich ermutigen, das Gelernte anzuwenden und deine Fortschritte zu feiern. Deine Körperbeherrschung und motorischen Fähigkeiten werden immer besser. " +
             "Mach weiter so!",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_1/Video_1_10.gif'),
   },
   {
     'path':
@@ -142,7 +142,7 @@ List<Map<String, dynamic>> _videoList = [
         "Erfahre, wie das Krabbeln nicht nur deine koordinativen Fähigkeiten verbessert, sondern auch gezielt auf die Stärkung deiner Rumpfmuskulatur abzielt. " +
         "Tauche ein in eine Welt des dynamischen Zusammenspiels von Bauch- und Rückenmuskeln, um unerwünschte Rotationen zu verhindern und deine Core-Stabilität zu maximieren." +
         "Lass uns gemeinsam krabbeln und die Grundlage für eine gesunde und stabile Körperhaltung schaffen",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_1.gif'),
   },
   {
     'path':
@@ -156,7 +156,7 @@ List<Map<String, dynamic>> _videoList = [
         "Denke immer daran: Schmerz ist nicht dein Feind ist, sondern ein Wegweiser zu einem gesünderen und beweglicheren Körper." +
         "Mit den richtigen Mobilisationsübungen kannst du deine Rückenschmerzen reduzieren und dich wieder frei und energiegeladen fühlen." +
         "Also, worauf wartest du? Klicke jetzt auf Play und entdecke die transformative Kraft der Mobilisationsübungen!",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_2.gif'),
   },
   {
     'path':
@@ -176,7 +176,7 @@ List<Map<String, dynamic>> _videoList = [
         "Mit gezielten Bewegungs- und Stabilisationsübungen und Entspannungstechniken wirst du den Körper-Zusammenhang auf eine ganz neue Art und Weise erleben." +
         "Also, schnapp dir deinen Lieblingsplatz, drück auf Play und lass uns gemeinsam die faszinierende Welt des Körper-Zusammenspiels erkunden! " +
         "Befreie dich von den Fesseln der traditionellen Behandlungsansätze und entdecke das Regional Interdependence Model für dich selbst.",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_3.gif'),
   },
   {
     'path':
@@ -190,7 +190,7 @@ List<Map<String, dynamic>> _videoList = [
         "Gemeinsam stärken wir die Muskulatur rund um die Handgelenke und sorgen für eine bessere Durchblutung, um Nährstoffe effizienter zu transportieren und Verletzungsrisiken zu minimieren." +
         "Erfahre, wie Handgelenksgymnastik Überlastungsschäden vorbeugen kann, insbesondere für diejenigen, die häufig am Computer arbeiten oder repetitive Handbewegungen ausführen." +
         "Dann komm mit uns auf diese spannende Reise und mach dich bereit für starke und gesunde Handgelenke!",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_4.gif'),
   },
   {
     'path':
@@ -204,7 +204,7 @@ List<Map<String, dynamic>> _videoList = [
         "Erfahre, wie du unerwünschte Kompensationsbewegungen vermeidest und die Belastung auf Muskeln und Sehnen reduzierst. " +
         "Mit einer starken und funktionalen Schulterblattmuskulatur bist du bereit, deine sportlichen Ziele zu erreichen und Verletzungen vorzubeugen. " +
         "Bist du bereit, dein Schulterblatt auf das nächste Level zu bringen?",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_5.gif'),
   },
   {
     'path':
@@ -218,7 +218,7 @@ List<Map<String, dynamic>> _videoList = [
         "Erfahre mehr über die Auswirkungen einer verhärteten oder verkürzten Plantarfaszie auf die gesamte hintere Kette und wie dies zu Rückenschmerzen führen kann. " +
         "Lerne gezielte Übungen und Mobilisationstechniken kennen, um deine Körperhaltung zu verbessern, die Flexibilität zu steigern und Rückenschmerzen zu reduzieren." +
         "Lerne mehr über effektive Strategien, um deine Wirbelsäule zu entlasten!",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_6.gif'),
   },
   {
     'path':
@@ -235,7 +235,7 @@ List<Map<String, dynamic>> _videoList = [
         "Du wirst spüren, wie deine Beweglichkeit Schritt für Schritt zunimmt und du deinen Körper in vollen Zügen genießen kannst." +
         "Der große Vorteil von Mobility gegenüber statischem Dehnen liegt in der Nachhaltigkeit und Übertragbarkeit auf den Sport. Du wirst nicht nur flexibler, sondern auch stabiler und kontrollierter in deinen Bewegungen. " +
         "Dein Nervensystem wird aktiviert und deine sensorische Wahrnehmung geschult, so dass du eine bessere Körperkontrolle entwickelst und Verletzungsrisiken minimierst.",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_7.gif'),
   },
   {
     'path':
@@ -246,7 +246,7 @@ List<Map<String, dynamic>> _videoList = [
         "Beim Aufrotieren der Brustwirbelsäule folgt dein Blick der Hand durch die ganze Bewegung." +
         "Schon seit unseren Kindesbeinen speichert unser Gehirn alle Bewegungsmuster. Ob Krabbeln, gehen oder greifen. " +
         "Das Ganze können wir uns vorstellen wie Straßen. Wird eine Bewegung nur ein paar Mal ausgeführt entsteht ein Trampelpfad durch eine dicht bewachsene Wiese. ",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_8.gif'),
   },
   {
     'path':
@@ -263,7 +263,7 @@ List<Map<String, dynamic>> _videoList = [
         "Unser Körper wird es uns danken, indem er geschmeidiger und flexibler wird. " +
         "Bereit, deinen Körper zu befreien und ihm die Variation zu geben, nach der er sich sehnt? " +
         "Dann schnapp dir deinen Stuhl, finde bequeme Kleidung und lass uns gemeinsam einen Schritt in Richtung eines bewegten und schmerzfreien Lebens machen.",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_9.gif'),
   },
   {
     'path':
@@ -278,7 +278,7 @@ List<Map<String, dynamic>> _videoList = [
         "Aber das ist erst der Anfang! In den kommenden Wochen werden wir nach und nach neue Trainings-, Wissens- und Entspannungsinhalte einführen, um deine Rückenschmerzprävention noch effektiver und abwechslungsreicher zu gestalten. Du darfst dich auf spannende und neue Herausforderungen freuen, die dich dabei unterstützen, deinen Rücken weiter zu stärken und deine Flexibilität zu verbessern. " +
         "Aber wir hören nicht nur bei den Inhalten auf. Wir möchten deine Erfahrung mit unserer App kontinuierlich verbessern und auf deine Bedürfnisse eingehen. Daher freuen wir uns immer über dein Feedback! Teile uns mit, wie dir die bisherigen Übungen, Wissenstexte und Entspannungsinhalte gefallen haben. Lass uns wissen, welche neuen Features du dir wünschst und wie wir deine Trainingsroutine noch besser gestalten können." +
         "Vielen Dank im Voraus! Mit deiner Hilfe können wir gemeinsam etwas besonderes erschaffen! ",
-    'overlay': Thumbnail('assets/thumbnails/level_3/3_3.png'),
+    'overlay': Thumbnail('assets/thumbnails/level_2/Video_2_10.gif'),
   },
 ];
 
