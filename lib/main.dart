@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'dart:io';
 
@@ -19,7 +18,6 @@ import 'trophy.dart';
 import 'videos.dart';
 import 'form.dart';
 import 'package:video_player/video_player.dart';
-
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -327,7 +325,7 @@ Widget testWidget(int order) {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
-                                "assets/gifs/$order.gif",
+                                "assets/thumbnails/$order.gif",
                                 fit: BoxFit.cover,
                                 width: 300,
                                 height: 200,
@@ -420,7 +418,7 @@ Widget testWidget(int order) {
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
-  
+
   VideoPlayerScreen({required this.videoUrl});
 
   @override
@@ -452,15 +450,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   void _videoPlayerListener() {
-    if (_videoPlayerController!.value.position >= _videoPlayerController!.value.duration) {
+    if (_videoPlayerController!.value.position >=
+        _videoPlayerController!.value.duration) {
       _videoCompleted = true;
-
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_videoPlayerController != null && _videoPlayerController!.value.isInitialized) {
+    if (_videoPlayerController != null &&
+        _videoPlayerController!.value.isInitialized) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Video Player'),
@@ -474,10 +473,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ElevatedButton(
               onPressed: () {
                 if (_videoCompleted) {
-            
-                } else {
-            
-                }
+                } else {}
               },
               child: Text(_videoCompleted ? 'Continue' : 'Retry'),
             ),
@@ -559,6 +555,8 @@ class _LoginPageState extends State<LoginPage> {
   String? _errorMessage;
 
   bool _isRegistration = false;
+  bool _acceptPrivacyPolicy = false;
+  bool _agreeToTerms = false;
 
   Future<void> _signInWithEmailAndPassword() async {
     try {
@@ -582,6 +580,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _registerWithEmailAndPassword() async {
+    if (!_acceptPrivacyPolicy || !_agreeToTerms) {
+      // Show an error message or take appropriate action
+      return;
+    }
+
     try {
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -596,6 +599,8 @@ class _LoginPageState extends State<LoginPage> {
         'Firstname': _firstNameController.text,
         'Lastname': _lastNameController.text,
         'totalLevels': 0,
+        'acceptedAGB': _acceptPrivacyPolicy,
+        'acceptedDatenschutz': _agreeToTerms,
       });
 
       Map<String, dynamic> levels = {};
@@ -718,6 +723,40 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _acceptPrivacyPolicy,
+                      onChanged: (value) {
+                        setState(() {
+                          _acceptPrivacyPolicy = value ?? false;
+                        });
+                      },
+                    ),
+                    Text('Datenschutzbestimmung akzeptieren'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _agreeToTerms,
+                      onChanged: (value) {
+                        setState(() {
+                          _agreeToTerms = value ?? false;
+                        });
+                      },
+                    ),
+                    Text('AGB zustimmen'),
+                  ],
+                ),
+                if (!_acceptPrivacyPolicy || !_agreeToTerms)
+                  Text(
+                    'Bitte akzeptiere die Datenschutzbestimmung und AGB.',
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
               ],
               SizedBox(height: 16.0),
               ElevatedButton(
