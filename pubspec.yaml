@@ -73,10 +73,8 @@ flutter:
     - assets/trophyIcon.png
     - assets/userIcon.png
     - assets/fireIcon.png
-    - assets/map.png
     - assets/levelmap.png
     - assets/levelmap.svg
-    - assets/map.jpg
     - assets/map.svg
     - assets/map1.svg
     - assets/map_point.png
@@ -84,8 +82,5 @@ flutter:
     - assets/map_point_locked.png
     - assets/completed.gif
     - assets/not.png
-    - assets/videos/
     - assets/thumbnails/
-    - assets/achivements/
-    - assets/gifs/
     - assets/database/database.db

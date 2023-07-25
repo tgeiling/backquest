@@ -282,7 +282,7 @@ Widget testWidget(int order) {
                 Image.asset(
                   complete
                       ? "assets/map_point_green.png"
-                      : locked
+                      : locked || order > 19
                           ? "assets/map_point_locked.png" // Image for locked state
                           : "assets/map_point.png",
                   fit: BoxFit.fitWidth,
@@ -298,7 +298,7 @@ Widget testWidget(int order) {
               ],
             ),
             onTap: () {
-              if (!locked) {
+              if (!locked && order <= 20) {
                 showDialog(
                   context: context,
                   builder: (_) => Dialog(
@@ -348,7 +348,7 @@ Widget testWidget(int order) {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             child: SizedBox(
-                              height: 250.0,
+                              height: 200.0,
                               child: SingleChildScrollView(
                                 child: Padding(
                                   padding:

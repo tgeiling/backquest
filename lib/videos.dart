@@ -268,7 +268,7 @@ List<Map<String, dynamic>> _videoList = [
   {
     'path':
         'https://player.vimeo.com/progressive_redirect/playback/834195887/rendition/720p/file.mp4?loc=external&signature=fbe59575c124e4b9a00e49619e82925656ae1478912e7d2c0423bb4562f39787',
-    'text': "2_10",
+    'text': "Glückwunsch schon bald hast du die Stufe 2 abgeschlossen!",
     'description': "Du hast die zweite Stufe nun so gut wie geschafft." +
         "Der Fokus liegt nochmal auf der Bewegung deiner Schulterblätter und der Stabilität im Schultergürtel." +
         "Zum Abschluss mobilisierst du noch deine Brustwirbelsäule (BWS) – der Blick folgt deinem Ellbogen in der ganzen Bewegung." +
@@ -582,25 +582,28 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
     //firebaseService.saveDataLocally(userdataUpdate);
   }
 
+  // Define a variable to store the last watched position.
+  Duration lastWatchedPosition = Duration.zero;
   Duration watchedDuration = Duration.zero;
-  Duration halfwayDuration = Duration.zero;
 
   void videoProgressListener() {
     if (chewieController != null) {
       final position = chewieController!.videoPlayerController.value.position;
       final duration = chewieController!.videoPlayerController.value.duration;
+      final halfwayDuration = duration * 0.5;
 
-      if (halfwayDuration == Duration.zero && position >= duration * 0.5) {
-        halfwayDuration = position;
+      // Calculate the difference between the current position and the last watched position.
+      final difference = position - lastWatchedPosition;
+
+      // If the difference is greater than 5 seconds, don't count it as watched.
+      if (difference < const Duration(seconds: 5)) {
+        watchedDuration += difference;
       }
 
-      if (position > watchedDuration) {
-        Duration diff = position - watchedDuration;
-        watchedDuration += diff;
-      }
+      // Update the last watched position to the current position.
+      lastWatchedPosition = position;
 
-      if (halfwayDuration != Duration.zero &&
-          watchedDuration >= duration * 0.5) {
+      if (watchedDuration > halfwayDuration) {
         updateLevel();
       }
     }
@@ -905,6 +908,7 @@ class FullView extends StatelessWidget {
                         ),
                         entryAnimation: EntryAnimation.top,
                         onOkButtonPressed: () {
+                          Navigator.of(context).pop();
                           Navigator.popUntil(context, (route) => route.isFirst);
                         },
                       ),
