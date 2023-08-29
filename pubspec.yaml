@@ -46,6 +46,9 @@ dependencies:
   sembast: ^3.0.0
   connectivity: ^3.0.6
 
+  bonfire: ^2.12.7
+  fast_noise: ^1.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -83,4 +86,5 @@ flutter:
     - assets/completed.gif
     - assets/not.png
     - assets/thumbnails/
+    - assets/character/
     - assets/database/database.db

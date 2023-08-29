@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:225457756064:android:9c330f1e1a0cb4f931f6c5",
+        "mobilesdk_app_id": "1:225457756064:android:4716ca1c874819d631f6c5",
         "android_client_info": {
-          "package_name": "com.example.backquest"
+          "package_name": "com.tgeiling.backquest"
         }
       },
       "oauth_client": [

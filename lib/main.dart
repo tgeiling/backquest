@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:backquest/character.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'data_provider.dart';
 import 'firebase_options.dart';
+
+import 'package:bonfire/bonfire.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +57,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: _title,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: MaterialColor(0xFF409AB5, color),
       ),
@@ -348,13 +352,14 @@ Widget testWidget(int order) {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             child: SizedBox(
-                              height: 200.0,
+                              height: MediaQuery.of(context).size.height * 0.2,
                               child: SingleChildScrollView(
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   child: Text(
-                                    _videoList[decreasedOrder]['description'],
+                                    _videoList[decreasedOrder]
+                                        ['shortDescription'],
                                     textAlign: TextAlign.left,
                                     style: TextStyle(fontSize: 18.0),
                                   ),
@@ -384,6 +389,9 @@ Widget testWidget(int order) {
                                             ['path'],
                                         text: _videoList[decreasedOrder]
                                             ['text'],
+                                        shortDescription:
+                                            _videoList[decreasedOrder]
+                                                ['shortDescription'],
                                         description: _videoList[decreasedOrder]
                                             ['description'],
                                         overlay: _videoList[decreasedOrder]
@@ -504,6 +512,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   List<Widget> _widgetOptions = <Widget>[
     MapVerticalExample(),
     videos.Levels(),
+    //CharacterBox(),
+    //GameManualMap(),
     FeedbackFormWidget(),
     UserTabWidget()
   ];

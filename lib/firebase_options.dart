@@ -66,8 +66,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '225457756064',
     projectId: 'backquest-68ea5',
     storageBucket: 'backquest-68ea5.appspot.com',
-    iosClientId: '225457756064-cenqcq7f3r717vduepp40l2qj3bu2o3n.apps.googleusercontent.com',
-    iosBundleId: 'com.example.backquest',
+    iosClientId:
+        '225457756064-cenqcq7f3r717vduepp40l2qj3bu2o3n.apps.googleusercontent.com',
+    iosBundleId: 'com.tgeiling.backquest',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -76,7 +77,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '225457756064',
     projectId: 'backquest-68ea5',
     storageBucket: 'backquest-68ea5.appspot.com',
-    iosClientId: '225457756064-cenqcq7f3r717vduepp40l2qj3bu2o3n.apps.googleusercontent.com',
-    iosBundleId: 'com.example.backquest',
+    iosClientId:
+        '225457756064-cenqcq7f3r717vduepp40l2qj3bu2o3n.apps.googleusercontent.com',
+    iosBundleId: 'com.tgeiling.backquest',
   );
 }

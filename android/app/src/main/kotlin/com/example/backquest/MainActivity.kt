@@ -1,4 +1,4 @@
-package com.example.backquest
+package com.tgeiling.backquest
 
 import io.flutter.embedding.android.FlutterActivity
 
