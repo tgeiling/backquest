@@ -819,76 +819,73 @@ class _VideoTextState extends State<VideoText> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+          child: Text(
+            widget.shortDescription,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              showDescription = !showDescription;
+            });
+          },
+          child: Container(
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  width: 2,
+                  color: Color.fromARGB(255, 153, 152, 152),
+                ),
+              ),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      showDescription ? 'Wissenswertes' : 'Wissenswertes',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(
+                      showDescription
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 20.0,
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (showDescription)
+          Container(
+            padding: const EdgeInsets.only(left: 15.0, top: 10.0),
             child: Text(
-              widget.shortDescription,
+              widget.description,
               style: const TextStyle(
                 fontSize: 16,
               ),
               textAlign: TextAlign.left,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                showDescription = !showDescription;
-              });
-            },
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    width: 2,
-                    color: Color.fromARGB(255, 153, 152, 152),
-                  ),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        showDescription ? 'Wissenswertes' : 'Wissenswertes',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Icon(
-                        showDescription
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        size: 20.0,
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (showDescription)
-            Container(
-              padding: const EdgeInsets.only(left: 15.0, top: 10.0),
-              child: Text(
-                widget.description,
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }
@@ -937,92 +934,96 @@ class FullView extends StatelessWidget {
       appBar: AppBar(
         title: Text(text),
       ),
-      body: Column(
-        children: [
-          Center(
-            child: VideoPlayerView(
-              order: order,
-              path: path,
-              text: "",
-              shortDescription: shortDescription,
-              description: description,
-              overlay: overlay,
-              locked: false,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Center(
+              child: VideoPlayerView(
+                order: order,
+                path: path,
+                text: "",
+                shortDescription: shortDescription,
+                description: description,
+                overlay: overlay,
+                locked: false,
+              ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              int increasedOrder = order! + 1;
-              final firebaseService =
-                  Provider.of<FirebaseService>(context, listen: false);
-              final levelDataStream = firebaseService.getLevelDataStream();
+            ElevatedButton(
+              onPressed: () async {
+                int increasedOrder = order! + 1;
+                final firebaseService =
+                    Provider.of<FirebaseService>(context, listen: false);
+                final levelDataStream = firebaseService.getLevelDataStream();
 
-              levelDataStream.listen((levelData) {
-                if (levelData.containsKey('level$increasedOrder')) {
-                  bool isLevelComplete =
-                      levelData['level$increasedOrder'] ?? false;
-                  if (isLevelComplete) {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AssetGiffDialog(
-                        image: Image.asset(
-                          "assets/completed.gif",
-                          fit: BoxFit.fitWidth,
-                          width: 90,
-                        ),
-                        title: Text(
-                          "Level Abgeschlossen",
-                          style: TextStyle(
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w600,
+                levelDataStream.listen((levelData) {
+                  if (levelData.containsKey('level$increasedOrder')) {
+                    bool isLevelComplete =
+                        levelData['level$increasedOrder'] ?? false;
+                    if (isLevelComplete) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AssetGiffDialog(
+                          image: Image.asset(
+                            "assets/completed.gif",
+                            fit: BoxFit.fitWidth,
+                            width: 90,
                           ),
-                        ),
-                        description: Text(
-                          "Ein weiterer Schritt zur Rückengesundheit",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(),
-                        ),
-                        entryAnimation: EntryAnimation.top,
-                        onOkButtonPressed: () {
-                          Navigator.popUntil(context, (route) => route.isFirst);
-                        },
-                      ),
-                    );
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AssetGiffDialog(
-                        image: Image.asset(
-                          "assets/not.png",
-                          fit: BoxFit.fitWidth,
-                          width: 90,
-                        ),
-                        title: Text(
-                          "Level Nicht geschafft",
-                          style: TextStyle(
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w600,
+                          title: Text(
+                            "Level Abgeschlossen",
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
+                          description: Text(
+                            "Ein weiterer Schritt zur Rückengesundheit",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(),
+                          ),
+                          entryAnimation: EntryAnimation.top,
+                          onOkButtonPressed: () {
+                            Navigator.popUntil(
+                                context, (route) => route.isFirst);
+                          },
                         ),
-                        description: Text(
-                          "Nur du selbst kannst deine Rückenschmerzen bekämpfen",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(),
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AssetGiffDialog(
+                          image: Image.asset(
+                            "assets/not.png",
+                            fit: BoxFit.fitWidth,
+                            width: 90,
+                          ),
+                          title: Text(
+                            "Level Nicht geschafft",
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          description: Text(
+                            "Nur du selbst kannst deine Rückenschmerzen bekämpfen",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(),
+                          ),
+                          entryAnimation: EntryAnimation.top,
+                          onOkButtonPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.popUntil(
+                                context, (route) => route.isFirst);
+                          },
                         ),
-                        entryAnimation: EntryAnimation.top,
-                        onOkButtonPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.popUntil(context, (route) => route.isFirst);
-                        },
-                      ),
-                    );
+                      );
+                    }
                   }
-                }
-              });
-            },
-            child: const Text('Abschließen'),
-          ),
-        ],
+                });
+              },
+              child: const Text('Abschließen'),
+            ),
+          ],
+        ),
       ),
     );
   }

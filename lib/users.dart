@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'data_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class UserTabWidget extends StatefulWidget {
   @override
@@ -14,10 +15,22 @@ class UserTabWidget extends StatefulWidget {
 class _UserTabWidgetState extends State<UserTabWidget> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   String? _selectedBulletPoint;
-  bool _isEditing = false; // Added editing mode flag
+  bool _isEditing = false;
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _ageController = TextEditingController();
+
+  late DateFormat? ageDateFormat;
+  late DateTime? ageDateTime;
+  late Timestamp? ageTimestamp;
+
+  // Maintain the expansion state for each panel
+  Map<String, bool> _expansionStates = {
+    'Meine Daten': false,
+    'Netzwerk Optionen': false,
+    'Logout': false,
+    'Datenschutzbestimmungen': false,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +42,17 @@ class _UserTabWidgetState extends State<UserTabWidget> {
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
         if (snapshot.hasData) {
-          final userData = snapshot.data!.data()!;
+          final userData = snapshot.data!;
 
           _firstNameController.text = userData['Firstname'] ?? '';
           _lastNameController.text = userData['Lastname'] ?? '';
-          _ageController.text = userData['Age'] ?? '';
+          if (_ageController.text == "") {
+            ageDateFormat = DateFormat('d. MMMM y');
+            ageDateTime = ageDateFormat?.parse(userData['Age']);
+            ageTimestamp = Timestamp.fromDate(ageDateTime!);
+
+            _ageController.text = DateFormat('dd. MMMM y').format(ageDateTime!);
+          }
 
           List<Item> _items = [
             Item(
@@ -50,7 +69,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                   ),
                 if (!_isEditing)
                   ListTile(
-                    title: Text('Age: ${userData['Age']}'),
+                    title: Text('Age: ${_ageController.text}'),
                   ),
                 if (!_isEditing)
                   ListTile(
@@ -76,9 +95,35 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                         controller: _lastNameController,
                         decoration: InputDecoration(labelText: 'Lastname'),
                       ),
-                      TextField(
-                        controller: _ageController,
-                        decoration: InputDecoration(labelText: 'Age'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _ageController,
+                              enabled: false,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () async {
+                              DateTime? selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime.now(),
+                              );
+
+                              if (selectedDate != null) {
+                                setState(() {
+                                  _ageController.text = DateFormat('dd. MMMM y')
+                                      .format(
+                                          selectedDate); // Update text field
+                                });
+                              }
+                            },
+                            child: Icon(Icons.calendar_today),
+                          ),
+                        ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -91,7 +136,9 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                                     userData['Firstname'] ?? '';
                                 _lastNameController.text =
                                     userData['Lastname'] ?? '';
-                                _ageController.text = userData['Age'] ?? '';
+                                _ageController.text = DateFormat('dd. MMMM y')
+                                        .format(ageDateTime!) ??
+                                    '';
                               });
                             },
                             child: Text('Cancel'),
@@ -110,12 +157,9 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                                 'Firstname': firstName,
                                 'Lastname': lastName,
                                 'Age': age,
-                              }).then((_) {
-                                setState(() {
-                                  _isEditing = false;
-                                });
-                              }).catchError((error) {
-                                print('Error updating user data: $error');
+                              });
+                              setState(() {
+                                _isEditing = false;
                               });
                             },
                             child: Text('Save'),
@@ -130,15 +174,20 @@ class _UserTabWidgetState extends State<UserTabWidget> {
               headerValue: 'Netzwerk Optionen',
               expandedValue: 'Netzwerk Optionen Content',
             ),
-            Item(headerValue: 'Logout', expandedValue: '', userData: [
-              Center(
+            Item(
+              headerValue: 'Logout',
+              expandedValue: '',
+              userData: [
+                Center(
                   child: ElevatedButton(
-                onPressed: () async {
-                  await _auth.signOut();
-                },
-                child: Text('Logout!'),
-              ))
-            ]),
+                    onPressed: () async {
+                      await _auth.signOut();
+                    },
+                    child: Text('Logout!'),
+                  ),
+                )
+              ],
+            ),
             Item(
               headerValue: 'Datenschutzbestimmungen',
               expandedValue: '''
@@ -170,7 +219,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
               
               Wenn Sie Fragen oder Bedenken zu unseren Datenschutzbestimmungen haben, können Sie sich gerne an uns wenden.
               ''',
-            ), // Rest of the code remains the same...
+            ),
           ];
 
           return Center(
@@ -178,50 +227,55 @@ class _UserTabWidgetState extends State<UserTabWidget> {
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: ListView(
                 children: _items.map<Widget>((Item item) {
-                  return ExpansionPanelList(
-                    elevation: 1,
-                    expandedHeaderPadding: EdgeInsets.zero,
-                    expansionCallback: (int index, bool isExpanded) {
-                      setState(() {
-                        _selectedBulletPoint =
-                            isExpanded ? null : item.headerValue;
-                      });
-                    },
+                  return Column(
                     children: [
-                      ExpansionPanel(
-                        headerBuilder: (BuildContext context, bool isExpanded) {
-                          return ListTile(
-                            title: Text(
+                      ListTile(
+                        title: Row(
+                          children: [
+                            // Use an icon to indicate expansion state
+                            Icon(
+                              _expansionStates[item.headerValue]!
+                                  ? Icons.expand_less
+                                  : Icons.expand_more,
+                            ),
+                            SizedBox(width: 16.0), // Add some space
+                            Text(
                               item.headerValue,
                               style: TextStyle(
                                 fontSize: 18.0,
-                                fontWeight: isExpanded
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
                               ),
                             ),
-                          );
+                          ],
+                        ),
+                        // Use the expansion state from the map
+                        onTap: () {
+                          setState(() {
+                            _expansionStates[item.headerValue] =
+                                !_expansionStates[item.headerValue]!;
+                          });
                         },
-                        body: _selectedBulletPoint == item.headerValue
-                            ? Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.expandedValue,
-                                      style: TextStyle(fontSize: 18.0),
-                                    ),
-                                    SizedBox(height: 16.0),
-                                    if (item.userData != null)
-                                      ...item.userData!,
-                                  ],
-                                ),
-                              )
-                            : SizedBox.shrink(),
-                        isExpanded: _selectedBulletPoint == item.headerValue,
                       ),
+                      // Use the expansion state from the map
+                      if (_expansionStates[item.headerValue]!)
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.expandedValue,
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight:
+                                      FontWeight.normal, // Adjust text weight
+                                ),
+                              ),
+                              SizedBox(height: 16.0),
+                              if (item.userData != null) ...item.userData!,
+                            ],
+                          ),
+                        ),
                     ],
                   );
                 }).toList(),

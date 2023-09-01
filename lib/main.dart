@@ -8,10 +8,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'data_provider.dart';
 import 'firebase_options.dart';
 
-import 'package:bonfire/bonfire.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
 import 'package:giff_dialog/giff_dialog.dart';
@@ -604,8 +603,11 @@ class _LoginPageState extends State<LoginPage> {
 
       final String userId = userCredential.user!.uid;
 
+      final ageDateFormat = DateFormat('d. MMMM y');
+      final ageDateTime = ageDateFormat.parse(_ageController.text);
+
       await _firestore.collection('Userdata').doc(userId).set({
-        'Age': _ageController.text,
+        'Age': DateFormat('dd. MMMM y').format(ageDateTime),
         'Firstname': _firstNameController.text,
         'Lastname': _lastNameController.text,
         'totalLevels': 0,
@@ -720,18 +722,45 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _ageController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Alter",
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte gebe dein Alter ein';
-                    }
-                    return null;
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _ageController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Alter",
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          labelStyle: TextStyle(color: Colors.black),
+                        ),
+                        enabled: false, // Disable manual input
+                      ),
+                    ),
+                    SizedBox(
+                        width:
+                            10), // Add spacing between the TextFormField and the button
+                    ElevatedButton(
+                      onPressed: () async {
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+
+                        if (selectedDate != null) {
+                          setState(() {
+                            _ageController.text =
+                                DateFormat('dd. MMMM y').format(selectedDate);
+                          });
+                        }
+                      },
+                      child: Icon(
+                          Icons.calendar_today), // You can use any icon here
+                    ),
+                  ],
                 ),
                 SizedBox(height: 16.0),
                 Row(
