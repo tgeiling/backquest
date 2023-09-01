@@ -45,6 +45,13 @@ dependencies:
   http: ^0.13.6
   sembast: ^3.0.0
   connectivity: ^3.0.6
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +74,7 @@ flutter:
     - assets/truststore.bks
     - assets/bqlogo1.jpeg
     - assets/bqlogo2.jpeg
+    - assets/icon.png
     - assets/bookIcon.png
     - assets/homeIcon.png
     - assets/formIcon.png
