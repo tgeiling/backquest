@@ -52,6 +52,7 @@ flutter_icons:
   ios: true
   image_path: "assets/icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
+  ios_assets_catalog: "backquest"
 
 dev_dependencies:
   flutter_test:
