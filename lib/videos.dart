@@ -1,6 +1,5 @@
 library videos;
 
-import 'dart:io';
 
 import 'package:backquest/data_provider.dart';
 import 'package:chewie/chewie.dart';
@@ -11,8 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),

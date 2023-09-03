@@ -1,22 +1,17 @@
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:backquest/character.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'data_provider.dart';
-import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
-import 'package:giff_dialog/giff_dialog.dart';
 import 'videos.dart' as videos;
 import 'users.dart';
-import 'trophy.dart';
 import 'videos.dart';
 import 'form.dart';
 import 'package:video_player/video_player.dart';
