@@ -324,17 +324,39 @@ Widget testWidget(int order) {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.asset(
-                                "assets/thumbnails/$order.gif",
-                                fit: BoxFit.cover,
-                                width: 300,
-                                height: 200,
-                              ),
-                            ),
-                          ),
+                              padding: const EdgeInsets.all(16.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FullView(
+                                        order: decreasedOrder,
+                                        path: _videoList[decreasedOrder]
+                                            ['path'],
+                                        text: _videoList[decreasedOrder]
+                                            ['text'],
+                                        shortDescription:
+                                            _videoList[decreasedOrder]
+                                                ['shortDescription'],
+                                        description: _videoList[decreasedOrder]
+                                            ['description'],
+                                        overlay: _videoList[decreasedOrder]
+                                            ['overlay'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.asset(
+                                    "assets/thumbnails/$order.gif",
+                                    fit: BoxFit.cover,
+                                    width: 300,
+                                    height: 200,
+                                  ),
+                                ),
+                              )),
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
@@ -399,7 +421,7 @@ Widget testWidget(int order) {
                                     ),
                                   );
                                 },
-                                child: Text('OK'),
+                                child: Text('Start'),
                               ),
                             ],
                           ),

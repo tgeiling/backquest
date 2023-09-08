@@ -46,6 +46,7 @@ dependencies:
   sembast: ^3.0.0
   connectivity: ^3.0.6
   flutter_launcher_icons: ^0.11.0
+  wakelock: ^0.6.2
 
 flutter_icons:
   android: true
@@ -91,6 +92,7 @@ flutter:
     - assets/map_point_locked.png
     - assets/completed.gif
     - assets/not.png
+    - assets/tryagain.jpg
     - assets/thumbnails/
     - assets/character/
     - assets/database/database.db
