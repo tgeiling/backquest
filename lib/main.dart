@@ -15,6 +15,7 @@ import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
 import 'package:giff_dialog/giff_dialog.dart';
 import 'videos.dart' as videos;
+import 'character.dart';
 import 'users.dart';
 import 'trophy.dart';
 import 'videos.dart';

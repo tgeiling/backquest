@@ -93,6 +93,7 @@ flutter:
     - assets/completed.gif
     - assets/not.png
     - assets/tryagain.jpg
+    - assets/character/example.png
     - assets/thumbnails/
     - assets/character/
     - assets/database/database.db
