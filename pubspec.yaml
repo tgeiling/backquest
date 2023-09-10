@@ -39,9 +39,9 @@ dependencies:
   video_player: ^2.2.18
   chewie: ^1.4.0
   giff_dialog: ^1.0.1
-  firebase_core: ^2.9.0
-  firebase_auth: ^4.3.0
-  cloud_firestore: ^4.5.0
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.9.0
+  cloud_firestore: ^4.9.1
   http: ^0.13.6
   sembast: ^3.0.0
   connectivity: ^3.0.6
