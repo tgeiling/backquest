@@ -3,13 +3,15 @@ import 'data_provider.dart';
 import 'package:provider/provider.dart';
 
 class CharacterBox extends StatefulWidget {
-  @override
   static List<IconData> staticAchievements = [
     Icons.star,
     Icons.favorite,
     Icons.gamepad,
   ];
 
+  const CharacterBox({super.key});
+
+  @override
   _CharacterBoxState createState() => _CharacterBoxState();
 }
 
@@ -37,7 +39,7 @@ class _CharacterBoxState extends State<CharacterBox> {
             double energyPercentage = energy / maxEnergy;
 
             return Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.cyan, width: 2),
               ),
@@ -51,21 +53,21 @@ class _CharacterBoxState extends State<CharacterBox> {
                         width: 50,
                         height: 50,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                         name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       for (IconData iconData in achievements) Icon(iconData),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Container(
                     width: 200,
                     height: 20,
@@ -83,12 +85,12 @@ class _CharacterBoxState extends State<CharacterBox> {
                           ),
                         ),
                         Center(
-                          child: Text('${health}/${maxHealth}'),
+                          child: Text('$health/$maxHealth'),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Container(
                     width: 200,
                     height: 20,
@@ -106,7 +108,7 @@ class _CharacterBoxState extends State<CharacterBox> {
                           ),
                         ),
                         Center(
-                          child: Text('${energy}/${maxEnergy}'),
+                          child: Text('$energy/$maxEnergy'),
                         ),
                       ],
                     ),
@@ -115,7 +117,7 @@ class _CharacterBoxState extends State<CharacterBox> {
               ),
             );
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }

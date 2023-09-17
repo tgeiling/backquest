@@ -7,24 +7,26 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class UserTabWidget extends StatefulWidget {
+  const UserTabWidget({super.key});
+
   @override
   _UserTabWidgetState createState() => _UserTabWidgetState();
 }
 
 class _UserTabWidgetState extends State<UserTabWidget> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _selectedBulletPoint;
   bool _isEditing = false;
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _ageController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
 
   late DateFormat? ageDateFormat;
   late DateTime? ageDateTime;
   late Timestamp? ageTimestamp;
 
   // Maintain the expansion state for each panel
-  Map<String, bool> _expansionStates = {
+  final Map<String, bool> _expansionStates = {
     'Meine Daten': false,
     'Netzwerk Optionen': false,
     'Logout': false,
@@ -53,7 +55,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
             _ageController.text = DateFormat('dd. MMMM y').format(ageDateTime!);
           }
 
-          List<Item> _items = [
+          List<Item> items = [
             Item(
               headerValue: 'Meine Daten',
               expandedValue: 'Hier können Sie Ihre Daten einsehen',
@@ -81,18 +83,18 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                         _isEditing = true;
                       });
                     },
-                    child: Text('Edit'),
+                    child: const Text('Edit'),
                   ),
                 if (_isEditing)
                   Column(
                     children: [
                       TextField(
                         controller: _firstNameController,
-                        decoration: InputDecoration(labelText: 'Firstname'),
+                        decoration: const InputDecoration(labelText: 'Firstname'),
                       ),
                       TextField(
                         controller: _lastNameController,
-                        decoration: InputDecoration(labelText: 'Lastname'),
+                        decoration: const InputDecoration(labelText: 'Lastname'),
                       ),
                       Row(
                         children: [
@@ -102,7 +104,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                               enabled: false,
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           ElevatedButton(
                             onPressed: () async {
                               DateTime? selectedDate = await showDatePicker(
@@ -120,7 +122,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                                 });
                               }
                             },
-                            child: Icon(Icons.calendar_today),
+                            child: const Icon(Icons.calendar_today),
                           ),
                         ],
                       ),
@@ -140,9 +142,9 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                                     '';
                               });
                             },
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           ElevatedButton(
                             onPressed: () {
                               String firstName = _firstNameController.text;
@@ -161,7 +163,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                                 _isEditing = false;
                               });
                             },
-                            child: Text('Save'),
+                            child: const Text('Save'),
                           ),
                         ],
                       ),
@@ -182,7 +184,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                     onPressed: () async {
                       await _auth.signOut();
                     },
-                    child: Text('Logout!'),
+                    child: const Text('Logout!'),
                   ),
                 )
               ],
@@ -223,9 +225,9 @@ class _UserTabWidgetState extends State<UserTabWidget> {
 
           return Center(
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ListView(
-                children: _items.map<Widget>((Item item) {
+                children: items.map<Widget>((Item item) {
                   return Column(
                     children: [
                       ListTile(
@@ -237,10 +239,10 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                                   ? Icons.expand_less
                                   : Icons.expand_more,
                             ),
-                            SizedBox(width: 16.0), // Add some space
+                            const SizedBox(width: 16.0), // Add some space
                             Text(
                               item.headerValue,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 18.0,
                               ),
                             ),
@@ -258,19 +260,19 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                       if (_expansionStates[item.headerValue]!)
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 item.expandedValue,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18.0,
                                   fontWeight:
                                       FontWeight.normal, // Adjust text weight
                                 ),
                               ),
-                              SizedBox(height: 16.0),
+                              const SizedBox(height: 16.0),
                               if (item.userData != null) ...item.userData!,
                             ],
                           ),
@@ -282,7 +284,7 @@ class _UserTabWidgetState extends State<UserTabWidget> {
             ),
           );
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
@@ -305,8 +307,8 @@ class Item {
 
 Widget _buildBulletPoint(String text, {required bool selected}) {
   return Container(
-    padding: EdgeInsets.symmetric(vertical: 8.0),
-    margin: EdgeInsets.symmetric(vertical: 4.0),
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    margin: const EdgeInsets.symmetric(vertical: 4.0),
     decoration: BoxDecoration(
       border: Border(
         left: BorderSide(
@@ -316,7 +318,7 @@ Widget _buildBulletPoint(String text, {required bool selected}) {
       ),
     ),
     child: Padding(
-      padding: EdgeInsets.only(left: 8.0),
+      padding: const EdgeInsets.only(left: 8.0),
       child: Text(
         text,
         style: TextStyle(
@@ -330,7 +332,9 @@ Widget _buildBulletPoint(String text, {required bool selected}) {
 }
 
 class PageFour extends StatelessWidget {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  PageFour({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -350,7 +354,7 @@ class PageFour extends StatelessWidget {
             child: Text('Hello, ${userData['Level'].toString()}!'),
           ));
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }

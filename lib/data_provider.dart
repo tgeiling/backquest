@@ -77,7 +77,7 @@ class FirebaseService extends ChangeNotifier {
 
   Future<void> _initDatabase() async {
     final dbFactory = databaseFactoryIo;
-    final databaseName = 'database.db';
+    const databaseName = 'database.db';
 
     // Get the application documents directory
     final appDocumentDir = await getApplicationDocumentsDirectory();
