@@ -39,13 +39,15 @@ dependencies:
   video_player: ^2.2.18
   chewie: ^1.4.0
   giff_dialog: ^1.0.1
-  firebase_core: ^2.9.0
-  firebase_auth: ^4.3.0
-  cloud_firestore: ^4.5.0
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.9.0
+  cloud_firestore: ^4.9.1
   http: ^0.13.6
   sembast: ^3.0.0
   connectivity: ^3.0.6
   flutter_launcher_icons: ^0.11.0
+  wakelock: ^0.6.2
+  intl: ^0.18.1
 
 flutter_icons:
   android: true
@@ -109,6 +111,8 @@ flutter:
     - assets/map_point_locked.png
     - assets/completed.gif
     - assets/not.png
+    - assets/tryagain.jpg
+    - assets/character/example.png
     - assets/thumbnails/
     - assets/character/
     - assets/database/database.db

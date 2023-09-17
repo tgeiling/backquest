@@ -50,25 +50,27 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 19
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
+        versionCode 2
         versionName flutterVersionName
         multiDexEnabled true
     }
 
+android {
     signingConfigs {
         release {
-            storeFile file('trusted_backquest.keystore')
-            storePassword 'Vittel3567!3456'
             keyAlias 'backquest_key'
             keyPassword 'Vittel3567!3456'
+            storeFile file('trusted_backquest.keystore')
+            storePassword 'Vittel3567!3456'
         }
     }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // ...
         }
     }
+}
 }
 
 flutter {

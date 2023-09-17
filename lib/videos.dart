@@ -9,6 +9,7 @@ import 'package:video_player/video_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 
 Map<int, Color> color = {
@@ -601,6 +602,9 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
       autoPlay: false,
       looping: false,
     );
+
+    Wakelock.enable();
+
     setState(() {});
 
     userId = await getUserId();
@@ -795,6 +799,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
   void dispose() {
     videoPlayerController?.dispose();
     chewieController?.dispose();
+    Wakelock.disable();
     super.dispose();
   }
 }
@@ -926,30 +931,13 @@ class FullView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(text),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
-              child: VideoPlayerView(
-                order: order,
-                path: path,
-                text: "",
-                shortDescription: shortDescription,
-                description: description,
-                overlay: overlay,
-                locked: false,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                int increasedOrder = order! + 1;
-                final firebaseService =
-                    Provider.of<FirebaseService>(context, listen: false);
-                final levelDataStream = firebaseService.getLevelDataStream();
+    return WillPopScope(
+      onWillPop: () async {
+        // Move your behavior here that you want to execute when leaving the view.
+        int increasedOrder = order! + 1;
+        final firebaseService =
+            Provider.of<FirebaseService>(context, listen: false);
+        final levelDataStream = firebaseService.getLevelDataStream();
 
                 levelDataStream.listen((levelData) {
                   if (levelData.containsKey('level$increasedOrder')) {
@@ -1019,6 +1007,90 @@ class FullView extends StatelessWidget {
               child: const Text('Abschließen'),
             ),
           ],
+        await for (var levelData in levelDataStream) {
+          if (levelData.containsKey('level$increasedOrder')) {
+            bool isLevelComplete = levelData['level$increasedOrder'] ?? false;
+            if (isLevelComplete) {
+              showDialog(
+                context: context,
+                builder: (_) => AssetGiffDialog(
+                  image: Image.asset(
+                    "assets/completed.gif",
+                    fit: BoxFit.fitWidth,
+                    width: 90,
+                  ),
+                  title: Text(
+                    "Level Abgeschlossen",
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  description: Text(
+                    "Ein weiterer Schritt zur Rückengesundheit",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(),
+                  ),
+                  entryAnimation: EntryAnimation.top,
+                  onOkButtonPressed: () {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  },
+                ),
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (_) => AssetGiffDialog(
+                  image: Image.asset(
+                    "assets/tryagain.jpg",
+                    fit: BoxFit.fitWidth,
+                    width: 90,
+                  ),
+                  title: Text(
+                    "Willst du schon aufhören?",
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  description: Text(
+                    "Wenn du zum Menü zurück gehst verlierst du deinen Fortschritt",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(),
+                  ),
+                  entryAnimation: EntryAnimation.top,
+                  onOkButtonPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  },
+                ),
+              );
+            }
+          }
+        }
+
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(text),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Center(
+                child: VideoPlayerView(
+                  order: order,
+                  path: path,
+                  text: "",
+                  shortDescription: shortDescription,
+                  description: description,
+                  overlay: overlay,
+                  locked: false,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
