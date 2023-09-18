@@ -1,33 +1,38 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:backquest/character.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'data_provider.dart';
+import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
 import 'package:game_levels_scrolling_map/model/point_model.dart';
+import 'package:giff_dialog/giff_dialog.dart';
 import 'videos.dart' as videos;
 import 'character.dart';
 import 'users.dart';
+import 'trophy.dart';
 import 'videos.dart';
 import 'form.dart';
 import 'package:video_player/video_player.dart';
 
 Map<int, Color> color = {
-  50: const Color.fromRGBO(64, 154, 181, .1),
-  100: const Color.fromRGBO(64, 154, 181, .2),
-  200: const Color.fromRGBO(64, 154, 181, .3),
-  300: const Color.fromRGBO(64, 154, 181, .4),
-  400: const Color.fromRGBO(64, 154, 181, .5),
-  500: const Color.fromRGBO(64, 154, 181, .6),
-  600: const Color.fromRGBO(64, 154, 181, .7),
-  700: const Color.fromRGBO(64, 154, 181, .8),
-  800: const Color.fromRGBO(64, 154, 181, .9),
-  900: const Color.fromRGBO(64, 154, 181, 1),
+  50: Color.fromRGBO(64, 154, 181, .1),
+  100: Color.fromRGBO(64, 154, 181, .2),
+  200: Color.fromRGBO(64, 154, 181, .3),
+  300: Color.fromRGBO(64, 154, 181, .4),
+  400: Color.fromRGBO(64, 154, 181, .5),
+  500: Color.fromRGBO(64, 154, 181, .6),
+  600: Color.fromRGBO(64, 154, 181, .7),
+  700: Color.fromRGBO(64, 154, 181, .8),
+  800: Color.fromRGBO(64, 154, 181, .9),
+  900: Color.fromRGBO(64, 154, 181, 1),
 };
 
 List<Map<String, dynamic>> _videoList = videos.getVideoList();
@@ -38,33 +43,15 @@ void main() async {
   return runApp(
     ChangeNotifierProvider(
       create: (context) => FirebaseService(),
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
-final scakey = GlobalKey<_MyStatefulWidgetState>();
-
-// class LogInPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: EdgeInsets.fromLTRB(0, 110, 0, 214),
-//       width: double.infinity,
-//       decoration: BoxDecoration (
-//         color:Color (0xffffffff),
-//     ),
-//     child: 
-//     Column(children: [CrossAxisAlignment: CrossAxisAlignment.start,
-//     children: ]),
-//   }
-// }
-
+final scakey = new GlobalKey<_MyStatefulWidgetState>();
 
 class MyApp extends StatelessWidget {
   static const String _title = 'Flutter Code Sample';
-
-  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +111,7 @@ class _ScoringState extends State<Scoring> {
               Container(
                 width: 40,
                 height: 100,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
                     alignment: Alignment.centerLeft,
                     image: AssetImage('assets/fireIcon.png'),
@@ -134,7 +121,7 @@ class _ScoringState extends State<Scoring> {
             ],
           );
         } else {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(),
           );
         }
@@ -199,14 +186,12 @@ class _IconRowState extends State<IconRow> {
 }
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 80.0,
       color: MaterialColor(0xFF409AB5, color),
-      child: const IconRow(),
+      child: IconRow(),
     );
   }
 }
@@ -219,7 +204,7 @@ class MapVerticalExample extends StatefulWidget {
 }
 
 class _MapVerticalExampleState extends State<MapVerticalExample> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseService? firebaseService;
 
   @override
@@ -324,7 +309,6 @@ Widget testWidget(int order) {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
                     ),
-<<<<<<< HEAD
                     child: Stack(
                       children: [
                         Container(
@@ -336,126 +320,6 @@ Widget testWidget(int order) {
                                 color: Colors.black.withOpacity(0.2),
                                 blurRadius: 10.0,
                                 offset: Offset(0, 4),
-=======
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10.0,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FullView(
-                                        order: decreasedOrder,
-                                        path: _videoList[decreasedOrder]
-                                            ['path'],
-                                        text: _videoList[decreasedOrder]
-                                            ['text'],
-                                        shortDescription:
-                                            _videoList[decreasedOrder]
-                                                ['shortDescription'],
-                                        description: _videoList[decreasedOrder]
-                                            ['description'],
-                                        overlay: _videoList[decreasedOrder]
-                                            ['overlay'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.asset(
-                                    "assets/thumbnails/$order.gif",
-                                    fit: BoxFit.cover,
-                                    width: 300,
-                                    height: 200,
-                                  ),
-                                ),
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              _videoList[decreasedOrder]['text'],
-                              style: const TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(height: 16.0),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: SingleChildScrollView(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    _videoList[decreasedOrder]
-                                        ['shortDescription'],
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(fontSize: 18.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              const SizedBox(width: 16.0),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FullView(
-                                        order: decreasedOrder,
-                                        path: _videoList[decreasedOrder]
-                                            ['path'],
-                                        text: _videoList[decreasedOrder]
-                                            ['text'],
-                                        shortDescription:
-                                            _videoList[decreasedOrder]
-                                                ['shortDescription'],
-                                        description: _videoList[decreasedOrder]
-                                            ['description'],
-                                        overlay: _videoList[decreasedOrder]
-                                            ['overlay'],
-                                      ),
-                                    ),
-                                  );
-                                },
-<<<<<<< HEAD
-                                child: const Text('OK'),
-=======
-                                child: Text('Start'),
->>>>>>> ae7574372f4a37cccaf36b660fcdf2146a9860e5
->>>>>>> 126a706aaac1ff1df67793c285b4c082b4dcb4d0
                               ),
                             ],
                           ),
@@ -599,7 +463,7 @@ Widget testWidget(int order) {
             },
           );
         } else {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(),
           );
         }
@@ -613,7 +477,7 @@ Widget testWidget(int order) {
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
 
-  const VideoPlayerScreen({super.key, required this.videoUrl});
+  VideoPlayerScreen({required this.videoUrl});
 
   @override
   _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
@@ -656,7 +520,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         _videoPlayerController!.value.isInitialized) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Video Player'),
+          title: Text('Video Player'),
         ),
         body: Column(
           children: [
@@ -675,7 +539,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         ),
       );
     } else {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -683,7 +547,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 }
 
 class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({required Key key}) : super(key: key);
+  MyStatefulWidget({required Key key}) : super(key: key);
 
   @override
   _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
@@ -695,13 +559,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   final scaKey = GlobalKey<_MyStatefulWidgetState>();
   bool isLoggedIn = false;
 
-  final List<Widget> _widgetOptions = <Widget>[
-    const MapVerticalExample(),
-    const videos.Levels(),
+  List<Widget> _widgetOptions = <Widget>[
+    MapVerticalExample(),
+    videos.Levels(),
     //CharacterBox(),
     //GameManualMap(),
-    const FeedbackFormWidget(),
-    const UserTabWidget()
+    FeedbackFormWidget(),
+    UserTabWidget()
   ];
 
   void _onItemTapped(int index) {
@@ -720,22 +584,20 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         appBar: AppBar(
           leading: Image.asset('assets/bqlogo2.jpeg'),
           leadingWidth: 250,
-          title: const Scoring(),
+          title: Scoring(),
         ),
         body: IndexedStack(
           index: _selectedIndex,
           children: _widgetOptions,
         ),
-        bottomNavigationBar: const Footer(),
+        bottomNavigationBar: Footer(),
       );
     }
-    return const LoginPage();
+    return LoginPage();
   }
 }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -842,14 +704,14 @@ class _LoginPageState extends State<LoginPage> {
         title: Text(_isRegistration ? 'Registration' : 'Login'),
         leading: _isRegistration
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back),
                 onPressed: _switchForm,
               )
             : null,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -866,7 +728,7 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16.0),
+              SizedBox(height: 16.0),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
@@ -882,7 +744,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               if (_isRegistration) ...[
-                const SizedBox(height: 16.0),
+                SizedBox(height: 16.0),
                 TextFormField(
                   controller: _firstNameController,
                   decoration: const InputDecoration(
@@ -896,7 +758,7 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16.0),
+                SizedBox(height: 16.0),
                 TextFormField(
                   controller: _lastNameController,
                   decoration: const InputDecoration(
@@ -910,7 +772,7 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16.0),
+                SizedBox(height: 16.0),
                 Row(
                   children: [
                     Expanded(
@@ -927,7 +789,7 @@ class _LoginPageState extends State<LoginPage> {
                         enabled: false, // Disable manual input
                       ),
                     ),
-                    const SizedBox(
+                    SizedBox(
                         width:
                             10), // Add spacing between the TextFormField and the button
                     ElevatedButton(
@@ -946,12 +808,12 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         }
                       },
-                      child: const Icon(
+                      child: Icon(
                           Icons.calendar_today), // You can use any icon here
                     ),
                   ],
                 ),
-                const SizedBox(height: 16.0),
+                SizedBox(height: 16.0),
                 Row(
                   children: [
                     Checkbox(
@@ -962,7 +824,7 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       },
                     ),
-                    const Text('Datenschutzbestimmung akzeptieren'),
+                    Text('Datenschutzbestimmung akzeptieren'),
                   ],
                 ),
                 Row(
@@ -975,41 +837,41 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       },
                     ),
-                    const Text('AGB zustimmen'),
+                    Text('AGB zustimmen'),
                   ],
                 ),
                 if (!_acceptPrivacyPolicy || !_agreeToTerms)
-                  const Text(
+                  Text(
                     'Bitte akzeptiere die Datenschutzbestimmung und AGB.',
                     style: TextStyle(
                       color: Colors.red,
                     ),
                   ),
               ],
-              const SizedBox(height: 16.0),
+              SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _isRegistration
                     ? _registerWithEmailAndPassword
                     : _signInWithEmailAndPassword,
                 child: Text(_isRegistration ? 'Registrieren' : 'Login'),
               ),
-              const SizedBox(height: 16.0),
+              SizedBox(height: 16.0),
               if (!_isRegistration)
                 ElevatedButton(
                   onPressed: _switchForm,
-                  child: const Text('Registrieren'),
+                  child: Text('Registrieren'),
                 ),
               if (_verificationMessage != null)
                 Text(
                   _verificationMessage!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.green,
                   ),
                 ),
               if (_errorMessage != null)
                 Text(
                   _errorMessage!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.red,
                   ),
                 ),

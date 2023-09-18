@@ -1,5 +1,6 @@
 library videos;
 
+import 'dart:io';
 
 import 'package:backquest/data_provider.dart';
 import 'package:chewie/chewie.dart';
@@ -11,18 +12,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 Map<int, Color> color = {
-  50: const Color.fromRGBO(64, 154, 181, .1),
-  100: const Color.fromRGBO(64, 154, 181, .2),
-  200: const Color.fromRGBO(64, 154, 181, .3),
-  300: const Color.fromRGBO(64, 154, 181, .4),
-  400: const Color.fromRGBO(64, 154, 181, .5),
-  500: const Color.fromRGBO(64, 154, 181, .6),
-  600: const Color.fromRGBO(64, 154, 181, .7),
-  700: const Color.fromRGBO(64, 154, 181, .8),
-  800: const Color.fromRGBO(64, 154, 181, .9),
-  900: const Color.fromRGBO(64, 154, 181, 1),
+  50: Color.fromRGBO(64, 154, 181, .1),
+  100: Color.fromRGBO(64, 154, 181, .2),
+  200: Color.fromRGBO(64, 154, 181, .3),
+  300: Color.fromRGBO(64, 154, 181, .4),
+  400: Color.fromRGBO(64, 154, 181, .5),
+  500: Color.fromRGBO(64, 154, 181, .6),
+  600: Color.fromRGBO(64, 154, 181, .7),
+  700: Color.fromRGBO(64, 154, 181, .8),
+  800: Color.fromRGBO(64, 154, 181, .9),
+  900: Color.fromRGBO(64, 154, 181, 1),
 };
 
 List<Map<String, dynamic>> _videoList = [
@@ -47,7 +50,7 @@ List<Map<String, dynamic>> _videoList = [
         "Manchmal wenn wir einen neuen Weg in unserem Leben einschlagen wollen, fühlt es sich an, als würden wir in tiefem Schlamm laufen. Unsere Schuhe werden mit jedem Schritt schwerer und jeder Schritt kostet mehr Anstrengung.\n\n"
         "Gerade dann lohnt es sich aufzuschauen. Manchmal sieht man erst dann, dass es noch einen anderen Weg gibt.\n\n"
         "BackQuest – Der einfache Weg zur Rückengesundheit",
-    'overlay': const Thumbnail('assets/thumbnails/1.gif'),
+    'overlay': Thumbnail('assets/thumbnails/1.gif'),
   },
   {
     'path':
@@ -67,7 +70,7 @@ List<Map<String, dynamic>> _videoList = [
         "Gönn dir damit eine wohlverdiente Auszeit vom Alltagsstress und schenke dir und deinem Rücken einen Moment der Ruhe.\n\n"
         "Mit der Atmung aktivierst Du dein parasympathisches Nervensystem. Spüre, wie der Stress von dir abfällt und ein Gefühl der Ruhe sich in dir ausbreitet.\n\n"
         "Erst entspannt entfalten die folgenden Dehn- und Mobilisationsübungen ihr ganzes Potenzial.",
-    'overlay': const Thumbnail('assets/thumbnails/2.gif'),
+    'overlay': Thumbnail('assets/thumbnails/2.gif'),
   },
   {
     'path':
@@ -87,7 +90,7 @@ List<Map<String, dynamic>> _videoList = [
         "Es basiert auf der Bewegungsentwicklung von Säuglingen und Kleinkindern, die das Rollen erlernen, um ihre motorischen Fähigkeiten zu entwickeln.\n\n"
         "Leider haben viele Erwachsene verlernt sich, ohne die Kraft ihrer Beine zu rollen. Versuche die Bewegung nur über die Bewegung deiner Arme einzuleiten und spüre, wie deine Rumpfmuskulatur die Bewegung weiter überträgt.\n\n"
         "Spüre wie Körperwahrnehmung, Koordination und Wohlbefinden sich verbessern.",
-    'overlay': const Thumbnail('assets/thumbnails/3.gif'),
+    'overlay': Thumbnail('assets/thumbnails/3.gif'),
   },
   {
     'path':
@@ -107,7 +110,7 @@ List<Map<String, dynamic>> _videoList = [
         "Bereit, deinen Körper auf ein neues Level der Beweglichkeit zu bringen? In diesem Video erfährst du alles über das Prinzip der proximalen (körpernah) Stabilität für distale (körperfern) Mobilität…\n\n"
             "Dieses grundlegende Konzept der Sport- und Physiotherapie besagt, dass eine kontrollierte Rumpf- und Atemmuskulatur (proximale Stabilität) die Voraussetzung schafft, dass Muskeln und Gelenke der entfernten Körperregionen (distale Mobilität) frei und effizient arbeiten können.\n\n"
             "Stärke deinen Kern und erlebe die Freude an einem geschmeidigen und beweglichen Körper!",
-    'overlay': const Thumbnail('assets/thumbnails/4.gif'),
+    'overlay': Thumbnail('assets/thumbnails/4.gif'),
   },
   {
     'path':
@@ -129,7 +132,7 @@ List<Map<String, dynamic>> _videoList = [
         "Wir führen dich durch eine Reihe von gezielten Übungen, bei denen du deinen Körper sanft auf dem Boden bewegst, um deine Faszien zu stimulieren und Verspannungen zu lösen.\n\n"
         "Spüre, wie dein Rücken sich mit jedem Atemzug freier und leichter anfühlt.\n\n"
         "Starte jetzt und entdecke die Kraft des Bodens für eine junge und bewegliche Wirbelsäule!",
-    'overlay': const Thumbnail('assets/thumbnails/5.gif'),
+    'overlay': Thumbnail('assets/thumbnails/5.gif'),
   },
   {
     'path':
@@ -151,7 +154,7 @@ List<Map<String, dynamic>> _videoList = [
         "Die sogenannte „Bracing“-Technik wird eingesetzt, um Stabilität und Ausrichtung der Wirbelsäule während einer Übung zu verbessern.\n\n"
         "Du wirst lernen, wie du die korrekte Ausrichtung deines Beckens unterstützt und eine neutrale Wirbelsäulenposition förderst.\n\n"
         "So kannst du übermäßige Belastungen und Kompensationen vermeiden.",
-    'overlay': const Thumbnail('assets/thumbnails/6.gif'),
+    'overlay': Thumbnail('assets/thumbnails/6.gif'),
   },
   {
     'path':
@@ -175,7 +178,7 @@ List<Map<String, dynamic>> _videoList = [
         "Ein gesunder Rücken hängt nicht nur von körperlicher Stärke ab, sondern auch von der Fähigkeit, loszulassen und zu entspannen.\n\n"
         "Finde die Balance zwischen Anspannen und Loslassen, um deinem Rücken optimale Unterstützung zu bieten und deinen Alltag mit Leichtigkeit zu meistern.\n\n"
         "P.S. Die Videoqualität wird nach der ersten Minute besser.",
-    'overlay': const Thumbnail('assets/thumbnails/7.gif'),
+    'overlay': Thumbnail('assets/thumbnails/7.gif'),
   },
   {
     'path':
@@ -200,7 +203,7 @@ List<Map<String, dynamic>> _videoList = [
         "Das kann zu Überlastungen und Rückenschmerzen führen.\n\n"
         "Bist du bereit, die Rolle deiner Hüfte bei der Prävention von Rückenschmerzen zu erkunden?\n\n"
         "Dann komm mit uns auf diese spannende Reise zur Mobilität und Stabilität. Lass uns deine Hüfte befreien und deinem Rücken eine solide Basis geben!",
-    'overlay': const Thumbnail('assets/thumbnails/8.gif'),
+    'overlay': Thumbnail('assets/thumbnails/8.gif'),
   },
   {
     'path':
@@ -223,7 +226,7 @@ List<Map<String, dynamic>> _videoList = [
         "Stell dir vor, du schmierst eine Schmerzsalbe auf deinen Rücken oder nimmst einfach nur Schmerzmedikamente ein, ohne die Hüfte oder deinen Schultergürtel zu untersuchen.\n\n"
         "Das wäre so, als würdest du die Batterie aus dem Rauchmelder entfernen, anstatt nach der eigentlichen Ursache des Alarms zu suchen.\n\n"
         "Lerne die Alarmglocken des Schmerzes zu verstehen und wie du die Hüfte als wichtigen Schlüssel zur Prävention und Linderung von Rückenschmerzen einsetzen kannst.",
-    'overlay': const Thumbnail('assets/thumbnails/9.gif'),
+    'overlay': Thumbnail('assets/thumbnails/9.gif'),
   },
   {
     'path':
@@ -249,7 +252,7 @@ List<Map<String, dynamic>> _videoList = [
         "Lass uns wissen, wie wir deine Erfahrung weiter verbessern können, denn am Ende des Tages geht es darum, dass du das Beste aus dieser App herausholen kannst.\n\n"
         "Auf geht's, gemeinsam schaffen wir Großes!\n\n"
         "Dein BackQuest Team",
-    'overlay': const Thumbnail('assets/thumbnails/10.gif'),
+    'overlay': Thumbnail('assets/thumbnails/10.gif'),
   },
   {
     'path':
@@ -272,7 +275,7 @@ List<Map<String, dynamic>> _videoList = [
         "sondern auch gezielt auf die Stärkung deiner Rumpfmuskulatur abzielt.\n\n"
         "Tauche ein in eine Welt des dynamischen Zusammenspiels von Bauch- und Rückenmuskeln, um unerwünschte Rotationen zu verhindern und deine Core-Stabilität zu maximieren.\n\n"
         "Lass uns gemeinsam krabbeln und die Grundlage für eine gesunde und stabile Körperhaltung schaffen.",
-    'overlay': const Thumbnail('assets/thumbnails/11.gif'),
+    'overlay': Thumbnail('assets/thumbnails/11.gif'),
   },
   {
     'path':
@@ -294,7 +297,7 @@ List<Map<String, dynamic>> _videoList = [
         "Denke immer daran: Schmerz ist nicht dein Feind, sondern ein Wegweiser zu einem gesünderen und beweglicheren Körper.\n\n"
         "Mit den richtigen Mobilisationsübungen kannst du deine Rückenschmerzen reduzieren und dich wieder frei und energiegeladen fühlen.\n\n"
         "Also, worauf wartest du? Klicke jetzt auf Play und entdecke die transformative Kraft der Mobilisationsübungen!",
-    'overlay': const Thumbnail('assets/thumbnails/12.gif'),
+    'overlay': Thumbnail('assets/thumbnails/12.gif'),
   },
   {
     'path':
@@ -322,7 +325,7 @@ List<Map<String, dynamic>> _videoList = [
         "Mit gezielten Bewegungs- und Stabilisationsübungen und Entspannungstechniken wirst du den Körper-Zusammenhang auf eine ganz neue Art und Weise erleben.\n\n"
         "Also, schnapp dir deinen Lieblingsplatz, drück auf Play und lass uns gemeinsam die faszinierende Welt des Körper-Zusammenspiels erkunden!\n\n"
         "Befreie dich von den Fesseln der traditionellen Behandlungsansätze und entdecke das Regional Interdependence Model für dich selbst.",
-    'overlay': const Thumbnail('assets/thumbnails/13.gif'),
+    'overlay': Thumbnail('assets/thumbnails/13.gif'),
   },
   {
     'path':
@@ -344,7 +347,7 @@ List<Map<String, dynamic>> _videoList = [
         "Gemeinsam stärken wir die Muskulatur rund um die Handgelenke und sorgen für eine bessere Durchblutung, um Nährstoffe effizienter zu transportieren und Verletzungsrisiken zu minimieren.\n\n"
         "Erfahre, wie Handgelenksgymnastik Überlastungsschäden vorbeugen kann, insbesondere für diejenigen, die häufig am Computer arbeiten oder repetitive Handbewegungen ausführen.\n\n"
         "Dann komm mit uns auf diese spannende Reise und mach dich bereit für starke und gesunde Handgelenke!",
-    'overlay': const Thumbnail('assets/thumbnails/14.gif'),
+    'overlay': Thumbnail('assets/thumbnails/14.gif'),
   },
   {
     'path':
@@ -366,7 +369,7 @@ List<Map<String, dynamic>> _videoList = [
         "Erfahre, wie du unerwünschte Kompensationsbewegungen vermeidest und die Belastung auf Muskeln und Sehnen reduzierst.\n\n"
         "Mit einer starken und funktionalen Schulterblattmuskulatur bist du bereit, deine sportlichen Ziele zu erreichen und Verletzungen vorzubeugen.\n\n"
         "Bist du bereit, dein Schulterblatt auf das nächste Level zu bringen?",
-    'overlay': const Thumbnail('assets/thumbnails/15.gif'),
+    'overlay': Thumbnail('assets/thumbnails/15.gif'),
   },
   {
     'path':
@@ -388,7 +391,7 @@ List<Map<String, dynamic>> _videoList = [
         "Erfahre mehr über die Auswirkungen einer verhärteten oder verkürzten Plantarfaszie auf die gesamte hintere Kette und wie dies zu Rückenschmerzen führen kann.\n\n"
         "Lerne gezielte Übungen und Mobilisationstechniken kennen, um deine Körperhaltung zu verbessern, die Flexibilität zu steigern und Rückenschmerzen zu reduzieren.\n\n"
         "Lerne mehr über effektive Strategien, um deine Wirbelsäule zu entlasten!",
-    'overlay': const Thumbnail('assets/thumbnails/16.gif'),
+    'overlay': Thumbnail('assets/thumbnails/16.gif'),
   },
   {
     'path':
@@ -413,7 +416,7 @@ List<Map<String, dynamic>> _videoList = [
         "Du wirst spüren, wie deine Beweglichkeit Schritt für Schritt zunimmt und du deinen Körper in vollen Zügen genießen kannst.\n\n"
         "Der große Vorteil von Mobility gegenüber statischem Dehnen liegt in der Nachhaltigkeit und Übertragbarkeit auf den Sport. Du wirst nicht nur flexibler, sondern auch stabiler und kontrollierter in deinen Bewegungen. \n\n"
         "Dein Nervensystem wird aktiviert und deine sensorische Wahrnehmung geschult, so dass du eine bessere Körperkontrolle entwickelst und Verletzungsrisiken minimierst.",
-    'overlay': const Thumbnail('assets/thumbnails/17.gif'),
+    'overlay': Thumbnail('assets/thumbnails/17.gif'),
   },
   {
     'path':
@@ -438,7 +441,7 @@ List<Map<String, dynamic>> _videoList = [
         "So kann aus einem Feldweg eine Straße werden.\n\n"
         "Bieten wir unserem Körper nun auch noch zahlreiche Übungsvarianten. In verschiedene Bewegungsrichtungen. Auf verschiedenen Untergründen.\n\n"
         "Dann kann aus einer Straße eine breite Autobahn werden. Auf der man nicht ins Straucheln gerät oder sich verletzt, wenn man leicht vom Weg abkommt. Sondern immer harmonisch mit möglichst wenig Muskelkraft vorwärtskommt.",
-    'overlay': const Thumbnail('assets/thumbnails/18.gif'),
+    'overlay': Thumbnail('assets/thumbnails/18.gif'),
   },
   {
     'path':
@@ -463,7 +466,7 @@ List<Map<String, dynamic>> _videoList = [
         "Unser Körper wird es uns danken, indem er geschmeidiger und flexibler wird.\n\n"
         "Bereit, deinen Körper zu befreien und ihm die Variation zu geben, nach der er sich sehnt?\n\n"
         "Dann schnapp dir deinen Stuhl, finde bequeme Kleidung und lass uns gemeinsam einen Schritt in Richtung eines bewegten und schmerzfreien Lebens machen.",
-    'overlay': const Thumbnail('assets/thumbnails/19.gif'),
+    'overlay': Thumbnail('assets/thumbnails/19.gif'),
   },
   {
     'path':
@@ -485,7 +488,7 @@ List<Map<String, dynamic>> _videoList = [
         "Aber das ist erst der Anfang! In den kommenden Wochen werden wir nach und nach neue Trainings-, Wissens- und Entspannungsinhalte einführen, um deine Rückenschmerzprävention noch effektiver und abwechslungsreicher zu gestalten. Du darfst dich auf spannende und neue Herausforderungen freuen, die dich dabei unterstützen, deinen Rücken weiter zu stärken und deine Flexibilität zu verbessern.\n\n"
         "Aber wir hören nicht nur bei den Inhalten auf. Wir möchten deine Erfahrung mit unserer App kontinuierlich verbessern und auf deine Bedürfnisse eingehen. Daher freuen wir uns immer über dein Feedback! Teile uns mit, wie dir die bisherigen Übungen, Wissenstexte und Entspannungsinhalte gefallen haben. Lass uns wissen, welche neuen Features du dir wünschst und wie wir deine Trainingsroutine noch besser gestalten können.\n\n"
         "Vielen Dank im Voraus! Mit deiner Hilfe können wir gemeinsam etwas Besonderes erschaffen!",
-    'overlay': const Thumbnail('assets/thumbnails/20.gif'),
+    'overlay': Thumbnail('assets/thumbnails/20.gif'),
   },
 ];
 
@@ -502,7 +505,7 @@ class Levels extends StatelessWidget {
       stream: FirebaseService().getLevelDataStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
@@ -513,7 +516,7 @@ class Levels extends StatelessWidget {
             bool isLocked = levelData['level$levelNumber'] ?? false;
 
             return Container(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               child: Column(
                 children: [
                   VideoPlayerView(
@@ -524,7 +527,7 @@ class Levels extends StatelessWidget {
                     overlay: _videoList[index]['overlay'],
                     locked: !isLocked,
                   ),
-                  const Divider(
+                  Divider(
                     // Add a separation line after each video widget
                     thickness: 1,
                     color: Colors.grey,
@@ -540,7 +543,7 @@ class Levels extends StatelessWidget {
             ),
           );
         } else {
-          return const Text('No data available.');
+          return Text('No data available.');
         }
       },
     );
@@ -572,6 +575,7 @@ class VideoPlayerView extends StatefulWidget {
 }
 
 class _VideoPlayerViewState extends State<VideoPlayerView> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseService firebaseService = FirebaseService();
 
   String? userId;
@@ -614,7 +618,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
 
   void updateLevel() async {
     int increasedOrder = widget.order! + 1;
-    String levelField = 'level$increasedOrder';
+    String levelField = 'level${increasedOrder}';
     bool completionStatus = true;
     int totalLevels = 0;
 
@@ -707,14 +711,14 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
             width: 800,
             margin: const EdgeInsets.symmetric(vertical: 50.0),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 153, 152, 152),
+              color: Color.fromARGB(255, 153, 152, 152),
               border: Border.all(
                 width: 2,
-                color: const Color.fromARGB(255, 153, 152, 152),
+                color: Color.fromARGB(255, 153, 152, 152),
               ),
               borderRadius: BorderRadius.circular(8.0),
             ),
-            child: const InkWell(
+            child: InkWell(
               child: Thumbnail('assets/thumbnails/locked.png'),
             ),
           ),
@@ -731,10 +735,10 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
             width: 800,
             margin: const EdgeInsets.symmetric(vertical: 50.0),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 153, 152, 152),
+              color: Color.fromARGB(255, 153, 152, 152),
               border: Border.all(
                 width: 2,
-                color: const Color.fromARGB(255, 153, 152, 152),
+                color: Color.fromARGB(255, 153, 152, 152),
               ),
               borderRadius: BorderRadius.circular(8.0),
             ),
@@ -779,10 +783,10 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
           width: 800,
           margin: const EdgeInsets.symmetric(vertical: 50.0),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 153, 152, 152),
+            color: Color.fromARGB(255, 153, 152, 152),
             border: Border.all(
               width: 2,
-              color: const Color.fromARGB(255, 153, 152, 152),
+              color: Color.fromARGB(255, 153, 152, 152),
             ),
             borderRadius: BorderRadius.circular(8.0),
           ),
@@ -805,7 +809,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
 }
 
 class VideoText extends StatefulWidget {
-  const VideoText(this.text, this.description, this.shortDescription, {super.key});
+  VideoText(this.text, this.description, this.shortDescription);
 
   final String text;
   final String description;
@@ -842,7 +846,7 @@ class _VideoTextState extends State<VideoText> {
           child: Container(
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(
                   width: 2,
@@ -892,7 +896,7 @@ class _VideoTextState extends State<VideoText> {
 }
 
 class Thumbnail extends StatelessWidget {
-  const Thumbnail(this.path, {super.key});
+  Thumbnail(this.path);
 
   final String path;
 
@@ -939,74 +943,6 @@ class FullView extends StatelessWidget {
             Provider.of<FirebaseService>(context, listen: false);
         final levelDataStream = firebaseService.getLevelDataStream();
 
-                levelDataStream.listen((levelData) {
-                  if (levelData.containsKey('level$increasedOrder')) {
-                    bool isLevelComplete =
-                        levelData['level$increasedOrder'] ?? false;
-                    if (isLevelComplete) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AssetGiffDialog(
-                          image: Image.asset(
-                            "assets/completed.gif",
-                            fit: BoxFit.fitWidth,
-                            width: 90,
-                          ),
-                          title: const Text(
-                            "Level Abgeschlossen",
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          description: const Text(
-                            "Ein weiterer Schritt zur Rückengesundheit",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(),
-                          ),
-                          entryAnimation: EntryAnimation.top,
-                          onOkButtonPressed: () {
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
-                          },
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AssetGiffDialog(
-                          image: Image.asset(
-                            "assets/not.png",
-                            fit: BoxFit.fitWidth,
-                            width: 90,
-                          ),
-                          title: const Text(
-                            "Level Nicht geschafft",
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          description: const Text(
-                            "Nur du selbst kannst deine Rückenschmerzen bekämpfen",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(),
-                          ),
-                          entryAnimation: EntryAnimation.top,
-                          onOkButtonPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
-                          },
-                        ),
-                      );
-                    }
-                  }
-                });
-              },
-              child: const Text('Abschließen'),
-            ),
-          ],
         await for (var levelData in levelDataStream) {
           if (levelData.containsKey('level$increasedOrder')) {
             bool isLevelComplete = levelData['level$increasedOrder'] ?? false;
