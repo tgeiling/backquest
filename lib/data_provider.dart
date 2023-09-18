@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -78,7 +77,7 @@ class FirebaseService extends ChangeNotifier {
 
   Future<void> _initDatabase() async {
     final dbFactory = databaseFactoryIo;
-    final databaseName = 'database.db';
+    const databaseName = 'database.db';
 
     // Get the application documents directory
     final appDocumentDir = await getApplicationDocumentsDirectory();

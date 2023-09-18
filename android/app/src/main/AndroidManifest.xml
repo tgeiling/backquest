@@ -7,7 +7,7 @@
 
     <!-- App Declaration -->
     <application
-        android:label="backquest"
+        android:label="BackQuest"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true"
