@@ -75,6 +75,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/truststore.bks
+    - assets/button_start.png
+    - assets/button_zuruck.png
+    - assets/close.png
     - assets/bqlogo1.jpeg
     - assets/bqlogo2.jpeg
     - assets/icon.png

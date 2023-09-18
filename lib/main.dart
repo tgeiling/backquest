@@ -309,125 +309,153 @@ Widget testWidget(int order) {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10.0,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FullView(
-                                        order: decreasedOrder,
-                                        path: _videoList[decreasedOrder]
-                                            ['path'],
-                                        text: _videoList[decreasedOrder]
-                                            ['text'],
-                                        shortDescription:
-                                            _videoList[decreasedOrder]
-                                                ['shortDescription'],
-                                        description: _videoList[decreasedOrder]
-                                            ['description'],
-                                        overlay: _videoList[decreasedOrder]
-                                            ['overlay'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.asset(
-                                    "assets/thumbnails/$order.gif",
-                                    fit: BoxFit.cover,
-                                    width: 300,
-                                    height: 200,
-                                  ),
-                                ),
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              _videoList[decreasedOrder]['text'],
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          SizedBox(height: 16.0),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: SingleChildScrollView(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Text(
-                                    _videoList[decreasedOrder]
-                                        ['shortDescription'],
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(fontSize: 18.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 16.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              SizedBox(width: 16.0),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FullView(
-                                        order: decreasedOrder,
-                                        path: _videoList[decreasedOrder]
-                                            ['path'],
-                                        text: _videoList[decreasedOrder]
-                                            ['text'],
-                                        shortDescription:
-                                            _videoList[decreasedOrder]
-                                                ['shortDescription'],
-                                        description: _videoList[decreasedOrder]
-                                            ['description'],
-                                        overlay: _videoList[decreasedOrder]
-                                            ['overlay'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text('Start'),
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10.0,
+                                offset: Offset(0, 4),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FullView(
+                                          order: decreasedOrder,
+                                          path: _videoList[decreasedOrder]
+                                              ['path'],
+                                          text: _videoList[decreasedOrder]
+                                              ['text'],
+                                          shortDescription:
+                                              _videoList[decreasedOrder]
+                                                  ['shortDescription'],
+                                          description:
+                                              _videoList[decreasedOrder]
+                                                  ['description'],
+                                          overlay: _videoList[decreasedOrder]
+                                              ['overlay'],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.asset(
+                                      "assets/thumbnails/$order.gif",
+                                      fit: BoxFit.cover,
+                                      width: 300,
+                                      height: 200,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  _videoList[decreasedOrder]['text'],
+                                  style: TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(height: 16.0),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Text(
+                                        _videoList[decreasedOrder]
+                                            ['shortDescription'],
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(fontSize: 18.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 16.0),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => FullView(
+                                            order: decreasedOrder,
+                                            path: _videoList[decreasedOrder]
+                                                ['path'],
+                                            text: _videoList[decreasedOrder]
+                                                ['text'],
+                                            shortDescription:
+                                                _videoList[decreasedOrder]
+                                                    ['shortDescription'],
+                                            description:
+                                                _videoList[decreasedOrder]
+                                                    ['description'],
+                                            overlay: _videoList[decreasedOrder]
+                                                ['overlay'],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      elevation: 0,
+                                    ),
+                                    child: InkWell(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            bottom: 10.0), // Add bottom margin
+                                        child: Image.asset(
+                                            'assets/button_start.png'),
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          right: 0.0,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Align(
+                                alignment: Alignment.topRight,
+                                child: Image.asset(
+                                  'assets/close.png',
+                                  width: 40,
+                                  height: 40,
+                                )),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
