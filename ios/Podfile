@@ -31,13 +31,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  pod 'Firebase/Core'
-  pod 'Firebase/Firestore'
-  pod 'Firebase/Database'
-  pod 'Firebase/Auth'
-  pod 'Firebase/Functions'
-  pod 'Firebase/Storage'
-  pod 'Firebase/Analytics'  
+  pod 'leveldb'
 
   # Add this line to use the pre-compiled Firestore iOS SDK
   pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '10.12.0'
