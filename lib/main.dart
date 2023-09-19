@@ -398,43 +398,43 @@ Widget testWidget(int order) {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => FullView(
-                                            order: decreasedOrder,
-                                            path: _videoList[decreasedOrder]
-                                                ['path'],
-                                            text: _videoList[decreasedOrder]
-                                                ['text'],
-                                            shortDescription:
-                                                _videoList[decreasedOrder]
-                                                    ['shortDescription'],
-                                            description:
-                                                _videoList[decreasedOrder]
-                                                    ['description'],
-                                            overlay: _videoList[decreasedOrder]
-                                                ['overlay'],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      elevation: 0,
-                                    ),
+                                  Container(
                                     child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => FullView(
+                                              order: decreasedOrder,
+                                              path: _videoList[decreasedOrder]
+                                                  ['path'],
+                                              text: _videoList[decreasedOrder]
+                                                  ['text'],
+                                              shortDescription:
+                                                  _videoList[decreasedOrder]
+                                                      ['shortDescription'],
+                                              description:
+                                                  _videoList[decreasedOrder]
+                                                      ['description'],
+                                              overlay:
+                                                  _videoList[decreasedOrder]
+                                                      ['overlay'],
+                                            ),
+                                          ),
+                                        );
+                                      },
                                       child: Container(
-                                        margin: EdgeInsets.only(
-                                            bottom: 10.0), // Add bottom margin
+                                        color: Colors
+                                            .white, // Set the background color of the container
                                         child: Image.asset(
-                                            'assets/button_start.png'),
+                                          'assets/button_start.png',
+                                          width:
+                                              100, // Adjust the width and height as needed
+                                          height: 100,
+                                        ),
                                       ),
-                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ],
