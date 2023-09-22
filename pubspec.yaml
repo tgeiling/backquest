@@ -93,6 +93,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/truststore.bks
+    - assets/playstorelogo.png
     - assets/button_start.png
     - assets/button_zuruck.png
     - assets/close.png

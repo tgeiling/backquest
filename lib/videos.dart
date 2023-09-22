@@ -976,29 +976,71 @@ class FullView extends StatelessWidget {
             } else {
               showDialog(
                 context: context,
-                builder: (_) => AssetGiffDialog(
-                  image: Image.asset(
-                    "assets/tryagain.jpg",
-                    fit: BoxFit.fitWidth,
-                    width: 90,
+                builder: (_) => Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
                   ),
-                  title: Text(
-                    "Willst du schon aufhören?",
-                    style: TextStyle(
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        right: 0.0,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Image.asset(
+                              'assets/close.png',
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              "assets/tryagain.jpg",
+                              fit: BoxFit.fitWidth,
+                              width: double.infinity,
+                            ),
+                          ),
+                          SizedBox(height: 16.0),
+                          Text(
+                            "Willst du schon aufhören?",
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            "Wenn du zum Menü zurück gehst verlierst du deinen Fortschritt",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              Navigator.popUntil(
+                                  context, (route) => route.isFirst);
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              child: Image.asset(
+                                'assets/button_zuruck.png',
+                                width: 100,
+                                height: 100,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  description: Text(
-                    "Wenn du zum Menü zurück gehst verlierst du deinen Fortschritt",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(),
-                  ),
-                  entryAnimation: EntryAnimation.top,
-                  onOkButtonPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                  },
                 ),
               );
             }
