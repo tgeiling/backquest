@@ -293,12 +293,26 @@ Widget testWidget(int order) {
                   width: 90,
                 ),
                 Container(
-                  padding: const EdgeInsets.only(bottom: 33.0),
-                  child: Text(
-                    "$order",
-                    style: const TextStyle(color: Colors.white, fontSize: 26),
-                  ),
-                )
+                    padding: const EdgeInsets.only(bottom: 33.0),
+                    child: Stack(
+                      children: <Widget>[
+                        Text(
+                          "$order",
+                          style: TextStyle(
+                            fontSize: 36,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 2
+                              ..color = Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "$order",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 36),
+                        ),
+                      ],
+                    ))
               ],
             ),
             onTap: () {
