@@ -20,6 +20,7 @@ import 'users.dart';
 import 'trophy.dart';
 import 'videos.dart';
 import 'form.dart';
+import 'quests.dart';
 import 'package:video_player/video_player.dart';
 
 Map<int, Color> color = {
@@ -163,6 +164,15 @@ class _IconRowState extends State<IconRow> {
               fit: BoxFit.cover, // Fixes border issues
             ),
           ),
+          /*GestureDetector(
+            onTap: () {
+              scakey.currentState!._onItemTapped(2);
+            }, // Image tapped
+            child: Image.asset(
+              'assets/questsIcon.png',
+              fit: BoxFit.cover, // Fixes border issues
+            ),
+          ),*/
           GestureDetector(
             onTap: () {
               scakey.currentState!._onItemTapped(2);
@@ -577,7 +587,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     MapVerticalExample(),
     videos.Levels(),
     //CharacterBox(),
-    //GameManualMap(),
     FeedbackFormWidget(),
     UserTabWidget()
   ];

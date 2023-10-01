@@ -141,9 +141,9 @@ class FirebaseService extends ChangeNotifier {
         .map((doc) => doc.data() as Map<String, dynamic>);
   }
 
-  Stream<Map<String, dynamic>> getCharacterDataStream() {
+  Stream<Map<String, dynamic>> getQuestProgressDataStream() {
     return FirebaseFirestore.instance
-        .collection('Characterdata')
+        .collection('QuestProgressdata')
         .doc(user!.uid)
         .snapshots()
         .map((doc) => doc.data() as Map<String, dynamic>);

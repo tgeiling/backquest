@@ -106,6 +106,7 @@ flutter:
     - assets/trophyIcon.png
     - assets/userIcon.png
     - assets/fireIcon.png
+    - assets/questsIcon.png
     - assets/levelmap.png
     - assets/levelmap.svg
     - assets/map.svg

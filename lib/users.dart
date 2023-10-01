@@ -31,6 +31,8 @@ class _UserTabWidgetState extends State<UserTabWidget> {
     'Netzwerk Optionen': false,
     'Logout': false,
     'Datenschutzbestimmungen': false,
+    'Quellen': false,
+    'Account Löschen': false,
   };
 
   @override
@@ -90,11 +92,13 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                     children: [
                       TextField(
                         controller: _firstNameController,
-                        decoration: const InputDecoration(labelText: 'Firstname'),
+                        decoration:
+                            const InputDecoration(labelText: 'Firstname'),
                       ),
                       TextField(
                         controller: _lastNameController,
-                        decoration: const InputDecoration(labelText: 'Lastname'),
+                        decoration:
+                            const InputDecoration(labelText: 'Lastname'),
                       ),
                       Row(
                         children: [
@@ -220,6 +224,43 @@ class _UserTabWidgetState extends State<UserTabWidget> {
               
               Wenn Sie Fragen oder Bedenken zu unseren Datenschutzbestimmungen haben, können Sie sich gerne an uns wenden.
               ''',
+            ),
+            Item(
+              headerValue: 'Quellen',
+              expandedValue: '''
+              (1)	Ärztliches Zentrum für Qualität in der Medizin (Hrsg.) (2017): Nationale Versorgungs Leitlinie: Nicht spezifischer Kreuzschmerz.
+(2)	Pfeifer, K. (2004): Expertise zur Prävention von Rückenschmerzen durch bewegungsbezogene Interventionen. Bertelsmannstiftung und Akademie für Manuelle Medizin an der Universität Münster.
+(3)	Moreside, J. and McGill, S. (2012): Hip Joint Range of Motion Improvements Using Three Different Interventions. Journal of Strength and Conditioning Research 26(5):p 1265-1273, DOI: 10.1519/JSC.0b013e31824f2351
+(4)	Miller, J. (2015): Roll dich Fit. Riva Verlag
+(5)	Deutsches Institut für Medizinische Dokumentation und Inforamtion (DIMDI) (Hrsg.). 2006. Prävention rezidivierender Rückenschmerzen – Präventionsmaßnahmen in der Arbeitsplatzumgebung. Schriftenreihe Health Technlogy Assessment, Bd. 38
+(6)	Kühlein, T., Maibaum, T. und Klemperer, D. 2018. „Quartäre Prävention“ oder die Verhinderung nutzloser Medizin. Deutscher Ärtzeverlag. Z Allg Med. 94 (4)
+(7)	Boyle, M. 2015. Der Joint by Joint Ansatz im Training. Online: https://www.functional-training-magazin.de/der-joint-by-joint-ansatz-im-training/
+(8)	Bundesministerium für Gesundheit und Soziale Sicherung (Hrsg.). (k.A.). RIPP: Rückenschmerz Intensiv Präventionsprogramm für den Pflegeberuf – Ein multimodales Konzept
+(9)	Shnayderman I, Katz-Leurer M. An aerobic walking programme versus muscle strengthening programme for chronic low back pain: a randomized controlled trial. Clin Rehabil. 2013 Mar;27(3):207-14. doi: 10.1177/0269215512453353. Epub 2012 Jul 31. PMID: 22850802.
+(10)	Cook C, Brismée JM, Sizer PS Jr. Subjective and objective descriptors of clinical lumbar spine instability: a Delphi study. Man Ther. 2006 Feb;11(1):11-21. doi: 10.1016/j.math.2005.01.002. Epub 2005 Jul 5. PMID: 15996889.
+(11)	Luomajoki, H., Kool, J., de Bruin, E.D. et al. Reliability of movement control tests in the lumbar spine. BMC Musculoskelet Disord 8, 90 (2007). https://doi.org/10.1186/1471-2474-8-90
+(12)	O'Sullivan PB. Lumbar segmental 'instability': clinical presentation and specific stabilizing exercise management. Man Ther. 2000 Feb;5(1):2-12. doi: 10.1054/math.1999.0213. PMID: 10688954.
+
+              
+              ''',
+            ),
+            Item(
+              headerValue: 'Account Löschen',
+              expandedValue: '',
+              userData: [
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Delete the logged-in Flutter account.
+                      await FirebaseAuth.instance.currentUser?.delete();
+
+                      // Log the user out.
+                      await FirebaseAuth.instance.signOut();
+                    },
+                    child: const Text('Account Löschen'),
+                  ),
+                )
+              ],
             ),
           ];
 

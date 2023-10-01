@@ -937,7 +937,6 @@ class FullView extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Move your behavior here that you want to execute when leaving the view.
         int increasedOrder = order! + 1;
         final firebaseService =
             Provider.of<FirebaseService>(context, listen: false);
