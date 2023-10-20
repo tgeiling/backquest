@@ -42,6 +42,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/sources/android-34/*
+/android/build-tools/34.0.0
+/android/emulator
+/android/platform-tools
+/android/platforms/android-34
 
 /android/app/key.properties
 /android/app/*.jks
