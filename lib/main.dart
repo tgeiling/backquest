@@ -22,6 +22,10 @@ import 'videos.dart';
 import 'form.dart';
 import 'quests.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Map<int, Color> color = {
   50: Color.fromRGBO(64, 154, 181, .1),
@@ -150,19 +154,17 @@ class _IconRowState extends State<IconRow> {
             onTap: () {
               scakey.currentState!._onItemTapped(0);
             },
-            child: Image.asset(
-              'assets/homeIcon.png',
-              fit: BoxFit.cover, // Fixes border issues
-            ),
+            child: CustomIcon(
+                active: scakey.currentState!._selectedIndex == 0 ? true : false,
+                icon: Icons.home_outlined),
           ),
           GestureDetector(
             onTap: () {
               scakey.currentState!._onItemTapped(1);
             }, // Image tapped
-            child: Image.asset(
-              'assets/bookIcon.png',
-              fit: BoxFit.cover, // Fixes border issues
-            ),
+            child: CustomIcon(
+                active: scakey.currentState!._selectedIndex == 1 ? true : false,
+                icon: Icons.timeline_outlined),
           ),
           /*GestureDetector(
             onTap: () {
@@ -176,22 +178,48 @@ class _IconRowState extends State<IconRow> {
           GestureDetector(
             onTap: () {
               scakey.currentState!._onItemTapped(2);
+              scakey.currentState!._selectedIndex;
             }, // Image tapped
-            child: Image.asset(
-              'assets/formIcon.png',
-              fit: BoxFit.cover, // Fixes border issues
-            ),
+            child: CustomIcon(
+                active: scakey.currentState!._selectedIndex == 2 ? true : false,
+                icon: Icons.feedback_outlined),
           ),
           GestureDetector(
             onTap: () {
               scakey.currentState!._onItemTapped(3);
             }, // Image tapped
-            child: Image.asset(
-              'assets/userIcon.png',
-              fit: BoxFit.cover, // Fixes border issues
-            ),
+            child: CustomIcon(
+                active: scakey.currentState!._selectedIndex == 3 ? true : false,
+                icon: Icons.person_outline),
           ),
         ]);
+  }
+}
+
+class CustomIcon extends StatelessWidget {
+  final bool active;
+  final IconData icon;
+
+  CustomIcon({required this.active, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: active
+          ? IconShadow(
+              Icon(
+                icon,
+                size: 48,
+                color: Colors.grey.shade300,
+              ),
+              shadowColor: Colors.black,
+            )
+          : Icon(
+              icon,
+              size: 48,
+              color: Colors.grey.shade300,
+            ),
+    );
   }
 }
 
@@ -200,7 +228,18 @@ class Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80.0,
-      color: MaterialColor(0xFF409AB5, color),
+      decoration: BoxDecoration(
+        color: MaterialColor(0xFF409AB5, color),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3), // Shadow color
+            offset: Offset(
+                0, -2), // Offset for the shadow (0, -2) moves it 2 pixels up
+            blurRadius: 4, // Spread of the shadow
+            spreadRadius: 0, // Spread radius of the shadow
+          ),
+        ],
+      ),
       child: IconRow(),
     );
   }
@@ -216,6 +255,61 @@ class MapVerticalExample extends StatefulWidget {
 class _MapVerticalExampleState extends State<MapVerticalExample> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseService? firebaseService;
+
+  void _showWelcomeDialog() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool dialogShown = prefs.getBool('welcomeDialogShown') ?? false;
+
+    if (!dialogShown) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Hier Klicken \n zum Starten',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Transform.rotate(
+                    angle: -45 * 3.14159265 / 180,
+                    child: Icon(
+                      Icons.arrow_downward,
+                      size: 24.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      // Update SharedPreferences to mark the welcome dialog as shown
+      prefs.setBool('welcomeDialogShown', true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +334,12 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
       firebaseService = Provider.of<FirebaseService>(context, listen: false);
       fillTestData();
     });
+    _showWelcomeDialog();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 
@@ -371,6 +471,11 @@ Widget testWidget(int order) {
                                                   ['description'],
                                           overlay: _videoList[decreasedOrder]
                                               ['overlay'],
+                                          numberDone: levelData[
+                                              'levelNumberDone$order'],
+                                          lastDone:
+                                              levelData['levelLastDone$order'],
+                                          complete: complete,
                                         ),
                                       ),
                                     );
@@ -398,24 +503,48 @@ Widget testWidget(int order) {
                                 ),
                               ),
                               SizedBox(height: 16.0),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
-                                  child: SingleChildScrollView(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(
-                                        _videoList[decreasedOrder]
-                                            ['shortDescription'],
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(fontSize: 18.0),
-                                      ),
+                              Container(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.timer,
+                                            size: 64,
+                                            color: Colors.grey
+                                                .shade800), // Increased icon size
+                                        SizedBox(
+                                            width:
+                                                20), // Increased spacing between icons
+                                        Icon(Icons.sports_tennis,
+                                            size: 64,
+                                            color: Colors.grey
+                                                .shade800), // Increased icon size
+                                      ],
                                     ),
-                                  ),
+                                    SizedBox(height: 10),
+                                    // Added spacing between rows
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                            '${_videoList[decreasedOrder]["duration"]} min',
+                                            style: TextStyle(
+                                                fontSize:
+                                                    20)), // Increased text size
+                                        SizedBox(
+                                            width:
+                                                20), // Increased spacing between text
+                                        Text('Matte',
+                                            style: TextStyle(
+                                                fontSize:
+                                                    20)), // Increased text size
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                               SizedBox(height: 16.0),
@@ -443,6 +572,11 @@ Widget testWidget(int order) {
                                               overlay:
                                                   _videoList[decreasedOrder]
                                                       ['overlay'],
+                                              numberDone: levelData[
+                                                  'levelNumberDone$order'],
+                                              lastDone: levelData[
+                                                  'levelLastDone$order'],
+                                              complete: complete,
                                             ),
                                           ),
                                         );
@@ -579,17 +713,20 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
-
   final scaKey = GlobalKey<_MyStatefulWidgetState>();
   bool isLoggedIn = false;
 
   List<Widget> _widgetOptions = <Widget>[
     MapVerticalExample(),
     videos.Levels(),
-    //CharacterBox(),
     FeedbackFormWidget(),
     UserTabWidget()
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -692,6 +829,8 @@ class _LoginPageState extends State<LoginPage> {
       Map<String, dynamic> levels = {};
       for (int i = 1; i <= 30; i++) {
         levels['level$i'] = false;
+        levels['levelNumberDone$i'] = 0;
+        levels['levelLastDone$i'] = 0;
       }
 
       await _firestore.collection('Leveldata').doc(userId).set(levels);
@@ -718,6 +857,18 @@ class _LoginPageState extends State<LoginPage> {
       _verificationMessage = null;
       _errorMessage = null;
     });
+  }
+
+  _launchURL(String url) async {
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   @override
@@ -863,6 +1014,15 @@ class _LoginPageState extends State<LoginPage> {
                     Text('AGB zustimmen'),
                   ],
                 ),
+                ElevatedButton(
+                  onPressed: () {
+                    _launchURL('https://backquest.online/privacy-policy/');
+                  },
+                  child: Text(
+                    'Datenschutzerklärung',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
                 if (!_acceptPrivacyPolicy || !_agreeToTerms)
                   Text(
                     'Bitte akzeptiere die Datenschutzbestimmung und AGB.',
@@ -898,6 +1058,15 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.red,
                   ),
                 ),
+              ElevatedButton(
+                onPressed: () {
+                  _launchURL('https://backquest.online/privacy-policy/');
+                },
+                child: Text(
+                  'Datenschutzerklärung',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
             ],
           ),
         ),

@@ -42,12 +42,16 @@ dependencies:
   firebase_core: ^2.15.1
   firebase_auth: ^4.9.0
   cloud_firestore: ^4.9.1
+  firebase_database: ^10.3.1
   http: ^0.13.6
   sembast: ^3.0.0
   connectivity: ^3.0.6
   flutter_launcher_icons: ^0.11.0
   wakelock: ^0.6.2
   intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  flutter_icon_shadow: ^2.0.6
+  url_launcher: ^6.2.1
 
 flutter_icons:
   android: true
@@ -99,6 +103,7 @@ flutter:
     - assets/close.png
     - assets/bqlogo1.jpeg
     - assets/bqlogo2.jpeg
+    - assets/bqlogo2.png
     - assets/playstorelogo.png
     - assets/bookIcon.png
     - assets/homeIcon.png
