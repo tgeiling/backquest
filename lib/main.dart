@@ -518,10 +518,13 @@ Widget testWidget(int order) {
                                         SizedBox(
                                             width:
                                                 20), // Increased spacing between icons
-                                        Icon(Icons.sports_tennis,
-                                            size: 64,
-                                            color: Colors.grey
-                                                .shade800), // Increased icon size
+                                        Image.asset(
+                                          "assets/icons/yoga.png",
+                                          width:
+                                              60, // Adjust the image size as needed
+                                          height:
+                                              60, // Adjust the image size as needed
+                                        ),
                                       ],
                                     ),
                                     SizedBox(height: 10),
@@ -1013,15 +1016,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Text('AGB zustimmen'),
                   ],
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _launchURL('https://backquest.online/privacy-policy/');
-                  },
-                  child: Text(
-                    'Datenschutzerklärung',
-                    style: TextStyle(fontSize: 12),
-                  ),
                 ),
                 if (!_acceptPrivacyPolicy || !_agreeToTerms)
                   Text(

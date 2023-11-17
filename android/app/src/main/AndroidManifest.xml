@@ -2,12 +2,12 @@
     package="com.tgeiling.backquest">
 
     <queries>
-    <intent>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="https" />
-    </intent>
-</queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />

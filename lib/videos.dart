@@ -836,18 +836,17 @@ class _VideoTextState extends State<VideoText> {
     int daysAgo = widget.lastDone != 0 ? (timeDifferenceInSeconds ~/ 86400) : 0;
 
     return Padding(
-        padding: EdgeInsets.all(32.0),
+        padding: EdgeInsets.all(8.0),
         child: Row(
           children: [
             Expanded(
-                flex: 3, // Adjust the flex value as needed
+                flex: 1, // Adjust the flex value as needed
                 child: Text(
                   widget.shortDescription,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 )),
-            SizedBox(width: 20), // Add spacing between the columns
             Expanded(
-              flex: 2, // Adjust the flex value as needed
+              flex: 1, // Adjust the flex value as needed
               child: Column(
                 children: [
                   Row(
@@ -862,8 +861,9 @@ class _VideoTextState extends State<VideoText> {
                                 fontSize: 70, fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            'Anzahl',
-                            style: TextStyle(fontSize: 20),
+                            'Anzahl \n Abgeschlossen',
+                            style: TextStyle(fontSize: 12),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -875,8 +875,9 @@ class _VideoTextState extends State<VideoText> {
                                 fontSize: 70, fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            'Tage',
-                            style: TextStyle(fontSize: 20),
+                            'Zuletzt \n Abgeschlossen',
+                            style: TextStyle(fontSize: 12),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),

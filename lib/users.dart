@@ -251,11 +251,37 @@ class _UserTabWidgetState extends State<UserTabWidget> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
-                      // Delete the logged-in Flutter account.
-                      await FirebaseAuth.instance.currentUser?.delete();
+                      try {
+                        await FirebaseAuth.instance.currentUser?.delete();
 
-                      // Log the user out.
-                      await FirebaseAuth.instance.signOut();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text('Account wurde erfolgreich gelöscht')),
+                        );
+                      } catch (e) {
+                        if (e is FirebaseAuthException &&
+                            e.code == 'requires-recent-login') {
+                          await FirebaseAuth.instance.signOut();
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Sie müssen sich vor dem Löschen noch einmal anmelden'),
+                            ),
+                          );
+
+                          print('Error: ${e.message}');
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Fehler beim Löschen des Accounts: $e'),
+                            ),
+                          );
+                          print('Error: $e');
+                        }
+                      }
                     },
                     child: const Text('Account Löschen'),
                   ),
