@@ -35,23 +35,17 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  game_levels_scrolling_map: ^0.0.7
+  path_provider: ^2.0.2
+  provider: ^6.1.1
+  shared_preferences: ^2.0.6
   video_player: ^2.2.18
   chewie: ^1.4.0
-  giff_dialog: ^1.0.1
-  firebase_core: ^2.15.1
-  firebase_auth: ^4.9.0
-  cloud_firestore: ^4.9.1
-  firebase_database: ^10.3.1
-  http: ^0.13.6
-  sembast: ^3.0.0
-  connectivity: ^3.0.6
-  flutter_launcher_icons: ^0.11.0
-  wakelock: ^0.6.2
-  intl: ^0.18.1
-  shared_preferences: ^2.2.2
-  flutter_icon_shadow: ^2.0.6
-  url_launcher: ^6.2.1
+  flutter_ffmpeg: ^0.4.2
+  neumorphic_ui: ^1.0.1
+  salomon_bottom_bar: ^3.3.2
+  quickalert: ^1.0.2
+
+
 
 flutter_icons:
   android: true
@@ -100,31 +94,19 @@ flutter:
     - assets/playstorelogo.png
     - assets/button_start.png
     - assets/button_zuruck.png
-    - assets/close.png
-    - assets/bqlogo1.jpeg
-    - assets/bqlogo2.jpeg
-    - assets/bqlogo2.png
-    - assets/playstorelogo.png
-    - assets/bookIcon.png
+    - assets/crownIcon.png
     - assets/homeIcon.png
-    - assets/formIcon.png
-    - assets/trophyIcon.png
-    - assets/userIcon.png
+    - assets/barchartIcon.png
     - assets/fireIcon.png
-    - assets/questsIcon.png
-    - assets/levelmap.png
-    - assets/levelmap.svg
-    - assets/map.svg
-    - assets/map1.svg
-    - assets/map_point.png
-    - assets/map_point_green.png
-    - assets/map_point_locked.png
-    - assets/completed.gif
-    - assets/not.png
-    - assets/tryagain.jpg
-    - assets/character/example.png
-    - assets/thumbnails/
-    - assets/character/
-    - assets/database/database.db
-    - assets/untitled.glb
-    - assets/icons/yoga.png
+    - assets/logo.png
+    - assets/close.png
+    - assets/button_green.png
+    - assets/button_grey.png
+    - assets/button_locked.png
+    - assets/button_quickstart.png
+    - assets/treasure.png
+    - assets/videos/abschluss1_cp_fesi.mp4
+    - assets/videos/birddog_hiswi_auf_4fl_auf.mp4
+    - assets/videos/birddog_wippen_links_4fl_auf_4fl_auf.mp4
+    - assets/videos/birddog_wippen_rechts_4fl_auf_4fl_auf.mp4
+    - assets/videos/childpose_4fl_cp.mp4

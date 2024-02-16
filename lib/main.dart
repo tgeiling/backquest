@@ -1,876 +1,83 @@
-import 'dart:developer';
-import 'dart:io';
-
-import 'package:backquest/character.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'data_provider.dart';
-import 'firebase_options.dart';
-
 import 'package:flutter/material.dart';
+import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-import 'package:game_levels_scrolling_map/game_levels_scrolling_map.dart';
-import 'package:game_levels_scrolling_map/model/point_model.dart';
-import 'package:giff_dialog/giff_dialog.dart';
-import 'videos.dart' as videos;
-import 'character.dart';
-import 'users.dart';
-import 'trophy.dart';
-import 'videos.dart';
-import 'form.dart';
-import 'quests.dart';
-import 'package:video_player/video_player.dart';
-import 'package:flutter_icon_shadow/flutter_icon_shadow.dart';
-
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-Map<int, Color> color = {
-  50: Color.fromRGBO(64, 154, 181, .1),
-  100: Color.fromRGBO(64, 154, 181, .2),
-  200: Color.fromRGBO(64, 154, 181, .3),
-  300: Color.fromRGBO(64, 154, 181, .4),
-  400: Color.fromRGBO(64, 154, 181, .5),
-  500: Color.fromRGBO(64, 154, 181, .6),
-  600: Color.fromRGBO(64, 154, 181, .7),
-  700: Color.fromRGBO(64, 154, 181, .8),
-  800: Color.fromRGBO(64, 154, 181, .9),
-  900: Color.fromRGBO(64, 154, 181, 1),
-};
+import 'stats.dart';
+import 'video.dart';
+import 'questionaire.dart';
 
-List<Map<String, dynamic>> _videoList = videos.getVideoList();
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  return runApp(
+void main() {
+  runApp(
     ChangeNotifierProvider(
-      create: (context) => FirebaseService(),
+      create: (context) => LevelNotifier(),
       child: MyApp(),
     ),
   );
 }
 
-final scakey = new GlobalKey<_MyStatefulWidgetState>();
-
 class MyApp extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: _title,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: MaterialColor(0xFF409AB5, color),
-      ),
-      home: MyStatefulWidget(key: scakey),
-    );
+        title: 'Duolingo Levels',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MainScaffold());
   }
 }
 
-class Scoring extends StatefulWidget {
-  const Scoring({
-    super.key,
-    this.scoringCount = "000",
-  });
-
-  final String scoringCount;
-
+class MainScaffold extends StatefulWidget {
   @override
-  State<Scoring> createState() => _ScoringState();
+  _MainScaffoldState createState() => _MainScaffoldState();
 }
 
-class _ScoringState extends State<Scoring> {
-  late String value;
-  late bool check;
+class _MainScaffoldState extends State<MainScaffold> {
+  PageController _pageController = PageController();
+  int _currentIndex = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    final firebaseService = Provider.of<FirebaseService>(context);
-    return StreamBuilder<Map<String, dynamic>>(
-      stream: firebaseService.getUserDataStream(),
-      builder: (context, snapshot) {
-        print('Connection State: ${snapshot.connectionState}');
-        print('Data: ${snapshot.data}');
+  OverlayEntry? _overlayEntry;
 
-        if (snapshot.hasData) {
-          final userData = snapshot.data!;
-
-          var totalLevels = userData['totalLevels'];
-          if (totalLevels is int) {
-            check = totalLevels >= 10;
-          } else if (totalLevels is String) {
-            check = int.parse(totalLevels) >= 10;
-          }
-
-          value = check
-              ? "0${userData['totalLevels']}"
-              : "00${userData['totalLevels']}";
-
-          return Row(
-            children: <Widget>[
-              Text("00${userData['totalLevels'] ?? 0}"),
-              Container(
-                width: 40,
-                height: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    alignment: Alignment.centerLeft,
-                    image: AssetImage('assets/fireIcon.png'),
-                  ),
-                ),
-              ),
-            ],
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          height: MediaQuery.of(context).size.height *
+              0.5, // Adjust the height as needed
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+          ),
+          child: ButtonTestScreen(), // Your custom widget content
+        );
       },
     );
   }
-}
-
-class IconRow extends StatefulWidget {
-  const IconRow({super.key});
-
-  @override
-  State<IconRow> createState() => _IconRowState();
-}
-
-class _IconRowState extends State<IconRow> {
-  _MyStatefulWidgetState qwe = _MyStatefulWidgetState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              scakey.currentState!._onItemTapped(0);
-            },
-            child: CustomIcon(
-                active: scakey.currentState!._selectedIndex == 0 ? true : false,
-                icon: Icons.home_outlined),
-          ),
-          GestureDetector(
-            onTap: () {
-              scakey.currentState!._onItemTapped(1);
-            }, // Image tapped
-            child: CustomIcon(
-                active: scakey.currentState!._selectedIndex == 1 ? true : false,
-                icon: Icons.timeline_outlined),
-          ),
-          /*GestureDetector(
-            onTap: () {
-              scakey.currentState!._onItemTapped(2);
-            }, // Image tapped
-            child: Image.asset(
-              'assets/questsIcon.png',
-              fit: BoxFit.cover, // Fixes border issues
-            ),
-          ),*/
-          GestureDetector(
-            onTap: () {
-              scakey.currentState!._onItemTapped(2);
-              scakey.currentState!._selectedIndex;
-            }, // Image tapped
-            child: CustomIcon(
-                active: scakey.currentState!._selectedIndex == 2 ? true : false,
-                icon: Icons.feedback_outlined),
-          ),
-          GestureDetector(
-            onTap: () {
-              scakey.currentState!._onItemTapped(3);
-            }, // Image tapped
-            child: CustomIcon(
-                active: scakey.currentState!._selectedIndex == 3 ? true : false,
-                icon: Icons.person_outline),
-          ),
-        ]);
-  }
-}
-
-class CustomIcon extends StatelessWidget {
-  final bool active;
-  final IconData icon;
-
-  CustomIcon({required this.active, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: active
-          ? IconShadow(
-              Icon(
-                icon,
-                size: 48,
-                color: Colors.grey.shade300,
-              ),
-              shadowColor: Colors.black,
-            )
-          : Icon(
-              icon,
-              size: 48,
-              color: Colors.grey.shade300,
-            ),
-    );
-  }
-}
-
-class Footer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 80.0,
-      decoration: BoxDecoration(
-        color: MaterialColor(0xFF409AB5, color),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3), // Shadow color
-            offset: Offset(
-                0, -2), // Offset for the shadow (0, -2) moves it 2 pixels up
-            blurRadius: 4, // Spread of the shadow
-            spreadRadius: 0, // Spread radius of the shadow
-          ),
-        ],
-      ),
-      child: IconRow(),
-    );
-  }
-}
-
-class MapVerticalExample extends StatefulWidget {
-  const MapVerticalExample({Key? key}) : super(key: key);
-
-  @override
-  State<MapVerticalExample> createState() => _MapVerticalExampleState();
-}
-
-class _MapVerticalExampleState extends State<MapVerticalExample> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseService? firebaseService;
-
-  void _showWelcomeDialog() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool dialogShown = prefs.getBool('welcomeDialogShown') ?? false;
-
-    if (!dialogShown) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            content: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Hier Klicken \n zum Starten',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Transform.rotate(
-                    angle: -45 * 3.14159265 / 180,
-                    child: Icon(
-                      Icons.arrow_downward,
-                      size: 24.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
-                    child: Text('Close'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-
-      // Update SharedPreferences to mark the welcome dialog as shown
-      prefs.setBool('welcomeDialogShown', true);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-          child: GameLevelsScrollingMap.scrollable(
-        imageUrl: "assets/levelmap.png",
-        direction: Axis.vertical,
-        reverseScrolling: true,
-        pointsPositionDeltaX: 25,
-        pointsPositionDeltaY: 25,
-        svgUrl: 'assets/levelmap.svg',
-        points: points,
-      )), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      firebaseService = Provider.of<FirebaseService>(context, listen: false);
-      fillTestData();
-    });
-    _showWelcomeDialog();
+    _checkQuestionnaireCompletion();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-}
+  Future<void> _checkQuestionnaireCompletion() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool questionnaireCompleted =
+        prefs.getBool('questionnaireCompleted') ?? false;
 
-List<PointModel> points = [];
-
-void fillTestData() {
-  for (int i = 1; i < 26; i++) {
-    points.add(PointModel(26, testWidget(i)));
-  }
-}
-
-Widget testWidget(int order) {
-  return Consumer<FirebaseService>(builder: (context, firebaseService, _) {
-    return StreamBuilder<Map<String, dynamic>>(
-      stream: firebaseService.getLevelDataStream(),
-      builder: (context, snapshot) {
-        print('Connection State: ${snapshot.connectionState}');
-        print('Data: ${snapshot.data}');
-
-        if (snapshot.hasData) {
-          final levelData = snapshot.data!;
-          int totalLevels = 3;
-
-          levelData.forEach((key, value) {
-            if (value == true) {
-              totalLevels++;
-            }
-          });
-
-          // Decrease the value of order by one
-          int decreasedOrder = order - 1;
-          bool complete = levelData['level$order'] ?? false;
-          bool locked = order > totalLevels;
-
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (!snapshot.hasError) {
-              //firebaseService.refreshData();
-            } else {
-              // Connection error occurred
-
-              // Check if it's a network connectivity issue
-              if (snapshot.error is SocketException) {
-                firebaseService.refreshData();
-              } else {
-                // Handle other types of connection errors
-              }
-            }
-          }
-
-          return InkWell(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.asset(
-                  complete
-                      ? "assets/map_point_green.png"
-                      : locked || order > 19
-                          ? "assets/map_point_locked.png" // Image for locked state
-                          : "assets/map_point.png",
-                  fit: BoxFit.fitWidth,
-                  width: 90,
-                ),
-                Container(
-                    padding: const EdgeInsets.only(bottom: 33.0),
-                    child: Stack(
-                      children: <Widget>[
-                        Text(
-                          "$order",
-                          style: TextStyle(
-                            fontSize: 36,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 2
-                              ..color = Colors.black,
-                          ),
-                        ),
-                        Text(
-                          "$order",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 36),
-                        ),
-                      ],
-                    ))
-              ],
-            ),
-            onTap: () {
-              if (!locked && order <= 20) {
-                showDialog(
-                  context: context,
-                  builder: (_) => Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 10.0,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FullView(
-                                          order: decreasedOrder,
-                                          path: _videoList[decreasedOrder]
-                                              ['path'],
-                                          text: _videoList[decreasedOrder]
-                                              ['text'],
-                                          shortDescription:
-                                              _videoList[decreasedOrder]
-                                                  ['shortDescription'],
-                                          description:
-                                              _videoList[decreasedOrder]
-                                                  ['description'],
-                                          overlay: _videoList[decreasedOrder]
-                                              ['overlay'],
-                                          numberDone: levelData[
-                                              'levelNumberDone$order'],
-                                          lastDone:
-                                              levelData['levelLastDone$order'],
-                                          complete: complete,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.asset(
-                                      "assets/thumbnails/$order.gif",
-                                      fit: BoxFit.cover,
-                                      width: 300,
-                                      height: 200,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  _videoList[decreasedOrder]['text'],
-                                  style: TextStyle(
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(height: 16.0),
-                              Container(
-                                padding: EdgeInsets.all(16),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.timer,
-                                            size: 64,
-                                            color: Colors.grey
-                                                .shade800), // Increased icon size
-                                        SizedBox(
-                                            width:
-                                                20), // Increased spacing between icons
-                                        Image.asset(
-                                          "assets/icons/yoga.png",
-                                          width:
-                                              60, // Adjust the image size as needed
-                                          height:
-                                              60, // Adjust the image size as needed
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10),
-                                    // Added spacing between rows
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                            '${_videoList[decreasedOrder]["duration"]} min',
-                                            style: TextStyle(
-                                                fontSize:
-                                                    20)), // Increased text size
-                                        SizedBox(
-                                            width:
-                                                20), // Increased spacing between text
-                                        Text('Matte',
-                                            style: TextStyle(
-                                                fontSize:
-                                                    20)), // Increased text size
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 16.0),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => FullView(
-                                              order: decreasedOrder,
-                                              path: _videoList[decreasedOrder]
-                                                  ['path'],
-                                              text: _videoList[decreasedOrder]
-                                                  ['text'],
-                                              shortDescription:
-                                                  _videoList[decreasedOrder]
-                                                      ['shortDescription'],
-                                              description:
-                                                  _videoList[decreasedOrder]
-                                                      ['description'],
-                                              overlay:
-                                                  _videoList[decreasedOrder]
-                                                      ['overlay'],
-                                              numberDone: levelData[
-                                                  'levelNumberDone$order'],
-                                              lastDone: levelData[
-                                                  'levelLastDone$order'],
-                                              complete: complete,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        color: Colors
-                                            .white, // Set the background color of the container
-                                        child: Image.asset(
-                                          'assets/button_start.png',
-                                          width:
-                                              100, // Adjust the width and height as needed
-                                          height: 100,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          right: 0.0,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Align(
-                                alignment: Alignment.topRight,
-                                child: Image.asset(
-                                  'assets/close.png',
-                                  width: 40,
-                                  height: 40,
-                                )),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-            },
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-  });
-}
-
-//Video tracker um zu erkennen ob der Nutzer das Video geguckt hat.
-
-class VideoPlayerScreen extends StatefulWidget {
-  final String videoUrl;
-
-  VideoPlayerScreen({required this.videoUrl});
-
-  @override
-  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
-}
-
-class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  VideoPlayerController? _videoPlayerController;
-  bool _videoCompleted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeVideoPlayer();
-  }
-
-  @override
-  void dispose() {
-    _videoPlayerController?.dispose();
-    super.dispose();
-  }
-
-  Future<void> _initializeVideoPlayer() async {
-    _videoPlayerController = VideoPlayerController.network(widget.videoUrl)
-      ..initialize().then((_) {
-        setState(() {});
+    if (!questionnaireCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => QuestionnaireScreen()),
+        );
       });
-    _videoPlayerController?.addListener(_videoPlayerListener);
-  }
-
-  void _videoPlayerListener() {
-    if (_videoPlayerController!.value.position >=
-        _videoPlayerController!.value.duration) {
-      _videoCompleted = true;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_videoPlayerController != null &&
-        _videoPlayerController!.value.isInitialized) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Video Player'),
-        ),
-        body: Column(
-          children: [
-            AspectRatio(
-              aspectRatio: _videoPlayerController!.value.aspectRatio,
-              child: VideoPlayer(_videoPlayerController!),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_videoCompleted) {
-                } else {}
-              },
-              child: Text(_videoCompleted ? 'Continue' : 'Retry'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  MyStatefulWidget({required Key key}) : super(key: key);
-
-  @override
-  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
-  final scaKey = GlobalKey<_MyStatefulWidgetState>();
-  bool isLoggedIn = false;
-
-  List<Widget> _widgetOptions = <Widget>[
-    MapVerticalExample(),
-    videos.Levels(),
-    FeedbackFormWidget(),
-    UserTabWidget()
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final firebaseService = Provider.of<FirebaseService>(context);
-
-    if (firebaseService.user != null) {
-      return Scaffold(
-        key: scaKey,
-        appBar: AppBar(
-          leading: Image.asset('assets/bqlogo2.jpeg'),
-          leadingWidth: 250,
-          title: Scoring(),
-        ),
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: _widgetOptions,
-        ),
-        bottomNavigationBar: Footer(),
-      );
-    }
-    return LoginPage();
-  }
-}
-
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  String? _verificationMessage;
-  String? _errorMessage;
-
-  bool _isRegistration = false;
-  bool _acceptPrivacyPolicy = false;
-  bool _agreeToTerms = false;
-
-  Future<void> _signInWithEmailAndPassword() async {
-    try {
-      final UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      setState(() {
-        _verificationMessage = 'Login successful.';
-        _errorMessage = null;
-      });
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _verificationMessage = null;
-        _errorMessage = e.message;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> _registerWithEmailAndPassword() async {
-    if (!_acceptPrivacyPolicy || !_agreeToTerms) {
-      // Show an error message or take appropriate action
-      return;
-    }
-
-    try {
-      final UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      final String userId = userCredential.user!.uid;
-
-      final ageDateFormat = DateFormat('d. MMMM y');
-      final ageDateTime = ageDateFormat.parse(_ageController.text);
-
-      await _firestore.collection('Userdata').doc(userId).set({
-        'Age': DateFormat('dd. MMMM y').format(ageDateTime),
-        'Firstname': _firstNameController.text,
-        'Lastname': _lastNameController.text,
-        'totalLevels': 0,
-        'acceptedAGB': _acceptPrivacyPolicy,
-        'acceptedDatenschutz': _agreeToTerms,
-      });
-
-      Map<String, dynamic> levels = {};
-      for (int i = 1; i <= 30; i++) {
-        levels['level$i'] = false;
-        levels['levelNumberDone$i'] = 0;
-        levels['levelLastDone$i'] = 0;
-      }
-
-      await _firestore.collection('Leveldata').doc(userId).set(levels);
-
-      setState(() {
-        _verificationMessage =
-            'Registration successful. Please login with your new account.';
-        _errorMessage = null;
-        _isRegistration = false;
-      });
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _verificationMessage = null;
-        _errorMessage = e.message;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void _switchForm() {
-    setState(() {
-      _isRegistration = !_isRegistration;
-      _verificationMessage = null;
-      _errorMessage = null;
-    });
-  }
-
-  _launchURL(String url) async {
-    try {
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        throw 'Could not launch $url';
-      }
-    } catch (e) {
-      print('Error: $e');
     }
   }
 
@@ -878,193 +85,655 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isRegistration ? 'Registration' : 'Login'),
-        leading: _isRegistration
-            ? IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: _switchForm,
-              )
-            : null,
+        titleSpacing: 0,
+        title: CompletedLevelsAppBar(),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Email",
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bitte gebe deine E-Mail ein';
-                  }
-                  return null;
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: [
+          LevelSelectionScreen(),
+          StatsWidget(), // Ensure this widget is defined elsewhere
+        ],
+      ),
+      bottomNavigationBar: Container(
+        height: 90,
+        child: Column(
+          children: [
+            Container(
+              // Grey line container
+              height: 1, // Height of the line
+              color: Colors.grey, // Color of the line
+            ),
+            Expanded(
+              // SalomonBottomBar needs to be wrapped with Expanded inside Column
+              child: SalomonBottomBar(
+                currentIndex: _currentIndex,
+                onTap: (i) {
+                  _pageController.jumpToPage(i);
                 },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Passwort",
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bitte gebe dein Passwort ein';
-                  }
-                  return null;
-                },
-              ),
-              if (_isRegistration) ...[
-                SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _firstNameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Vorname",
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte gebe deinen Vornamen ein';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _lastNameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Nachname",
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte gebe deinen Nachnamen ein';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _ageController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Alter",
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                          labelStyle: TextStyle(color: Colors.black),
-                        ),
-                        enabled: false, // Disable manual input
-                      ),
+                items: [
+                  SalomonBottomBarItem(
+                    icon: Image.asset(
+                      'assets/homeIcon.png',
+                      width: 40,
+                      height: 40,
                     ),
-                    SizedBox(
-                        width:
-                            10), // Add spacing between the TextFormField and the button
-                    ElevatedButton(
-                      onPressed: () async {
-                        DateTime? selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                        );
+                    title: Text("Main"),
+                    selectedColor: Colors.blue,
+                  ),
+                  SalomonBottomBarItem(
+                    icon: Image.asset(
+                      'assets/barchartIcon.png',
+                      width: 44,
+                      height: 44,
+                    ),
+                    title: Text("Stats"),
+                    selectedColor: Colors.blue,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: Container(
+          height: 68,
+          child: GestureDetector(
+            onTap: () {
+              _showModalBottomSheet(context);
+            }, // Call this method to show the overlay
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/button_quickstart.png'),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(
+                    30), // Adjust for rounded corners if necessary
+              ),
+              child: Text(
+                "Schnellstart",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Ensure contrast with the button color
+                ),
+              ),
+            ),
+          )),
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .endFloat, // Position the button at the bottom end
+    );
+  }
+}
 
-                        if (selectedDate != null) {
-                          setState(() {
-                            _ageController.text =
-                                DateFormat('dd. MMMM y').format(selectedDate);
-                          });
-                        }
-                      },
-                      child: Icon(
-                          Icons.calendar_today), // You can use any icon here
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _acceptPrivacyPolicy,
-                      onChanged: (value) {
-                        setState(() {
-                          _acceptPrivacyPolicy = value ?? false;
-                        });
-                      },
-                    ),
-                    Text('Datenschutzbestimmung akzeptieren'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _agreeToTerms,
-                      onChanged: (value) {
-                        setState(() {
-                          _agreeToTerms = value ?? false;
-                        });
-                      },
-                    ),
-                    Text('AGB zustimmen'),
-                  ],
-                ),
-                if (!_acceptPrivacyPolicy || !_agreeToTerms)
-                  Text(
-                    'Bitte akzeptiere die Datenschutzbestimmung und AGB.',
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
+class ButtonTestScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              "Passen Sie Ihr Training an und starten Sie direkt",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 3 / 1, // Adjust based on your button size
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle button press for Fokus
+                    },
+                    child: Text('Fokus'),
                   ),
-              ],
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _isRegistration
-                    ? _registerWithEmailAndPassword
-                    : _signInWithEmailAndPassword,
-                child: Text(_isRegistration ? 'Registrieren' : 'Login'),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle button press for Dauer
+                    },
+                    child: Text('Dauer'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle button press for Art
+                    },
+                    child: Text('Art'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle button press for Ort
+                    },
+                    child: Text('Ort'),
+                  ),
+                ],
               ),
-              SizedBox(height: 16.0),
-              if (!_isRegistration)
-                ElevatedButton(
-                  onPressed: _switchForm,
-                  child: Text('Registrieren'),
-                ),
-              if (_verificationMessage != null)
-                Text(
-                  _verificationMessage!,
-                  style: TextStyle(
-                    color: Colors.green,
+            ),
+            SizedBox(height: 10), // Spacing after the grid
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to the VideoCombinerScreen
+                // Replace 'level.id' with the appropriate level ID
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VideoCombinerScreen(
+                      levelId: 0, // Use the correct level ID here
+                      levelNotifier:
+                          Provider.of<LevelNotifier>(context, listen: false),
+                    ),
                   ),
-                ),
-              if (_errorMessage != null)
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ElevatedButton(
-                onPressed: () {
-                  _launchURL('https://backquest.online/privacy-policy/');
-                },
-                child: Text(
-                  'Datenschutzerklärung',
-                  style: TextStyle(fontSize: 12),
-                ),
+                );
+              },
+              child: Text('Jetzt starten'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(
+                    double.infinity, 50), // make the button wider and taller
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
+  }
+}
+
+class CompletedLevelsAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Use a Container to wrap AppBar content and add a bottom border
+    return Container(
+      decoration: BoxDecoration(
+        // Add a bottom border
+        border: Border(
+          bottom: BorderSide(
+              color: Colors.grey, width: 2.0), // Grey line with 1.0 thickness
+        ),
+      ),
+      child: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Logo on the left
+            Image.asset('assets/logo.png',
+                height: 20), // Adjust the height as needed
+
+            Consumer<LevelNotifier>(
+              builder: (context, levelNotifier, child) {
+                // Calculate the number of completed levels
+                int completedLevels = levelNotifier.levels.values
+                    .where((level) => level.isDone)
+                    .length;
+
+                return Row(
+                  children: [
+                    Image.asset('assets/crownIcon.png', height: 24),
+                    SizedBox(width: 8),
+                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
+                    SizedBox(width: 20),
+                    Image.asset('assets/fireIcon.png', height: 24),
+                    SizedBox(width: 8),
+                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+        centerTitle: false, // Align the title to the start
+        elevation: 0, // Remove shadow if not needed
+        backgroundColor: Colors
+            .transparent, // Make AppBar background transparent to blend with Container
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(
+      kToolbarHeight + 1.0); // Default AppBar height + grey line height
+}
+
+class LevelNotifier with ChangeNotifier {
+  Map<int, Level> _levels = {};
+
+  Map<int, Level> get levels => _levels;
+
+  LevelNotifier() {
+    _loadLevels();
+  }
+
+  Future<void> _loadLevels() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Define your levels here
+    Map<int, Level> tempLevels = {
+      1: Level(id: 1, description: "Description for level 1"),
+      2: Level(id: 2, description: "Description for level 2"),
+      3: Level(id: 3, description: "Description for level 3"),
+      4: Level(id: 4, description: "Description for level 4"),
+      5: Level(
+          id: 5, description: "Description for level 5", reward: "Gold Coin"),
+      6: Level(id: 6, description: "Description for level 6"),
+      7: Level(id: 7, description: "Description for level 7"),
+      8: Level(id: 8, description: "Description for level 8"),
+      9: Level(id: 9, description: "Description for level 9"),
+      10: Level(
+          id: 10, description: "Description for level 10", reward: "Gold Coin"),
+      11: Level(id: 11, description: "Description for level 11"),
+      12: Level(id: 12, description: "Description for level 12"),
+      13: Level(id: 13, description: "Description for level 13"),
+      14: Level(id: 14, description: "Description for level 14"),
+      15: Level(
+          id: 15, description: "Description for level 15", reward: "Gold Coin"),
+      16: Level(id: 16, description: "Description for level 16"),
+      17: Level(id: 17, description: "Description for level 17"),
+      18: Level(id: 18, description: "Description for level 18"),
+      19: Level(id: 19, description: "Description for level 19"),
+      20: Level(
+          id: 20, description: "Description for level 20", reward: "Gold Coin"),
+    };
+
+    // Load isDone status from SharedPreferences and update tempLevels
+    _levels = {
+      for (var entry in tempLevels.entries)
+        entry.key: Level(
+          id: entry.value.id,
+          description: entry.value.description,
+          reward: entry.value.reward,
+          isDone: prefs.getBool('level_${entry.value.id}_isDone') ?? false,
+        ),
+    };
+
+    notifyListeners(); // Notify listeners to rebuild the UI
+  }
+
+  void updateLevelStatus(int levelId, bool isDone) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('level_${levelId}_isDone', isDone);
+
+    _levels[levelId]?.isDone = isDone;
+    notifyListeners(); // Notify listeners to rebuild the UI
+  }
+}
+
+class Level {
+  final int id;
+  final String description;
+  final String reward;
+  bool isDone;
+
+  Level(
+      {required this.id,
+      required this.description,
+      this.reward = '',
+      this.isDone = false});
+}
+
+class LevelSelectionScreen extends StatefulWidget {
+  @override
+  _LevelSelectionScreenState createState() => _LevelSelectionScreenState();
+}
+
+class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final levelNotifier = Provider.of<LevelNotifier>(context);
+    final levels = levelNotifier.levels;
+
+    return ListView.builder(
+      reverse: true,
+      controller: _scrollController,
+      itemCount: levels.length,
+      itemBuilder: (context, index) {
+        int levelId = levels.keys.toList()[index];
+        Level level = levels[levelId]!;
+
+        int row = index % 4; // Adjust to 4 items per row
+        int group =
+            index ~/ 4; // Group index changes because of 4 items per group
+
+        // Calculate padding for the snake pattern and 4 items per row
+        bool isEvenGroup = group % 2 == 0;
+        double startPadding, endPadding;
+        if (isEvenGroup) {
+          startPadding = MediaQuery.of(context).size.width / 8 * row;
+          endPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
+        } else {
+          startPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
+          endPadding = MediaQuery.of(context).size.width / 8 * row;
+        }
+
+        // Determine if this level is the next to be actionable
+        bool isNext = false;
+        if (!level.isDone) {
+          // Find the highest 'done' level
+          int? maxDoneLevelId = levels.entries
+              .where((entry) => entry.value.isDone)
+              .map((entry) => entry.key)
+              .fold<int?>(
+                  null,
+                  (prev, element) => prev != null
+                      ? (element > prev ? element : prev)
+                      : element);
+
+          // If no level is done yet, mark the first level as isNext
+          if (maxDoneLevelId == null) {
+            isNext =
+                levelId == levels.keys.first; // true only for the first level
+          } else {
+            // If the current level is immediately after the last 'done' level
+            if (levelId == maxDoneLevelId + 1) {
+              isNext = true;
+            }
+          }
+        }
+
+        return Padding(
+          padding: EdgeInsets.only(left: startPadding, right: endPadding),
+          child: LevelCircle(
+            level: level.id,
+            onTap: () => _showLevelDialog(context, level),
+            isTreasureLevel: level.id % 4 == 0,
+            isDone: level.isDone,
+            isNext: isNext, // Pass the isNext status
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLevelDialog(BuildContext context, Level level) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10.0,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VideoCombinerScreen(
+                                    levelId: level.id,
+                                    levelNotifier: Provider.of<LevelNotifier>(
+                                        context,
+                                        listen: false),
+                                  )),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset(
+                          "assets/thumbnails/${level.id}.gif",
+                          fit: BoxFit.cover,
+                          width: 300,
+                          height: 200,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Text 123",
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.timer,
+                                size: 64,
+                                color: Colors
+                                    .grey.shade800), // Increased icon size
+                            SizedBox(
+                                width: 20), // Increased spacing between icons
+                            Image.asset(
+                              "assets/icons/yoga.png",
+                              width: 60, // Adjust the image size as needed
+                              height: 60, // Adjust the image size as needed
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        // Added spacing between rows
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('15 min',
+                                style: TextStyle(
+                                    fontSize: 20)), // Increased text size
+                            SizedBox(
+                                width: 20), // Increased spacing between text
+                            Text('Matte',
+                                style: TextStyle(
+                                    fontSize: 20)), // Increased text size
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => VideoCombinerScreen(
+                                  levelId: level.id,
+                                  levelNotifier: Provider.of<LevelNotifier>(
+                                      context,
+                                      listen: false),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            color: Colors
+                                .white, // Set the background color of the container
+                            child: Image.asset(
+                              'assets/button_start.png',
+                              width:
+                                  100, // Adjust the width and height as needed
+                              height: 100,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              right: 0.0,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Align(
+                    alignment: Alignment.topRight,
+                    child: Image.asset(
+                      'assets/close.png',
+                      width: 40,
+                      height: 40,
+                    )),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+}
+
+class LevelCircle extends StatelessWidget {
+  final int level;
+  final VoidCallback onTap;
+  final bool isTreasureLevel;
+  final bool isDone;
+  final bool isNext; // Indicates if this is the next level to start
+
+  LevelCircle({
+    required this.level,
+    required this.onTap,
+    this.isTreasureLevel = false,
+    this.isDone = false,
+    this.isNext = false, // Default to false
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    String imageName;
+    if (isDone) {
+      imageName = 'assets/button_green.png';
+    } else if (isNext) {
+      imageName = 'assets/button_grey.png';
+    } else {
+      imageName = 'assets/button_locked.png';
+    }
+
+    return Material(
+      type: MaterialType.transparency, // Use transparent material
+      child: InkWell(
+        onTap: onTap,
+        splashColor: Colors.transparent, // Ensure no splash is shown
+        highlightColor: Colors.transparent, // Ensure no highlight is shown
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 5),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(imageName),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              child: Container(
+                padding: EdgeInsets.only(right: 0, bottom: 20),
+                child: Center(
+                  child: Text(
+                    '$level',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (isNext)
+              Positioned(
+                top: 50, // Adjust as necessary
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    "START",
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BubblePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.yellow // Color of the triangle, same as your bubble
+      ..style = PaintingStyle.fill;
+
+    // Starting point for the path
+    final path = Path()
+      ..moveTo(size.width / 2, size.height)
+      // Draw line to the right bottom corner of the triangle
+      ..lineTo(size.width / 2 + 10, size.height + 10)
+      // Draw line to the left bottom corner of the triangle
+      ..lineTo(size.width / 2 - 10, size.height + 10)
+      // Draw line back to the start point
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
