@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:backquest/stats.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,12 +13,15 @@ import 'dart:io';
 import 'main.dart';
 
 class VideoCombinerScreen extends StatefulWidget {
-  final LevelNotifier levelNotifier; // Add this line
+  final LevelNotifier levelNotifier;
+  final ProfilProvider profilProvider;
   final int levelId;
 
-  VideoCombinerScreen(
-      {required this.levelNotifier,
-      required this.levelId}); // Modify constructor to accept LevelNotifier
+  VideoCombinerScreen({
+    required this.levelNotifier,
+    required this.profilProvider,
+    required this.levelId,
+  });
 
   @override
   _VideoCombinerScreenState createState() => _VideoCombinerScreenState();
@@ -116,6 +120,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         if (!hasBeenUpdated) {
           if (widget.levelId != 0) {
             widget.levelNotifier.updateLevelStatus(widget.levelId, true);
+            widget.profilProvider.setCompletedLevels(widget.levelId);
           }
           hasBeenUpdated = true;
         }

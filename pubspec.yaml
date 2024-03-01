@@ -44,7 +44,8 @@ dependencies:
   neumorphic_ui: ^1.0.1
   salomon_bottom_bar: ^3.3.2
   quickalert: ^1.0.2
-
+  stroke_text: ^0.0.2
+  numberpicker: ^2.1.2
 
 
 flutter_icons:
@@ -94,6 +95,7 @@ flutter:
     - assets/playstorelogo.png
     - assets/button_start.png
     - assets/button_zuruck.png
+    - assets/timo.jpg
     - assets/crownIcon.png
     - assets/homeIcon.png
     - assets/barchartIcon.png
