@@ -3,312 +3,20 @@ import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stroke_text/stroke_text.dart';
 
 import 'stats.dart';
 import 'video.dart';
 import 'questionaire.dart';
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => LevelNotifier(),
-      child: MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Duolingo Levels',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: MainScaffold());
-  }
-}
-
-class MainScaffold extends StatefulWidget {
-  @override
-  _MainScaffoldState createState() => _MainScaffoldState();
-}
-
-class _MainScaffoldState extends State<MainScaffold> {
-  PageController _pageController = PageController();
-  int _currentIndex = 0;
-
-  OverlayEntry? _overlayEntry;
-
-  void _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16),
-          height: MediaQuery.of(context).size.height *
-              0.5, // Adjust the height as needed
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-          ),
-          child: ButtonTestScreen(), // Your custom widget content
-        );
-      },
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _checkQuestionnaireCompletion();
-  }
-
-  Future<void> _checkQuestionnaireCompletion() async {
-    final prefs = await SharedPreferences.getInstance();
-    final bool questionnaireCompleted =
-        prefs.getBool('questionnaireCompleted') ?? false;
-
-    if (!questionnaireCompleted) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => QuestionnaireScreen()),
-        );
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: CompletedLevelsAppBar(),
-      ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        children: [
-          LevelSelectionScreen(),
-          StatsWidget(), // Ensure this widget is defined elsewhere
-        ],
-      ),
-      bottomNavigationBar: Container(
-        height: 90,
-        child: Column(
-          children: [
-            Container(
-              // Grey line container
-              height: 1, // Height of the line
-              color: Colors.grey, // Color of the line
-            ),
-            Expanded(
-              // SalomonBottomBar needs to be wrapped with Expanded inside Column
-              child: SalomonBottomBar(
-                currentIndex: _currentIndex,
-                onTap: (i) {
-                  _pageController.jumpToPage(i);
-                },
-                items: [
-                  SalomonBottomBarItem(
-                    icon: Image.asset(
-                      'assets/homeIcon.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                    title: Text("Main"),
-                    selectedColor: Colors.blue,
-                  ),
-                  SalomonBottomBarItem(
-                    icon: Image.asset(
-                      'assets/barchartIcon.png',
-                      width: 44,
-                      height: 44,
-                    ),
-                    title: Text("Stats"),
-                    selectedColor: Colors.blue,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: Container(
-          height: 68,
-          child: GestureDetector(
-            onTap: () {
-              _showModalBottomSheet(context);
-            }, // Call this method to show the overlay
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/button_quickstart.png'),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(
-                    30), // Adjust for rounded corners if necessary
-              ),
-              child: Text(
-                "Schnellstart",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // Ensure contrast with the button color
-                ),
-              ),
-            ),
-          )),
-      floatingActionButtonLocation: FloatingActionButtonLocation
-          .endFloat, // Position the button at the bottom end
-    );
-  }
-}
-
-class ButtonTestScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              "Passen Sie Ihr Training an und starten Sie direkt",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 3 / 1, // Adjust based on your button size
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle button press for Fokus
-                    },
-                    child: Text('Fokus'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle button press for Dauer
-                    },
-                    child: Text('Dauer'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle button press for Art
-                    },
-                    child: Text('Art'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle button press for Ort
-                    },
-                    child: Text('Ort'),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10), // Spacing after the grid
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the VideoCombinerScreen
-                // Replace 'level.id' with the appropriate level ID
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VideoCombinerScreen(
-                      levelId: 0, // Use the correct level ID here
-                      levelNotifier:
-                          Provider.of<LevelNotifier>(context, listen: false),
-                    ),
-                  ),
-                );
-              },
-              child: Text('Jetzt starten'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(
-                    double.infinity, 50), // make the button wider and taller
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CompletedLevelsAppBar extends StatelessWidget
-    implements PreferredSizeWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Use a Container to wrap AppBar content and add a bottom border
-    return Container(
-      decoration: BoxDecoration(
-        // Add a bottom border
-        border: Border(
-          bottom: BorderSide(
-              color: Colors.grey, width: 2.0), // Grey line with 1.0 thickness
-        ),
-      ),
-      child: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Logo on the left
-            Image.asset('assets/logo.png',
-                height: 20), // Adjust the height as needed
-
-            Consumer<LevelNotifier>(
-              builder: (context, levelNotifier, child) {
-                // Calculate the number of completed levels
-                int completedLevels = levelNotifier.levels.values
-                    .where((level) => level.isDone)
-                    .length;
-
-                return Row(
-                  children: [
-                    Image.asset('assets/crownIcon.png', height: 24),
-                    SizedBox(width: 8),
-                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
-                    SizedBox(width: 20),
-                    Image.asset('assets/fireIcon.png', height: 24),
-                    SizedBox(width: 8),
-                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-        centerTitle: false, // Align the title to the start
-        elevation: 0, // Remove shadow if not needed
-        backgroundColor: Colors
-            .transparent, // Make AppBar background transparent to blend with Container
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(
-      kToolbarHeight + 1.0); // Default AppBar height + grey line height
-}
+import 'elements.dart';
 
 class LevelNotifier with ChangeNotifier {
   Map<int, Level> _levels = {};
 
   Map<int, Level> get levels => _levels;
+
+  int get completedLevels =>
+      _levels.values.where((level) => level.isDone).length;
 
   LevelNotifier() {
     _loadLevels();
@@ -355,16 +63,330 @@ class LevelNotifier with ChangeNotifier {
         ),
     };
 
-    notifyListeners(); // Notify listeners to rebuild the UI
+    notifyListeners();
   }
 
   void updateLevelStatus(int levelId, bool isDone) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('level_${levelId}_isDone', isDone);
+    await prefs.setInt('completedLevels', completedLevels + 1);
 
     _levels[levelId]?.isDone = isDone;
-    notifyListeners(); // Notify listeners to rebuild the UI
+    notifyListeners();
   }
+}
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => LevelNotifier()),
+        ChangeNotifierProvider(create: (context) => ProfilProvider()),
+      ],
+      child: MyApp(), // Your main app widget
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Duolingo Levels',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MainScaffold());
+  }
+}
+
+class MainScaffold extends StatefulWidget {
+  @override
+  _MainScaffoldState createState() => _MainScaffoldState();
+}
+
+class _MainScaffoldState extends State<MainScaffold> {
+  PageController _pageController = PageController();
+  int _currentIndex = 0;
+
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent, // Removes the semi-transparent overlay
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(16),
+              height: MediaQuery.of(context).size.height * 0.5 - 90,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+              ),
+              child: ButtonTestScreen(),
+            ),
+            SizedBox(height: 90),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkQuestionnaireCompletion();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<ProfilProvider>(context, listen: false)
+          .loadInitialData();
+    });
+  }
+
+  Future<void> _checkQuestionnaireCompletion() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool questionnaireCompleted =
+        prefs.getBool('questionnaireCompleted') ?? false;
+
+    if (!questionnaireCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => QuestionnaireScreen()),
+        );
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: CompletedLevelsAppBar(),
+      ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: [
+          Container(
+            color: Color.fromRGBO(0, 59, 46, 0.9),
+            child: LevelSelectionScreen(),
+          ),
+          ProfilPage(), // Ensure this widget is defined elsewhere
+        ],
+      ),
+      bottomNavigationBar: Container(
+        height: 90,
+        child: Column(
+          children: [
+            Container(
+              // Grey line container
+              height: 1, // Height of the line
+              color: Colors.grey, // Color of the line
+            ),
+            Expanded(
+              // SalomonBottomBar needs to be wrapped with Expanded inside Column
+              child: SalomonBottomBar(
+                currentIndex: _currentIndex,
+                onTap: (i) {
+                  _pageController.jumpToPage(i);
+                },
+                items: [
+                  SalomonBottomBarItem(
+                    icon: Image.asset(
+                      'assets/homeIcon.png',
+                      width: 40,
+                      height: 40,
+                    ),
+                    title: Text("Main"),
+                    selectedColor: Colors.blue,
+                  ),
+                  SalomonBottomBarItem(
+                    icon: Image.asset(
+                      'assets/barchartIcon.png',
+                      width: 44,
+                      height: 44,
+                    ),
+                    title: Text("Stats"),
+                    selectedColor: Colors.blue,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: Container(
+          child: GestureDetector(
+        onTap: () {
+          _showModalBottomSheet(context);
+        }, // Call this method to show the overlay
+        child: PressableButton(
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          child: Icon(
+            Icons.arrow_upward,
+            color: Colors.white,
+            size: 24,
+          ),
+        ),
+      )),
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .endFloat, // Position the button at the bottom end
+    );
+  }
+}
+
+class ButtonTestScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              "Passen Sie Ihr Training an und starten Sie direkt",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+            ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 3 / 1, // Adjust based on your button size
+                children: <Widget>[
+                  PressableButton(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: Center(
+                        child: Text("Fokus",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ))),
+                  ),
+                  PressableButton(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: Center(
+                        child: Text("Dauer",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ))),
+                  ),
+                  PressableButton(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: Center(
+                        child: Text("Art",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ))),
+                  ),
+                  PressableButton(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    child: Center(
+                        child: Text("Ort",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ))),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            PressableButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VideoCombinerScreen(
+                      levelId: 0, // Use the correct level ID here
+                      levelNotifier:
+                          Provider.of<LevelNotifier>(context, listen: false),
+                      profilProvider:
+                          Provider.of<ProfilProvider>(context, listen: false),
+                    ),
+                  ),
+                );
+              },
+              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+              child: Center(
+                  child: Text("Jetzt starten",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ))),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CompletedLevelsAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Use a Container to wrap AppBar content and add a bottom border
+    return Container(
+      decoration: BoxDecoration(
+        // Add a bottom border
+        border: Border(
+          bottom: BorderSide(
+              color: Colors.grey, width: 2.0), // Grey line with 1.0 thickness
+        ),
+      ),
+      child: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Logo on the left
+            Image.asset('assets/logo.png',
+                height: 20), // Adjust the height as needed
+
+            Consumer<LevelNotifier>(
+              builder: (context, levelNotifier, child) {
+                // Calculate the number of completed levels
+                int completedLevels = levelNotifier.completedLevels;
+
+                return Row(
+                  children: [
+                    Image.asset('assets/crownIcon.png', height: 24),
+                    SizedBox(width: 8),
+                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
+                    SizedBox(width: 20),
+                    Image.asset('assets/fireIcon.png', height: 24),
+                    SizedBox(width: 8),
+                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+        centerTitle: false, // Align the title to the start
+        elevation: 0, // Remove shadow if not needed
+        backgroundColor: Colors
+            .transparent, // Make AppBar background transparent to blend with Container
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(
+      kToolbarHeight + 1.0); // Default AppBar height + grey line height
 }
 
 class Level {
@@ -491,6 +513,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                                     levelNotifier: Provider.of<LevelNotifier>(
                                         context,
                                         listen: false),
+                                    profilProvider: Provider.of<ProfilProvider>(
+                                        context,
+                                        listen: false),
                                   )),
                         );
                       },
@@ -568,6 +593,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                                 builder: (context) => VideoCombinerScreen(
                                   levelId: level.id,
                                   levelNotifier: Provider.of<LevelNotifier>(
+                                      context,
+                                      listen: false),
+                                  profilProvider: Provider.of<ProfilProvider>(
                                       context,
                                       listen: false),
                                 ),
@@ -656,8 +684,8 @@ class LevelCircle extends StatelessWidget {
           children: [
             Container(
               margin: EdgeInsets.symmetric(vertical: 5),
-              width: 80,
-              height: 80,
+              width: 95,
+              height: 95,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(imageName),
@@ -665,22 +693,23 @@ class LevelCircle extends StatelessWidget {
                 ),
               ),
               child: Container(
-                padding: EdgeInsets.only(right: 0, bottom: 20),
+                padding: EdgeInsets.only(right: 0, bottom: 15),
                 child: Center(
-                  child: Text(
-                    '$level',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
+                  child: StrokeText(
+                    text: "$level",
+                    textStyle: TextStyle(
+                        fontSize: 34,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                    strokeColor: Colors.black,
+                    strokeWidth: 2,
                   ),
                 ),
               ),
             ),
             if (isNext)
               Positioned(
-                top: 50, // Adjust as necessary
+                top: 65, // Adjust as necessary
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
@@ -700,7 +729,7 @@ class LevelCircle extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.grey.shade800,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 15,
                     ),
                   ),
                 ),
@@ -709,31 +738,5 @@ class LevelCircle extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class BubblePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.yellow // Color of the triangle, same as your bubble
-      ..style = PaintingStyle.fill;
-
-    // Starting point for the path
-    final path = Path()
-      ..moveTo(size.width / 2, size.height)
-      // Draw line to the right bottom corner of the triangle
-      ..lineTo(size.width / 2 + 10, size.height + 10)
-      // Draw line to the left bottom corner of the triangle
-      ..lineTo(size.width / 2 - 10, size.height + 10)
-      // Draw line back to the start point
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
   }
 }
