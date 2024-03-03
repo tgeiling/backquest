@@ -2,24 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:numberpicker/numberpicker.dart';
-
 import 'elements.dart';
+import 'settings.dart';
 
 class ProfilProvider extends ChangeNotifier {
   int _completedLevels = 0;
-  int _level = 0; // Add this line
-  int _exp = 0; // Add this line
+  int _level = 0;
+  int _exp = 0;
+
+  // Keeping only weekly variables
+  int _weeklyGoal = 0;
+  int _weeklyDone = 0;
+
+  // Getters for weekly variables
+  int get weeklyGoal => _weeklyGoal;
+  int get weeklyDone => _weeklyDone;
 
   int get completedLevels => _completedLevels;
-  int get level => _level; // Add this getter
-  int get exp => _exp; // Add this getter
+  int get level => _level;
+  int get exp => _exp;
 
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    int completedLevels = prefs.getInt('completedLevels') ?? 0;
-    setCompletedLevels(
-        completedLevels); // Use your existing method to set the initial state
+    _completedLevels = prefs.getInt('completedLevels') ?? 0;
+    _level = prefs.getInt('level') ?? 0; // Load level from SharedPreferences
+    _exp = prefs.getInt('exp') ?? 0; // Load exp from SharedPreferences
+
+    // Load weekly values from SharedPreferences
+    _weeklyGoal = prefs.getInt('weeklyGoal') ?? 0;
+    _weeklyDone = prefs.getInt('weeklyDone') ?? 0;
+
+    notifyListeners(); // Notify listeners once after loading all values
   }
 
   void setCompletedLevels(int levels) {
@@ -28,14 +41,23 @@ class ProfilProvider extends ChangeNotifier {
   }
 
   void setLevel(int newLevel) {
-    // Add this method
     _level = newLevel;
     notifyListeners();
   }
 
   void setExp(int newExp) {
-    // Add this method
     _exp = newExp;
+    notifyListeners();
+  }
+
+  // Setters for weekly variables
+  void setWeeklyGoal(int goal) {
+    _weeklyGoal = goal;
+    notifyListeners();
+  }
+
+  void setWeeklyDone(int done) {
+    _weeklyDone = done;
     notifyListeners();
   }
 
@@ -95,34 +117,6 @@ class ProfilPageState extends State<ProfilPage> {
                   "Ziele",
                   style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 5.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween, // Align items to both ends
-                  children: [
-                    Text(
-                      "Monat",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      "2/4", // Your desired text on the right
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 6.0),
-                Container(
-                  height: 8.0,
-                  color: Colors.orange[50],
-                  child: LinearProgressIndicator(
-                    value: 0.47, // Your progress value
-                    backgroundColor: Colors
-                        .orange[50], // Background color of the progress bar
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.cyan, // Color of the progress indicator
-                    ),
-                  ),
-                ),
                 SizedBox(height: 23.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment
@@ -138,19 +132,8 @@ class ProfilPageState extends State<ProfilPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 6.0),
-                Container(
-                  height: 8.0,
-                  color: Colors.orange[50],
-                  child: LinearProgressIndicator(
-                    value: 0.78, // Your progress value for "Woche"
-                    backgroundColor: Colors
-                        .orange[50], // Background color of the progress bar
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.cyan, // Color of the progress indicator
-                    ),
-                  ),
-                ),
+                SizedBox(height: 12.0),
+                ProgressBarWithPill(initialProgress: 0.5),
                 SizedBox(height: 39.0),
                 Text(
                   "Statistiken",
@@ -204,37 +187,62 @@ class ProfilPageState extends State<ProfilPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 11.0, right: 100),
-                  child: Text(
-                    "Benjamin",
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceBetween, // Aligns the children at the start and end of the row
+                  children: [
+                    Text(
+                      "Benjamin",
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.settings),
+                      iconSize: 20.0,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      },
+                    )
+                  ],
                 ),
                 SizedBox(height: 10.0),
-                PressableButton(
-                  onPressed: () => _showGoalSettingDialog(context),
-                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 25),
-                  child: Center(
-                      child: Text("Ziele",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ))),
-                ),
+                Consumer<ProfilProvider>(
+                  builder: (context, profilProvider, child) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // Aligns the text to the start of the column
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              "${profilProvider.weeklyDone}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(width: 8), // Space between text and image
+                            Image.asset('assets/leaf.png',
+                                width: 24, height: 24),
+                          ],
+                        ),
+                        SizedBox(
+                            height:
+                                4), // Space between the row and the text below
+                        Text(
+                          "Tage diese Woche trainiert",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    );
+                  },
+                )
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Future<void> _showGoalSettingDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => GoalSettingDialog(),
     );
   }
 
@@ -372,73 +380,6 @@ class ProfilPageState extends State<ProfilPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class GoalSettingDialog extends StatefulWidget {
-  final int initialWeeklyGoal;
-  final int initialMonthlyGoal;
-
-  const GoalSettingDialog({
-    Key? key,
-    this.initialWeeklyGoal = 3,
-    this.initialMonthlyGoal = 12,
-  }) : super(key: key);
-
-  @override
-  _GoalSettingDialogState createState() => _GoalSettingDialogState();
-}
-
-class _GoalSettingDialogState extends State<GoalSettingDialog> {
-  late int weeklyGoal;
-  late int monthlyGoal;
-
-  @override
-  void initState() {
-    super.initState();
-    weeklyGoal = widget.initialWeeklyGoal;
-    monthlyGoal = widget.initialMonthlyGoal;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Setze deine Ziele'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: <Widget>[
-            Text('Wöchentliche Übungen Ziele:'),
-            NumberPicker(
-              value: weeklyGoal,
-              minValue: 0,
-              maxValue: 20,
-              onChanged: (value) => setState(() => weeklyGoal = value),
-            ),
-            SizedBox(height: 20),
-            Text('Monatliche Übungen Ziele:'),
-            NumberPicker(
-              value: monthlyGoal,
-              minValue: 0,
-              maxValue: 100,
-              onChanged: (value) => setState(() => monthlyGoal = value),
-            ),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: Text('Abbrechen'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        TextButton(
-          child: Text('Speichern'),
-          onPressed: () {
-            // Optionally, save the goals here or pass them back to the parent widget
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
     );
   }
 }

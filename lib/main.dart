@@ -165,10 +165,10 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         titleSpacing: 0,
         title: CompletedLevelsAppBar(),
-      ),
+      ), */
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
@@ -254,10 +254,11 @@ class ButtonTestScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              "Passen Sie Ihr Training an und starten Sie direkt",
+              "Passen Sie Ihr Training an",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
+            SizedBox(height: 10),
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,

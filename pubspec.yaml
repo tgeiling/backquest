@@ -102,6 +102,7 @@ flutter:
     - assets/fireIcon.png
     - assets/logo.png
     - assets/close.png
+    - assets/leaf.png
     - assets/button_green.png
     - assets/button_grey.png
     - assets/button_locked.png
