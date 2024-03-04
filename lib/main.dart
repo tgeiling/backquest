@@ -26,30 +26,42 @@ class LevelNotifier with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // Define your levels here
     Map<int, Level> tempLevels = {
-      1: Level(id: 1, description: "Description for level 1"),
-      2: Level(id: 2, description: "Description for level 2"),
-      3: Level(id: 3, description: "Description for level 3"),
-      4: Level(id: 4, description: "Description for level 4"),
+      1: Level(id: 1, description: "Description for level 1", minutes: 13),
+      2: Level(id: 2, description: "Description for level 2", minutes: 12),
+      3: Level(id: 3, description: "Description for level 3", minutes: 14),
+      4: Level(id: 4, description: "Description for level 4", minutes: 11),
       5: Level(
-          id: 5, description: "Description for level 5", reward: "Gold Coin"),
-      6: Level(id: 6, description: "Description for level 6"),
-      7: Level(id: 7, description: "Description for level 7"),
-      8: Level(id: 8, description: "Description for level 8"),
-      9: Level(id: 9, description: "Description for level 9"),
+          id: 5,
+          description: "Description for level 5",
+          reward: "Gold Coin",
+          minutes: 6),
+      6: Level(id: 6, description: "Description for level 6", minutes: 6),
+      7: Level(id: 7, description: "Description for level 7", minutes: 6),
+      8: Level(id: 8, description: "Description for level 8", minutes: 6),
+      9: Level(id: 9, description: "Description for level 9", minutes: 6),
       10: Level(
-          id: 10, description: "Description for level 10", reward: "Gold Coin"),
-      11: Level(id: 11, description: "Description for level 11"),
-      12: Level(id: 12, description: "Description for level 12"),
-      13: Level(id: 13, description: "Description for level 13"),
-      14: Level(id: 14, description: "Description for level 14"),
+          id: 10,
+          description: "Description for level 10",
+          reward: "Gold Coin",
+          minutes: 6),
+      11: Level(id: 11, description: "Description for level 11", minutes: 6),
+      12: Level(id: 12, description: "Description for level 12", minutes: 6),
+      13: Level(id: 13, description: "Description for level 13", minutes: 6),
+      14: Level(id: 14, description: "Description for level 14", minutes: 6),
       15: Level(
-          id: 15, description: "Description for level 15", reward: "Gold Coin"),
-      16: Level(id: 16, description: "Description for level 16"),
-      17: Level(id: 17, description: "Description for level 17"),
-      18: Level(id: 18, description: "Description for level 18"),
-      19: Level(id: 19, description: "Description for level 19"),
+          id: 15,
+          description: "Description for level 15",
+          reward: "Gold Coin",
+          minutes: 6),
+      16: Level(id: 16, description: "Description for level 16", minutes: 6),
+      17: Level(id: 17, description: "Description for level 17", minutes: 6),
+      18: Level(id: 18, description: "Description for level 18", minutes: 6),
+      19: Level(id: 19, description: "Description for level 19", minutes: 6),
       20: Level(
-          id: 20, description: "Description for level 20", reward: "Gold Coin"),
+          id: 20,
+          description: "Description for level 20",
+          reward: "Gold Coin",
+          minutes: 6),
     };
 
     // Load isDone status from SharedPreferences and update tempLevels
@@ -58,6 +70,7 @@ class LevelNotifier with ChangeNotifier {
         entry.key: Level(
           id: entry.value.id,
           description: entry.value.description,
+          minutes: entry.value.minutes,
           reward: entry.value.reward,
           isDone: prefs.getBool('level_${entry.value.id}_isDone') ?? false,
         ),
@@ -393,12 +406,14 @@ class CompletedLevelsAppBar extends StatelessWidget
 class Level {
   final int id;
   final String description;
+  final int minutes;
   final String reward;
   bool isDone;
 
   Level(
       {required this.id,
       required this.description,
+      this.minutes = 15,
       this.reward = '',
       this.isDone = false});
 }
@@ -534,7 +549,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      "Text 123",
+                      "${level.description}",
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -568,7 +583,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('15 min',
+                            Text('${level.minutes} min',
                                 style: TextStyle(
                                     fontSize: 20)), // Increased text size
                             SizedBox(
@@ -582,41 +597,29 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VideoCombinerScreen(
-                                  levelId: level.id,
-                                  levelNotifier: Provider.of<LevelNotifier>(
-                                      context,
-                                      listen: false),
-                                  profilProvider: Provider.of<ProfilProvider>(
-                                      context,
-                                      listen: false),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            color: Colors
-                                .white, // Set the background color of the container
-                            child: Image.asset(
-                              'assets/button_start.png',
-                              width:
-                                  100, // Adjust the width and height as needed
-                              height: 100,
-                            ),
+                  PressableButton(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoCombinerScreen(
+                            levelId: level.id,
+                            levelNotifier: Provider.of<LevelNotifier>(context,
+                                listen: false),
+                            profilProvider: Provider.of<ProfilProvider>(context,
+                                listen: false),
                           ),
                         ),
-                      )
-                    ],
+                      );
+                    },
+                    child: Text("Starten",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
                   ),
+                  SizedBox(height: 30.0),
                 ],
               ),
             ),

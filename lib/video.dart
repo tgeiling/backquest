@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:backquest/stats.dart';
 import 'package:chewie/chewie.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
@@ -11,6 +12,7 @@ import 'package:quickalert/quickalert.dart';
 import 'dart:io';
 
 import 'main.dart';
+import 'questionaire.dart';
 
 class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;
@@ -137,20 +139,14 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             if (hasBeenUpdated) {
-              QuickAlert.show(
-                context: context,
-                type: QuickAlertType.success,
-                title: 'Herzlichen Glückwunsch!',
-                text:
-                    'Gut gemacht, du hast deine Trainingssitzung abgeschlossen.',
-                confirmBtnText: 'zurück',
-                onConfirmBtnTap: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                showCancelBtn: true,
-                cancelBtnText: 'bleiben',
-              );
+              if (hasBeenUpdated) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AfterVideoView()), // Directly open AfterVideoView
+                );
+              }
             } else {
               QuickAlert.show(
                 context: context,
@@ -194,44 +190,94 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 Future<void> combineVideos() async {
   final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
 
-// Define the paths of the input videos in the assets
-  final List<String> videoAssetPaths = [
-    'assets/videos/abschluss1_cp_fesi.mp4',
-    'assets/videos/birddog_hiswi-auf_4fl-auf.mp4',
-    'assets/videos/birddog-wippen-links_4fl-auf_4fl-auf.mp4',
-    'assets/videos/childpose_4fl_cp.mp4',
-    'assets/videos/childpose_cp_cp.mp4',
-    'assets/videos/katzekuh_4fl-auf_4fl-auf_.mp4',
+  // Define the URLs of the input streams
+  final List<String> streamUrls = [
+    'https://player.vimeo.com/external/887648660.m3u8?s=63218d565ec58f2d2e3b8e850df015e9520f5ac3&logging=false',
+    'https://player.vimeo.com/external/887650209.m3u8?s=add52ae6fce53491a0dcc44b04afeae9d7bcdb37&logging=false',
+    'https://player.vimeo.com/external/887649947.m3u8?s=9876c8bcb50399733deb3ccea025989948aff93a&logging=false',
+    'https://player.vimeo.com/external/887649631.m3u8?s=6ae79d78e9ada9cb217346286d7d671682358f5a&logging=false',
+    'https://player.vimeo.com/external/887648435.m3u8?s=ab12d21b9e1f2a250e0035b5ede7a15fff9429fa&logging=false'
   ];
 
-  // Copy videos from assets to temporary files
-  final List<String> videoFilePaths = await Future.wait(
-    videoAssetPaths.map((assetPath) => _assetToFile(assetPath)),
-  );
+  // Temporary directory for intermediate files
+  final tempDir = await getTemporaryDirectory();
+  final List<String> downloadedPaths = [];
 
-  // Create a temporary file to list all videos for the concat demuxer
-  final String listPath =
-      (await getTemporaryDirectory()).path + '/video_list.txt';
-  final File listFile = File(listPath);
-  final String content =
-      videoFilePaths.map((path) => "file '$path'").join('\n');
-  await listFile.writeAsString(content);
+  // Download and convert each M3U8 stream to a file
+  for (int i = 0; i < streamUrls.length; i++) {
+    final outputPath = '${tempDir.path}/video_$i.mp4';
+    final downloadCommand = '-i ${streamUrls[i]} -c copy $outputPath';
+    final returnCode = await _flutterFFmpeg.execute(downloadCommand);
+    if (returnCode == 0) {
+      print('Download and conversion successful for stream $i');
+      downloadedPaths.add(outputPath);
+    } else {
+      print(
+          'Error downloading/converting stream $i. FFmpeg returned code: $returnCode');
+      return; // Exit if any download fails
+    }
+  }
 
-  // Define the output path for the combined video
-  final String outputPath = await _localPath + '/combined_video.mp4';
+  // Generate the file list for concatenation
+  final fileListPath = '${tempDir.path}/file_list.txt';
+  final fileList = File(fileListPath);
+  final fileContent = downloadedPaths.map((path) => "file '$path'").join('\n');
+  await fileList.writeAsString(fileContent);
 
-  // FFmpeg command using the concat demuxer
-  final String command =
-      '-y -f concat -safe 0 -i $listPath -c copy $outputPath';
+  // Concatenate the downloaded video files
+  final outputPath = '${tempDir.path}/combined_video.mp4';
+  final concatCommand =
+      '-f concat -safe 0 -i $fileListPath -c copy $outputPath';
+  final concatReturnCode = await _flutterFFmpeg.execute(concatCommand);
 
-  // Run FFmpeg command
-  final int returnCode = await _flutterFFmpeg.execute(command);
-
-  if (returnCode == 0) {
+  if (concatReturnCode == 0) {
     print('Video combination successful. Combined video saved at: $outputPath');
   } else {
-    print('Error combining videos. FFmpeg returned code: $returnCode');
+    print('Error combining videos. FFmpeg returned code: $concatReturnCode');
   }
+}
+
+Future<String> downloadFile(String url, int index) async {
+  final client = http.Client();
+  final request = http.Request('GET', Uri.parse(url));
+  final streamedResponse = await client.send(request);
+
+  final contentLength = streamedResponse.contentLength;
+  int receivedBytes = 0;
+
+  final directory = await getTemporaryDirectory();
+  // Use the index to create a unique file name for each video
+  final filePath = '${directory.path}/video_$index.mp4';
+  final file = File(filePath);
+  final iosink = file.openWrite();
+
+  streamedResponse.stream.listen(
+    (List<int> chunk) {
+      // Update the received bytes
+      receivedBytes += chunk.length;
+      print(
+          'Download progress: ${(receivedBytes / contentLength! * 100).toStringAsFixed(0)}%');
+
+      // Write the file chunk
+      iosink.add(chunk);
+    },
+    onDone: () async {
+      await iosink.flush();
+      await iosink.close();
+      print('Download completed: $filePath');
+    },
+    onError: (e) {
+      print('Error: $e');
+      iosink.close();
+      client.close();
+    },
+    cancelOnError: true,
+  );
+
+  // Since we are listening to the stream, we don't want to return the path immediately
+  // Wait for the stream to finish and the file to close
+  await iosink.done;
+  return filePath;
 }
 
 Future<String> _assetToFile(String assetPath) async {

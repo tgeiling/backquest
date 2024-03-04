@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
 class PressableButton extends StatefulWidget {
-  final Widget child; // Accept any widget as a child
-  final EdgeInsets padding; // Accept padding as a parameter
-  final VoidCallback? onPressed; // Optional onPressed callback
+  final Widget child;
+  final EdgeInsets padding;
+  final VoidCallback? onPressed;
+  final Color color;
+  final Color shadowColor;
 
   PressableButton({
     Key? key,
     required this.child,
     required this.padding,
+    this.color = const Color(0xFF59c977),
+    this.shadowColor = const Color(0xFF48a160),
     this.onPressed, // Optional parameter
   }) : super(key: key);
 
@@ -39,13 +43,13 @@ class _PressableButtonState extends State<PressableButton> {
         duration: Duration(milliseconds: 100),
         padding: widget.padding,
         decoration: BoxDecoration(
-          color: Color(0xFF59c977),
+          color: widget.color,
           borderRadius: BorderRadius.circular(10),
           boxShadow: _isPressed
               ? []
               : [
                   BoxShadow(
-                    color: Color(0xFF48a160),
+                    color: widget.shadowColor,
                     offset: Offset(0, 5),
                     blurRadius: 0,
                   ),

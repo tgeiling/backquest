@@ -133,7 +133,7 @@ class ProfilPageState extends State<ProfilPage> {
                   ],
                 ),
                 SizedBox(height: 12.0),
-                ProgressBarWithPill(initialProgress: 0.5),
+                ProgressBarWithPill(initialProgress: 0.75),
                 SizedBox(height: 39.0),
                 Text(
                   "Statistiken",
