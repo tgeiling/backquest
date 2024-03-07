@@ -102,81 +102,30 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _authenticated = false;
+
+  void _setAuthenticated(bool value) {
+    setState(() {
+      _authenticated = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Duolingo Levels',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: MainScaffold());
-  }
-}
-
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _authService = AuthService();
-
-  void _attemptLogin() async {
-    bool success = await _authService.login(
-      _usernameController.text,
-      _passwordController.text,
-    );
-
-    if (success) {
-      Navigator.pop(context);
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Login Failed'),
-            content: Text('Invalid username or password. Please try again.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Close'),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            ElevatedButton(
-              onPressed: _attemptLogin,
-              child: Text('Login'),
-            ),
-          ],
-        ),
+      title: 'Duolingo Levels',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: _authenticated
+          ? MainScaffold()
+          : LoginScreen(setAuthenticated: _setAuthenticated),
     );
   }
 }
