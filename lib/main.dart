@@ -589,7 +589,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                             SizedBox(
                                 width: 20), // Increased spacing between icons
                             Image.asset(
-                              "assets/icons/yoga.png",
+                              "assets/yoga.png",
                               width: 60, // Adjust the image size as needed
                               height: 60, // Adjust the image size as needed
                             ),
