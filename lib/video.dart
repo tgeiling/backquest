@@ -54,29 +54,20 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       _isLoading = true; // Show loading indicator while processing
     });
 
-    // Simulating video combining process
-    await combineVideos(); // Ensure this is your actual video combining function
+    // Trigger video combining process on the server
+    await combineVideos();
 
-    // Assuming combineVideos saves the output video to a known path
-    final String outputVideoPath = (await _localPath) + '/combined_video.mp4';
+    // URL of the concatenated video on the server
+    // Assuming your server is accessible via HTTP and the concatenated video is served at the /video endpoint
+    final String outputVideoUrl = 'http://135.125.218.147:3000/video';
 
-    // Check if the combined video file exists before trying to play it
-    final File outputFile = File(outputVideoPath);
-    if (await outputFile.exists()) {
-      _videoPlayerController = VideoPlayerController.file(outputFile);
-      await _videoPlayerController!.initialize();
-      _createChewieController();
-      setState(() {
-        _isLoading = false;
-      });
-    } else {
-      // Handle the case where the video file doesn't exist
-      setState(() {
-        _isLoading = false;
-        // Optionally, set some state variable to show an error message to the user
-      });
-      print('Combined video file does not exist: $outputVideoPath');
-    }
+    // Initialize the video player controller with the network URL
+    _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
+    await _videoPlayerController!.initialize();
+    _createChewieController();
+    setState(() {
+      _isLoading = false;
+    });
 
     _videoPlayerController!.addListener(videoProgressListener);
   }
@@ -102,30 +93,29 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       final duration = _chewieController!.videoPlayerController.value.duration;
       final halfwayDuration = duration * 0.5;
 
-      // Calculate the difference between the current position and the last watched position.
       final difference = position - lastWatchedPosition;
 
-      // If the difference is greater than 5 seconds, don't count it as watched.
-      if (difference < const Duration(seconds: 5)) {
+      if (difference > Duration.zero &&
+          difference < const Duration(seconds: 5)) {
         watchedDuration += difference;
       }
 
-      // Update the last watched position to the current position.
-      lastWatchedPosition = position;
+      if (difference > Duration.zero &&
+          difference < const Duration(seconds: 10)) {
+        lastWatchedPosition = position;
+      }
 
       print("#################################");
       print(watchedDuration);
       print(halfwayDuration);
       print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
-      if (watchedDuration > halfwayDuration) {
-        if (!hasBeenUpdated) {
-          if (widget.levelId != 0) {
-            widget.levelNotifier.updateLevelStatus(widget.levelId, true);
-            widget.profilProvider.setCompletedLevels(widget.levelId);
-          }
-          hasBeenUpdated = true;
+      if (watchedDuration > halfwayDuration && !hasBeenUpdated) {
+        if (widget.levelId != 0) {
+          widget.levelNotifier.updateLevelStatus(widget.levelId, true);
+          widget.profilProvider.setCompletedLevels(widget.levelId);
         }
+        hasBeenUpdated = true;
       }
     }
   }
@@ -187,14 +177,14 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   }
 }
 
-Future<void> combineVideos() async {
+/* Future<void> combineVideos() async {
   final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
 
 // Define the paths of the input videos in the assets
   final List<String> videoAssetPaths = [
     'assets/videos/abschluss1_cp_fesi.mp4',
-    'assets/videos/birddog_hiswi-auf_4fl-auf.mp4',
-    'assets/videos/birddog-wippen-links_4fl-auf_4fl-auf.mp4',
+    'assets/videos/birddog_hiswi_auf_4fl_auf.mp4',
+    'assets/videos/birddog_wippen_links_4fl_auf_4fl_auf.mp4',
     'assets/videos/childpose_4fl_cp.mp4',
     'assets/videos/childpose_cp_cp.mp4',
     'assets/videos/katzekuh_4fl-auf_4fl-auf_.mp4',
@@ -227,6 +217,18 @@ Future<void> combineVideos() async {
     print('Video combination successful. Combined video saved at: $outputPath');
   } else {
     print('Error combining videos. FFmpeg returned code: $returnCode');
+  }
+} */
+
+Future<void> combineVideos() async {
+  final String url =
+      'http://135.125.218.147:3000/concatenate'; // Replace with your actual server URL and port
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    print('Video concatenation triggered successfully.');
+  } else {
+    throw Exception('Failed to trigger video concatenation');
   }
 }
 
