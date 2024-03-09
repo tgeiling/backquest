@@ -89,21 +89,10 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 
   void videoProgressListener() {
     if (_chewieController != null) {
-      final position = _chewieController!.videoPlayerController.value.position;
       final duration = _chewieController!.videoPlayerController.value.duration;
       final halfwayDuration = duration * 0.5;
 
-      final difference = position - lastWatchedPosition;
-
-      if (difference > Duration.zero &&
-          difference < const Duration(seconds: 5)) {
-        watchedDuration += difference;
-      }
-
-      if (difference > Duration.zero &&
-          difference < const Duration(seconds: 10)) {
-        lastWatchedPosition = position;
-      }
+      watchedDuration += Duration(milliseconds: 300);
 
       print("#################################");
       print(watchedDuration);
