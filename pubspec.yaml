@@ -38,6 +38,7 @@ dependencies:
   http: ^0.13.6
   path_provider: ^2.0.2
   provider: ^6.1.1
+  flutter_secure_storage: ^9.0.0
   shared_preferences: ^2.0.6
   video_player: ^2.2.18
   chewie: ^1.4.0

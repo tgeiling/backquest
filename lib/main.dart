@@ -108,22 +108,41 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _authenticated = false;
+  bool? _authenticated;
+  final AuthService _authService = AuthService();
 
-  void _setAuthenticated(bool value) {
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  Future<void> _checkAuthentication() async {
+    final expired = await _authService.isTokenExpired();
     setState(() {
-      _authenticated = value;
+      _authenticated = !expired;
     });
+  }
+
+  void _setAuthenticated(bool authenticated) {
+    setState(() => _authenticated = authenticated);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_authenticated == null) {
+      return MaterialApp(
+        home: CircularProgressIndicator(), // Or some loading indicator
+      );
+    }
+
+    // Once the check is complete, show the appropriate screen
     return MaterialApp(
       title: 'Duolingo Levels',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _authenticated
+      home: _authenticated!
           ? MainScaffold()
           : LoginScreen(setAuthenticated: _setAuthenticated),
     );

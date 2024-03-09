@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-bool authenticated = false;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
   final String baseUrl = 'http://135.125.218.147:3000';
+  final storage = FlutterSecureStorage();
 
   Future<bool> login(String username, String password) async {
     final response = await http.post(
@@ -15,11 +15,17 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
+      final token = jsonDecode(response.body)[
+          'accessToken']; // Assuming the token is returned in this manner
+      await storage.write(key: 'authToken', value: token);
+
       return true;
+    } else {
+      print('Login failed with status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      return false;
     }
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    return false;
   }
 
   Future<bool> register(String username, String password) async {
@@ -38,6 +44,34 @@ class AuthService {
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
     return false;
+  }
+
+  Future<bool> isTokenExpired() async {
+    final token = await storage.read(key: 'authToken');
+    if (token == null) return true;
+
+    final expiration = getTokenExpiration(token);
+    if (expiration == null) return true;
+
+    // Check if the token expires within the next minute
+    return expiration.isBefore(DateTime.now().add(Duration(minutes: 1)));
+  }
+
+  DateTime? getTokenExpiration(String token) {
+    try {
+      final payload = token.split('.')[1];
+      final decoded = utf8.decode(base64.decode(base64.normalize(payload)));
+      final payloadMap = json.decode(decoded);
+      if (payloadMap is Map<String, dynamic>) {
+        final exp = payloadMap['exp'];
+        if (exp is int) {
+          return DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+        }
+      }
+    } catch (e) {
+      print("Error decoding token: $e");
+    }
+    return null;
   }
 }
 
@@ -62,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
-      authenticated = true;
       widget.setAuthenticated(true);
     } else {
       showDialog(
