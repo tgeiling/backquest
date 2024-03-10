@@ -126,6 +126,17 @@ class _MyAppState extends State<MyApp> {
 
   void _setAuthenticated(bool authenticated) {
     setState(() => _authenticated = authenticated);
+    _checkQuestionnaireCompletion();
+  }
+
+  Future<void> _checkQuestionnaireCompletion() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool questionnaireCompleted =
+        prefs.getBool('questionnaireCompleted') ?? false;
+
+    if (questionnaireCompleted) {
+      questionaireDone = true;
+    }
   }
 
   @override
@@ -143,7 +154,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: _authenticated!
-          ? MainScaffold()
+          ? (questionaireDone ? MainScaffold() : QuestionnaireScreen())
           : LoginScreen(setAuthenticated: _setAuthenticated),
     );
   }
@@ -170,7 +181,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.5 - 90,
+              height: MediaQuery.of(context).size.height * 0.4,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -190,25 +201,10 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   void initState() {
     super.initState();
-    _checkQuestionnaireCompletion();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Provider.of<ProfilProvider>(context, listen: false)
           .loadInitialData();
     });
-  }
-
-  Future<void> _checkQuestionnaireCompletion() async {
-    final prefs = await SharedPreferences.getInstance();
-    final bool questionnaireCompleted =
-        prefs.getBool('questionnaireCompleted') ?? false;
-
-    if (!questionnaireCompleted) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => QuestionnaireScreen()),
-        );
-      });
-    }
   }
 
   @override
