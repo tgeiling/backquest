@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkAuthentication() async {
     final expired = await _authService.isTokenExpired();
     setState(() {
-      _authenticated = !expired;
+      _setAuthenticated(!expired);
     });
   }
 
@@ -176,23 +176,25 @@ class _MainScaffoldState extends State<MainScaffold> {
       backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent, // Removes the semi-transparent overlay
       builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.4,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+        return Transform.translate(
+          offset: Offset(0, -90), // Shifts the modal up by 90 pixels
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(16),
+                height: MediaQuery.of(context).size.height * 0.4,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
                 ),
+                child: ButtonTestScreen(),
               ),
-              child: ButtonTestScreen(),
-            ),
-            SizedBox(height: 90),
-          ],
+            ],
+          ),
         );
       },
     );
