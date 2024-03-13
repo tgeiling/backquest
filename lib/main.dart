@@ -165,221 +165,244 @@ class MainScaffold extends StatefulWidget {
   _MainScaffoldState createState() => _MainScaffoldState();
 }
 
-class _MainScaffoldState extends State<MainScaffold> {
+class _MainScaffoldState extends State<MainScaffold>
+    with SingleTickerProviderStateMixin {
   PageController _pageController = PageController();
   int _currentIndex = 0;
+  bool _isModalVisible = false;
 
-  void _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent, // Removes the semi-transparent overlay
-      builder: (BuildContext context) {
-        return Transform.translate(
-          offset: Offset(0, -90), // Shifts the modal up by 90 pixels
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(16),
-                height: MediaQuery.of(context).size.height * 0.4,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
-                child: ButtonTestScreen(),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<ProfilProvider>(context, listen: false)
-          .loadInitialData();
+  void _toggleModal() {
+    setState(() {
+      _isModalVisible = !_isModalVisible;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /* appBar: AppBar(
-        titleSpacing: 0,
-        title: CompletedLevelsAppBar(),
-      ), */
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+      body: Stack(
         children: [
-          Container(
-            color: Color.fromRGBO(0, 59, 46, 0.9),
-            child: LevelSelectionScreen(),
-          ),
-          ProfilPage(), // Ensure this widget is defined elsewhere
-        ],
-      ),
-      bottomNavigationBar: Container(
-        height: 90,
-        child: Column(
-          children: [
-            Container(
-              // Grey line container
-              height: 1, // Height of the line
-              color: Colors.grey, // Color of the line
+          GestureDetector(
+            onTap: () {
+              if (_isModalVisible) {
+                _toggleModal();
+              }
+            },
+            behavior: HitTestBehavior
+                .opaque, // To ensure it captures taps over the entire scaffold body
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              children: [
+                Container(
+                    color: Color.fromRGBO(0, 59, 46, 0.9),
+                    child: LevelSelectionScreen()),
+                ProfilPage(),
+              ],
             ),
-            Expanded(
-              // SalomonBottomBar needs to be wrapped with Expanded inside Column
-              child: SalomonBottomBar(
-                currentIndex: _currentIndex,
-                onTap: (i) {
-                  _pageController.jumpToPage(i);
-                },
-                items: [
-                  SalomonBottomBarItem(
-                    icon: Image.asset(
-                      'assets/homeIcon.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                    title: Text("Main"),
-                    selectedColor: Colors.blue,
-                  ),
-                  SalomonBottomBarItem(
-                    icon: Image.asset(
-                      'assets/barchartIcon.png',
-                      width: 44,
-                      height: 44,
-                    ),
-                    title: Text("Stats"),
-                    selectedColor: Colors.blue,
-                  ),
-                ],
+          ),
+          // Modal Container
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            bottom: _isModalVisible
+                ? 0
+                : -(MediaQuery.of(context).size.height * 0.5),
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+              ),
+              child: Container(
+                height: 300,
+                width: double.maxFinite,
+                // Wrap your ButtonTestScreen in a widget that prevents tap propagation
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap:
+                      () {}, // Empty onTap handler to prevent taps from propagating to the GestureDetector behind it
+                  child: ButtonTestScreen(toggleModal: _toggleModal),
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      floatingActionButton: Container(
-          child: GestureDetector(
-        onTap: () {
-          _showModalBottomSheet(context);
-        }, // Call this method to show the overlay
+      bottomNavigationBar: _buildBottomNavigationBar(),
+      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return Container(
+      height: 90,
+      child: Column(
+        children: [
+          Container(
+            // Grey line container
+            height: 1, // Height of the line
+            color: Colors.grey, // Color of the line
+          ),
+          Expanded(
+            // SalomonBottomBar needs to be wrapped with Expanded inside Column
+            child: SalomonBottomBar(
+              currentIndex: _currentIndex,
+              onTap: (i) {
+                _pageController.jumpToPage(i);
+              },
+              items: [
+                SalomonBottomBarItem(
+                  icon: Image.asset(
+                    'assets/homeIcon.png',
+                    width: 40,
+                    height: 40,
+                  ),
+                  title: Text("Main"),
+                  selectedColor: Colors.blue,
+                ),
+                SalomonBottomBarItem(
+                  icon: Image.asset(
+                    'assets/barchartIcon.png',
+                    width: 44,
+                    height: 44,
+                  ),
+                  title: Text("Stats"),
+                  selectedColor: Colors.blue,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFloatingActionButton() {
+    return Container(
+      child: GestureDetector(
+        onTap: _toggleModal, // Use _toggleModal to control the modal visibility
         child: PressableButton(
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          child: Icon(
-            Icons.arrow_upward,
-            color: Colors.white,
-            size: 24,
-          ),
+          child: Icon(Icons.arrow_upward, color: Colors.white, size: 24),
         ),
-      )),
-      floatingActionButtonLocation: FloatingActionButtonLocation
-          .endFloat, // Position the button at the bottom end
+      ),
     );
   }
 }
 
-class ButtonTestScreen extends StatelessWidget {
+class ButtonTestScreen extends StatefulWidget {
+  final VoidCallback toggleModal; // Callback for toggling the modal
+
+  ButtonTestScreen({required this.toggleModal});
+
+  @override
+  _ButtonTestScreenState createState() => _ButtonTestScreenState();
+}
+
+class _ButtonTestScreenState extends State<ButtonTestScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              "Passen Sie Ihr Training an",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 3 / 1, // Adjust based on your button size
-                children: <Widget>[
-                  PressableButton(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Center(
-                        child: Text("Fokus",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ))),
-                  ),
-                  PressableButton(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Center(
-                        child: Text("Dauer",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ))),
-                  ),
-                  PressableButton(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Center(
-                        child: Text("Art",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ))),
-                  ),
-                  PressableButton(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    child: Center(
-                        child: Text("Ort",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ))),
-                  ),
-                ],
+    return GestureDetector(
+        onTap: widget.toggleModal,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                "Passen Sie Ihr Training an",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
               ),
-            ),
-            SizedBox(height: 10),
-            PressableButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VideoCombinerScreen(
-                      levelId: 0, // Use the correct level ID here
-                      levelNotifier:
-                          Provider.of<LevelNotifier>(context, listen: false),
-                      profilProvider:
-                          Provider.of<ProfilProvider>(context, listen: false),
+              SizedBox(height: 10),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 3 / 1, // Adjust based on your button size
+                  children: <Widget>[
+                    PressableButton(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Center(
+                          child: Text("Fokus",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ))),
                     ),
-                  ),
-                );
-              },
-              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-              child: Center(
-                  child: Text("Jetzt starten",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ))),
-            ),
-          ],
-        ),
-      ),
-    );
+                    PressableButton(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Center(
+                          child: Text("Dauer",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ))),
+                    ),
+                    PressableButton(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Center(
+                          child: Text("Art",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ))),
+                    ),
+                    PressableButton(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      child: Center(
+                          child: Text("Ort",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ))),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              PressableButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VideoCombinerScreen(
+                        levelId: 0, // Use the correct level ID here
+                        levelNotifier:
+                            Provider.of<LevelNotifier>(context, listen: false),
+                        profilProvider:
+                            Provider.of<ProfilProvider>(context, listen: false),
+                      ),
+                    ),
+                  );
+                },
+                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                child: Center(
+                    child: Text("Jetzt starten",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ))),
+              ),
+            ],
+          ),
+        ));
   }
 }
 
