@@ -173,10 +173,14 @@ class _MainScaffoldState extends State<MainScaffold>
   PageController _pageController = PageController();
   int _currentIndex = 0;
   bool _isModalVisible = false;
+  String modalDescription = "Declaring Description";
 
-  void _toggleModal() {
+  void _toggleModal([String setDescription = "Default Description"]) {
     setState(() {
       _isModalVisible = !_isModalVisible;
+      if (_isModalVisible) {
+        modalDescription = setDescription;
+      }
     });
   }
 
@@ -233,7 +237,9 @@ class _MainScaffoldState extends State<MainScaffold>
                   onTap: () {
                     print("Inner pressed");
                   },
-                  child: ButtonTestScreen(),
+                  child: CustomBottomModal(
+                    description: modalDescription,
+                  ),
                 ),
               ),
             ),
@@ -305,12 +311,16 @@ class _MainScaffoldState extends State<MainScaffold>
   }
 }
 
-class ButtonTestScreen extends StatefulWidget {
+class CustomBottomModal extends StatefulWidget {
+  final String description;
+
+  CustomBottomModal({Key? key, required this.description}) : super(key: key);
+
   @override
-  _ButtonTestScreenState createState() => _ButtonTestScreenState();
+  _CustomBottomModalState createState() => _CustomBottomModalState();
 }
 
-class _ButtonTestScreenState extends State<ButtonTestScreen> {
+class _CustomBottomModalState extends State<CustomBottomModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -322,6 +332,14 @@ class _ButtonTestScreenState extends State<ButtonTestScreen> {
                 Alignment.centerLeft, // This will align the text to the left
             child: Text(
               "Passen Sie Ihr Training an",
+              style: TextStyle(fontSize: 24),
+            ),
+          ),
+          Align(
+            alignment:
+                Alignment.centerLeft, // This will align the text to the left
+            child: Text(
+              widget.description,
               style: TextStyle(fontSize: 24),
             ),
           ),
@@ -472,7 +490,7 @@ class Level {
 }
 
 class LevelSelectionScreen extends StatefulWidget {
-  final VoidCallback toggleModal;
+  final Function(String) toggleModal;
 
   LevelSelectionScreen({required this.toggleModal});
 
@@ -540,7 +558,11 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           padding: EdgeInsets.only(left: startPadding, right: endPadding),
           child: LevelCircle(
             level: level.id,
-            onTap: widget.toggleModal,
+            onTap: () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                widget.toggleModal(level.description);
+              });
+            },
             isTreasureLevel: level.id % 4 == 0,
             isDone: level.isDone,
             isNext: isNext,
