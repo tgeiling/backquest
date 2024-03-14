@@ -143,6 +143,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (_authenticated == null) {
       return MaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Roboto',
+        ),
         home: CircularProgressIndicator(), // Or some loading indicator
       );
     }
@@ -188,8 +191,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 _toggleModal();
               }
             },
-            behavior: HitTestBehavior
-                .opaque, // To ensure it captures taps over the entire scaffold body
+            behavior: HitTestBehavior.opaque,
             child: PageView(
               controller: _pageController,
               onPageChanged: (index) {
@@ -200,7 +202,7 @@ class _MainScaffoldState extends State<MainScaffold>
               children: [
                 Container(
                     color: Color.fromRGBO(0, 59, 46, 0.9),
-                    child: LevelSelectionScreen()),
+                    child: LevelSelectionScreen(toggleModal: _toggleModal)),
                 ProfilPage(),
               ],
             ),
@@ -226,12 +228,12 @@ class _MainScaffoldState extends State<MainScaffold>
               child: Container(
                 height: 300,
                 width: double.maxFinite,
-                // Wrap your ButtonTestScreen in a widget that prevents tap propagation
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap:
-                      () {}, // Empty onTap handler to prevent taps from propagating to the GestureDetector behind it
-                  child: ButtonTestScreen(toggleModal: _toggleModal),
+                  onTap: () {
+                    print("Inner pressed");
+                  },
+                  child: ButtonTestScreen(),
                 ),
               ),
             ),
@@ -250,12 +252,10 @@ class _MainScaffoldState extends State<MainScaffold>
       child: Column(
         children: [
           Container(
-            // Grey line container
-            height: 1, // Height of the line
-            color: Colors.grey, // Color of the line
+            height: 1,
+            color: Colors.grey,
           ),
           Expanded(
-            // SalomonBottomBar needs to be wrapped with Expanded inside Column
             child: SalomonBottomBar(
               currentIndex: _currentIndex,
               onTap: (i) {
@@ -289,23 +289,23 @@ class _MainScaffoldState extends State<MainScaffold>
   }
 
   Widget _buildFloatingActionButton() {
-    return Container(
-      child: GestureDetector(
-        onTap: _toggleModal, // Use _toggleModal to control the modal visibility
-        child: PressableButton(
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          child: Icon(Icons.arrow_upward, color: Colors.white, size: 24),
+    if (_isModalVisible) {
+      return Container();
+    } else {
+      return Container(
+        child: GestureDetector(
+          onTap: _toggleModal,
+          child: PressableButton(
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            child: Icon(Icons.arrow_upward, color: Colors.white, size: 24),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
 
 class ButtonTestScreen extends StatefulWidget {
-  final VoidCallback toggleModal; // Callback for toggling the modal
-
-  ButtonTestScreen({required this.toggleModal});
-
   @override
   _ButtonTestScreenState createState() => _ButtonTestScreenState();
 }
@@ -313,96 +313,92 @@ class ButtonTestScreen extends StatefulWidget {
 class _ButtonTestScreenState extends State<ButtonTestScreen> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: widget.toggleModal,
-        behavior: HitTestBehavior.opaque,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text(
-                "Passen Sie Ihr Training an",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 3 / 1, // Adjust based on your button size
-                  children: <Widget>[
-                    PressableButton(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      child: Center(
-                          child: Text("Fokus",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ))),
-                    ),
-                    PressableButton(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      child: Center(
-                          child: Text("Dauer",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ))),
-                    ),
-                    PressableButton(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      child: Center(
-                          child: Text("Art",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ))),
-                    ),
-                    PressableButton(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      child: Center(
-                          child: Text("Ort",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ))),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              PressableButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VideoCombinerScreen(
-                        levelId: 0, // Use the correct level ID here
-                        levelNotifier:
-                            Provider.of<LevelNotifier>(context, listen: false),
-                        profilProvider:
-                            Provider.of<ProfilProvider>(context, listen: false),
-                      ),
-                    ),
-                  );
-                },
-                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                child: Center(
-                    child: Text("Jetzt starten",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ))),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Align(
+            alignment:
+                Alignment.centerLeft, // This will align the text to the left
+            child: Text(
+              "Passen Sie Ihr Training an",
+              style: TextStyle(fontSize: 24),
+            ),
           ),
-        ));
+          SizedBox(height: 10),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 3 / 1, // Adjust based on your button size
+              children: <Widget>[
+                PressableButton(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Center(
+                      child: Text("Fokus",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ))),
+                ),
+                PressableButton(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Center(
+                      child: Text("Dauer",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ))),
+                ),
+                PressableButton(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Center(
+                      child: Text("Art",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ))),
+                ),
+                PressableButton(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Center(
+                      child: Text("Ort",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ))),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          PressableButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VideoCombinerScreen(
+                    levelId: 0, // Use the correct level ID here
+                    levelNotifier:
+                        Provider.of<LevelNotifier>(context, listen: false),
+                    profilProvider:
+                        Provider.of<ProfilProvider>(context, listen: false),
+                  ),
+                ),
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+            child: Center(
+                child: Text("Jetzt starten",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -476,6 +472,10 @@ class Level {
 }
 
 class LevelSelectionScreen extends StatefulWidget {
+  final VoidCallback toggleModal;
+
+  LevelSelectionScreen({required this.toggleModal});
+
   @override
   _LevelSelectionScreenState createState() => _LevelSelectionScreenState();
 }
@@ -540,164 +540,13 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           padding: EdgeInsets.only(left: startPadding, right: endPadding),
           child: LevelCircle(
             level: level.id,
-            onTap: () => _showLevelDialog(context, level),
+            onTap: widget.toggleModal,
             isTreasureLevel: level.id % 4 == 0,
             isDone: level.isDone,
-            isNext: isNext, // Pass the isNext status
+            isNext: isNext,
           ),
         );
       },
-    );
-  }
-
-  void _showLevelDialog(BuildContext context, Level level) {
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10.0,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VideoCombinerScreen(
-                                    levelId: level.id,
-                                    levelNotifier: Provider.of<LevelNotifier>(
-                                        context,
-                                        listen: false),
-                                    profilProvider: Provider.of<ProfilProvider>(
-                                        context,
-                                        listen: false),
-                                  )),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset(
-                          "assets/thumbnails/${level.id}.gif",
-                          fit: BoxFit.cover,
-                          width: 300,
-                          height: 200,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      "${level.description}",
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.timer,
-                                size: 64,
-                                color: Colors
-                                    .grey.shade800), // Increased icon size
-                            SizedBox(
-                                width: 20), // Increased spacing between icons
-                            Image.asset(
-                              "assets/yoga.png",
-                              width: 60, // Adjust the image size as needed
-                              height: 60, // Adjust the image size as needed
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        // Added spacing between rows
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('${level.minutes} min',
-                                style: TextStyle(
-                                    fontSize: 20)), // Increased text size
-                            SizedBox(
-                                width: 20), // Increased spacing between text
-                            Text('Matte',
-                                style: TextStyle(
-                                    fontSize: 20)), // Increased text size
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16.0),
-                  PressableButton(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VideoCombinerScreen(
-                            levelId: level.id,
-                            levelNotifier: Provider.of<LevelNotifier>(context,
-                                listen: false),
-                            profilProvider: Provider.of<ProfilProvider>(context,
-                                listen: false),
-                          ),
-                        ),
-                      );
-                    },
-                    child: Text("Starten",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-                  ),
-                  SizedBox(height: 30.0),
-                ],
-              ),
-            ),
-            Positioned(
-              right: 0.0,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Align(
-                    alignment: Alignment.topRight,
-                    child: Image.asset(
-                      'assets/close.png',
-                      width: 40,
-                      height: 40,
-                    )),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
