@@ -136,7 +136,9 @@ class _MyAppState extends State<MyApp> {
         prefs.getBool('questionnaireCompleted') ?? false;
 
     if (questionnaireCompleted) {
-      questionaireDone = true;
+      setState(() {
+        questionaireDone = true;
+      });
     }
   }
 
@@ -169,13 +171,20 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       home: _authenticated!
-          ? (questionaireDone ? MainScaffold() : QuestionnaireScreen())
+          ? (questionaireDone
+              ? MainScaffold(setAuthenticated: _setAuthenticated)
+              : QuestionnaireScreen(
+                  checkQuestionaire: _checkQuestionnaireCompletion))
           : LoginScreen(setAuthenticated: _setAuthenticated),
     );
   }
 }
 
 class MainScaffold extends StatefulWidget {
+  final Function(bool) setAuthenticated;
+
+  MainScaffold({Key? key, required this.setAuthenticated}) : super(key: key);
+
   @override
   _MainScaffoldState createState() => _MainScaffoldState();
 }
@@ -239,7 +248,8 @@ class _MainScaffoldState extends State<MainScaffold>
                         ],
                       ),
                     ),
-                    child: ProfilPage()),
+                    child:
+                        ProfilPage(setAuthenticated: widget.setAuthenticated)),
               ],
             ),
           ),

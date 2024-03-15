@@ -68,17 +68,22 @@ class ProfilProvider extends ChangeNotifier {
 }
 
 class ProfilPage extends StatefulWidget {
-  const ProfilPage({Key? key})
-      : super(
-          key: key,
-        );
+  final Function(bool) setAuthenticated;
+
+  const ProfilPage({
+    Key? key,
+    required this.setAuthenticated,
+  }) : super(key: key);
 
   @override
   ProfilPageState createState() => ProfilPageState();
-  static Widget builder(BuildContext context) {
+
+  static Widget builder(BuildContext context, Function(bool) setAuth) {
     return ChangeNotifierProvider(
       create: (context) => ProfilProvider(),
-      child: ProfilPage(),
+      child: ProfilPage(
+        setAuthenticated: setAuth,
+      ),
     );
   }
 }
@@ -199,7 +204,8 @@ class ProfilPageState extends State<ProfilPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SettingsPage()),
+                              builder: (context) => SettingsPage(
+                                  setAuthenticated: widget.setAuthenticated)),
                         );
                       },
                     )

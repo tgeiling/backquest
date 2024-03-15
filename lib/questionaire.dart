@@ -7,6 +7,11 @@ import 'elements.dart';
 bool questionaireDone = false;
 
 class QuestionnaireScreen extends StatefulWidget {
+  final VoidCallback checkQuestionaire;
+
+  QuestionnaireScreen({Key? key, required this.checkQuestionaire})
+      : super(key: key);
+
   @override
   _QuestionnaireScreenState createState() => _QuestionnaireScreenState();
 }
@@ -33,9 +38,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   void _finishQuestionnaire() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('questionnaireCompleted', true);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => MainScaffold()),
-    );
+    widget.checkQuestionaire();
   }
 
   @override
@@ -48,16 +51,27 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
-        children: [
-          QuestionPage1(),
-          QuestionPage2(),
-          QuestionPage3(),
-          QuestionPage4(onFinish: _finishQuestionnaire),
-        ],
-      ),
+      body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromRGBO(97, 184, 115, 0.9),
+                Color.fromRGBO(0, 59, 46, 0.9),
+              ],
+            ),
+          ),
+          child: PageView(
+            controller: _pageController,
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              QuestionPage1(),
+              QuestionPage2(),
+              QuestionPage3(),
+              QuestionPage4(onFinish: _finishQuestionnaire),
+            ],
+          )),
       floatingActionButton: _currentPage < 3
           ? FloatingActionButton(
               backgroundColor: Colors.black,

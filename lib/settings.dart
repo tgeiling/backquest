@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'elements.dart';
+import 'auth.dart';
 
 class SettingsPage extends StatelessWidget {
+  final Function(bool) setAuthenticated;
+
+  const SettingsPage({Key? key, required this.setAuthenticated})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +24,11 @@ class SettingsPage extends StatelessWidget {
             SettingsTile(
                 title: 'Datenschutzerklärung', icon: Icons.privacy_tip),
             SettingsTile(title: 'Impressum', icon: Icons.info_outline),
+            SettingsTile(
+              title: 'Logout',
+              icon: Icons.logout,
+              onTileTap: setAuthenticated,
+            ),
           ],
         ).toList(),
       ),
@@ -28,12 +39,18 @@ class SettingsPage extends StatelessWidget {
 class SettingsTile extends StatelessWidget {
   final String title;
   final IconData icon;
+  final Function(bool)? onTileTap; // Optional callback
 
-  const SettingsTile({Key? key, required this.title, required this.icon})
-      : super(key: key);
+  const SettingsTile({
+    Key? key,
+    required this.title,
+    required this.icon,
+    this.onTileTap, // Include it here and make it optional
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final AuthService _authService = AuthService();
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
@@ -43,6 +60,11 @@ class SettingsTile extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => GoalSettingPage()),
           );
+        }
+        if (title == 'Logout') {
+          _authService.logout();
+          onTileTap?.call(false);
+          Navigator.pop(context);
         } else {
           Navigator.push(
             context,
