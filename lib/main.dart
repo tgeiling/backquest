@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:provider/provider.dart';
@@ -143,9 +144,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (_authenticated == null) {
       return MaterialApp(
-        theme: ThemeData(
-          fontFamily: 'Roboto',
-        ),
         home: CircularProgressIndicator(), // Or some loading indicator
       );
     }
@@ -154,7 +152,21 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Duolingo Levels',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        fontFamily: 'Roboto',
+        textTheme: TextTheme(
+          titleLarge: TextStyle(
+            // Define the default style for titleLarge texts here
+            fontSize: 24.0,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          // Define other text styles like bodyMedium, bodySmall, etc.
+          bodyMedium: TextStyle(
+            fontSize: 14.0,
+            color: Colors.white,
+          ),
+          // ... more styles
+        ),
       ),
       home: _authenticated!
           ? (questionaireDone ? MainScaffold() : QuestionnaireScreen())
@@ -205,9 +217,29 @@ class _MainScaffoldState extends State<MainScaffold>
               },
               children: [
                 Container(
-                    color: Color.fromRGBO(0, 59, 46, 0.9),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(97, 184, 115, 0.9),
+                          Color.fromRGBO(0, 59, 46, 0.9),
+                        ],
+                      ),
+                    ),
                     child: LevelSelectionScreen(toggleModal: _toggleModal)),
-                ProfilPage(),
+                Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(97, 184, 115, 0.9),
+                          Color.fromRGBO(0, 59, 46, 0.9),
+                        ],
+                      ),
+                    ),
+                    child: ProfilPage()),
               ],
             ),
           ),
@@ -215,22 +247,20 @@ class _MainScaffoldState extends State<MainScaffold>
           AnimatedPositioned(
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            bottom: _isModalVisible
-                ? 0
-                : -(MediaQuery.of(context).size.height * 0.5),
+            bottom: _isModalVisible ? 0 : -450,
             left: 0,
             right: 0,
             child: Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color.fromRGBO(0, 59, 46, 0.9),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
               ),
               child: Container(
-                height: 300,
+                height: 380,
                 width: double.maxFinite,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -263,28 +293,29 @@ class _MainScaffoldState extends State<MainScaffold>
           ),
           Expanded(
             child: SalomonBottomBar(
+              backgroundColor: Color.fromRGBO(0, 59, 46, 0.9),
               currentIndex: _currentIndex,
               onTap: (i) {
                 _pageController.jumpToPage(i);
               },
               items: [
                 SalomonBottomBarItem(
-                  icon: Image.asset(
-                    'assets/homeIcon.png',
-                    width: 40,
-                    height: 40,
+                  icon: Icon(
+                    CupertinoIcons.home,
+                    size: 44.0,
+                    color: Colors.white,
                   ),
                   title: Text("Main"),
-                  selectedColor: Colors.blue,
+                  selectedColor: Colors.white,
                 ),
                 SalomonBottomBarItem(
-                  icon: Image.asset(
-                    'assets/barchartIcon.png',
-                    width: 44,
-                    height: 44,
+                  icon: Icon(
+                    CupertinoIcons.chart_bar_square,
+                    size: 44.0,
+                    color: Colors.white,
                   ),
                   title: Text("Stats"),
-                  selectedColor: Colors.blue,
+                  selectedColor: Colors.white,
                 ),
               ],
             ),
@@ -332,15 +363,16 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                 Alignment.centerLeft, // This will align the text to the left
             child: Text(
               "Passen Sie Ihr Training an",
-              style: TextStyle(fontSize: 24),
+              style: TextStyle(fontSize: 24, color: Colors.white),
             ),
           ),
+          SizedBox(height: 4),
           Align(
             alignment:
                 Alignment.centerLeft, // This will align the text to the left
             child: Text(
               widget.description,
-              style: TextStyle(fontSize: 24),
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade300),
             ),
           ),
           SizedBox(height: 10),

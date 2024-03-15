@@ -92,62 +92,57 @@ class ProfilPageState extends State<ProfilPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: Container(
-          width: double.maxFinite,
-          decoration: BoxDecoration(
-            color: Colors.white,
+      child: Container(
+        width: double.maxFinite,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 56.0,
           ),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 56.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Consumer<ProfilProvider>(
-                  builder: (context, provider, child) {
-                    return _buildRowWithImageAndText(
-                        context, provider.level, provider.exp);
-                  },
-                ),
-                SizedBox(height: 39.0),
-                Text(
-                  "Ziele",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 23.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween, // Align items to both ends
-                  children: [
-                    Text(
-                      "Woche",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      "3/4", // Replace "3/4" with the dynamic progress text you need
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.0),
-                ProgressBarWithPill(initialProgress: 0.75),
-                SizedBox(height: 39.0),
-                Text(
-                  "Statistiken",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 14.0),
-                Consumer<ProfilProvider>(
-                  builder: (context, provider, child) {
-                    return _buildRowWithColumns(
-                        context, provider.completedLevels);
-                  },
-                ),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Consumer<ProfilProvider>(
+                builder: (context, provider, child) {
+                  return _buildRowWithImageAndText(
+                      context, provider.level, provider.exp);
+                },
+              ),
+              SizedBox(height: 39.0),
+              Text(
+                "Ziele",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 23.0),
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween, // Align items to both ends
+                children: [
+                  Text(
+                    "Woche",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  Text(
+                    "3/4", // Replace "3/4" with the dynamic progress text you need
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.0),
+              ProgressBarWithPill(initialProgress: 0.75),
+              SizedBox(height: 39.0),
+              Text(
+                "Statistiken",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 14.0),
+              Consumer<ProfilProvider>(
+                builder: (context, provider, child) {
+                  return _buildRowWithColumns(
+                      context, provider.completedLevels);
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -168,7 +163,7 @@ class ProfilPageState extends State<ProfilPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(
+                  color: Colors.white.withOpacity(
                       0.5), // Adjust the color and opacity as needed
                   spreadRadius: 2,
                   blurRadius: 7,
@@ -194,11 +189,12 @@ class ProfilPageState extends State<ProfilPage> {
                     Text(
                       "Benjamin",
                       style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: Icon(Icons.settings),
-                      iconSize: 20.0,
+                      iconSize: 26.0,
+                      color: Colors.white,
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -220,19 +216,19 @@ class ProfilPageState extends State<ProfilPage> {
                           children: <Widget>[
                             Text(
                               "${profilProvider.weeklyDone}",
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 44),
                             ),
                             SizedBox(width: 8), // Space between text and image
                             Image.asset('assets/leaf.png',
-                                width: 24, height: 24),
+                                width: 45, height: 45),
                           ],
                         ),
                         SizedBox(
                             height:
                                 4), // Space between the row and the text below
                         Text(
-                          "Tage diese Woche trainiert",
-                          style: TextStyle(fontSize: 14),
+                          "Tage diese Woche \n trainiert",
+                          style: TextStyle(fontSize: 22),
                         ),
                       ],
                     );

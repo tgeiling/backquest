@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 import 'elements.dart';
 
@@ -15,9 +14,6 @@ class SettingsPage extends StatelessWidget {
           context: context,
           tiles: [
             SettingsTile(title: 'Ziele anpassen', icon: Icons.settings),
-            SettingsTile(title: 'Medizinprodukt', icon: Icons.medical_services),
-            SettingsTile(title: 'Hilfe-Center', icon: Icons.help),
-            SettingsTile(title: 'Gebrauchsanweisung', icon: Icons.description),
             SettingsTile(title: 'AGB', icon: Icons.article),
             SettingsTile(
                 title: 'Datenschutzerklärung', icon: Icons.privacy_tip),
@@ -78,12 +74,10 @@ class DetailView extends StatelessWidget {
 
 class GoalSettingPage extends StatefulWidget {
   final int initialWeeklyGoal;
-  final int initialMonthlyGoal;
 
   const GoalSettingPage({
     Key? key,
     this.initialWeeklyGoal = 3,
-    this.initialMonthlyGoal = 12,
   }) : super(key: key);
 
   @override
@@ -92,13 +86,47 @@ class GoalSettingPage extends StatefulWidget {
 
 class _GoalSettingPageState extends State<GoalSettingPage> {
   late int weeklyGoal;
-  late int monthlyGoal;
 
   @override
   void initState() {
     super.initState();
     weeklyGoal = widget.initialWeeklyGoal;
-    monthlyGoal = widget.initialMonthlyGoal;
+  }
+
+  bool isGoalSelected(int goal) {
+    return weeklyGoal == goal;
+  }
+
+  Widget goalTile(int goal) {
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: isGoalSelected(goal)
+            ? LinearGradient(
+                colors: [
+                  Color.fromRGBO(97, 184, 115, 1), // Adjust start color here
+                  Color.fromRGBO(0, 59, 46, 1), // Adjust end color here
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              )
+            : null,
+        color: isGoalSelected(goal)
+            ? null
+            : Colors.grey[850], // Non-selected tile color
+      ),
+      child: ListTile(
+        title: Text('$goal Tage',
+            style: TextStyle(
+                color: isGoalSelected(goal) ? Colors.white : Colors.grey[400])),
+        onTap: () {
+          setState(() {
+            weeklyGoal = goal;
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -107,32 +135,22 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
       appBar: AppBar(
         title: Text('Setze deine Ziele'),
       ),
-      body: Center(
-        child: Container(
-          height: 240,
-          child: GreyContainer(
-            padding: EdgeInsets.symmetric(horizontal: 16.0), // Optional padding
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment
-                  .center, // This will center the column's children vertically
-              children: <Widget>[
-                Text('Wöchentliche Übungen Ziele:'),
-                NumberPicker(
-                  value: weeklyGoal,
-                  minValue: 0,
-                  maxValue: 20,
-                  onChanged: (value) => setState(() => weeklyGoal = value),
-                ),
-                SizedBox(height: 20),
-              ],
-            ),
+      body: ListView(
+        padding: EdgeInsets.all(16.0),
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text('Wöchentliche Übungen Ziele:',
+                style: Theme.of(context).textTheme.headline6),
           ),
-        ),
+          for (int i = 2; i <= 5; i++) goalTile(i),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save),
+        child: Icon(Icons.check),
         onPressed: () {
-          Navigator.of(context).pop();
+          // TODO: Implement save functionality
+          Navigator.of(context).pop(weeklyGoal);
         },
       ),
     );
