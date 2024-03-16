@@ -167,7 +167,6 @@ class _AfterVideoViewState extends State<AfterVideoView> {
           SecondPage(onPressedAbschliessen: () {
             Navigator.pop(context);
             Navigator.pop(context);
-            Navigator.pop(context);
           }),
         ],
       ),
@@ -234,7 +233,6 @@ class FirstPage extends StatelessWidget {
                 color: Colors.grey.shade100,
                 shadowColor: Colors.grey.shade300,
                 onPressed: () {
-                  Navigator.pop(context);
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },

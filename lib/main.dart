@@ -26,7 +26,6 @@ class LevelNotifier with ChangeNotifier {
 
   Future<void> _loadLevels() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Define your levels here
     Map<int, Level> tempLevels = {
       1: Level(id: 1, description: "Description for level 1", minutes: 13),
       2: Level(id: 2, description: "Description for level 2", minutes: 12),
@@ -116,6 +115,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _checkAuthentication();
+    Future.microtask(() =>
+        Provider.of<ProfilProvider>(context, listen: false).loadInitialData());
   }
 
   Future<void> _checkAuthentication() async {
@@ -150,9 +151,8 @@ class _MyAppState extends State<MyApp> {
       );
     }
 
-    // Once the check is complete, show the appropriate screen
     return MaterialApp(
-      title: 'Duolingo Levels',
+      title: 'Backquest',
       theme: ThemeData(
         fontFamily: 'Roboto',
         textTheme: TextTheme(
@@ -195,12 +195,15 @@ class _MainScaffoldState extends State<MainScaffold>
   int _currentIndex = 0;
   bool _isModalVisible = false;
   String modalDescription = "Declaring Description";
+  int level = 0;
 
-  void _toggleModal([String setDescription = "Default Description"]) {
+  void _toggleModal(
+      [String setDescription = "Default Description", int setLevel = 0]) {
     setState(() {
       _isModalVisible = !_isModalVisible;
       if (_isModalVisible) {
         modalDescription = setDescription;
+        level = setLevel;
       }
     });
   }
@@ -279,6 +282,7 @@ class _MainScaffoldState extends State<MainScaffold>
                   },
                   child: CustomBottomModal(
                     description: modalDescription,
+                    levelId: level,
                   ),
                 ),
               ),
@@ -354,8 +358,11 @@ class _MainScaffoldState extends State<MainScaffold>
 
 class CustomBottomModal extends StatefulWidget {
   final String description;
+  final int levelId;
 
-  CustomBottomModal({Key? key, required this.description}) : super(key: key);
+  CustomBottomModal(
+      {Key? key, required this.description, required this.levelId})
+      : super(key: key);
 
   @override
   _CustomBottomModalState createState() => _CustomBottomModalState();
@@ -439,7 +446,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => VideoCombinerScreen(
-                    levelId: 0, // Use the correct level ID here
+                    levelId: widget.levelId,
                     levelNotifier:
                         Provider.of<LevelNotifier>(context, listen: false),
                     profilProvider:
@@ -532,7 +539,7 @@ class Level {
 }
 
 class LevelSelectionScreen extends StatefulWidget {
-  final Function(String) toggleModal;
+  final Function(String, int) toggleModal;
 
   LevelSelectionScreen({required this.toggleModal});
 
@@ -602,7 +609,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             level: level.id,
             onTap: () {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                widget.toggleModal(level.description);
+                widget.toggleModal(level.description, level.id);
               });
             },
             isTreasureLevel: level.id % 4 == 0,

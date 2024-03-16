@@ -90,7 +90,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   void videoProgressListener() {
     if (_chewieController != null) {
       final duration = _chewieController!.videoPlayerController.value.duration;
-      final halfwayDuration = duration * 0.5;
+      final halfwayDuration = duration * 0.1;
 
       watchedDuration += Duration(milliseconds: 300);
 

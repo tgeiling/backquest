@@ -10,11 +10,9 @@ class ProfilProvider extends ChangeNotifier {
   int _level = 0;
   int _exp = 0;
 
-  // Keeping only weekly variables
   int _weeklyGoal = 0;
   int _weeklyDone = 0;
 
-  // Getters for weekly variables
   int get weeklyGoal => _weeklyGoal;
   int get weeklyDone => _weeklyDone;
 
@@ -25,14 +23,13 @@ class ProfilProvider extends ChangeNotifier {
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _completedLevels = prefs.getInt('completedLevels') ?? 0;
-    _level = prefs.getInt('level') ?? 0; // Load level from SharedPreferences
-    _exp = prefs.getInt('exp') ?? 0; // Load exp from SharedPreferences
+    _level = prefs.getInt('level') ?? 0;
+    _exp = prefs.getInt('exp') ?? 0;
 
-    // Load weekly values from SharedPreferences
     _weeklyGoal = prefs.getInt('weeklyGoal') ?? 0;
     _weeklyDone = prefs.getInt('weeklyDone') ?? 0;
 
-    notifyListeners(); // Notify listeners once after loading all values
+    notifyListeners();
   }
 
   void setCompletedLevels(int levels) {
