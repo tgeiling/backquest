@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'main.dart';
 
 class AuthService {
   final String baseUrl = 'http://135.125.218.147:3000';

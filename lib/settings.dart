@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'elements.dart';
 import 'auth.dart';
 
 class SettingsPage extends StatelessWidget {
