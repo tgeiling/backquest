@@ -20,6 +20,24 @@ class ProfilProvider extends ChangeNotifier {
   int get level => _level;
   int get exp => _exp;
 
+  DateTime? _birthdate;
+  String? _gender;
+  int? _weight;
+  int? _height;
+  String? _workplaceEnvironment;
+  String? _fitnessLevel;
+  List<String> _hasPain = [];
+  List<String> _goals = [];
+
+  DateTime? get birthdate => _birthdate;
+  String? get gender => _gender;
+  int? get weight => _weight;
+  int? get height => _height;
+  String? get workplaceEnvironment => _workplaceEnvironment;
+  String? get fitnessLevel => _fitnessLevel;
+  List<String> get hasPain => _hasPain;
+  List<String> get goals => _goals;
+
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _completedLevels = prefs.getInt('completedLevels') ?? 0;
@@ -29,6 +47,15 @@ class ProfilProvider extends ChangeNotifier {
     _weeklyGoal = prefs.getInt('weeklyGoal') ?? 0;
     _weeklyDone = prefs.getInt('weeklyDone') ?? 0;
 
+    _birthdate = DateTime.tryParse(prefs.getString('birthdate') ?? '');
+    _gender = prefs.getString('gender');
+    _weight = prefs.getInt('weight');
+    _height = prefs.getInt('height');
+    _workplaceEnvironment = prefs.getString('workplaceEnvironment');
+    _fitnessLevel = prefs.getString('fitnessLevel');
+    _hasPain = prefs.getStringList('hasPain') ?? [];
+    _goals = prefs.getStringList('goals') ?? [];
+
     notifyListeners();
   }
 
@@ -37,24 +64,59 @@ class ProfilProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLevel(int newLevel) {
-    _level = newLevel;
+  Future<void> setBirthdate(DateTime date) async {
+    _birthdate = date;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('birthdate', date.toIso8601String());
     notifyListeners();
   }
 
-  void setExp(int newExp) {
-    _exp = newExp;
+  Future<void> setGender(String gender) async {
+    _gender = gender;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('gender', gender);
     notifyListeners();
   }
 
-  // Setters for weekly variables
-  void setWeeklyGoal(int goal) {
-    _weeklyGoal = goal;
+  Future<void> setWeight(int weight) async {
+    _weight = weight;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('weight', weight);
     notifyListeners();
   }
 
-  void setWeeklyDone(int done) {
-    _weeklyDone = done;
+  Future<void> setHeight(int height) async {
+    _height = height;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('height', height);
+    notifyListeners();
+  }
+
+  Future<void> setWorkplaceEnvironment(String environment) async {
+    _workplaceEnvironment = environment;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('workplaceEnvironment', environment);
+    notifyListeners();
+  }
+
+  Future<void> setFitnessLevel(String level) async {
+    _fitnessLevel = level;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fitnessLevel', level);
+    notifyListeners();
+  }
+
+  Future<void> setHasPain(List<String> pains) async {
+    _hasPain = pains;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('hasPain', pains);
+    notifyListeners();
+  }
+
+  Future<void> setGoals(List<String> goals) async {
+    _goals = goals;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('goals', goals);
     notifyListeners();
   }
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 import 'elements.dart';
+import 'stats.dart';
 
 bool questionaireDone = false;
 
@@ -65,57 +68,634 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
             controller: _pageController,
             physics: NeverScrollableScrollPhysics(),
             children: [
-              QuestionPage1(),
-              QuestionPage2(),
-              QuestionPage3(),
-              QuestionPage4(onFinish: _finishQuestionnaire),
+              QuestionPage1(pageController: _pageController),
+              QuestionPage2(pageController: _pageController),
+              QuestionPage3(pageController: _pageController),
+              QuestionPage4(pageController: _pageController),
+              QuestionPage5(pageController: _pageController),
+              QuestionPage6(pageController: _pageController),
+              QuestionPage7(onFinish: _finishQuestionnaire),
             ],
           )),
-      floatingActionButton: _currentPage < 3
-          ? FloatingActionButton(
-              backgroundColor: Colors.black,
-              child: Icon(Icons.navigate_next),
-              onPressed: () {
-                _pageController.nextPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
 
 class QuestionPage1 extends StatelessWidget {
+  final PageController pageController;
+
+  QuestionPage1({required this.pageController});
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Page 1 Content"));
-    // Add your custom widgets for Page 1 here
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacer(),
+          Text(
+            'Erzähle uns ein wenig mehr über Dich,',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          Text(
+            'damit wir das Rückenprogramm individuell auf Dich zuschneiden können.',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class QuestionPage2 extends StatelessWidget {
+class QuestionPage2 extends StatefulWidget {
+  final PageController pageController;
+
+  QuestionPage2({required this.pageController});
+
+  @override
+  _QuestionPage2State createState() => _QuestionPage2State();
+}
+
+class _QuestionPage2State extends State<QuestionPage2> {
+  DateTime selectedDate = DateTime.now();
+  double _genderSliderValue = 1;
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Page 2 Content"));
-    // Add your custom widgets for Page 2 here
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacer(),
+          Text(
+            'Erst einmal zwei persönliche Fragen.',
+            style: TextStyle(fontSize: 22, color: Colors.white),
+          ),
+          SizedBox(height: 32),
+          Text(
+            'Wann bist du geboren?',
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          Container(
+              width: double.maxFinite,
+              height: 400,
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: Brightness.dark,
+                ),
+                child: CupertinoDatePicker(
+                  dateOrder: DatePickerDateOrder.dmy,
+                  initialDateTime: selectedDate,
+                  mode: CupertinoDatePickerMode.date,
+                  onDateTimeChanged: (DateTime newDate) {
+                    setState(() {
+                      selectedDate = newDate;
+                    });
+                  },
+                ),
+              )),
+          SizedBox(height: 24),
+          Text(
+            'Was ist Dein Geschlecht?',
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: Colors.white,
+              inactiveTrackColor: Colors.white.withOpacity(0.5),
+              trackHeight: 4.0,
+              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+              thumbColor: Colors.white,
+              overlayColor: Colors.white.withAlpha(32),
+              overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+              tickMarkShape: RoundSliderTickMarkShape(),
+              activeTickMarkColor: Colors.white,
+              inactiveTickMarkColor: Colors.white.withOpacity(0.5),
+            ),
+            child: Slider(
+              value: _genderSliderValue,
+              min: 0,
+              max: 2,
+              divisions: 2,
+              onChanged: (value) {
+                setState(() {
+                  _genderSliderValue = value;
+                });
+              },
+            ),
+          ),
+          Center(
+            child: Text(
+              _genderSliderValue == 0
+                  ? 'Männlich'
+                  : _genderSliderValue == 1
+                      ? 'Weiblich'
+                      : 'Divers',
+              style: TextStyle(color: Colors.white, fontSize: 22),
+            ),
+          ),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class QuestionPage3 extends StatelessWidget {
+class QuestionPage3 extends StatefulWidget {
+  final PageController pageController;
+
+  QuestionPage3({required this.pageController});
+
+  @override
+  _QuestionPage3State createState() => _QuestionPage3State();
+}
+
+class _QuestionPage3State extends State<QuestionPage3> {
+  int _currentHeight = 170;
+  int _currentWeight = 70;
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Page 3 Content"));
-    // Add your custom widgets for Page 3 here
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacer(),
+          Text(
+            'Nun gehen wir mehr ins Detail.',
+            style: TextStyle(fontSize: 22, color: Colors.white),
+          ),
+          SizedBox(height: 80),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Wie groß bist Du? (cm)',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              NumberPicker(
+                value: _currentHeight,
+                minValue: 100,
+                maxValue: 220,
+                textStyle: TextStyle(color: Colors.grey.shade400),
+                selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+                onChanged: (value) => setState(() => _currentHeight = value),
+              ),
+            ],
+          ),
+          SizedBox(height: 44),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Wieviel wiegst Du? (kg)',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              NumberPicker(
+                value: _currentWeight,
+                minValue: 20,
+                maxValue: 200,
+                textStyle: TextStyle(color: Colors.grey.shade400),
+                selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+                onChanged: (value) => setState(() => _currentWeight = value),
+              ),
+            ],
+          ),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class QuestionPage4 extends StatelessWidget {
+class QuestionPage4 extends StatefulWidget {
+  final PageController pageController;
+
+  QuestionPage4({required this.pageController});
+
+  @override
+  _QuestionPage4State createState() => _QuestionPage4State();
+}
+
+class _QuestionPage4State extends State<QuestionPage4> {
+  String _selectedOption1 = "Option 1-1";
+  String _selectedOption2 = "Option 2-1";
+
+  final List<String> options1 = ['Option 1-1', 'Option 1-2', 'Option 1-3'];
+  final List<String> options2 = ['Option 2-1', 'Option 2-2', 'Option 2-3'];
+  final List<String> options3 = ['Option 3-1', 'Option 3-2', 'Option 3-3'];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  _saveSelectedOption(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacer(),
+          Text(
+            'Weiter zu Deinem Alltag.',
+            style: TextStyle(fontSize: 22, color: Colors.white),
+          ),
+          SizedBox(height: 50),
+          _buildRoundedSelectBox('Was trifft auf Deinen Arbeitsalltag zu?',
+              _selectedOption1, options1, 'everyDaySituation'),
+          SizedBox(height: 50),
+          _buildRoundedSelectBox('Wie ist Dein aktuelles Fitnesslevel?',
+              _selectedOption2, options2, 'fitnessLevel'),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoundedSelectBox(String labelText, String? selectedValue,
+      List<String> items, String prefKey) {
+    selectedValue ??= items.first;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          child: Text(
+            labelText,
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
+        Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: selectedValue,
+              icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+              isDense: true,
+              isExpanded: true,
+              onChanged: (String? newValue) {
+                setState(() {
+                  switch (prefKey) {
+                    case 'everyDaySituation':
+                      _selectedOption1 = newValue!;
+                      break;
+                    case 'fitnessLevel':
+                      _selectedOption2 = newValue!;
+                      break;
+                  }
+                  _saveSelectedOption(prefKey, newValue!);
+                });
+              },
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, style: TextStyle(color: Colors.black)),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class QuestionPage5 extends StatefulWidget {
+  final PageController pageController;
+
+  QuestionPage5({required this.pageController});
+
+  @override
+  _QuestionPage5State createState() => _QuestionPage5State();
+}
+
+class _QuestionPage5State extends State<QuestionPage5> {
+  Map<String, bool> painAreas = {
+    'Unterer Rücken': false,
+    'Oberer Rücken': false,
+    'Linke Schulter': false,
+    'Rechte Schulter': false,
+    'Linker Arm': false,
+    'Rechter Arm': false,
+    'Thorax': false,
+    'Steuerboard': false,
+    'Yomama': false,
+    'Yoiceborndragon': false,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> keys = painAreas.keys.toList();
+
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        children: [
+          Spacer(),
+          Text(
+            'Jetzt werden wir noch spezifischer für das Programm.',
+            style: TextStyle(fontSize: 22, color: Colors.white),
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: keys.take(5).map((String key) {
+                    return CheckboxListTile(
+                      title: Text(key, style: TextStyle(color: Colors.white)),
+                      value: painAreas[key],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          painAreas[key] = value!;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: keys.skip(5).map((String key) {
+                    return CheckboxListTile(
+                      title: Text(key, style: TextStyle(color: Colors.white)),
+                      value: painAreas[key],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          painAreas[key] = value!;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class QuestionPage6 extends StatefulWidget {
+  final PageController pageController;
+
+  QuestionPage6({required this.pageController});
+
+  @override
+  _QuestionPage6State createState() => _QuestionPage6State();
+}
+
+class _QuestionPage6State extends State<QuestionPage6> {
+  String _selectedExpectation = "Better Posture";
+  String _selectedPersonalGoal = "Yoga Master";
+  String _additionalPersonalGoal = "";
+
+  final List<String> expectationsOptions = [
+    'Better Posture',
+    'Pain Relief',
+    'More Flexibility'
+  ];
+
+  final List<String> personalGoalsOptions = [
+    'Run a Marathon',
+    'Lift Weights',
+    'Yoga Master'
+  ];
+
+  _saveSelectedOption(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 100),
+                  Text(
+                    'Zum Schluss noch etwas Persönliches von Dir.',
+                    style: TextStyle(fontSize: 22, color: Colors.white),
+                  ),
+                  SizedBox(height: 50),
+                  _buildRoundedSelectBox(
+                      'Was sind Deine 3 Ziele die Du durch die App erwartest?',
+                      _selectedExpectation,
+                      expectationsOptions,
+                      'selectedExpectation'),
+                  SizedBox(height: 50),
+                  _buildRoundedSelectBox(
+                      'Ergänze noch ein persönliches Ziel bei Bedarf.',
+                      _selectedPersonalGoal,
+                      personalGoalsOptions,
+                      'selectedPersonalGoal'),
+                  SizedBox(height: 50),
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: "Schreibe Dein Ziel",
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
+                    onChanged: (value) {
+                      _additionalPersonalGoal = value;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoundedSelectBox(String labelText, String selectedValue,
+      List<String> items, String prefKey) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          child: Text(
+            labelText,
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
+        Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: selectedValue,
+              icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+              isDense: true,
+              isExpanded: true,
+              onChanged: (String? newValue) {
+                setState(() {
+                  switch (prefKey) {
+                    case 'selectedExpectation':
+                      _selectedExpectation = newValue!;
+                      break;
+                    case 'selectedPersonalGoal':
+                      _selectedPersonalGoal = newValue!;
+                      break;
+                  }
+                  _saveSelectedOption(prefKey, newValue!);
+                });
+              },
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, style: TextStyle(color: Colors.black)),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class QuestionPage7 extends StatelessWidget {
   final VoidCallback onFinish;
 
-  QuestionPage4({required this.onFinish});
+  QuestionPage7({required this.onFinish});
 
   @override
   Widget build(BuildContext context) {
@@ -130,8 +710,8 @@ class QuestionPage4 extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                    onFinish(); // Call the onFinish callback
+                    Navigator.of(context).pop();
+                    onFinish();
                   },
                   child: Text("Start"),
                 ),
@@ -185,8 +765,7 @@ class FirstPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Align text to the left
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Spacer(),
             Center(
@@ -225,7 +804,7 @@ class FirstPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 12), // Add some space between the buttons
+            SizedBox(height: 12),
             Center(
               child: PressableButton(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -279,8 +858,7 @@ class SecondPage extends StatelessWidget {
               onPressed: onPressedAbschliessen,
               child: Text('Abschließen'),
               style: ElevatedButton.styleFrom(
-                minimumSize:
-                    Size(double.infinity, 36), // make width as wide as possible
+                minimumSize: Size(double.infinity, 36),
               ),
             ),
           ),
@@ -350,21 +928,19 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
       ),
       leading: Image.asset(
         "assets/fragen/birddogwippenlinks.jpg",
-        width: 40.0, // Set width to 30
-        height: 30.0, // Set height to 40
+        width: 40.0,
+        height: 30.0,
       ),
     );
   }
 
   void _showPainLocationDialog() {
-    // Define the variable for selected body part in the state class, not inside the showDialog method
     String? selectedBodyPart;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          // Add this StatefulBuilder to manage the state of the selected body part
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
               title: Text('Wo haben Sie bei der Übung Schmerzen gehabt?'),
@@ -384,7 +960,6 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                   );
                 }).toList(),
                 onChanged: (newValue) {
-                  // Update the selected body part within the StatefulBuilder
                   setState(() {
                     selectedBodyPart = newValue;
                   });
@@ -400,7 +975,6 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                 ),
                 PressableButton(
                   onPressed: () {
-                    //hier muss wert in Provider eingetragen werden
                     Navigator.of(context).pop();
                   },
                   child: Text('Speichern'),
