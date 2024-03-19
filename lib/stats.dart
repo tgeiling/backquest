@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'elements.dart';
 import 'settings.dart';
+import 'services.dart';
 
 class ProfilProvider extends ChangeNotifier {
   int _completedLevels = 0;
@@ -64,6 +65,39 @@ class ProfilProvider extends ChangeNotifier {
 
   void setCompletedLevels(int levels) {
     _completedLevels = levels;
+    notifyListeners();
+  }
+
+  Future<void> setWeeklyDone() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Try to read the last update date from SharedPreferences
+    final lastUpdateString = prefs.getString('lastWeeklyDoneUpdate');
+    DateTime? lastUpdate =
+        lastUpdateString != null ? DateTime.parse(lastUpdateString) : null;
+
+    final now = DateTime.now();
+    final currentWeek = weekNumber(now);
+    final lastUpdateWeek =
+        lastUpdate != null ? weekNumber(lastUpdate) : currentWeek;
+
+    if (currentWeek != lastUpdateWeek) {
+      _weeklyDone = 0;
+    } else {
+      _weeklyDone += 1; // Increment weeklyDone by one
+    }
+
+    // Update SharedPreferences with the new last update date and weeklyDone
+    await prefs.setString('lastWeeklyDoneUpdate', now.toIso8601String());
+    await prefs.setInt('weeklyDone', _weeklyDone);
+
+    notifyListeners();
+  }
+
+  Future<void> setWeeklyGoal(int weeklyGoal) async {
+    _weeklyGoal = weeklyGoal;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('weeklyGoal', _weeklyGoal);
     notifyListeners();
   }
 
@@ -161,27 +195,36 @@ class ProfilPageState extends State<ProfilPage> {
   @override
   void initState() {
     super.initState();
+    /* getAuthToken().then((token) {
+      if (token != null) {
+        fetchProfile(token).then((profileData) {
+          if (profileData != null) {
+            print(profileData);
+          } else {
+            print('Failed to fetch profile');
+          }
+        });
+        print('Token available');
+      }
+    }); */
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        width: double.maxFinite,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 56.0,
-          ),
-          child: Column(
+      width: double.maxFinite,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 56.0,
+        ),
+        child:
+            Consumer<ProfilProvider>(builder: (context, profilProvider, child) {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Consumer<ProfilProvider>(
-                builder: (context, provider, child) {
-                  return _buildRowWithImageAndText(
-                      context, provider.level, provider.exp);
-                },
-              ),
+              _buildRowWithImageAndText(context),
               SizedBox(height: 39.0),
               Text(
                 "Ziele",
@@ -189,21 +232,22 @@ class ProfilPageState extends State<ProfilPage> {
               ),
               SizedBox(height: 23.0),
               Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween, // Align items to both ends
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     "Woche",
                     style: TextStyle(fontSize: 16.0),
                   ),
                   Text(
-                    "3/4", // Replace "3/4" with the dynamic progress text you need
+                    "${profilProvider.weeklyDone}/${profilProvider.weeklyGoal}", // Replace "3/4" with the dynamic progress text you need
                     style: TextStyle(fontSize: 16.0),
                   ),
                 ],
               ),
               SizedBox(height: 12.0),
-              ProgressBarWithPill(initialProgress: 0.75),
+              ProgressBarWithPill(
+                  initialProgress:
+                      profilProvider.weeklyDone / profilProvider.weeklyGoal),
               SizedBox(height: 39.0),
               Text(
                 "Statistiken",
@@ -217,13 +261,13 @@ class ProfilPageState extends State<ProfilPage> {
                 },
               ),
             ],
-          ),
-        ),
+          );
+        }),
       ),
-    );
+    ));
   }
 
-  Widget _buildRowWithImageAndText(BuildContext context, int level, int exp) {
+  Widget _buildRowWithImageAndText(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -261,7 +305,7 @@ class ProfilPageState extends State<ProfilPage> {
                       .spaceBetween, // Aligns the children at the start and end of the row
                   children: [
                     Text(
-                      "Benjamin",
+                      "Profil",
                       style: TextStyle(
                           fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
@@ -318,34 +362,36 @@ class ProfilPageState extends State<ProfilPage> {
   }
 
   Widget _buildRowWithColumns(BuildContext context, int completedLevels) {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: _buildColumnWithText(
-              dynamicText: "${completedLevels}",
-              dynamicText1: "Übungen",
+    return Consumer<ProfilProvider>(builder: (context, profilProvider, child) {
+      return Container(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: _buildColumnWithText(
+                dynamicText: "${completedLevels}",
+                dynamicText1: "Übungen",
+              ),
             ),
-          ),
-          SizedBox(width: 12.0),
-          Expanded(
-            child: _buildColumnWithText(
-              dynamicText: "17",
-              dynamicText1: "Freunde",
+            SizedBox(width: 12.0),
+            Expanded(
+              child: _buildColumnWithText(
+                dynamicText: "${profilProvider.hasPain.length}",
+                dynamicText1: "Schmerzen",
+              ),
             ),
-          ),
-          SizedBox(width: 12.0),
-          Expanded(
-            child: _buildColumnWithText(
-              dynamicText: "435",
-              dynamicText1: "Zeit min",
+            SizedBox(width: 12.0),
+            Expanded(
+              child: _buildColumnWithText(
+                dynamicText: "${profilProvider.fitnessLevel}",
+                dynamicText1: "Fitnesslevel",
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildRowWithViews(BuildContext context) {

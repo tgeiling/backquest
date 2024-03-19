@@ -102,6 +102,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         if (widget.levelId != 0) {
           widget.levelNotifier.updateLevelStatus(widget.levelId, true);
           widget.profilProvider.setCompletedLevels(widget.levelId);
+          widget.profilProvider.setWeeklyDone();
         }
         hasBeenUpdated = true;
       }

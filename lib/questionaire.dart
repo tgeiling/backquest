@@ -77,7 +77,8 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
               QuestionPage4(pageController: _pageController),
               QuestionPage5(pageController: _pageController),
               QuestionPage6(pageController: _pageController),
-              QuestionPage7(onFinish: _finishQuestionnaire),
+              QuestionPage7(pageController: _pageController),
+              QuestionPage8(onFinish: _finishQuestionnaire),
             ],
           )),
     );
@@ -815,10 +816,96 @@ class _QuestionPage6State extends State<QuestionPage6> {
   }
 }
 
-class QuestionPage7 extends StatelessWidget {
+class QuestionPage7 extends StatefulWidget {
+  final PageController pageController;
+
+  QuestionPage7({required this.pageController});
+
+  @override
+  _QuestionPage7State createState() => _QuestionPage7State();
+}
+
+class _QuestionPage7State extends State<QuestionPage7> {
+  int _weeklyGoal = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context);
+
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacer(),
+          Text(
+            'Als letztes, setzte deine Ziele Fest!',
+            style: TextStyle(fontSize: 22, color: Colors.white),
+          ),
+          SizedBox(height: 80),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Wöchentliches Ziel: ',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              NumberPicker(
+                value: _weeklyGoal,
+                minValue: 0,
+                maxValue: 12,
+                textStyle: TextStyle(color: Colors.grey.shade400),
+                selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+                onChanged: (value) => setState(() => _weeklyGoal = value),
+              ),
+            ],
+          ),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+
+              profilProvider.setWeeklyGoal(_weeklyGoal);
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    weeklyGoal: _weeklyGoal,
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Weiter",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class QuestionPage8 extends StatelessWidget {
   final VoidCallback onFinish;
 
-  QuestionPage7({required this.onFinish});
+  QuestionPage8({required this.onFinish});
 
   @override
   Widget build(BuildContext context) {

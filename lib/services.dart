@@ -42,6 +42,7 @@ Future<bool> updateProfile({
   String? gender,
   int? weight,
   int? height,
+  int? weeklyGoal,
   List<String>? painAreas,
   String? workplaceEnvironment,
   String? fitnessLevel,
@@ -55,6 +56,7 @@ Future<bool> updateProfile({
   if (gender != null) body['gender'] = gender;
   if (weight != null) body['weight'] = weight;
   if (height != null) body['height'] = height;
+  if (weeklyGoal != null) body['weeklyGoal'] = weeklyGoal;
   if (painAreas != null) body['painAreas'] = painAreas;
   if (workplaceEnvironment != null)
     body['workplaceEnvironment'] = workplaceEnvironment;
@@ -82,4 +84,17 @@ Future<bool> updateProfile({
     print('Error updating profile: $e');
     return false;
   }
+}
+
+int weekNumber(DateTime date) {
+  final startOfYear = DateTime(date.year, 1, 1, 0, 0);
+  final firstMonday = startOfYear.weekday;
+  final daysInFirstWeek = 8 - firstMonday;
+  final diff = date.difference(startOfYear);
+  var weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
+  if (daysInFirstWeek > 3) {
+    // If the first week of the year contains more than 3 days, it counts as the first week
+    weeks += 1;
+  }
+  return weeks;
 }
