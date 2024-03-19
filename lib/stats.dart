@@ -160,7 +160,7 @@ class ProfilProvider extends ChangeNotifier {
   Future<void> setExpectation(String expectation) async {
     _expectation = expectation;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('fitnessLevel', expectation);
+    await prefs.setString('expectation', expectation);
     notifyListeners();
   }
 
@@ -195,7 +195,7 @@ class ProfilPageState extends State<ProfilPage> {
   @override
   void initState() {
     super.initState();
-    /* getAuthToken().then((token) {
+    getAuthToken().then((token) {
       if (token != null) {
         fetchProfile(token).then((profileData) {
           if (profileData != null) {
@@ -206,7 +206,7 @@ class ProfilPageState extends State<ProfilPage> {
         });
         print('Token available');
       }
-    }); */
+    });
   }
 
   @override
