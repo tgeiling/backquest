@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:provider/provider.dart';
 
+import 'services.dart';
 import 'elements.dart';
 import 'stats.dart';
 
@@ -149,6 +152,8 @@ class _QuestionPage2State extends State<QuestionPage2> {
 
   @override
   Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context);
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -230,6 +235,29 @@ class _QuestionPage2State extends State<QuestionPage2> {
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
+              profilProvider.setBirthdate(selectedDate);
+              String gender = _genderSliderValue == 0
+                  ? "male"
+                  : (_genderSliderValue == 1 ? "female" : "other");
+              profilProvider.setGender(gender);
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    birthdate: selectedDate,
+                    gender: gender,
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
             },
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Center(
@@ -260,6 +288,8 @@ class _QuestionPage3State extends State<QuestionPage3> {
 
   @override
   Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context);
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -314,6 +344,27 @@ class _QuestionPage3State extends State<QuestionPage3> {
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
+
+              profilProvider.setHeight(_currentHeight);
+              profilProvider.setWeight(_currentWeight);
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    height: _currentHeight,
+                    weight: _currentWeight,
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
             },
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Center(
@@ -358,6 +409,8 @@ class _QuestionPage4State extends State<QuestionPage4> {
 
   @override
   Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context);
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -382,6 +435,27 @@ class _QuestionPage4State extends State<QuestionPage4> {
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
+
+              profilProvider.setWorkplaceEnvironment(_selectedOption1);
+              profilProvider.setFitnessLevel(_selectedOption2);
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    workplaceEnvironment: _selectedOption1,
+                    fitnessLevel: _selectedOption2,
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
             },
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Center(
@@ -477,6 +551,7 @@ class _QuestionPage5State extends State<QuestionPage5> {
   @override
   Widget build(BuildContext context) {
     List<String> keys = painAreas.keys.toList();
+    final profilProvider = Provider.of<ProfilProvider>(context);
 
     return Container(
       padding: EdgeInsets.all(32.0),
@@ -529,6 +604,31 @@ class _QuestionPage5State extends State<QuestionPage5> {
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
+
+              profilProvider.setHasPain(painAreas.entries
+                  .where((entry) => entry.value)
+                  .map((entry) => entry.key)
+                  .toList());
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    painAreas: painAreas.entries
+                        .where((entry) => entry.value)
+                        .map((entry) => entry.key)
+                        .toList(),
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
             },
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Center(
@@ -577,6 +677,8 @@ class _QuestionPage6State extends State<QuestionPage6> {
 
   @override
   Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context);
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -625,6 +727,27 @@ class _QuestionPage6State extends State<QuestionPage6> {
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
+
+              profilProvider.setExpectation(_selectedExpectation);
+              profilProvider.setGoal(_selectedPersonalGoal);
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    expectation: _selectedExpectation,
+                    personalGoal: _selectedPersonalGoal,
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
             },
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Center(

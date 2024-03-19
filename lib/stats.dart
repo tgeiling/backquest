@@ -26,8 +26,9 @@ class ProfilProvider extends ChangeNotifier {
   int? _height;
   String? _workplaceEnvironment;
   String? _fitnessLevel;
+  String? _goal;
+  String? _expectation;
   List<String> _hasPain = [];
-  List<String> _goals = [];
 
   DateTime? get birthdate => _birthdate;
   String? get gender => _gender;
@@ -35,8 +36,9 @@ class ProfilProvider extends ChangeNotifier {
   int? get height => _height;
   String? get workplaceEnvironment => _workplaceEnvironment;
   String? get fitnessLevel => _fitnessLevel;
+  String? get goal => _goal;
+  String? get expectation => _expectation;
   List<String> get hasPain => _hasPain;
-  List<String> get goals => _goals;
 
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,8 +55,9 @@ class ProfilProvider extends ChangeNotifier {
     _height = prefs.getInt('height');
     _workplaceEnvironment = prefs.getString('workplaceEnvironment');
     _fitnessLevel = prefs.getString('fitnessLevel');
+    _goal = prefs.getString('goal');
+    _expectation = prefs.getString('expectation');
     _hasPain = prefs.getStringList('hasPain') ?? [];
-    _goals = prefs.getStringList('goals') ?? [];
 
     notifyListeners();
   }
@@ -113,10 +116,17 @@ class ProfilProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setGoals(List<String> goals) async {
-    _goals = goals;
+  Future<void> setGoal(String goal) async {
+    _goal = goal;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('goals', goals);
+    await prefs.setString('goal', goal);
+    notifyListeners();
+  }
+
+  Future<void> setExpectation(String expectation) async {
+    _expectation = expectation;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fitnessLevel', expectation);
     notifyListeners();
   }
 
