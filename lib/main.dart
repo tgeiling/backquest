@@ -11,6 +11,7 @@ import 'video.dart';
 import 'questionaire.dart';
 import 'elements.dart';
 import 'auth.dart';
+import 'services.dart';
 
 class LevelNotifier with ChangeNotifier {
   Map<int, Level> _levels = {};
@@ -65,7 +66,6 @@ class LevelNotifier with ChangeNotifier {
           minutes: 6),
     };
 
-    // Load isDone status from SharedPreferences and update tempLevels
     _levels = {
       for (var entry in tempLevels.entries)
         entry.key: Level(
@@ -80,12 +80,37 @@ class LevelNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateLevelStatus(int levelId, bool isDone) async {
+  void updateLevelStatus(int levelId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('level_${levelId}_isDone', isDone);
+    await prefs.setBool('level_${levelId}_isDone', true);
     await prefs.setInt('completedLevels', completedLevels + 1);
 
-    _levels[levelId]?.isDone = isDone;
+    getAuthToken().then((token) {
+      if (token != null) {
+        updateProfile(
+          token: token,
+          completedLevels: completedLevels + 1,
+        ).then((success) {
+          if (success) {
+            print("Profile updated successfully.");
+          } else {
+            print("Failed to update profile.");
+          }
+        });
+      } else {
+        print("No auth token available.");
+      }
+    });
+
+    _levels[levelId]?.isDone = true;
+    notifyListeners();
+  }
+
+  void updateLevelStatusSync(int levelId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('level_${levelId}_isDone', true);
+
+    _levels[levelId]?.isDone = true;
     notifyListeners();
   }
 }

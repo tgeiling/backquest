@@ -391,12 +391,21 @@ class QuestionPage4 extends StatefulWidget {
 }
 
 class _QuestionPage4State extends State<QuestionPage4> {
-  String _selectedOption1 = "Option 1-1";
-  String _selectedOption2 = "Option 2-1";
+  String _selectedOption1 = "meistens sitzend";
+  String _selectedOption2 = "Garkein Sport";
 
-  final List<String> options1 = ['Option 1-1', 'Option 1-2', 'Option 1-3'];
-  final List<String> options2 = ['Option 2-1', 'Option 2-2', 'Option 2-3'];
-  final List<String> options3 = ['Option 3-1', 'Option 3-2', 'Option 3-3'];
+  final List<String> options1 = [
+    'meistens sitzend',
+    'häufig sitzend',
+    'fast immer stehend'
+  ];
+
+  final List<String> options2 = [
+    'Garkein Sport',
+    'Anfänger',
+    'Fortgeschritten',
+    'Experte'
+  ];
 
   @override
   void initState() {
@@ -826,7 +835,7 @@ class QuestionPage7 extends StatefulWidget {
 }
 
 class _QuestionPage7State extends State<QuestionPage7> {
-  int _weeklyGoal = 0;
+  int _weeklyGoal = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -853,7 +862,7 @@ class _QuestionPage7State extends State<QuestionPage7> {
               ),
               NumberPicker(
                 value: _weeklyGoal,
-                minValue: 0,
+                minValue: 1,
                 maxValue: 12,
                 textStyle: TextStyle(color: Colors.grey.shade400),
                 selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),

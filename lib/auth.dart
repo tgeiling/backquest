@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'services.dart';
+import 'stats.dart';
+import 'main.dart';
 
 class AuthService {
   final String baseUrl = 'http://135.125.218.147:3000';
@@ -94,13 +100,85 @@ class _LoginScreenState extends State<LoginScreen> {
   final _authService = AuthService();
 
   void _attemptLogin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool success = await _authService.login(
       _usernameController.text,
       _passwordController.text,
     );
 
     if (success) {
-      widget.setAuthenticated(true);
+      final token = await getAuthToken();
+
+      if (token != null) {
+        final profileData = await fetchProfile(token);
+
+        if (profileData != null) {
+          final profilProvider =
+              Provider.of<ProfilProvider>(context, listen: false);
+          final levelProvider =
+              Provider.of<LevelNotifier>(context, listen: false);
+
+          if (profileData.containsKey('birthdate')) {
+            profilProvider
+                .setBirthdate(DateTime.parse(profileData['birthdate']));
+          }
+          if (profileData.containsKey('gender')) {
+            profilProvider.setGender(profileData['gender']);
+          }
+          if (profileData.containsKey('weight')) {
+            profilProvider.setWeight(profileData['weight']);
+          }
+          if (profileData.containsKey('height')) {
+            profilProvider.setHeight(profileData['height']);
+          }
+          if (profileData.containsKey('weeklyGoal')) {
+            profilProvider.setWeeklyGoal(profileData['weeklyGoal']);
+          }
+          if (profileData.containsKey('painAreas')) {
+            List<dynamic> painAreasDynamic = profileData['painAreas'];
+            List<String> painAreas = painAreasDynamic
+                .map((dynamic item) => item.toString())
+                .toList();
+            profilProvider.setHasPain(painAreas);
+          }
+          if (profileData.containsKey('workplaceEnvironment')) {
+            profilProvider
+                .setWorkplaceEnvironment(profileData['workplaceEnvironment']);
+          }
+          if (profileData.containsKey('fitnessLevel')) {
+            profilProvider.setFitnessLevel(profileData['fitnessLevel']);
+          }
+          if (profileData.containsKey('expectation')) {
+            profilProvider.setExpectation(profileData['expectation']);
+          }
+          if (profileData.containsKey('personalGoal')) {
+            profilProvider.setGoal(profileData['personalGoal']);
+          }
+
+          if (profileData.containsKey('completedLevels')) {
+            int completedLevels = profileData['completedLevels'];
+            profilProvider.setCompletedLevels(completedLevels);
+
+            // Ensure completedLevels is an integer and within the desired range
+            if (completedLevels >= 1 && completedLevels <= 4) {
+              await prefs.setInt('completedLevels', completedLevels);
+
+              for (int levelId = 1; levelId <= completedLevels; levelId++) {
+                levelProvider.updateLevelStatusSync(levelId);
+              }
+            } else {
+              // Handle case where completedLevels is not an int or out of range
+              print('Invalid completedLevels value: $completedLevels');
+            }
+          }
+
+          widget.setAuthenticated(true);
+        } else {
+          print("Failed to fetch profile data after login");
+        }
+      } else {
+        print("No token found after successful login");
+      }
     } else {
       showDialog(
         context: context,
@@ -112,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
               TextButton(
                 child: Text('Close'),
                 onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
+                  Navigator.of(context).pop();
                 },
               ),
             ],

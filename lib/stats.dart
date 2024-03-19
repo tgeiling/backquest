@@ -362,6 +362,13 @@ class ProfilPageState extends State<ProfilPage> {
   }
 
   Widget _buildRowWithColumns(BuildContext context, int completedLevels) {
+    final List<String> options2 = [
+      'Garkein Sport',
+      'Anfänger',
+      'Fortgeschritten',
+      'Experte'
+    ];
+
     return Consumer<ProfilProvider>(builder: (context, profilProvider, child) {
       return Container(
         width: double.infinity,
@@ -384,7 +391,8 @@ class ProfilPageState extends State<ProfilPage> {
             SizedBox(width: 12.0),
             Expanded(
               child: _buildColumnWithText(
-                dynamicText: "${profilProvider.fitnessLevel}",
+                dynamicText:
+                    "${options2.indexOf(profilProvider.fitnessLevel ?? 'Garkein Sport')}",
                 dynamicText1: "Fitnesslevel",
               ),
             ),
