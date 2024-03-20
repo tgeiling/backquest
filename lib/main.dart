@@ -122,7 +122,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => LevelNotifier()),
         ChangeNotifierProvider(create: (context) => ProfilProvider()),
       ],
-      child: MyApp(), // Your main app widget
+      child: MyApp(),
     ),
   );
 }

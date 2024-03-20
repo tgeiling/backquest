@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -706,7 +705,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
                   ),
                   SizedBox(height: 50),
                   _buildRoundedSelectBox(
-                      'Was sind Deine 3 Ziele die Du durch die App erwartest?',
+                      'Was sind deine 3 Ziele die du durch die App erwartest?',
                       _selectedExpectation,
                       expectationsOptions,
                       'selectedExpectation'),
