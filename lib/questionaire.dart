@@ -41,8 +41,25 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
 
   void _finishQuestionnaire() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('questionnaireCompleted', true);
+    await prefs.setBool('questionnaireDone', true);
     widget.checkQuestionaire();
+
+    getAuthToken().then((token) {
+      if (token != null) {
+        updateProfile(
+          token: token,
+          questionnaireDone: true,
+        ).then((success) {
+          if (success) {
+            print("Profile updated successfully.");
+          } else {
+            print("Failed to update profile.");
+          }
+        });
+      } else {
+        print("No auth token available.");
+      }
+    });
   }
 
   @override

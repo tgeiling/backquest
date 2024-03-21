@@ -87,8 +87,13 @@ class AuthService {
 
 class LoginScreen extends StatefulWidget {
   final Function(bool) setAuthenticated;
+  final VoidCallback setQuestionnairDone;
 
-  LoginScreen({Key? key, required this.setAuthenticated}) : super(key: key);
+  LoginScreen({
+    Key? key,
+    required this.setAuthenticated,
+    required this.setQuestionnairDone,
+  }) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -111,6 +116,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (token != null) {
         final profileData = await fetchProfile(token);
+        await prefs.clear();
+
+        widget.setQuestionnairDone();
 
         if (profileData != null) {
           final profilProvider =
@@ -155,19 +163,22 @@ class _LoginScreenState extends State<LoginScreen> {
             profilProvider.setGoal(profileData['personalGoal']);
           }
 
+          if (profileData.containsKey('questionnaireDone')) {
+            profilProvider
+                .setQuestionnaireDone(profileData['questionnaireDone']);
+          }
+
           if (profileData.containsKey('completedLevels')) {
             int completedLevels = profileData['completedLevels'];
             profilProvider.setCompletedLevels(completedLevels);
 
-            // Ensure completedLevels is an integer and within the desired range
-            if (completedLevels >= 1 && completedLevels <= 4) {
+            if (completedLevels >= 1) {
               await prefs.setInt('completedLevels', completedLevels);
 
               for (int levelId = 1; levelId <= completedLevels; levelId++) {
                 levelProvider.updateLevelStatusSync(levelId);
               }
             } else {
-              // Handle case where completedLevels is not an int or out of range
               print('Invalid completedLevels value: $completedLevels');
             }
           }

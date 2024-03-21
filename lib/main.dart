@@ -111,6 +111,7 @@ class LevelNotifier with ChangeNotifier {
     await prefs.setBool('level_${levelId}_isDone', true);
 
     _levels[levelId]?.isDone = true;
+    _loadLevels();
     notifyListeners();
   }
 }
@@ -159,11 +160,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkQuestionnaireCompletion() async {
     final prefs = await SharedPreferences.getInstance();
     final bool questionnaireCompleted =
-        prefs.getBool('questionnaireCompleted') ?? false;
+        prefs.getBool('questionnaireDone') ?? false;
 
     if (questionnaireCompleted) {
       setState(() {
         questionaireDone = true;
+      });
+    } else {
+      setState(() {
+        questionaireDone = false;
       });
     }
   }
@@ -200,7 +205,10 @@ class _MyAppState extends State<MyApp> {
               ? MainScaffold(setAuthenticated: _setAuthenticated)
               : QuestionnaireScreen(
                   checkQuestionaire: _checkQuestionnaireCompletion))
-          : LoginScreen(setAuthenticated: _setAuthenticated),
+          : LoginScreen(
+              setAuthenticated: _setAuthenticated,
+              setQuestionnairDone: _checkQuestionnaireCompletion,
+            ),
     );
   }
 }

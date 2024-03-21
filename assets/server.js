@@ -35,6 +35,7 @@ const UserSchema = new mongoose.Schema({
   fitnessLevel: String,
   expectation: String,
   personalGoal: String,
+  questionnaireDone: Boolean
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -92,6 +93,7 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
     if (req.body.fitnessLevel) user.fitnessLevel = req.body.fitnessLevel;
     if (req.body.expectation) user.expectation = req.body.expectation;
     if (req.body.personalGoal) user.personalGoal = req.body.personalGoal;
+	if (req.body.questionnaireDone) user.questionnaireDone = req.body.questionnaireDone;
 
     await user.save();
     res.status(200).send('Profile updated successfully');
@@ -121,6 +123,7 @@ app.get('/profile', authenticateToken, async (req, res) => {
       fitnessLevel: user.fitnessLevel,
       expectation: user.expectation,
       personalGoal: user.personalGoal,
+	  questionnaireDone: user.questionnaireDone,
     };
 
     res.status(200).json(userProfile);

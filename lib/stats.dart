@@ -7,19 +7,12 @@ import 'settings.dart';
 import 'services.dart';
 
 class ProfilProvider extends ChangeNotifier {
-  int _completedLevels = 0;
-  int _level = 0;
-  int _exp = 0;
-
   int _weeklyGoal = 0;
   int _weeklyDone = 0;
 
-  int get weeklyGoal => _weeklyGoal;
-  int get weeklyDone => _weeklyDone;
-
-  int get completedLevels => _completedLevels;
-  int get level => _level;
-  int get exp => _exp;
+  int _completedLevels = 0;
+  int _level = 0;
+  int _exp = 0;
 
   DateTime? _birthdate;
   String? _gender;
@@ -30,6 +23,14 @@ class ProfilProvider extends ChangeNotifier {
   String? _goal;
   String? _expectation;
   List<String> _hasPain = [];
+  bool? _questionnaireDone;
+
+  int get weeklyGoal => _weeklyGoal;
+  int get weeklyDone => _weeklyDone;
+
+  int get completedLevels => _completedLevels;
+  int get level => _level;
+  int get exp => _exp;
 
   DateTime? get birthdate => _birthdate;
   String? get gender => _gender;
@@ -40,6 +41,7 @@ class ProfilProvider extends ChangeNotifier {
   String? get goal => _goal;
   String? get expectation => _expectation;
   List<String> get hasPain => _hasPain;
+  bool? get questionnaireDone => _questionnaireDone;
 
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -59,6 +61,7 @@ class ProfilProvider extends ChangeNotifier {
     _goal = prefs.getString('goal');
     _expectation = prefs.getString('expectation');
     _hasPain = prefs.getStringList('hasPain') ?? [];
+    _questionnaireDone = prefs.getBool('questionnaireDone');
 
     notifyListeners();
   }
@@ -161,6 +164,13 @@ class ProfilProvider extends ChangeNotifier {
     _expectation = expectation;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('expectation', expectation);
+    notifyListeners();
+  }
+
+  Future<void> setQuestionnaireDone(bool questionnaireDone) async {
+    _questionnaireDone = questionnaireDone;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('questionnaireDone', questionnaireDone);
     notifyListeners();
   }
 
