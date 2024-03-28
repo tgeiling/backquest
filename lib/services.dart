@@ -48,7 +48,7 @@ Future<bool> updateProfile({
   String? workplaceEnvironment,
   String? fitnessLevel,
   String? expectation,
-  String? personalGoal,
+  List<String>? personalGoal,
   bool? questionnaireDone,
 }) async {
   final Uri apiUrl = Uri.parse('http://135.125.218.147:3000/updateProfile');

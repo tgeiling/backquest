@@ -33,8 +33,7 @@ const UserSchema = new mongoose.Schema({
   painAreas: [String],
   workplaceEnvironment: String,
   fitnessLevel: String,
-  expectation: String,
-  personalGoal: String,
+  personalGoal: [String],
   questionnaireDone: Boolean
 });
 
@@ -91,7 +90,6 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
     if (req.body.painAreas) user.painAreas = req.body.painAreas;
     if (req.body.workplaceEnvironment) user.workplaceEnvironment = req.body.workplaceEnvironment;
     if (req.body.fitnessLevel) user.fitnessLevel = req.body.fitnessLevel;
-    if (req.body.expectation) user.expectation = req.body.expectation;
     if (req.body.personalGoal) user.personalGoal = req.body.personalGoal;
 	if (req.body.questionnaireDone) user.questionnaireDone = req.body.questionnaireDone;
 
@@ -121,7 +119,6 @@ app.get('/profile', authenticateToken, async (req, res) => {
       painAreas: user.painAreas,
       workplaceEnvironment: user.workplaceEnvironment,
       fitnessLevel: user.fitnessLevel,
-      expectation: user.expectation,
       personalGoal: user.personalGoal,
 	  questionnaireDone: user.questionnaireDone,
     };

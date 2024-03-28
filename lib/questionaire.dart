@@ -407,20 +407,23 @@ class QuestionPage4 extends StatefulWidget {
 }
 
 class _QuestionPage4State extends State<QuestionPage4> {
-  String _selectedOption1 = "meistens sitzend";
-  String _selectedOption2 = "Garkein Sport";
+  String _selectedOption1 = "Größtenteils Sitzend (z.B. Schreibtischjob)";
+  String _selectedOption2 = "Nicht so oft";
 
   final List<String> options1 = [
-    'meistens sitzend',
-    'häufig sitzend',
-    'fast immer stehend'
+    'Größtenteils Sitzend (z.B. Schreibtischjob)',
+    'Sitzend und Stehend (z.B. Büro mit Stehschreibtisch)',
+    'Überwiegend stehend (z.B. Lehrer/in)',
+    'Größtenteils in Bewegung (z.B. Erzieher/in)',
+    'Schwer Hebend (z.B. Umzugshelfer/in)'
   ];
 
   final List<String> options2 = [
-    'Garkein Sport',
-    'Anfänger',
-    'Fortgeschritten',
-    'Experte'
+    'Nicht so oft',
+    'Mehrmals im Monat',
+    'Einmal pro Woche',
+    'Mehrmals pro Woche',
+    'Täglich',
   ];
 
   @override
@@ -452,8 +455,8 @@ class _QuestionPage4State extends State<QuestionPage4> {
           _buildRoundedSelectBox('Was trifft auf Deinen Arbeitsalltag zu?',
               _selectedOption1, options1, 'everyDaySituation'),
           SizedBox(height: 50),
-          _buildRoundedSelectBox('Wie ist Dein aktuelles Fitnesslevel?',
-              _selectedOption2, options2, 'fitnessLevel'),
+          _buildRoundedSelectBox('Wie oft treibst du Sport?', _selectedOption2,
+              options2, 'fitnessLevel'),
           Spacer(),
           PressableButton(
             onPressed: () {
@@ -680,22 +683,16 @@ class QuestionPage6 extends StatefulWidget {
 }
 
 class _QuestionPage6State extends State<QuestionPage6> {
-  String _selectedExpectation = "Better Posture";
-  String _selectedPersonalGoal = "Yoga Master";
+  String _selectedGoal1 = "Better Posture";
+  String _selectedGoal2 = "Pain Relief";
+  String _selectedGoal3 = "More Flexibility";
   String _additionalPersonalGoal = "";
 
-  final List<String> expectationsOptions = [
+  final List<String> personalGoalsOptions = [
     'Better Posture',
     'Pain Relief',
     'More Flexibility'
   ];
-
-  final List<String> personalGoalsOptions = [
-    'Run a Marathon',
-    'Lift Weights',
-    'Yoga Master'
-  ];
-
   _saveSelectedOption(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(key, value);
@@ -723,15 +720,14 @@ class _QuestionPage6State extends State<QuestionPage6> {
                   SizedBox(height: 50),
                   _buildRoundedSelectBox(
                       'Was sind deine 3 Ziele die du durch die App erwartest?',
-                      _selectedExpectation,
-                      expectationsOptions,
-                      'selectedExpectation'),
-                  SizedBox(height: 50),
-                  _buildRoundedSelectBox(
-                      'Ergänze noch ein persönliches Ziel bei Bedarf.',
-                      _selectedPersonalGoal,
+                      _selectedGoal1,
                       personalGoalsOptions,
-                      'selectedPersonalGoal'),
+                      'selectedGoal1'),
+                  SizedBox(height: 10),
+                  _buildRoundedSelectBox('', _selectedGoal2,
+                      personalGoalsOptions, 'selectedGoal2'),
+                  _buildRoundedSelectBox('', _selectedGoal3,
+                      personalGoalsOptions, 'selectedGoal3'),
                   SizedBox(height: 50),
                   TextField(
                     decoration: InputDecoration(
@@ -754,15 +750,19 @@ class _QuestionPage6State extends State<QuestionPage6> {
                 curve: Curves.easeInOut,
               );
 
-              profilProvider.setExpectation(_selectedExpectation);
-              profilProvider.setGoal(_selectedPersonalGoal);
+              List<String> selectedGoals = [
+                _selectedGoal1,
+                _selectedGoal2,
+                _selectedGoal3
+              ];
+
+              profilProvider.setGoals(selectedGoals);
 
               getAuthToken().then((token) {
                 if (token != null) {
                   updateProfile(
                     token: token,
-                    expectation: _selectedExpectation,
-                    personalGoal: _selectedPersonalGoal,
+                    personalGoal: selectedGoals,
                   ).then((success) {
                     if (success) {
                       print("Profile updated successfully.");
@@ -816,13 +816,18 @@ class _QuestionPage6State extends State<QuestionPage6> {
               isExpanded: true,
               onChanged: (String? newValue) {
                 setState(() {
+                  // Update the selected value based on prefKey
                   switch (prefKey) {
-                    case 'selectedExpectation':
-                      _selectedExpectation = newValue!;
+                    case 'selectedGoal1':
+                      _selectedGoal1 = newValue!;
                       break;
-                    case 'selectedPersonalGoal':
-                      _selectedPersonalGoal = newValue!;
+                    case 'selectedGoal2':
+                      _selectedGoal2 = newValue!;
                       break;
+                    case 'selectedGoal3':
+                      _selectedGoal3 = newValue!;
+                      break;
+                    // Add more cases as needed for other preferences
                   }
                   _saveSelectedOption(prefKey, newValue!);
                 });

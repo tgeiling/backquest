@@ -156,11 +156,12 @@ class _LoginScreenState extends State<LoginScreen> {
           if (profileData.containsKey('fitnessLevel')) {
             profilProvider.setFitnessLevel(profileData['fitnessLevel']);
           }
-          if (profileData.containsKey('expectation')) {
-            profilProvider.setExpectation(profileData['expectation']);
-          }
+
           if (profileData.containsKey('personalGoal')) {
-            profilProvider.setGoal(profileData['personalGoal']);
+            List<dynamic> goalsDynamic = profileData['personalGoal'];
+            List<String> goals =
+                goalsDynamic.map((dynamic item) => item.toString()).toList();
+            profilProvider.setGoals(goals);
           }
 
           if (profileData.containsKey('questionnaireDone')) {
