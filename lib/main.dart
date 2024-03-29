@@ -89,7 +89,7 @@ class LevelNotifier with ChangeNotifier {
       if (token != null) {
         updateProfile(
           token: token,
-          completedLevels: completedLevels + 1,
+          completedLevels: levelId,
         ).then((success) {
           if (success) {
             print("Profile updated successfully.");
@@ -111,6 +111,11 @@ class LevelNotifier with ChangeNotifier {
     await prefs.setBool('level_${levelId}_isDone', true);
 
     _levels[levelId]?.isDone = true;
+    _loadLevels();
+    notifyListeners();
+  }
+
+  void loadLevelsAfterStart() async {
     _loadLevels();
     notifyListeners();
   }

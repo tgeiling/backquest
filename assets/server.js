@@ -29,6 +29,7 @@ const UserSchema = new mongoose.Schema({
   weight: Number,
   height: Number,
   weeklyGoal: Number,
+  weeklyDone: Number,
   completedLevels: Number,
   painAreas: [String],
   workplaceEnvironment: String,
@@ -86,6 +87,7 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
     if (req.body.weight) user.weight = req.body.weight;
     if (req.body.height) user.height = req.body.height;
 	if (req.body.weeklyGoal) user.weeklyGoal = req.body.weeklyGoal;
+  if (req.body.weeklyDone) user.weeklyDone = req.body.weeklyDone;
 	if (req.body.completedLevels) user.completedLevels = req.body.completedLevels;
     if (req.body.painAreas) user.painAreas = req.body.painAreas;
     if (req.body.workplaceEnvironment) user.workplaceEnvironment = req.body.workplaceEnvironment;
@@ -115,6 +117,7 @@ app.get('/profile', authenticateToken, async (req, res) => {
       weight: user.weight,
       height: user.height,
 	  weeklyGoal: user.weeklyGoal,
+    weeklyDone: user.weeklyDone,
 	  completedLevels: user.completedLevels,
       painAreas: user.painAreas,
       workplaceEnvironment: user.workplaceEnvironment,

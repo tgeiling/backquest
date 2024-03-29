@@ -43,6 +43,7 @@ Future<bool> updateProfile({
   int? weight,
   int? height,
   int? weeklyGoal,
+  int? weeklyDone,
   int? completedLevels,
   List<String>? painAreas,
   String? workplaceEnvironment,
@@ -59,6 +60,7 @@ Future<bool> updateProfile({
   if (weight != null) body['weight'] = weight;
   if (height != null) body['height'] = height;
   if (weeklyGoal != null) body['weeklyGoal'] = weeklyGoal;
+  if (weeklyDone != null) body['weeklyDone'] = weeklyDone;
   if (completedLevels != null) body['completedLevels'] = completedLevels;
   if (painAreas != null) body['painAreas'] = painAreas;
   if (workplaceEnvironment != null)

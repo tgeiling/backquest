@@ -142,6 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
           if (profileData.containsKey('weeklyGoal')) {
             profilProvider.setWeeklyGoal(profileData['weeklyGoal']);
           }
+
+          if (profileData.containsKey('weeklyDone')) {
+            profilProvider.setWeeklyDone(profileData['weeklyDone']);
+          }
+
           if (profileData.containsKey('painAreas')) {
             List<dynamic> painAreasDynamic = profileData['painAreas'];
             List<String> painAreas = painAreasDynamic
@@ -183,6 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
               print('Invalid completedLevels value: $completedLevels');
             }
           }
+          levelProvider.loadLevelsAfterStart();
 
           widget.setAuthenticated(true);
         } else {

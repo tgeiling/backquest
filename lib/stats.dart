@@ -71,10 +71,9 @@ class ProfilProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setWeeklyDone() async {
+  Future<void> setWeeklyDone([int? number]) async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Try to read the last update date from SharedPreferences
     final lastUpdateString = prefs.getString('lastWeeklyDoneUpdate');
     DateTime? lastUpdate =
         lastUpdateString != null ? DateTime.parse(lastUpdateString) : null;
@@ -84,16 +83,36 @@ class ProfilProvider extends ChangeNotifier {
     final lastUpdateWeek =
         lastUpdate != null ? weekNumber(lastUpdate) : currentWeek;
 
-    if (currentWeek != lastUpdateWeek) {
-      _weeklyDone = 0;
+    if (number == null) {
+      print(_weeklyDone);
+      if (currentWeek != lastUpdateWeek) {
+        _weeklyDone = 0;
+      } else {
+        _weeklyDone += 1;
+      }
+
+      getAuthToken().then((token) {
+        if (token != null) {
+          updateProfile(
+            token: token,
+            weeklyDone: _weeklyDone,
+          ).then((success) {
+            if (success) {
+              print("Profile updated successfully.");
+            } else {
+              print("Failed to update profile.");
+            }
+          });
+        } else {
+          print("No auth token available.");
+        }
+      });
+
+      await prefs.setString('lastWeeklyDoneUpdate', now.toIso8601String());
+      await prefs.setInt('weeklyDone', _weeklyDone);
     } else {
-      _weeklyDone += 1; // Increment weeklyDone by one
+      await prefs.setInt('weeklyDone', number!);
     }
-
-    // Update SharedPreferences with the new last update date and weeklyDone
-    await prefs.setString('lastWeeklyDoneUpdate', now.toIso8601String());
-    await prefs.setInt('weeklyDone', _weeklyDone);
-
     notifyListeners();
   }
 
@@ -395,7 +414,7 @@ class ProfilPageState extends State<ProfilPage> {
             Expanded(
               child: _buildColumnWithText(
                 dynamicText:
-                    "${options2.indexOf(profilProvider.fitnessLevel ?? 'Garkein Sport')}",
+                    "${options2.indexOf(profilProvider.fitnessLevel ?? 'Nicht so oft')}",
                 dynamicText1: "Fitnesslevel",
               ),
             ),
