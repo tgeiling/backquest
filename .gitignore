@@ -8,22 +8,19 @@
 .buildlog/
 .history
 .svn/
-migrate_working_dir/
 
-# IntelliJ related
+# IDE - IntelliJ
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
+out/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# IDE - VSCode
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -31,22 +28,53 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+ios/Flutter/.last_build_id
+.flutter-plugins
+.flutter-plugins-dependencies
 
-# Symbolication related
-app.*.symbols
+# iOS related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/.generated/
+**/ios/**/*.perspectivev3
+**/ios/**/xcuserdata/
+**/ios/**/DerivedData/
+**/ios/**/.sync/
+**/ios/**/Pods/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
 
-# Obfuscation related
-app.*.map.json
+# Android related
+**/android/**/build/
+**/android/**/.gradle
+**/android/**/.idea
+.gradle
+/local.properties
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-/android/sources/android-34/*
-/android/build-tools/34.0.0
-/android/emulator
-/android/platform-tools
-/android/platforms/android-34
+# Web related
+**/web/**/build/
 
-/android/app/key.properties
-/android/app/*.jks
+# macOS related
+**/macos/**/Flutter/ephemeral/
+**/macos/**/Flutter/.last_build_id
+**/macos/**/Flutter/flutter_export_environment.sh
+**/macos/**/Pods/
+**/.metadata
+
+# Linux related
+**/linux/**/build/
+
+# Windows related
+**/windows/**/flutter/
+**/windows/**/Generated Files/
+
+# Exceptions to above rules.
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
