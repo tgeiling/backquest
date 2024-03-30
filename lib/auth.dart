@@ -189,6 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           }
           levelProvider.loadLevelsAfterStart();
+          profilProvider.loadInitialData();
 
           widget.setAuthenticated(true);
         } else {
