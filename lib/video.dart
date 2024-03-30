@@ -12,6 +12,7 @@ import 'dart:io';
 
 import 'main.dart';
 import 'questionaire.dart';
+import 'services.dart';
 
 class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;
@@ -56,8 +57,8 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
     // Trigger video combining process on the server
     await combineVideos();
 
-    // URL of the concatenated video on the server
-    // Assuming your server is accessible via HTTP and the concatenated video is served at the /video endpoint
+    await Future.delayed(Duration(seconds: 2));
+
     final String outputVideoUrl = 'http://135.125.218.147:3000/video';
 
     // Initialize the video player controller with the network URL
@@ -210,14 +211,25 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 } */
 
 Future<void> combineVideos() async {
-  final String url =
-      'http://135.125.218.147:3000/concatenate'; // Replace with your actual server URL and port
-  final response = await http.get(Uri.parse(url));
+  final String url = 'http://135.125.218.147:3000/concatenate';
+  final token = await getAuthToken();
 
-  if (response.statusCode == 200) {
-    print('Video concatenation triggered successfully.');
-  } else {
-    throw Exception('Failed to trigger video concatenation');
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Video concatenation triggered successfully.');
+    } else {
+      print('Failed to trigger video concatenation: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error making request to /concatenate endpoint: $e');
   }
 }
 

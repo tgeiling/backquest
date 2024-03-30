@@ -136,17 +136,21 @@ app.get('/profile', authenticateToken, async (req, res) => {
 
 //Video Concat
 
-const videosToConcatenate = [
-    '/var/www/backquest/videos/abschluss1_cp_fesi.mp4',
-    '/var/www/backquest/videos/birddog_hiswi_auf_4fl_auf.mp4',
-    '/var/www/backquest/videos/birddog_wippen_links_4fl_auf_4fl_auf.mp4',
-    '/var/www/backquest/videos/birddog_wippen_rechts_4fl_auf_4fl_auf.mp4',
-    '/var/www/backquest/videos/childpose_4fl_cp.mp4',
-    '/var/www/backquest/videos/childpose_cp_cp.mp4',
-    '/var/www/backquest/videos/einseitigchildpose_rechts_cp_cp.mp4',
-    '/var/www/backquest/videos/katzekuh_4fl_auf_4fl_auf_.mp4',
-    '/var/www/backquest/videos/schneidersitz_meditation.mp4'
-];
+const VideoSchema = new mongoose.Schema({
+  id: String,
+  name: String,
+  background: String,
+  duration: Number,
+  startPose: String,
+  endPose: String,
+  direction: String,
+  focus: [String],
+  goal: [String],
+  difficulty: Number,
+  caution: [String],
+});
+
+const Video = mongoose.model('Video', VideoSchema);
 
 function generateConcatListFile(videoFiles, listPath) {
     const listContent = videoFiles.map(file => `file '${file}'`).join('\n');
@@ -166,21 +170,44 @@ function concatenateVideos(listPath, outputFile) {
     });
 }
 
-app.get('/concatenate', (req, res) => {
-    const listPath = '/var/www/backquest/videos/mylist.txt'; // Path to your list file
-    const outputVideo = '/var/www/backquest/output/concatenated_video.mp4'; // Output file path
+app.get('/concatenate', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
-    // Generate list file and concatenate videos
-    generateConcatListFile(videosToConcatenate, listPath);
-    concatenateVideos(listPath, outputVideo)
-        .then(() => {
-            console.log('Videos concatenated successfully');
-            res.send('Videos concatenated successfully');
-        })
-        .catch((error) => {
-            console.error('Failed to concatenate videos:', error);
-            res.status(500).send('Failed to concatenate videos');
-        });
+    const fitnessLevelMap = {
+      'Nicht so oft': 1,
+      'Mehrmals im Monat': 2,
+      'Einmal pro Woche': 3,
+      'Mehrmals pro Woche': 4,
+      'Täglich': 5,
+    };
+    const userFitnessLevel = fitnessLevelMap[user.fitnessLevel];
+
+    const matchingVideos = await Video.find({ difficulty: userFitnessLevel }).limit(5);
+	
+	console.log(userFitnessLevel);
+	
+    const videoFiles = matchingVideos.map(video => {
+	  const filePath = `/var/www/backquest/videos/${video.id}.mp4`;
+	  console.log(`Processing video file: ${filePath}`);
+	  return filePath;
+	});
+
+    const listPath = '/var/www/backquest/videos/mylist.txt';
+    const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
+
+    generateConcatListFile(videoFiles, listPath);
+    await concatenateVideos(listPath, outputVideo);
+
+    console.log('Videos concatenated successfully');
+    res.send('Videos concatenated successfully');
+  } catch (error) {
+    console.error('Failed to concatenate videos:', error);
+    res.status(500).send('Failed to concatenate videos');
+  }
 });
 
 //Video Streaming
