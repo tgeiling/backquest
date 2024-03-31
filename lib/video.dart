@@ -51,17 +51,15 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 
   Future<void> _startVideoCombining() async {
     setState(() {
-      _isLoading = true; // Show loading indicator while processing
+      _isLoading = true;
     });
 
-    // Trigger video combining process on the server
     await combineVideos();
 
     await Future.delayed(Duration(seconds: 2));
 
     final String outputVideoUrl = 'http://135.125.218.147:3000/video';
 
-    // Initialize the video player controller with the network URL
     _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
     await _videoPlayerController!.initialize();
     _createChewieController();
