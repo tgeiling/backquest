@@ -165,14 +165,18 @@ async function concatenateVideos(listPath, outputFile) {
 	await delay(10000);
   return new Promise((resolve, reject) => {
     ffmpeg()
-      .input(listPath)
-      .inputOptions(['-f concat', '-safe 0'])
-      .outputOptions('-c copy')
-      .output(outputFile)
-      .on('error', (err) => reject(err))
-      .on('end', () => resolve(outputFile))
-      .run();
-  });
+  .input(listPath)
+  .inputOptions(['-f concat', '-safe 0'])
+  .outputOptions('-c copy')
+  .output(outputFile)
+  .on('start', (commandLine) => {
+    console.log(`Spawned ffmpeg with command: ${commandLine}`);
+    console.log(`ffmpeg working directory: ${process.cwd()}`);
+  })
+  .on('error', (err) => reject(err))
+  .on('end', () => resolve(outputFile))
+  .run();
+});
 }
 
 app.get('/concatenate', authenticateToken, async (req, res) => {
