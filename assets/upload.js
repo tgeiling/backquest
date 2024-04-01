@@ -22,9 +22,24 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://admin:OD9quYgeiM0pb8F7o
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 45000,
   connectTimeoutMS: 45000,
-}).then(() => {
+}).then(async () => {
   console.log('MongoDB connected');
+
+  try {
+
+    await mongoose.connection.dropCollection('videos');
+    console.log('Collection dropped successfully.');
+  } catch (err) {
+    if (err.code === 26) {
+      console.log('Collection not found. Proceeding with import.');
+    } else {
+      console.error('Error dropping collection:', err);
+      process.exit(); 
+    }
+  }
+
   importVideos();
+
 }).catch(err => {
   console.error('MongoDB connection error:', err);
 });

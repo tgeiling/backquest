@@ -157,25 +157,28 @@ function generateConcatListFile(videoFiles, listPath) {
     fs.writeFileSync(listPath, listContent);
 }
 
-function concatenateVideos(listPath, outputFile) {
-    return new Promise((resolve, reject) => {
-        ffmpeg()
-            .input(listPath)
-            .inputOptions(['-f concat', '-safe 0'])
-            .outputOptions('-c copy')
-            .output(outputFile)
-            .on('error', (err) => reject(err))
-            .on('end', () => resolve(outputFile))
-            .run();
-    });
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function concatenateVideos(listPath, outputFile) {
+	await delay(10000);
+  return new Promise((resolve, reject) => {
+    ffmpeg()
+      .input(listPath)
+      .inputOptions(['-f concat', '-safe 0'])
+      .outputOptions('-c copy')
+      .output(outputFile)
+      .on('error', (err) => reject(err))
+      .on('end', () => resolve(outputFile))
+      .run();
+  });
 }
 
 app.get('/concatenate', authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
+    if (!user) return res.status(404).send('User not found');
 
     const fitnessLevelMap = {
       'Nicht so oft': 1,
@@ -184,22 +187,41 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
       'Mehrmals pro Woche': 4,
       'Täglich': 5,
     };
-    const userFitnessLevel = fitnessLevelMap[user.fitnessLevel];
 
-    const matchingVideos = await Video.find({ difficulty: userFitnessLevel }).limit(5);
-	
-	console.log(userFitnessLevel);
-	
-    const videoFiles = matchingVideos.map(video => {
-	  const filePath = `/var/www/backquest/videos/${video.id}.mp4`;
-	  console.log(`Processing video file: ${filePath}`);
-	  return filePath;
-	});
+    let userFitnessLevel = fitnessLevelMap[user.fitnessLevel];
+    let selectedVideoIds = [];
+    const videoFiles = [];
+
+    const initialVideos = await Video.find({ difficulty: userFitnessLevel, _id: { $nin: selectedVideoIds } });
+    if (initialVideos.length === 0) return res.status(404).send('No matching videos found');
+
+    const initialVideo = initialVideos[Math.floor(Math.random() * initialVideos.length)];
+    videoFiles.push(`/var/www/backquest/videos/${initialVideo.id}.mp4`);
+    selectedVideoIds.push(initialVideo._id);
+    let currentEndPose = initialVideo.endPose;
+
+    console.log(`Initial video selected: ${initialVideo.id} with endPose ${initialVideo.endPose}`);
+
+    // Find subsequent videos
+    for (let i = 1; i < 5; i++) {
+      const nextVideo = await Video.findOne({
+        startPose: currentEndPose,
+        difficulty: { $in: [userFitnessLevel, userFitnessLevel + 1] },
+        _id: { $nin: selectedVideoIds }
+      });
+
+      if (!nextVideo) break;
+
+      console.log(`Next video selected: ${nextVideo.id} with startPose ${nextVideo.startPose} and endPose ${nextVideo.endPose}`);
+      videoFiles.push(`/var/www/backquest/videos/${nextVideo.id}.mp4`);
+      selectedVideoIds.push(nextVideo._id);
+      currentEndPose = nextVideo.endPose;
+    }
 
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
 
-    generateConcatListFile(videoFiles, listPath);
+    await generateConcatListFile(videoFiles, listPath);
     await concatenateVideos(listPath, outputVideo);
 
     console.log('Videos concatenated successfully');
