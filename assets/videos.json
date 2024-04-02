@@ -1119,7 +1119,7 @@
         "difficulty": 1,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": null
+        "logic": "Abschluss"
     },
     {
         "id": "0051",
@@ -1780,7 +1780,7 @@
         "difficulty": 1,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": null
+        "logic": "Abschluss"
     },
     {
         "id": "0081",

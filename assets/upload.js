@@ -13,6 +13,8 @@ const VideoSchema = new mongoose.Schema({
   goal: [String],
   difficulty: Number,
   caution: [String],
+  workplaceRelevance: String,
+  logic: String,
 });
 
 const Video = mongoose.model('Video', VideoSchema);
