@@ -149,7 +149,7 @@ const VideoSchema = new mongoose.Schema({
   difficulty: Number,
   caution: [String],
   workplaceRelevance: String,
-  logic: String,
+  logic: [String],
 });
 
 const Video = mongoose.model('Video', VideoSchema);
@@ -196,51 +196,54 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
     let userFitnessLevel = fitnessLevelMap[user.fitnessLevel];
     let selectedVideoIds = [];
     const videoFiles = [];
+    let currentEndPose;
 
-    const initialVideos = await Video.find({
+    const wu1Video = await Video.findOne({
       difficulty: userFitnessLevel,
       _id: { $nin: selectedVideoIds },
-      logic: { $ne: "Abschluss" }
+      logic: { $in: ["WU1"] }
     });
+    if (!wu1Video) return res.status(404).send('No WU1 video found');
+    videoFiles.push(`/var/www/backquest/videos/${wu1Video.id}.mp4`);
+    selectedVideoIds.push(wu1Video._id);
+    currentEndPose = wu1Video.endPose;
 
-    if (initialVideos.length === 0) return res.status(404).send('No matching videos found');
+    const wu2Video = await Video.findOne({
+      startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
+      difficulty: userFitnessLevel,
+      _id: { $nin: selectedVideoIds },
+      logic: { $in: ["WU2"] }
+    });
+    if (wu2Video) {
+      videoFiles.push(`/var/www/backquest/videos/${wu2Video.id}.mp4`);
+      selectedVideoIds.push(wu2Video._id);
+      currentEndPose = wu2Video.endPose;
+    }
 
-    const initialVideo = initialVideos[Math.floor(Math.random() * initialVideos.length)];
-    videoFiles.push(`/var/www/backquest/videos/${initialVideo.id}.mp4`);
-    selectedVideoIds.push(initialVideo._id);
-    let currentEndPose = initialVideo.endPose;
-
-    console.log(`Initial video selected: ${initialVideo.id} with endPose ${initialVideo.endPose}`);
-
-    for (let i = 1; i < 7; i++) {
+    for (let i = 2; i < 6; i++) {
       const nextVideo = await Video.findOne({
-        startPose: currentEndPose,
+        startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
         difficulty: { $in: [userFitnessLevel, userFitnessLevel + 1] },
         _id: { $nin: selectedVideoIds },
-        logic: { $ne: "Abschluss" }
+        logic: { $nin: ["WU1", "AB2"] }
       });
 
       if (!nextVideo) break;
 
-      console.log(`Next video selected: ${nextVideo.id} with startPose ${nextVideo.startPose} and endPose ${nextVideo.endPose}`);
       videoFiles.push(`/var/www/backquest/videos/${nextVideo.id}.mp4`);
       selectedVideoIds.push(nextVideo._id);
       currentEndPose = nextVideo.endPose;
     }
 
-    const finalVideo = await Video.findOne({
-      startPose: currentEndPose,
+    const ab2Video = await Video.findOne({
+      startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
       difficulty: { $in: [userFitnessLevel, userFitnessLevel + 1] },
       _id: { $nin: selectedVideoIds },
-      logic: "Abschluss"
+      logic: { $in: ["AB2"] }
     });
 
-    if (finalVideo) {
-      console.log(`Final video selected: ${finalVideo.id} with startPose ${finalVideo.startPose}`);
-      videoFiles.push(`/var/www/backquest/videos/${finalVideo.id}.mp4`);
-    } else {
-      console.log('No suitable Abschluss video found to conclude the sequence.');
-    }
+    if (!ab2Video) return res.status(404).send('No AB2 video found to conclude the sequence.');
+    videoFiles.push(`/var/www/backquest/videos/${ab2Video.id}.mp4`);
 
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
@@ -255,6 +258,7 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
     res.status(500).send('Failed to concatenate videos');
   }
 });
+
 
 //Video Streaming
 
