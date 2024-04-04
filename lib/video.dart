@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:backquest/stats.dart';
@@ -13,6 +14,8 @@ import 'dart:io';
 import 'main.dart';
 import 'questionaire.dart';
 import 'services.dart';
+
+List<dynamic> selectedVideos = [];
 
 class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;
@@ -112,7 +115,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Seamless Video Playback'),
+        backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -122,7 +125,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          AfterVideoView()), // Directly open AfterVideoView
+                          AfterVideoView(videoIds: selectedVideos)),
                 );
               }
             } else {
@@ -222,6 +225,11 @@ Future<void> combineVideos() async {
 
     if (response.statusCode == 200) {
       print('Video concatenation triggered successfully.');
+
+      final jsonResponse = json.decode(response.body);
+      selectedVideos = jsonResponse['selectedVideos'];
+
+      print('Selected videos: $selectedVideos');
     } else {
       print('Failed to trigger video concatenation: ${response.statusCode}');
       print('Response body: ${response.body}');

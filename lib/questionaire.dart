@@ -966,6 +966,10 @@ class QuestionPage8 extends StatelessWidget {
 }
 
 class AfterVideoView extends StatefulWidget {
+  final List<dynamic> videoIds;
+
+  AfterVideoView({Key? key, required this.videoIds}) : super(key: key);
+
   @override
   _AfterVideoViewState createState() => _AfterVideoViewState();
 }
@@ -983,10 +987,13 @@ class _AfterVideoViewState extends State<AfterVideoView> {
               onPressedWeiter: () => _pageController.nextPage(
                   duration: Duration(milliseconds: 500),
                   curve: Curves.easeInOut)),
-          SecondPage(onPressedAbschliessen: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          }),
+          SecondPage(
+            onPressedAbschliessen: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            videoIds: widget.videoIds,
+          ),
         ],
       ),
     );
@@ -1072,9 +1079,10 @@ class FirstPage extends StatelessWidget {
 }
 
 class SecondPage extends StatelessWidget {
+  final List<dynamic> videoIds;
   final VoidCallback onPressedAbschliessen;
 
-  SecondPage({required this.onPressedAbschliessen});
+  SecondPage({required this.onPressedAbschliessen, required this.videoIds});
 
   @override
   Widget build(BuildContext context) {
@@ -1088,7 +1096,8 @@ class SecondPage extends StatelessWidget {
             child: ListView.builder(
               itemCount: 5,
               itemBuilder: (context, index) {
-                return ExerciseFeedbackTile(index: index + 1);
+                return ExerciseFeedbackTile(
+                    index: index + 1, videoId: videoIds[index]);
               },
             ),
           ),
@@ -1109,9 +1118,10 @@ class SecondPage extends StatelessWidget {
 }
 
 class ExerciseFeedbackTile extends StatefulWidget {
+  final String videoId;
   final int index;
 
-  ExerciseFeedbackTile({required this.index});
+  ExerciseFeedbackTile({required this.index, required this.videoId});
 
   @override
   _ExerciseFeedbackTileState createState() => _ExerciseFeedbackTileState();
@@ -1167,9 +1177,8 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
         ],
       ),
       leading: Image.asset(
-        "assets/fragen/birddogwippenlinks.jpg",
-        width: 40.0,
-        height: 30.0,
+        "assets/thumbnails/${widget.videoId}.PNG",
+        width: 100.0,
       ),
     );
   }

@@ -100,6 +100,7 @@ flutter:
     - assets/button_grey.png
     - assets/button_locked.png
     - assets/fragen/birddogwippenlinks.jpg
+    - assets/thumbnails/
 
   fonts:
     - family: Roboto

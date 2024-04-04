@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -250,9 +251,16 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
 
     await generateConcatListFile(videoFiles, listPath);
     await concatenateVideos(listPath, outputVideo);
+	
+	res.json({
+		message: 'Videos concatenated successfully',
+		selectedVideos: videoFiles.map(filePath => {
+		  const fileName = path.basename(filePath);
+		  return fileName.split('.')[0];
+		}),
+	});
 
     console.log('Videos concatenated successfully');
-    res.send('Videos concatenated successfully');
   } catch (error) {
     console.error('Failed to concatenate videos:', error);
     res.status(500).send('Failed to concatenate videos');
