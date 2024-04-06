@@ -93,7 +93,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       final duration = _chewieController!.videoPlayerController.value.duration;
       final halfwayDuration = duration * 0.1;
 
-      watchedDuration += Duration(milliseconds: 300);
+      watchedDuration += Duration(milliseconds: 500);
 
       print("#################################");
       print(watchedDuration);
@@ -227,7 +227,10 @@ Future<void> combineVideos() async {
       print('Video concatenation triggered successfully.');
 
       final jsonResponse = json.decode(response.body);
-      selectedVideos = jsonResponse['selectedVideos'];
+      selectedVideos = jsonResponse['selectedVideos']
+          .map<String>((dynamicItem) => dynamicItem.toString())
+          .toList();
+      ;
 
       print('Selected videos: $selectedVideos');
     } else {

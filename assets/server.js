@@ -147,13 +147,14 @@ const VideoSchema = new mongoose.Schema({
   direction: String,
   focus: [String],
   goal: [String],
-  difficulty: Number, // This represents the inherent difficulty of the video, not user feedback
-  userDifficulty: String, // New field for user-reported difficulty
-  painAreas: [String], // New field for user-reported pain areas
+  difficulty: Number,
+  userDifficulty: String,
+  painAreas: [String],
   caution: [String],
   workplaceRelevance: String,
   logic: [String],
 });
+
 const Video = mongoose.model('Video', VideoSchema);
 
 function generateConcatListFile(videoFiles, listPath) {
@@ -182,10 +183,10 @@ async function concatenateVideos(listPath, outputFile) {
 });
 }
 
-app.post('/submit-feedback', authenticateToken, async (req, res) => {
+app.post('/feedback', authenticateToken, async (req, res) => {
   try {
     const feedbackData = req.body.feedback;
-
+	
     if (!feedbackData) {
       return res.status(400).send('Feedback data is missing.');
     }

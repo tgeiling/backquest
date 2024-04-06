@@ -12,6 +12,8 @@ const VideoSchema = new mongoose.Schema({
   focus: [String],
   goal: [String],
   difficulty: Number,
+  userDifficulty: String,
+  painAreas: [String],
   caution: [String],
   workplaceRelevance: String,
   logic: [String],

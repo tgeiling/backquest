@@ -1134,12 +1134,14 @@ class _SecondPageState extends State<SecondPage> {
   Future<void> _sendFeedback() async {
     final feedbackData = feedbackList.map((f) => f.toJson()).toList();
 
-    const String url = 'https://your-backend-endpoint/feedback';
+    const String url = 'http://135.125.218.147:3000/feedback';
+    final token = await getAuthToken();
 
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {
+          "Authorization": "Bearer $token",
           'Content-Type': 'application/json',
         },
         body: jsonEncode({'feedback': feedbackData}),
@@ -1159,6 +1161,9 @@ class _SecondPageState extends State<SecondPage> {
         content: Text('Error sending feedback: $e'),
       ));
     }
+
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override
@@ -1177,7 +1182,8 @@ class _SecondPageState extends State<SecondPage> {
               ),
             ),
           ),
-          ElevatedButton(
+          PressableButton(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             onPressed: _sendFeedback,
             child: Text('Abschließen'),
           ),
@@ -1210,7 +1216,13 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('Übung ${widget.index + 1}'),
+      title: Row(children: [
+        Text('Übung ${widget.index + 1}'),
+        IconButton(
+          icon: Icon(Icons.flash_on),
+          onPressed: _showPainLocationDialog,
+        ),
+      ]),
       subtitle: Wrap(
         spacing: 8.0,
         children: ['Einfach', 'Ok', 'Schwer']
@@ -1227,10 +1239,6 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
       ),
       leading:
           Image.asset("assets/thumbnails/${widget.videoId}.PNG", width: 100.0),
-      trailing: IconButton(
-        icon: Icon(Icons.flash_on),
-        onPressed: _showPainLocationDialog,
-      ),
     );
   }
 
@@ -1244,42 +1252,66 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
   }
 
   void _showPainLocationDialog() {
+    List<String> tempSelectedPainAreas = List.from(selectedPainAreas);
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Schmerzbereiche wählen'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: [
-              'Unterer Rücken',
-              'Oberer Rücken',
-              'Linke Schulter',
-              'Rechte Schulter',
-              'Linker Arm',
-              'Rechter Arm',
-              'Nacken',
-              'Hüfte',
-              'Linkes Knie',
-              'Rechtes Knie'
-            ]
-                .map((area) => FilterChip(
-                      label: Text(area),
-                      selected: selectedPainAreas.contains(area),
-                      onSelected: (bool selected) {
-                        setState(() => selected
-                            ? selectedPainAreas.add(area)
-                            : selectedPainAreas.remove(area));
-                        _updateFeedback();
-                      },
-                    ))
-                .toList(),
-          ),
-        ),
-        actions: [
-          TextButton(
-              child: Text('Fertig'), onPressed: () => Navigator.pop(context)),
-        ],
-      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text('Schmerzbereiche wählen'),
+              content: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 5.0,
+                  children: [
+                    'Unterer Rücken',
+                    'Oberer Rücken',
+                    'Linke Schulter',
+                    'Rechte Schulter',
+                    'Linker Arm',
+                    'Rechter Arm',
+                    'Nacken',
+                    'Hüfte',
+                    'Linkes Knie',
+                    'Rechtes Knie'
+                  ]
+                      .map((area) => FilterChip(
+                            label: Text(area),
+                            selected: tempSelectedPainAreas.contains(area),
+                            onSelected: (bool selected) {
+                              setDialogState(() {
+                                if (selected) {
+                                  tempSelectedPainAreas.add(area);
+                                } else {
+                                  tempSelectedPainAreas.remove(area);
+                                }
+                              });
+                            },
+                          ))
+                      .toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Abbrechen'),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                TextButton(
+                  child: Text('Speichern'),
+                  onPressed: () {
+                    setState(() {
+                      selectedPainAreas = tempSelectedPainAreas;
+                      _updateFeedback();
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
