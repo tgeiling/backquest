@@ -15,7 +15,7 @@ import 'main.dart';
 import 'questionaire.dart';
 import 'services.dart';
 
-List<dynamic> selectedVideos = [];
+List<String> selectedVideos = [];
 
 class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;

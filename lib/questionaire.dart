@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 import 'services.dart';
 import 'elements.dart';
@@ -571,10 +574,10 @@ class _QuestionPage5State extends State<QuestionPage5> {
     'Rechte Schulter': false,
     'Linker Arm': false,
     'Rechter Arm': false,
-    'Thorax': false,
-    'Steuerboard': false,
-    'Yomama': false,
-    'Yoiceborndragon': false,
+    'Nacken': false,
+    'Hüfte': false,
+    'Linkes Knie': false,
+    'Rechtes Knie': false,
   };
 
   @override
@@ -966,7 +969,7 @@ class QuestionPage8 extends StatelessWidget {
 }
 
 class AfterVideoView extends StatefulWidget {
-  final List<dynamic> videoIds;
+  final List<String> videoIds;
 
   AfterVideoView({Key? key, required this.videoIds}) : super(key: key);
 
@@ -988,10 +991,6 @@ class _AfterVideoViewState extends State<AfterVideoView> {
                   duration: Duration(milliseconds: 500),
                   curve: Curves.easeInOut)),
           SecondPage(
-            onPressedAbschliessen: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
             videoIds: widget.videoIds,
           ),
         ],
@@ -1078,38 +1077,109 @@ class FirstPage extends StatelessWidget {
   }
 }
 
-class SecondPage extends StatelessWidget {
-  final List<dynamic> videoIds;
-  final VoidCallback onPressedAbschliessen;
+class ExerciseFeedback {
+  final String videoId;
+  String? difficulty;
+  List<String> painAreas;
 
-  SecondPage({required this.onPressedAbschliessen, required this.videoIds});
+  ExerciseFeedback({
+    required this.videoId,
+    this.difficulty,
+    this.painAreas = const [],
+  });
+
+  void update({String? newDifficulty, List<String>? newPainAreas}) {
+    if (newDifficulty != null) {
+      difficulty = newDifficulty;
+    }
+    if (newPainAreas != null && newPainAreas.isNotEmpty) {
+      painAreas = newPainAreas;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'videoId': videoId,
+      'difficulty': difficulty,
+      'painAreas': painAreas,
+    };
+  }
+}
+
+class SecondPage extends StatefulWidget {
+  final List<String> videoIds;
+
+  const SecondPage({Key? key, required this.videoIds}) : super(key: key);
+
+  @override
+  _SecondPageState createState() => _SecondPageState();
+}
+
+class _SecondPageState extends State<SecondPage> {
+  List<ExerciseFeedback> feedbackList = [];
+
+  void _handleFeedbackUpdated(ExerciseFeedback feedback) {
+    setState(() {
+      int index = feedbackList.indexWhere((f) => f.videoId == feedback.videoId);
+      if (index != -1) {
+        feedbackList[index].update(
+            newDifficulty: feedback.difficulty,
+            newPainAreas: feedback.painAreas);
+      } else {
+        feedbackList.add(feedback);
+      }
+    });
+  }
+
+  Future<void> _sendFeedback() async {
+    final feedbackData = feedbackList.map((f) => f.toJson()).toList();
+
+    const String url = 'https://your-backend-endpoint/feedback';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'feedback': feedbackData}),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Feedback sent successfully!'),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Failed to send feedback.'),
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error sending feedback: $e'),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Feedback zu Deinen Übungen'),
-      ),
+      appBar: AppBar(title: Text('Feedback zu Deinen Übungen')),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return ExerciseFeedbackTile(
-                    index: index + 1, videoId: videoIds[index]);
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: onPressedAbschliessen,
-              child: Text('Abschließen'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 36),
+              itemCount: widget.videoIds.length,
+              itemBuilder: (context, index) => ExerciseFeedbackTile(
+                index: index,
+                videoId: widget.videoIds[index],
+                onFeedbackUpdated: _handleFeedbackUpdated,
               ),
             ),
+          ),
+          ElevatedButton(
+            onPressed: _sendFeedback,
+            child: Text('Abschließen'),
           ),
         ],
       ),
@@ -1120,120 +1190,96 @@ class SecondPage extends StatelessWidget {
 class ExerciseFeedbackTile extends StatefulWidget {
   final String videoId;
   final int index;
+  final Function(ExerciseFeedback) onFeedbackUpdated;
 
-  ExerciseFeedbackTile({required this.index, required this.videoId});
+  const ExerciseFeedbackTile({
+    Key? key,
+    required this.index,
+    required this.videoId,
+    required this.onFeedbackUpdated,
+  }) : super(key: key);
 
   @override
   _ExerciseFeedbackTileState createState() => _ExerciseFeedbackTileState();
 }
 
 class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
-  String? selectedOption;
+  String? selectedDifficulty;
+  List<String> selectedPainAreas = [];
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Row(
-        children: [
-          Expanded(
-            child: Text('Übung ${widget.index}'),
-          ),
-          IconButton(
-            icon: Icon(Icons.flash_on),
-            onPressed: _showPainLocationDialog,
-          ),
-        ],
+      title: Text('Übung ${widget.index + 1}'),
+      subtitle: Wrap(
+        spacing: 8.0,
+        children: ['Einfach', 'Ok', 'Schwer']
+            .map((difficulty) => ChoiceChip(
+                  label: Text(difficulty),
+                  selected: selectedDifficulty == difficulty,
+                  onSelected: (bool selected) {
+                    setState(() =>
+                        selectedDifficulty = selected ? difficulty : null);
+                    _updateFeedback();
+                  },
+                ))
+            .toList(),
       ),
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ChoiceChip(
-            label: Text('Einfach'),
-            selected: selectedOption == 'Einfach',
-            onSelected: (bool selected) {
-              setState(() {
-                selectedOption = 'Einfach';
-              });
-            },
-          ),
-          ChoiceChip(
-            label: Text('Ok'),
-            selected: selectedOption == 'Ok',
-            onSelected: (bool selected) {
-              setState(() {
-                selectedOption = 'Ok';
-              });
-            },
-          ),
-          ChoiceChip(
-            label: Text('Schwer'),
-            selected: selectedOption == 'Schwer',
-            onSelected: (bool selected) {
-              setState(() {
-                selectedOption = 'Schwer';
-              });
-            },
-          ),
-        ],
-      ),
-      leading: Image.asset(
-        "assets/thumbnails/${widget.videoId}.PNG",
-        width: 100.0,
+      leading:
+          Image.asset("assets/thumbnails/${widget.videoId}.PNG", width: 100.0),
+      trailing: IconButton(
+        icon: Icon(Icons.flash_on),
+        onPressed: _showPainLocationDialog,
       ),
     );
   }
 
-  void _showPainLocationDialog() {
-    String? selectedBodyPart;
+  void _updateFeedback() {
+    final feedback = ExerciseFeedback(
+      videoId: widget.videoId,
+      difficulty: selectedDifficulty,
+      painAreas: selectedPainAreas,
+    );
+    widget.onFeedbackUpdated(feedback);
+  }
 
+  void _showPainLocationDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: Text('Wo haben Sie bei der Übung Schmerzen gehabt?'),
-              content: DropdownButton<String>(
-                isExpanded: true,
-                value: selectedBodyPart,
-                items: <String>[
-                  'Rücken',
-                  'Schulter',
-                  'Knie',
-                  'Hüfte',
-                  'Handgelenk'
-                ].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedBodyPart = newValue;
-                  });
-                },
-              ),
-              actions: [
-                PressableButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Abbrechen'),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                ),
-                PressableButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Speichern'),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                )
-              ],
-            );
-          },
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: Text('Schmerzbereiche wählen'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: [
+              'Unterer Rücken',
+              'Oberer Rücken',
+              'Linke Schulter',
+              'Rechte Schulter',
+              'Linker Arm',
+              'Rechter Arm',
+              'Nacken',
+              'Hüfte',
+              'Linkes Knie',
+              'Rechtes Knie'
+            ]
+                .map((area) => FilterChip(
+                      label: Text(area),
+                      selected: selectedPainAreas.contains(area),
+                      onSelected: (bool selected) {
+                        setState(() => selected
+                            ? selectedPainAreas.add(area)
+                            : selectedPainAreas.remove(area));
+                        _updateFeedback();
+                      },
+                    ))
+                .toList(),
+          ),
+        ),
+        actions: [
+          TextButton(
+              child: Text('Fertig'), onPressed: () => Navigator.pop(context)),
+        ],
+      ),
     );
   }
 }

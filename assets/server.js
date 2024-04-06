@@ -147,12 +147,13 @@ const VideoSchema = new mongoose.Schema({
   direction: String,
   focus: [String],
   goal: [String],
-  difficulty: Number,
+  difficulty: Number, // This represents the inherent difficulty of the video, not user feedback
+  userDifficulty: String, // New field for user-reported difficulty
+  painAreas: [String], // New field for user-reported pain areas
   caution: [String],
   workplaceRelevance: String,
   logic: [String],
 });
-
 const Video = mongoose.model('Video', VideoSchema);
 
 function generateConcatListFile(videoFiles, listPath) {
@@ -180,6 +181,30 @@ async function concatenateVideos(listPath, outputFile) {
   .run();
 });
 }
+
+app.post('/submit-feedback', authenticateToken, async (req, res) => {
+  try {
+    const feedbackData = req.body.feedback;
+
+    if (!feedbackData) {
+      return res.status(400).send('Feedback data is missing.');
+    }
+
+    for (const feedback of feedbackData) {
+      const { videoId, difficulty, painAreas } = feedback;
+      await Video.findOneAndUpdate(
+        { id: videoId },
+        { $set: { userDifficulty: difficulty, painAreas: painAreas }},
+        { new: true }
+      );
+    }
+
+    res.status(200).send({ message: 'Feedback updated successfully.' });
+  } catch (error) {
+    console.error('Failed to update feedback:', error);
+    res.status(500).send({ error: 'Failed to update feedback.' });
+  }
+});
 
 app.get('/concatenate', authenticateToken, async (req, res) => {
   try {
