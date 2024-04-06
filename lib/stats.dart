@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +27,7 @@ class ProfilProvider extends ChangeNotifier {
   List<String> _hasPain = [];
   List<String> _goals = [];
   bool? _questionnaireDone;
+  List<ExerciseFeedback> _feedback = [];
 
   int get weeklyGoal => _weeklyGoal;
   int get weeklyDone => _weeklyDone;
@@ -43,6 +46,7 @@ class ProfilProvider extends ChangeNotifier {
   List<String> get hasPain => _hasPain;
   List<String> get goals => _goals;
   bool? get questionnaireDone => _questionnaireDone;
+  List<ExerciseFeedback> get feedback => _feedback;
 
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -62,6 +66,13 @@ class ProfilProvider extends ChangeNotifier {
     _goals = prefs.getStringList('goals') ?? [];
     _hasPain = prefs.getStringList('hasPain') ?? [];
     _questionnaireDone = prefs.getBool('questionnaireDone');
+    String? feedbackJson = prefs.getString('feedback');
+    if (feedbackJson != null) {
+      List<dynamic> feedbackList = json.decode(feedbackJson);
+      _feedback = feedbackList
+          .map((feedback) => ExerciseFeedback.fromJson(feedback))
+          .toList();
+    }
 
     notifyListeners();
   }
@@ -184,6 +195,12 @@ class ProfilProvider extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('questionnaireDone', questionnaireDone);
     notifyListeners();
+  }
+
+  Future<void> setFeedback(List<ExerciseFeedback> feedback) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String feedbackJson = json.encode(feedback.map((f) => f.toJson()).toList());
+    await prefs.setString('feedback', feedbackJson);
   }
 
   @override

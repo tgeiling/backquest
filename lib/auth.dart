@@ -174,6 +174,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 .setQuestionnaireDone(profileData['questionnaireDone']);
           }
 
+          if (profileData.containsKey('feedback')) {
+            profilProvider.setFeedback(profileData['feedback']);
+          }
+
           if (profileData.containsKey('completedLevels')) {
             int completedLevels = profileData['completedLevels'];
             profilProvider.setCompletedLevels(completedLevels);

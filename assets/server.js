@@ -36,7 +36,12 @@ const UserSchema = new mongoose.Schema({
   workplaceEnvironment: String,
   fitnessLevel: String,
   personalGoal: [String],
-  questionnaireDone: Boolean
+  questionnaireDone: Boolean,
+  feedback: [{
+    videoId: String,
+    difficulty: String,
+    painAreas: [String]
+  }]
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -95,6 +100,7 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
     if (req.body.fitnessLevel) user.fitnessLevel = req.body.fitnessLevel;
     if (req.body.personalGoal) user.personalGoal = req.body.personalGoal;
 	if (req.body.questionnaireDone) user.questionnaireDone = req.body.questionnaireDone;
+	if (req.body.feedback) user.feedback = req.body.feedback;
 
     await user.save();
     res.status(200).send('Profile updated successfully');
@@ -125,12 +131,43 @@ app.get('/profile', authenticateToken, async (req, res) => {
       fitnessLevel: user.fitnessLevel,
       personalGoal: user.personalGoal,
 	  questionnaireDone: user.questionnaireDone,
+	  feedback: user.feedback,
     };
 
     res.status(200).json(userProfile);
   } catch (error) {
     console.error("Fetching profile error:", error);
     res.status(500).send(error.message || 'Server error');
+  }
+});
+
+app.get('/userFeedback', async (req, res) => {
+  try {
+    const users = await User.find({});
+
+    const userFeedback = users.map((user) => ({
+      userData: {
+        username: user.username,
+        birthdate: user.birthdate,
+        gender: user.gender,
+        weight: user.weight,
+        height: user.height,
+        weeklyGoal: user.weeklyGoal,
+        weeklyDone: user.weeklyDone,
+        completedLevels: user.completedLevels,
+        painAreas: user.painAreas,
+        workplaceEnvironment: user.workplaceEnvironment,
+        fitnessLevel: user.fitnessLevel,
+        personalGoal: user.personalGoal,
+        questionnaireDone: user.questionnaireDone,
+        feedback: user.feedback
+      }
+    }));
+
+    res.json(userFeedback);
+  } catch (error) {
+    console.error('Failed to fetch user feedback:', error);
+    res.status(500).send('Failed to fetch user feedback');
   }
 });
 
@@ -148,8 +185,6 @@ const VideoSchema = new mongoose.Schema({
   focus: [String],
   goal: [String],
   difficulty: Number,
-  userDifficulty: String,
-  painAreas: [String],
   caution: [String],
   workplaceRelevance: String,
   logic: [String],
@@ -185,20 +220,23 @@ async function concatenateVideos(listPath, outputFile) {
 
 app.post('/feedback', authenticateToken, async (req, res) => {
   try {
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) return res.status(404).send('User not found');
+
     const feedbackData = req.body.feedback;
-	
     if (!feedbackData) {
       return res.status(400).send('Feedback data is missing.');
     }
 
-    for (const feedback of feedbackData) {
-      const { videoId, difficulty, painAreas } = feedback;
-      await Video.findOneAndUpdate(
-        { id: videoId },
-        { $set: { userDifficulty: difficulty, painAreas: painAreas }},
-        { new: true }
-      );
-    }
+    feedbackData.forEach(feedback => {
+      user.feedback.push({
+        videoId: feedback.videoId,
+        difficulty: feedback.difficulty,
+        painAreas: feedback.painAreas
+      });
+    });
+
+    await user.save();
 
     res.status(200).send({ message: 'Feedback updated successfully.' });
   } catch (error) {
@@ -206,6 +244,7 @@ app.post('/feedback', authenticateToken, async (req, res) => {
     res.status(500).send({ error: 'Failed to update feedback.' });
   }
 });
+
 
 app.get('/concatenate', authenticateToken, async (req, res) => {
   try {

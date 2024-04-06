@@ -1077,35 +1077,6 @@ class FirstPage extends StatelessWidget {
   }
 }
 
-class ExerciseFeedback {
-  final String videoId;
-  String? difficulty;
-  List<String> painAreas;
-
-  ExerciseFeedback({
-    required this.videoId,
-    this.difficulty,
-    this.painAreas = const [],
-  });
-
-  void update({String? newDifficulty, List<String>? newPainAreas}) {
-    if (newDifficulty != null) {
-      difficulty = newDifficulty;
-    }
-    if (newPainAreas != null && newPainAreas.isNotEmpty) {
-      painAreas = newPainAreas;
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'videoId': videoId,
-      'difficulty': difficulty,
-      'painAreas': painAreas,
-    };
-  }
-}
-
 class SecondPage extends StatefulWidget {
   final List<String> videoIds;
 

@@ -14,8 +14,6 @@
             "Kraft"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "unterer Ruecken 2"
         ],
@@ -39,8 +37,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3"
         ],
@@ -64,8 +60,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3"
         ],
@@ -90,8 +84,6 @@
             " Beweglichkeit"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Schulter 2",
             " Handgelenke 2"
@@ -115,8 +107,6 @@
             " Haltung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "wenig Platz"
         ],
@@ -139,8 +129,6 @@
             " Haltung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "wenig Platz"
         ],
@@ -163,8 +151,6 @@
             " Haltung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -187,8 +173,6 @@
             " Haltung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -211,8 +195,6 @@
             " Haltung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -234,8 +216,6 @@
             "Kraft"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": []
@@ -258,8 +238,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -284,8 +262,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -309,8 +285,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Extension",
             " Knie 4"
@@ -337,8 +311,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 4"
         ],
@@ -364,8 +336,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -393,8 +363,6 @@
             " Haltung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3"
         ],
@@ -422,8 +390,6 @@
             " Haltung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3"
         ],
@@ -451,8 +417,6 @@
             " Haltung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -479,8 +443,6 @@
             " Haltung"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": []
@@ -502,8 +464,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -529,8 +489,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -555,8 +513,6 @@
             "Beweglichekeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -581,8 +537,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -607,8 +561,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -636,8 +588,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2",
             " Handgelenk 2"
@@ -664,8 +614,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2",
             " Handgelenk 2"
@@ -692,8 +640,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2",
             " Handgelenk 2"
@@ -718,8 +664,6 @@
             " Entspannung"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Extension"
         ],
@@ -744,8 +688,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -770,8 +712,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -794,8 +734,6 @@
             "Kraft "
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Handgelenk 4",
             " Schulter 3"
@@ -821,8 +759,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -848,8 +784,6 @@
             " Haltung"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Schulter 3",
             " Handgelenke 3"
@@ -876,8 +810,6 @@
             " Haltung"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Schulter 3",
             " Handgelenke 3"
@@ -902,8 +834,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -928,8 +858,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -955,8 +883,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3"
         ],
@@ -981,8 +907,6 @@
             " Kraft"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -1007,8 +931,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1033,8 +955,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1059,8 +979,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1085,8 +1003,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1108,8 +1024,6 @@
             "Kraft"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": []
@@ -1131,8 +1045,6 @@
             "Kraft"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1157,8 +1069,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1183,8 +1093,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1208,8 +1116,6 @@
             " Entspnnaung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1234,8 +1140,6 @@
             " Entspnnaung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1258,8 +1162,6 @@
             "Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1281,8 +1183,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1304,8 +1204,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1327,8 +1225,6 @@
             "Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1350,8 +1246,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1373,8 +1267,6 @@
             "Entspannung"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1396,8 +1288,6 @@
             "Entspannung"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1421,8 +1311,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3",
             " Handgelenke 3"
@@ -1447,8 +1335,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 3",
             " Handgelenke 3"
@@ -1473,8 +1359,6 @@
             " Kraft"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Fuss 3"
         ],
@@ -1499,8 +1383,6 @@
             " Haltung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1525,8 +1407,6 @@
             " Haltung"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 4",
             " Handgelenke 3"
@@ -1552,8 +1432,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1578,8 +1456,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1604,8 +1480,6 @@
             " Kraft"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Handgelenke 5",
             " Nacken 5"
@@ -1630,8 +1504,6 @@
             "Kraft"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Handgelenke 4",
             " Nacken 4"
@@ -1655,8 +1527,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 4"
         ],
@@ -1682,8 +1552,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -1707,8 +1575,6 @@
             "Kraft"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": []
@@ -1729,8 +1595,6 @@
             "Kraft"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 4"
         ],
@@ -1753,8 +1617,6 @@
             "Kraft"
         ],
         "difficulty": 4,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 4"
         ],
@@ -1778,8 +1640,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -1805,8 +1665,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -1830,8 +1688,6 @@
             "Kraft"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "unterer Ruecken 3"
         ],
@@ -1855,8 +1711,6 @@
             " Entspannung"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -1880,8 +1734,6 @@
             " Entspannung"
         ],
         "difficulty": 3,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Knie 2"
         ],
@@ -1904,8 +1756,6 @@
             "Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Schneidersitz"
         ],
@@ -1932,8 +1782,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Gewicht"
         ],
@@ -1960,8 +1808,6 @@
             " Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [
             "Gewicht"
         ],
@@ -1987,8 +1833,6 @@
             " Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -2014,8 +1858,6 @@
             " Beweglichkeit"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": "Hebend",
         "logic": [
@@ -2039,8 +1881,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -2062,8 +1902,6 @@
             "Entspannung"
         ],
         "difficulty": 2,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -2085,8 +1923,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
@@ -2108,8 +1944,6 @@
             "Entspannung"
         ],
         "difficulty": 1,
-        "userDifficulty": null,
-        "painAreas": null,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [

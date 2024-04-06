@@ -51,6 +51,7 @@ Future<bool> updateProfile({
   String? expectation,
   List<String>? personalGoal,
   bool? questionnaireDone,
+  List<ExerciseFeedback>? feedback,
 }) async {
   final Uri apiUrl = Uri.parse('http://135.125.218.147:3000/updateProfile');
 
@@ -69,6 +70,7 @@ Future<bool> updateProfile({
   if (expectation != null) body['expectation'] = expectation;
   if (personalGoal != null) body['personalGoal'] = personalGoal;
   if (questionnaireDone != null) body['questionnaireDone'] = questionnaireDone;
+  if (feedback != null) body['feedback'] = feedback;
 
   try {
     final response = await http.post(
@@ -103,4 +105,41 @@ int weekNumber(DateTime date) {
     weeks += 1;
   }
   return weeks;
+}
+
+class ExerciseFeedback {
+  final String videoId;
+  String? difficulty;
+  List<String> painAreas;
+
+  ExerciseFeedback({
+    required this.videoId,
+    this.difficulty,
+    this.painAreas = const [],
+  });
+
+  factory ExerciseFeedback.fromJson(Map<String, dynamic> json) {
+    return ExerciseFeedback(
+      videoId: json['videoId'],
+      difficulty: json['difficulty'],
+      painAreas: List<String>.from(json['painAreas'] ?? []),
+    );
+  }
+
+  void update({String? newDifficulty, List<String>? newPainAreas}) {
+    if (newDifficulty != null) {
+      difficulty = newDifficulty;
+    }
+    if (newPainAreas != null && newPainAreas.isNotEmpty) {
+      painAreas = newPainAreas;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'videoId': videoId,
+      'difficulty': difficulty,
+      'painAreas': painAreas,
+    };
+  }
 }
