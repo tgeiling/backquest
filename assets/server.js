@@ -252,7 +252,6 @@ app.post('/feedback', authenticateToken, async (req, res) => {
   }
 });
 
-
 app.get('/concatenate', authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
@@ -266,22 +265,23 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
       'Täglich': 5,
     };
 
-    let userFitnessLevel = fitnessLevelMap[user.fitnessLevel];
+    let userFitnessLevel = fitnessLevelMap[user.fitnessLevel] + 2;
     let selectedVideoIds = [];
     const videoFiles = [];
     let currentEndPose;
 
-    const wu1Video = await Video.findOne({
-      difficulty: userFitnessLevel,
-      _id: { $nin: selectedVideoIds },
-      logic: { $in: ["WU1"] }
-    });
+    const wu1Videos = await Video.aggregate([
+      { $match: { difficulty: userFitnessLevel, logic: { $in: ["WU1"] }, _id: { $nin: selectedVideoIds } } },
+      { $sample: { size: 1 } }
+    ]);
+
+    const wu1Video = wu1Videos[0];
     if (!wu1Video) return res.status(404).send('No WU1 video found');
     videoFiles.push(`/var/www/backquest/videos/${wu1Video.id}.mp4`);
     selectedVideoIds.push(wu1Video._id);
     currentEndPose = wu1Video.endPose;
 
-    const wu2Video = await Video.findOne({
+	const wu2Video = await Video.findOne({
       startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
       difficulty: userFitnessLevel,
       _id: { $nin: selectedVideoIds },
@@ -323,14 +323,14 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
 
     await generateConcatListFile(videoFiles, listPath);
     await concatenateVideos(listPath, outputVideo);
-	
-	res.json({
-		message: 'Videos concatenated successfully',
-		selectedVideos: videoFiles.map(filePath => {
-		  const fileName = path.basename(filePath);
-		  return fileName.split('.')[0];
-		}),
-	});
+
+    res.json({
+      message: 'Videos concatenated successfully',
+      selectedVideos: videoFiles.map(filePath => {
+        const fileName = path.basename(filePath);
+        return fileName.split('.')[0];
+      }),
+    });
 
     console.log('Videos concatenated successfully');
   } catch (error) {

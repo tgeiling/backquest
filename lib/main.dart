@@ -182,7 +182,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (_authenticated == null) {
       return MaterialApp(
-        home: CircularProgressIndicator(), // Or some loading indicator
+        home: CircularProgressIndicator(),
       );
     }
 
@@ -192,12 +192,10 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'Roboto',
         textTheme: TextTheme(
           titleLarge: TextStyle(
-            // Define the default style for titleLarge texts here
             fontSize: 24.0,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          // Define other text styles like bodyMedium, bodySmall, etc.
           bodyMedium: TextStyle(
             fontSize: 14.0,
             color: Colors.white,

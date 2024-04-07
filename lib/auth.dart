@@ -175,7 +175,11 @@ class _LoginScreenState extends State<LoginScreen> {
           }
 
           if (profileData.containsKey('feedback')) {
-            profilProvider.setFeedback(profileData['feedback']);
+            List<ExerciseFeedback> feedbackList =
+                (profileData['feedback'] as List)
+                    .map((item) => ExerciseFeedback.fromJson(item))
+                    .toList();
+            profilProvider.setFeedback(feedbackList);
           }
 
           if (profileData.containsKey('completedLevels')) {

@@ -1007,7 +1007,18 @@ class FirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+        body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO(97, 184, 115, 0.9),
+            Color.fromRGBO(0, 59, 46, 0.9),
+          ],
+        ),
+      ),
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1022,7 +1033,7 @@ class FirstPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 40.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ))),
             SizedBox(height: 18.0),
@@ -1033,7 +1044,7 @@ class FirstPage extends StatelessWidget {
                       'Damit kann das Trainingsprogramm noch besser auf dich zugeschnitten werden.',
                       style: TextStyle(
                         fontSize: 18.0,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ))),
             Spacer(),
@@ -1073,7 +1084,7 @@ class FirstPage extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -1140,27 +1151,46 @@ class _SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Feedback zu Deinen Übungen')),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.videoIds.length,
-              itemBuilder: (context, index) => ExerciseFeedbackTile(
-                index: index,
-                videoId: widget.videoIds[index],
-                onFeedbackUpdated: _handleFeedbackUpdated,
-              ),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(97, 184, 115, 0.9),
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromRGBO(97, 184, 115, 0.9),
+                Color.fromRGBO(0, 59, 46, 0.9),
+              ],
             ),
           ),
-          PressableButton(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            onPressed: _sendFeedback,
-            child: Text('Abschließen'),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.videoIds.length,
+                  itemBuilder: (context, index) => ExerciseFeedbackTile(
+                    index: index,
+                    videoId: widget.videoIds[index],
+                    onFeedbackUpdated: _handleFeedbackUpdated,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: PressableButton(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 28),
+                  onPressed: _sendFeedback,
+                  child: Text(
+                    'Abschließen',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              )
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
 
@@ -1186,30 +1216,78 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Row(children: [
-        Text('Übung ${widget.index + 1}'),
-        IconButton(
-          icon: Icon(Icons.flash_on),
-          onPressed: _showPainLocationDialog,
-        ),
-      ]),
-      subtitle: Wrap(
-        spacing: 8.0,
-        children: ['Einfach', 'Ok', 'Schwer']
-            .map((difficulty) => ChoiceChip(
-                  label: Text(difficulty),
-                  selected: selectedDifficulty == difficulty,
-                  onSelected: (bool selected) {
-                    setState(() =>
-                        selectedDifficulty = selected ? difficulty : null);
-                    _updateFeedback();
-                  },
-                ))
-            .toList(),
+    return Card(
+      color: Colors.grey.shade500.withOpacity(0.3),
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
       ),
-      leading:
-          Image.asset("assets/thumbnails/${widget.videoId}.PNG", width: 100.0),
+      child: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          children: <Widget>[
+            Container(
+              height: 80.0,
+              width: 80.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: Colors.white, width: 2.0),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.asset(
+                  "assets/thumbnails/${widget.videoId}.PNG",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Übung ${widget.index + 1}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.flash_on),
+                          onPressed: _showPainLocationDialog,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                    Wrap(
+                      spacing: 8.0,
+                      children: ['Einfach', 'Ok', 'Schwer']
+                          .map((difficulty) => ChoiceChip(
+                                backgroundColor: Colors.grey.shade700,
+                                checkmarkColor: Colors.white,
+                                selectedColor: Colors.green,
+                                label: Text(
+                                  difficulty,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                selected: selectedDifficulty == difficulty,
+                                onSelected: (bool selected) {
+                                  setState(() => selectedDifficulty =
+                                      selected ? difficulty : null);
+                                  _updateFeedback();
+                                },
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
