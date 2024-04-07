@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:io';
 
 import 'main.dart';
@@ -114,10 +115,14 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             if (hasBeenUpdated) {
               if (hasBeenUpdated) {
@@ -148,7 +153,25 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       ),
       body: Center(
         child: _isLoading
-            ? CircularProgressIndicator()
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SpinKitCubeGrid(
+                      color: Colors.white,
+                      size: 90.0,
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Wir bereiten Ihr Video vor',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              )
             : _chewieController != null &&
                     _chewieController!.videoPlayerController.value.isInitialized
                 ? Chewie(
