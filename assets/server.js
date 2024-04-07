@@ -229,11 +229,18 @@ app.post('/feedback', authenticateToken, async (req, res) => {
     }
 
     feedbackData.forEach(feedback => {
-      user.feedback.push({
-        videoId: feedback.videoId,
-        difficulty: feedback.difficulty,
-        painAreas: feedback.painAreas
-      });
+      const existingFeedbackIndex = user.feedback.findIndex(f => f.videoId === feedback.videoId);
+
+      if (existingFeedbackIndex !== -1) {
+        user.feedback[existingFeedbackIndex].difficulty = feedback.difficulty;
+        user.feedback[existingFeedbackIndex].painAreas = feedback.painAreas;
+      } else {
+        user.feedback.push({
+          videoId: feedback.videoId,
+          difficulty: feedback.difficulty,
+          painAreas: feedback.painAreas
+        });
+      }
     });
 
     await user.save();
