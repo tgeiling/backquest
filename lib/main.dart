@@ -412,8 +412,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       child: Column(
         children: [
           Align(
-            alignment:
-                Alignment.centerLeft, // This will align the text to the left
+            alignment: Alignment.centerLeft,
             child: Text(
               "Passen Sie Ihr Training an",
               style: TextStyle(fontSize: 24, color: Colors.white),
@@ -421,8 +420,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           SizedBox(height: 4),
           Align(
-            alignment:
-                Alignment.centerLeft, // This will align the text to the left
+            alignment: Alignment.centerLeft,
             child: Text(
               widget.description,
               style: TextStyle(fontSize: 18, color: Colors.grey.shade300),
@@ -434,7 +432,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               crossAxisCount: 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              childAspectRatio: 3 / 1, // Adjust based on your button size
+              childAspectRatio: 3 / 1,
               children: <Widget>[
                 PressableButton(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -487,6 +485,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         Provider.of<LevelNotifier>(context, listen: false),
                     profilProvider:
                         Provider.of<ProfilProvider>(context, listen: false),
+                    duration: 900,
                   ),
                 ),
               );

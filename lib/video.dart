@@ -22,11 +22,13 @@ class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;
   final ProfilProvider profilProvider;
   final int levelId;
+  final int duration; // Add this line
 
   VideoCombinerScreen({
     required this.levelNotifier,
     required this.profilProvider,
     required this.levelId,
+    this.duration = 600, // Add this line with a default value of 600
   });
 
   @override
@@ -58,7 +60,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       _isLoading = true;
     });
 
-    await combineVideos();
+    await combineVideos(duration: widget.duration);
 
     await Future.delayed(Duration(seconds: 2));
 
@@ -234,13 +236,17 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   }
 } */
 
-Future<void> combineVideos() async {
-  final String url = 'http://135.125.218.147:3000/concatenate';
+Future<void> combineVideos({int duration = 600}) async {
+  // Base URL
+  final String baseUrl = 'http://135.125.218.147:3000/concatenate';
+
+  final String urlWithParams = "$baseUrl?duration=$duration";
+
   final token = await getAuthToken();
 
   try {
     final response = await http.get(
-      Uri.parse(url),
+      Uri.parse(urlWithParams),
       headers: {
         "Authorization": "Bearer $token",
       },
@@ -250,11 +256,12 @@ Future<void> combineVideos() async {
       print('Video concatenation triggered successfully.');
 
       final jsonResponse = json.decode(response.body);
+      final totalDuration = jsonResponse['totalDuration'];
       selectedVideos = jsonResponse['selectedVideos']
           .map<String>((dynamicItem) => dynamicItem.toString())
           .toList();
-      ;
 
+      print(totalDuration);
       print('Selected videos: $selectedVideos');
     } else {
       print('Failed to trigger video concatenation: ${response.statusCode}');

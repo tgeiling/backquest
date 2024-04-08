@@ -204,19 +204,29 @@ function delay(ms) {
 async function concatenateVideos(listPath, outputFile) {
   return new Promise((resolve, reject) => {
     ffmpeg()
-  .input(listPath)
-  .inputOptions(['-f concat', '-safe 0'])
-  .outputOptions('-c copy')
-  .output(outputFile)
-  .on('start', (commandLine) => {
-    console.log(`Spawned ffmpeg with command: ${commandLine}`);
-    console.log(`ffmpeg working directory: ${process.cwd()}`);
-  })
-  .on('error', (err) => reject(err))
-  .on('end', () => resolve(outputFile))
-  .run();
-});
+      .input(listPath)
+      .inputOptions(['-f concat', '-safe 0'])
+      .outputOptions([
+        '-c copy',
+        '-bsf:a aac_adtstoasc',
+        '-fflags +genpts'
+      ])
+      .output(outputFile)
+      .on('start', (commandLine) => {
+        console.log(`Spawned ffmpeg with command: ${commandLine}`);
+      })
+      .on('error', (err) => {
+        console.error(`Error during concatenation: ${err.message}`);
+        reject(err);
+      })
+      .on('end', () => {
+        console.log('Concatenation succeeded');
+        resolve(outputFile);
+      })
+      .run();
+  });
 }
+
 
 app.post('/feedback', authenticateToken, async (req, res) => {
   try {
@@ -257,6 +267,9 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     if (!user) return res.status(404).send('User not found');
 
+    const desiredDuration = parseInt(req.query.duration) || 600;
+    const timeAllocation = getTimeAllocation(desiredDuration);
+
     const fitnessLevelMap = {
       'Nicht so oft': 1,
       'Mehrmals im Monat': 2,
@@ -265,58 +278,67 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
       'Täglich': 5,
     };
 
-    let userFitnessLevel = fitnessLevelMap[user.fitnessLevel] + 2;
+    let userFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
     let selectedVideoIds = [];
     const videoFiles = [];
+    let totalDuration = 0;
     let currentEndPose;
 
-    const wu1Videos = await Video.aggregate([
-      { $match: { difficulty: userFitnessLevel, logic: { $in: ["WU1"] }, _id: { $nin: selectedVideoIds } } },
-      { $sample: { size: 1 } }
-    ]);
+    const logicCategories = ['WU1', 'WU2', 'MAIN', 'AB1', 'AB2'];
 
-    const wu1Video = wu1Videos[0];
-    if (!wu1Video) return res.status(404).send('No WU1 video found');
-    videoFiles.push(`/var/www/backquest/videos/${wu1Video.id}.mp4`);
-    selectedVideoIds.push(wu1Video._id);
-    currentEndPose = wu1Video.endPose;
+    for (const logic of logicCategories) {
+      let categoryTime = timeAllocation[logic];
 
-	const wu2Video = await Video.findOne({
-      startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
-      difficulty: userFitnessLevel,
-      _id: { $nin: selectedVideoIds },
-      logic: { $in: ["WU2"] }
-    });
-    if (wu2Video) {
-      videoFiles.push(`/var/www/backquest/videos/${wu2Video.id}.mp4`);
-      selectedVideoIds.push(wu2Video._id);
-      currentEndPose = wu2Video.endPose;
+      while (categoryTime > 0 && totalDuration < desiredDuration) {
+        let matchCriteria = {
+          difficulty: { $gte: userFitnessLevel },
+          _id: { $nin: selectedVideoIds },
+          duration: { $lte: categoryTime },
+        };
+
+        if (logic !== "MAIN") {
+          matchCriteria.logic = { $in: [logic] };
+        } else {
+          matchCriteria.logic = { $exists: false };
+        }
+
+        if (currentEndPose) {
+          matchCriteria['startPose'] = new RegExp('^' + currentEndPose + '$', 'i');
+        }
+
+        let videos = await Video.find(matchCriteria).sort({ duration: -1 });
+
+        if (videos.length === 0) {
+          if (userFitnessLevel > 1) {
+            userFitnessLevel--;
+          } else {
+            delete matchCriteria.difficulty;
+            delete matchCriteria.startPose;
+            videos = await Video.find(matchCriteria).sort({ duration: -1 });
+          }
+
+          if (videos.length === 0) {
+			  const fallbackVideos = await Video.find({ _id: { $nin: selectedVideoIds } }).sort({ duration: -1 });
+			  if (fallbackVideos.length > 0) {
+				const randomFallbackIndex = Math.floor(Math.random() * fallbackVideos.length);
+				videos = [fallbackVideos[randomFallbackIndex]];
+			  } else {
+				break;
+			  }
+			}
+        }
+
+        const randomIndex = Math.floor(Math.random() * videos.length);
+        const video = videos[randomIndex];
+
+        videoFiles.push(`/var/www/backquest/videos/${video.id}.mp4`);
+        selectedVideoIds.push(video._id);
+        const videoDuration = video.duration;
+        categoryTime -= videoDuration;
+        totalDuration += videoDuration;
+        currentEndPose = video.endPose.toLowerCase();
+      }
     }
-
-    for (let i = 2; i < 6; i++) {
-      const nextVideo = await Video.findOne({
-        startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
-        difficulty: { $in: [userFitnessLevel, userFitnessLevel + 1] },
-        _id: { $nin: selectedVideoIds },
-        logic: { $nin: ["WU1", "AB2"] }
-      });
-
-      if (!nextVideo) break;
-
-      videoFiles.push(`/var/www/backquest/videos/${nextVideo.id}.mp4`);
-      selectedVideoIds.push(nextVideo._id);
-      currentEndPose = nextVideo.endPose;
-    }
-
-    const ab2Video = await Video.findOne({
-      startPose: { $regex: new RegExp('^' + currentEndPose + '$', 'i') },
-      difficulty: { $in: [userFitnessLevel, userFitnessLevel + 1] },
-      _id: { $nin: selectedVideoIds },
-      logic: { $in: ["AB2"] }
-    });
-
-    if (!ab2Video) return res.status(404).send('No AB2 video found to conclude the sequence.');
-    videoFiles.push(`/var/www/backquest/videos/${ab2Video.id}.mp4`);
 
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
@@ -326,18 +348,50 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
 
     res.json({
       message: 'Videos concatenated successfully',
-      selectedVideos: videoFiles.map(filePath => {
-        const fileName = path.basename(filePath);
-        return fileName.split('.')[0];
-      }),
+      totalDuration,
+      selectedVideos: videoFiles.map(filePath => path.basename(filePath, '.mp4')),
     });
-
-    console.log('Videos concatenated successfully');
   } catch (error) {
     console.error('Failed to concatenate videos:', error);
     res.status(500).send('Failed to concatenate videos');
   }
 });
+
+
+
+function getTimeAllocation(desiredDuration) {
+  let WU = 0;
+  let MAIN = 0;
+  let AB = 0;
+
+  if (desiredDuration <= 5 * 60) {
+    WU = 1 * 60;
+    MAIN = desiredDuration - WU - 1 * 60;
+    AB = 1 * 60;
+  } else if (desiredDuration <= 10 * 60) {
+    WU = 2 * 60;
+    MAIN = desiredDuration - WU - 1 * 60;
+    AB = 1 * 60;
+  } else if (desiredDuration <= 18 * 60) {
+    WU = 2 * 60;
+    MAIN = desiredDuration - WU - (desiredDuration >= 17 * 60 ? 4 : 3) * 60;
+    AB = (desiredDuration >= 17 * 60 ? 4 : 3) * 60;
+  } else if (desiredDuration <= 19 * 60) {
+    WU = 3 * 60;
+    MAIN = 14 * 60;
+    AB = 4 * 60;
+  } else {
+    WU = 3 * 60;
+    MAIN = desiredDuration - WU - 4 * 60;
+    AB = 4 * 60;
+  }
+
+  let AB1 = AB / 2;
+  let AB2 = AB / 2;
+
+  return { "WU1": WU / 2, "WU2": WU / 2, "MAIN": MAIN, "AB1": AB1, "AB2": AB2 };
+}
+
 
 
 //Video Streaming
