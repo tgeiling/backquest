@@ -278,7 +278,16 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
       'Täglich': 5,
     };
 
-    let userFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
+    let originalFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
+    let fitnessLevelsToTry = [originalFitnessLevel];
+    if (originalFitnessLevel < 5) {
+      for (let i = 1; i <= 5; i++) {
+        if (i !== originalFitnessLevel) fitnessLevelsToTry.push(i);
+      }
+    } else {
+      fitnessLevelsToTry = [5, 4, 3, 2, 1];
+    }
+
     let selectedVideoIds = [];
     const videoFiles = [];
     let totalDuration = 0;
@@ -290,53 +299,58 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
       let categoryTime = timeAllocation[logic];
 
       while (categoryTime > 0 && totalDuration < desiredDuration) {
-        let matchCriteria = {
-          difficulty: { $gte: userFitnessLevel },
-          _id: { $nin: selectedVideoIds },
-          duration: { $lte: categoryTime },
-        };
+        let videoFound = false;
 
-        if (logic !== "MAIN") {
-          matchCriteria.logic = { $in: [logic] };
-        } else {
-          matchCriteria.logic = { $exists: false };
-        }
+        for (const userFitnessLevel of fitnessLevelsToTry) {
+          let matchCriteria = {
+            difficulty: userFitnessLevel,
+            _id: { $nin: selectedVideoIds },
+            duration: { $lte: categoryTime },
+          };
 
-        if (currentEndPose) {
-          matchCriteria['startPose'] = new RegExp('^' + currentEndPose + '$', 'i');
-        }
-
-        let videos = await Video.find(matchCriteria).sort({ duration: -1 });
-
-        if (videos.length === 0) {
-          if (userFitnessLevel > 1) {
-            userFitnessLevel--;
+          if (logic !== "MAIN") {
+            matchCriteria.logic = { $in: [logic] };
           } else {
-            delete matchCriteria.difficulty;
-            delete matchCriteria.startPose;
-            videos = await Video.find(matchCriteria).sort({ duration: -1 });
+            matchCriteria.logic = { $exists: false };
           }
 
-          if (videos.length === 0) {
-			  const fallbackVideos = await Video.find({ _id: { $nin: selectedVideoIds } }).sort({ duration: -1 });
-			  if (fallbackVideos.length > 0) {
-				const randomFallbackIndex = Math.floor(Math.random() * fallbackVideos.length);
-				videos = [fallbackVideos[randomFallbackIndex]];
-			  } else {
-				break;
-			  }
-			}
+          if (currentEndPose) {
+            matchCriteria['startPose'] = new RegExp('^' + currentEndPose + '$', 'i');
+          }
+
+          let videos = await Video.find(matchCriteria).sort({ duration: -1 });
+
+          if (videos.length > 0) {
+            const randomIndex = Math.floor(Math.random() * videos.length);
+            const video = videos[randomIndex];
+
+            videoFiles.push(`/var/www/backquest/videos/${video.id}.mp4`);
+            selectedVideoIds.push(video._id);
+            const videoDuration = video.duration;
+            categoryTime -= videoDuration;
+            totalDuration += videoDuration;
+            currentEndPose = video.endPose.toLowerCase();
+            videoFound = true;
+            break;
+          }
         }
 
-        const randomIndex = Math.floor(Math.random() * videos.length);
-        const video = videos[randomIndex];
+        if (!videoFound) {
+          const fallbackVideos = await Video.find({ _id: { $nin: selectedVideoIds } }).sort({ duration: -1 });
+          if (fallbackVideos.length > 0) {
+            const randomFallbackIndex = Math.floor(Math.random() * fallbackVideos.length);
+            const video = fallbackVideos[randomFallbackIndex];
 
-        videoFiles.push(`/var/www/backquest/videos/${video.id}.mp4`);
-        selectedVideoIds.push(video._id);
-        const videoDuration = video.duration;
-        categoryTime -= videoDuration;
-        totalDuration += videoDuration;
-        currentEndPose = video.endPose.toLowerCase();
+            videoFiles.push(`/var/www/backquest/videos/${video.id}.mp4`);
+            selectedVideoIds.push(video._id);
+            const videoDuration = video.duration;
+            categoryTime -= videoDuration;
+            totalDuration += videoDuration;
+            currentEndPose = video.endPose.toLowerCase();
+          } else {
+            break;
+          }
+        }
       }
     }
 
@@ -356,8 +370,6 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
     res.status(500).send('Failed to concatenate videos');
   }
 });
-
-
 
 function getTimeAllocation(desiredDuration) {
   let WU = 0;
