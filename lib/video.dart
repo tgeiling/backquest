@@ -22,13 +22,17 @@ class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;
   final ProfilProvider profilProvider;
   final int levelId;
-  final int duration; // Add this line
+  final String focus;
+  final String goal;
+  final int duration;
 
   VideoCombinerScreen({
     required this.levelNotifier,
     required this.profilProvider,
     required this.levelId,
-    this.duration = 600, // Add this line with a default value of 600
+    required this.focus,
+    required this.goal,
+    this.duration = 600,
   });
 
   @override
@@ -60,7 +64,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       _isLoading = true;
     });
 
-    await combineVideos(duration: widget.duration);
+    await combineVideos(widget.focus, widget.goal, duration: widget.duration);
 
     await Future.delayed(Duration(seconds: 2));
 
@@ -236,11 +240,19 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   }
 } */
 
-Future<void> combineVideos({int duration = 600}) async {
+Future<void> combineVideos(
+  String focus,
+  String goal, {
+  int duration = 600,
+}) async {
   // Base URL
   final String baseUrl = 'http://135.125.218.147:3000/concatenate';
 
-  final String urlWithParams = "$baseUrl?duration=$duration";
+  final String encodedFocus = Uri.encodeComponent(focus);
+  final String encodedGoal = Uri.encodeComponent(goal);
+
+  final String urlWithParams =
+      "$baseUrl?duration=$duration&focus=$encodedFocus&goal=$encodedGoal";
 
   final token = await getAuthToken();
 

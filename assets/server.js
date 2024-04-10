@@ -267,9 +267,6 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     if (!user) return res.status(404).send('User not found');
 
-    const desiredDuration = parseInt(req.query.duration) || 600;
-    const timeAllocation = getTimeAllocation(desiredDuration);
-
     const fitnessLevelMap = {
       'Nicht so oft': 1,
       'Mehrmals im Monat': 2,
@@ -277,99 +274,146 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
       'Mehrmals pro Woche': 4,
       'Täglich': 5,
     };
+    const numericFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
 
-    let originalFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
-    let fitnessLevelsToTry = [originalFitnessLevel];
-    if (originalFitnessLevel < 5) {
-      for (let i = 1; i <= 5; i++) {
-        if (i !== originalFitnessLevel) fitnessLevelsToTry.push(i);
+    const desiredDuration = parseInt(req.query.duration) || 600;
+    const focus = req.query.focus !== 'allgemein' ? req.query.focus : null;
+    const goal = req.query.goal !== 'allgemein' ? req.query.goal : null;
+
+    let totalDuration = 0;
+    let currentEndPose = null;
+    const selectedVideos = [];
+    const warmupCategories = ['WU1', 'WU2'];
+    const cooldownCategories = ['AB1', 'AB2'];
+
+    for (const category of warmupCategories) {
+      let video = await selectStartingVideoForCategory(category, currentEndPose);
+      if (video) {
+        selectedVideos.push(video);
+        currentEndPose = video.endPose;
+        totalDuration += video.duration;
       }
-    } else {
-      fitnessLevelsToTry = [5, 4, 3, 2, 1];
+    }
+	
+	console.log(desiredDuration);
+	
+    while (totalDuration < desiredDuration) {
+		console.log(totalDuration);
+      let mainVideo = await selectAdditionalVideo(numericFitnessLevel, currentEndPose, focus, goal, 'MAIN');
+      if (!mainVideo) break;
+      selectedVideos.push(mainVideo);
+      currentEndPose = mainVideo.endPose;
+      totalDuration += mainVideo.duration;
     }
 
-    let selectedVideoIds = [];
-    const videoFiles = [];
-    let totalDuration = 0;
-    let currentEndPose;
-
-    const logicCategories = ['WU1', 'WU2', 'MAIN', 'AB1', 'AB2'];
-
-    for (const logic of logicCategories) {
-      let categoryTime = timeAllocation[logic];
-
-      while (categoryTime > 0 && totalDuration < desiredDuration) {
-        let videoFound = false;
-
-        for (const userFitnessLevel of fitnessLevelsToTry) {
-          let matchCriteria = {
-            difficulty: userFitnessLevel,
-            _id: { $nin: selectedVideoIds },
-            duration: { $lte: categoryTime },
-          };
-
-          if (logic !== "MAIN") {
-            matchCriteria.logic = { $in: [logic] };
-          } else {
-            matchCriteria.logic = { $exists: false };
-          }
-
-          if (currentEndPose) {
-            matchCriteria['startPose'] = new RegExp('^' + currentEndPose + '$', 'i');
-          }
-
-          let videos = await Video.find(matchCriteria).sort({ duration: -1 });
-
-          if (videos.length > 0) {
-            const randomIndex = Math.floor(Math.random() * videos.length);
-            const video = videos[randomIndex];
-
-            videoFiles.push(`/var/www/backquest/videos/${video.id}.mp4`);
-            selectedVideoIds.push(video._id);
-            const videoDuration = video.duration;
-            categoryTime -= videoDuration;
-            totalDuration += videoDuration;
-            currentEndPose = video.endPose.toLowerCase();
-            videoFound = true;
-            break;
-          }
-        }
-
-        if (!videoFound) {
-          const fallbackVideos = await Video.find({ _id: { $nin: selectedVideoIds } }).sort({ duration: -1 });
-          if (fallbackVideos.length > 0) {
-            const randomFallbackIndex = Math.floor(Math.random() * fallbackVideos.length);
-            const video = fallbackVideos[randomFallbackIndex];
-
-            videoFiles.push(`/var/www/backquest/videos/${video.id}.mp4`);
-            selectedVideoIds.push(video._id);
-            const videoDuration = video.duration;
-            categoryTime -= videoDuration;
-            totalDuration += videoDuration;
-            currentEndPose = video.endPose.toLowerCase();
-          } else {
-            break;
-          }
-        }
+    for (const category of cooldownCategories) {
+      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal);
+      if (video) {
+        selectedVideos.push(video);
+        currentEndPose = video.endPose;
+        totalDuration += video.duration;
       }
     }
 
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
-
-    await generateConcatListFile(videoFiles, listPath);
+    await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
 
     res.json({
       message: 'Videos concatenated successfully',
       totalDuration,
-      selectedVideos: videoFiles.map(filePath => path.basename(filePath, '.mp4')),
+      selectedVideos: selectedVideos.map(video => video.id),
     });
   } catch (error) {
     console.error('Failed to concatenate videos:', error);
     res.status(500).send('Failed to concatenate videos');
   }
 });
+
+async function selectStartingVideoForCategory(category, currentEndPose) {
+  let videoFound = null;
+
+
+	let matchCriteria = {logic: category };
+	if (currentEndPose) matchCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');;
+
+	const videos = await Video.find(matchCriteria).sort({ duration: -1 });
+	if (videos.length > 0) {
+	  videoFound = videos[0];
+	}
+  
+  return videoFound;
+}
+
+
+async function selectVideoForCategory(category, fitnessLevel, currentEndPose, focus, goal) {
+  let fitnessLevelsToTry = [fitnessLevel, ...Array.from({ length: 5 - fitnessLevel }, (_, i) => i + fitnessLevel + 1)];
+  let videoFound = null;
+
+  for (const level of fitnessLevelsToTry) {
+    let matchCriteria = { difficulty: level, logic: category };
+    if (currentEndPose) matchCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');
+    if (focus !== null) matchCriteria.focus = focus;
+    if (goal !== null) matchCriteria.goal = goal;
+
+    const videos = await Video.find(matchCriteria).sort({ duration: -1 });
+    if (videos.length > 0) {
+      videoFound = videos[0];
+      break;
+    }
+  }
+
+  if (!videoFound && (focus !== null || goal !== null)) {
+    for (const level of fitnessLevelsToTry) {
+      let relaxedCriteria = { difficulty: level, logic: category };
+      if (currentEndPose) relaxedCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');
+
+      const videos = await Video.find(relaxedCriteria).sort({ duration: -1 });
+      if (videos.length > 0) {
+        videoFound = videos[0];
+        break;
+      }
+    }
+  }
+
+  return videoFound;
+}
+
+async function selectAdditionalVideo(fitnessLevel, currentEndPose, focus, goal) {
+  let fitnessLevelsToTry = [fitnessLevel, ...Array.from({ length: 5 - fitnessLevel }, (_, i) => i + fitnessLevel + 1)];
+  let videoFound = null;
+
+  for (const level of fitnessLevelsToTry) {
+    let matchCriteria = { difficulty: level };
+    if (currentEndPose) matchCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');
+    if (focus !== null) matchCriteria.focus = focus;
+    if (goal !== null) matchCriteria.goal = goal;
+
+    const videos = await Video.find(matchCriteria).sort({ duration: -1 });
+    if (videos.length > 0) {
+      videoFound = videos[Math.floor(Math.random() * videos.length)];
+      break;
+    }
+  }
+
+  if (!videoFound && (focus !== null || goal !== null)) {
+    for (const level of fitnessLevelsToTry) {
+      let relaxedCriteria = { difficulty: level };
+      if (currentEndPose) relaxedCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');
+
+      const videos = await Video.find(relaxedCriteria).sort({ duration: -1 });
+      if (videos.length > 0) {
+        videoFound = videos[Math.floor(Math.random() * videos.length)];
+        break;
+      }
+    }
+  }
+
+  return videoFound;
+}
+
+
 
 function getTimeAllocation(desiredDuration) {
   let WU = 0;
@@ -403,11 +447,6 @@ function getTimeAllocation(desiredDuration) {
 
   return { "WU1": WU / 2, "WU2": WU / 2, "MAIN": MAIN, "AB1": AB1, "AB2": AB2 };
 }
-
-
-
-//Video Streaming
-
 
 const videoPath = '/var/www/backquest/output/concatenated_video.mp4';
 

@@ -405,6 +405,26 @@ class CustomBottomModal extends StatefulWidget {
 }
 
 class _CustomBottomModalState extends State<CustomBottomModal> {
+  int selectedDuration = 900;
+  String selectedFocus = "allgemein";
+  String selectedGoal = "allgemein";
+
+  final List<String> focusOptions = [
+    "unterer Ruecken",
+    "oberer Ruecken",
+    "Nacken",
+    "Schulter",
+    "Knie",
+    "allgemein"
+  ];
+
+  final List<String> goalOptions = [
+    "allgemein",
+    "Kraft",
+    "Beweglichkeit",
+    "Haltung"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -426,54 +446,53 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               style: TextStyle(fontSize: 18, color: Colors.grey.shade300),
             ),
           ),
-          SizedBox(height: 10),
           Expanded(
             child: GridView.count(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              childAspectRatio: 3 / 1,
+              childAspectRatio: 8 / 1,
               children: <Widget>[
                 PressableButton(
+                  onPressed: () => showDurationDialog(),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Center(
-                      child: Text("Fokus",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ))),
+                    child: Text(
+                        "Dauer: ${selectedDuration ~/ 60} Minuten", // Convert seconds back to minutes for display
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        )),
+                  ),
                 ),
                 PressableButton(
+                  onPressed: () => showOptionDialog(focusOptions,
+                      "Wählen Sie den Fokus", (value) => selectedFocus = value),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Center(
-                      child: Text("Dauer",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ))),
+                    child: Text("Fokus: $selectedFocus",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        )),
+                  ),
                 ),
                 PressableButton(
+                  onPressed: () => showOptionDialog(goalOptions,
+                      "Wählen Sie das Ziel", (value) => selectedGoal = value),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Center(
-                      child: Text("Art",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ))),
-                ),
-                PressableButton(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  child: Center(
-                      child: Text("Ort",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ))),
+                    child: Text("Ziel: $selectedGoal",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        )),
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 30),
           PressableButton(
             onPressed: () {
               Navigator.push(
@@ -485,7 +504,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         Provider.of<LevelNotifier>(context, listen: false),
                     profilProvider:
                         Provider.of<ProfilProvider>(context, listen: false),
-                    duration: 900,
+                    focus: selectedFocus,
+                    goal: selectedGoal,
+                    duration: selectedDuration,
                   ),
                 ),
               );
@@ -501,6 +522,79 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
         ],
       ),
     );
+  }
+
+  void showDurationDialog() async {
+    int? duration = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Wählen Sie die Dauer"),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: 20,
+              itemBuilder: (BuildContext context, int index) {
+                int minute = index + 1; // Since index is 0-based, we add 1
+                return ListTile(
+                  title: Text("$minute Minute${minute > 1 ? 'n' : ''}"),
+                  onTap: () => Navigator.of(context)
+                      .pop(minute * 60), // Convert minutes to seconds
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Abbrechen"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (duration != null) {
+      setState(() {
+        selectedDuration = duration; // Duration is already in seconds
+      });
+    }
+  }
+
+  void showOptionDialog(List<String> options, String title,
+      void Function(String) onSelected) async {
+    String? selection = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: options
+                  .map((String option) => RadioListTile<String>(
+                        title: Text(option),
+                        value: option,
+                        groupValue: selectedFocus,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            Navigator.of(context).pop(value);
+                          }
+                        },
+                      ))
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selection != null) {
+      setState(() {
+        onSelected(selection);
+      });
+    }
   }
 }
 
