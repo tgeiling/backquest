@@ -190,62 +190,17 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
     );
   }
 
-  // Function to get the local path for saving the combined video
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 }
 
-/* Future<void> combineVideos() async {
-  final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
-
-// Define the paths of the input videos in the assets
-  final List<String> videoAssetPaths = [
-    'assets/videos/abschluss1_cp_fesi.mp4',
-    'assets/videos/birddog_hiswi_auf_4fl_auf.mp4',
-    'assets/videos/birddog_wippen_links_4fl_auf_4fl_auf.mp4',
-    'assets/videos/childpose_4fl_cp.mp4',
-    'assets/videos/childpose_cp_cp.mp4',
-    'assets/videos/katzekuh_4fl-auf_4fl-auf_.mp4',
-  ];
-
-  // Copy videos from assets to temporary files
-  final List<String> videoFilePaths = await Future.wait(
-    videoAssetPaths.map((assetPath) => _assetToFile(assetPath)),
-  );
-
-  // Create a temporary file to list all videos for the concat demuxer
-  final String listPath =
-      (await getTemporaryDirectory()).path + '/video_list.txt';
-  final File listFile = File(listPath);
-  final String content =
-      videoFilePaths.map((path) => "file '$path'").join('\n');
-  await listFile.writeAsString(content);
-
-  // Define the output path for the combined video
-  final String outputPath = await _localPath + '/combined_video.mp4';
-
-  // FFmpeg command using the concat demuxer
-  final String command =
-      '-y -f concat -safe 0 -i $listPath -c copy $outputPath';
-
-  // Run FFmpeg command
-  final int returnCode = await _flutterFFmpeg.execute(command);
-
-  if (returnCode == 0) {
-    print('Video combination successful. Combined video saved at: $outputPath');
-  } else {
-    print('Error combining videos. FFmpeg returned code: $returnCode');
-  }
-} */
-
 Future<void> combineVideos(
   String focus,
   String goal, {
   int duration = 600,
 }) async {
-  // Base URL
   final String baseUrl = 'http://135.125.218.147:3000/concatenate';
 
   final String encodedFocus = Uri.encodeComponent(focus);

@@ -101,7 +101,6 @@ int weekNumber(DateTime date) {
   final diff = date.difference(startOfYear);
   var weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
   if (daysInFirstWeek > 3) {
-    // If the first week of the year contains more than 3 days, it counts as the first week
     weeks += 1;
   }
   return weeks;

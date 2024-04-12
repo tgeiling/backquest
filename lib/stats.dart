@@ -278,7 +278,7 @@ class ProfilPageState extends State<ProfilPage> {
                     style: TextStyle(fontSize: 16.0),
                   ),
                   Text(
-                    "${profilProvider.weeklyDone}/${profilProvider.weeklyGoal}", // Replace "3/4" with the dynamic progress text you need
+                    "${profilProvider.weeklyDone}/${profilProvider.weeklyGoal}",
                     style: TextStyle(fontSize: 16.0),
                   ),
                 ],
@@ -314,18 +314,16 @@ class ProfilPageState extends State<ProfilPage> {
         children: [
           Container(
             margin: EdgeInsets.only(left: 30),
-            height: 105.0, // Adjust the size as needed
+            height: 105.0,
             width: 105.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withOpacity(
-                      0.5), // Adjust the color and opacity as needed
+                  color: Colors.white.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 7,
-                  offset: Offset(0,
-                      3), // Adjust the x and y offset to change the shadow position
+                  offset: Offset(0, 3),
                 ),
               ],
               image: DecorationImage(
@@ -340,8 +338,7 @@ class ProfilPageState extends State<ProfilPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween, // Aligns the children at the start and end of the row
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "Profil",
@@ -367,8 +364,7 @@ class ProfilPageState extends State<ProfilPage> {
                 Consumer<ProfilProvider>(
                   builder: (context, profilProvider, child) {
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start, // Aligns the text to the start of the column
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Row(
                           children: <Widget>[
@@ -376,14 +372,12 @@ class ProfilPageState extends State<ProfilPage> {
                               "${profilProvider.weeklyDone}",
                               style: TextStyle(fontSize: 44),
                             ),
-                            SizedBox(width: 8), // Space between text and image
+                            SizedBox(width: 8),
                             Image.asset('assets/leaf.png',
                                 width: 45, height: 45),
                           ],
                         ),
-                        SizedBox(
-                            height:
-                                4), // Space between the row and the text below
+                        SizedBox(height: 4),
                         Text(
                           "Tage diese Woche \n trainiert",
                           style: TextStyle(fontSize: 22),
@@ -518,14 +512,14 @@ class ProfilPageState extends State<ProfilPage> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
         decoration: BoxDecoration(
-          color: Color(0xFFf5f2f2), // Background color similar to .button
-          borderRadius: BorderRadius.circular(8.0), // Rounded corners
+          color: Color(0xFFf5f2f2),
+          borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFb3b3b3), // Shadow color similar to #b3b3b3
-              offset: Offset(0, 5), // Vertical shadow position
-              blurRadius: 0, // No blur for a solid shadow
-              spreadRadius: 0, // No spread for a clean shadow line
+              color: Color(0xFFb3b3b3),
+              offset: Offset(0, 5),
+              blurRadius: 0,
+              spreadRadius: 0,
             ),
           ],
         ),

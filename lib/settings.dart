@@ -38,13 +38,13 @@ class SettingsPage extends StatelessWidget {
 class SettingsTile extends StatelessWidget {
   final String title;
   final IconData icon;
-  final Function(bool)? onTileTap; // Optional callback
+  final Function(bool)? onTileTap;
 
   const SettingsTile({
     Key? key,
     required this.title,
     required this.icon,
-    this.onTileTap, // Include it here and make it optional
+    this.onTileTap,
   }) : super(key: key);
 
   @override
@@ -126,16 +126,14 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
         gradient: isGoalSelected(goal)
             ? LinearGradient(
                 colors: [
-                  Color.fromRGBO(97, 184, 115, 1), // Adjust start color here
-                  Color.fromRGBO(0, 59, 46, 1), // Adjust end color here
+                  Color.fromRGBO(97, 184, 115, 1),
+                  Color.fromRGBO(0, 59, 46, 1),
                 ],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               )
             : null,
-        color: isGoalSelected(goal)
-            ? null
-            : Colors.grey[850], // Non-selected tile color
+        color: isGoalSelected(goal) ? null : Colors.grey[850],
       ),
       child: ListTile(
         title: Text('$goal Tage',
@@ -170,7 +168,6 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () {
-          // TODO: Implement save functionality
           Navigator.of(context).pop(weeklyGoal);
         },
       ),

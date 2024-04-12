@@ -819,7 +819,6 @@ class _QuestionPage6State extends State<QuestionPage6> {
               isExpanded: true,
               onChanged: (String? newValue) {
                 setState(() {
-                  // Update the selected value based on prefKey
                   switch (prefKey) {
                     case 'selectedGoal1':
                       _selectedGoal1 = newValue!;
@@ -830,7 +829,6 @@ class _QuestionPage6State extends State<QuestionPage6> {
                     case 'selectedGoal3':
                       _selectedGoal3 = newValue!;
                       break;
-                    // Add more cases as needed for other preferences
                   }
                   _saveSelectedOption(prefKey, newValue!);
                 });

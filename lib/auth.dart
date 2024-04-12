@@ -21,8 +21,7 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final token = jsonDecode(response.body)[
-          'accessToken']; // Assuming the token is returned in this manner
+      final token = jsonDecode(response.body)['accessToken'];
       await storage.write(key: 'authToken', value: token);
 
       return true;
@@ -46,11 +45,8 @@ class AuthService {
     );
 
     if (response.statusCode == 201) {
-      // Assuming 201 Created status for successful registration
       return true;
-    } else if (response.statusCode == 400) {
-      // Handle specific cases, like username already taken, based on your API's response
-    }
+    } else if (response.statusCode == 400) {}
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
     return false;
@@ -63,7 +59,6 @@ class AuthService {
     final expiration = getTokenExpiration(token);
     if (expiration == null) return true;
 
-    // Check if the token expires within the next minute
     return expiration.isBefore(DateTime.now().add(Duration(minutes: 1)));
   }
 
@@ -250,7 +245,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Navigate to the RegisterScreen when the button is pressed
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
@@ -273,8 +267,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService =
-      AuthService(); // Assuming AuthService has a register method
+  final _authService = AuthService();
 
   void _attemptRegister() async {
     bool success = await _authService.register(
@@ -283,8 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (success) {
-      Navigator.pop(
-          context); // Return to the previous screen on successful registration
+      Navigator.pop(context);
     } else {
       showDialog(
         context: context,
@@ -296,7 +288,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextButton(
                 child: Text('Close'),
                 onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
+                  Navigator.of(context).pop();
                 },
               ),
             ],

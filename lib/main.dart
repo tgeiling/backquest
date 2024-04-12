@@ -200,7 +200,6 @@ class _MyAppState extends State<MyApp> {
             fontSize: 14.0,
             color: Colors.white,
           ),
-          // ... more styles
         ),
       ),
       home: _authenticated!
@@ -292,7 +291,6 @@ class _MainScaffoldState extends State<MainScaffold>
               ],
             ),
           ),
-          // Modal Container
           AnimatedPositioned(
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
@@ -457,8 +455,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   onPressed: () => showDurationDialog(),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Center(
-                    child: Text(
-                        "Dauer: ${selectedDuration ~/ 60} Minuten", // Convert seconds back to minutes for display
+                    child: Text("Dauer: ${selectedDuration ~/ 60} Minuten",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -536,11 +533,10 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               shrinkWrap: true,
               itemCount: 20,
               itemBuilder: (BuildContext context, int index) {
-                int minute = index + 1; // Since index is 0-based, we add 1
+                int minute = index + 1;
                 return ListTile(
                   title: Text("$minute Minute${minute > 1 ? 'n' : ''}"),
-                  onTap: () => Navigator.of(context)
-                      .pop(minute * 60), // Convert minutes to seconds
+                  onTap: () => Navigator.of(context).pop(minute * 60),
                 );
               },
             ),
@@ -557,7 +553,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
 
     if (duration != null) {
       setState(() {
-        selectedDuration = duration; // Duration is already in seconds
+        selectedDuration = duration;
       });
     }
   }
@@ -602,26 +598,19 @@ class CompletedLevelsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
-    // Use a Container to wrap AppBar content and add a bottom border
     return Container(
       decoration: BoxDecoration(
-        // Add a bottom border
         border: Border(
-          bottom: BorderSide(
-              color: Colors.grey, width: 2.0), // Grey line with 1.0 thickness
+          bottom: BorderSide(color: Colors.grey, width: 2.0),
         ),
       ),
       child: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Logo on the left
-            Image.asset('assets/logo.png',
-                height: 20), // Adjust the height as needed
-
+            Image.asset('assets/logo.png', height: 20),
             Consumer<LevelNotifier>(
               builder: (context, levelNotifier, child) {
-                // Calculate the number of completed levels
                 int completedLevels = levelNotifier.completedLevels;
 
                 return Row(
@@ -639,17 +628,15 @@ class CompletedLevelsAppBar extends StatelessWidget
             ),
           ],
         ),
-        centerTitle: false, // Align the title to the start
-        elevation: 0, // Remove shadow if not needed
-        backgroundColor: Colors
-            .transparent, // Make AppBar background transparent to blend with Container
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(
-      kToolbarHeight + 1.0); // Default AppBar height + grey line height
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + 1.0);
 }
 
 class Level {
@@ -692,11 +679,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
         int levelId = levels.keys.toList()[index];
         Level level = levels[levelId]!;
 
-        int row = index % 4; // Adjust to 4 items per row
-        int group =
-            index ~/ 4; // Group index changes because of 4 items per group
+        int row = index % 4;
+        int group = index ~/ 4;
 
-        // Calculate padding for the snake pattern and 4 items per row
         bool isEvenGroup = group % 2 == 0;
         double startPadding, endPadding;
         if (isEvenGroup) {
@@ -707,10 +692,8 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           endPadding = MediaQuery.of(context).size.width / 8 * row;
         }
 
-        // Determine if this level is the next to be actionable
         bool isNext = false;
         if (!level.isDone) {
-          // Find the highest 'done' level
           int? maxDoneLevelId = levels.entries
               .where((entry) => entry.value.isDone)
               .map((entry) => entry.key)
@@ -720,12 +703,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                       ? (element > prev ? element : prev)
                       : element);
 
-          // If no level is done yet, mark the first level as isNext
           if (maxDoneLevelId == null) {
-            isNext =
-                levelId == levels.keys.first; // true only for the first level
+            isNext = levelId == levels.keys.first;
           } else {
-            // If the current level is immediately after the last 'done' level
             if (levelId == maxDoneLevelId + 1) {
               isNext = true;
             }
@@ -762,14 +742,14 @@ class LevelCircle extends StatelessWidget {
   final VoidCallback onTap;
   final bool isTreasureLevel;
   final bool isDone;
-  final bool isNext; // Indicates if this is the next level to start
+  final bool isNext;
 
   LevelCircle({
     required this.level,
     required this.onTap,
     this.isTreasureLevel = false,
     this.isDone = false,
-    this.isNext = false, // Default to false
+    this.isNext = false,
   });
 
   @override
@@ -784,11 +764,11 @@ class LevelCircle extends StatelessWidget {
     }
 
     return Material(
-      type: MaterialType.transparency, // Use transparent material
+      type: MaterialType.transparency,
       child: InkWell(
         onTap: onTap,
-        splashColor: Colors.transparent, // Ensure no splash is shown
-        highlightColor: Colors.transparent, // Ensure no highlight is shown
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -819,7 +799,7 @@ class LevelCircle extends StatelessWidget {
             ),
             if (isNext)
               Positioned(
-                top: 65, // Adjust as necessary
+                top: 65,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
