@@ -404,8 +404,8 @@ class CustomBottomModal extends StatefulWidget {
 
 class _CustomBottomModalState extends State<CustomBottomModal> {
   int selectedDuration = 900;
-  String selectedFocus = "allgemein";
-  String selectedGoal = "allgemein";
+  String selectedFocus = "Allgemein";
+  String selectedGoal = "Allgemein";
 
   final List<String> focusOptions = [
     "unterer Ruecken",
@@ -413,11 +413,11 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     "Nacken",
     "Schulter",
     "Knie",
-    "allgemein"
+    "Allgemein"
   ];
 
   final List<String> goalOptions = [
-    "allgemein",
+    "Allgemein",
     "Kraft",
     "Beweglichkeit",
     "Haltung"
@@ -463,7 +463,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   ),
                 ),
                 PressableButton(
-                  onPressed: () => showOptionDialog(focusOptions,
+                  onPressed: () => showOptionDialogFocus(focusOptions,
                       "Wählen Sie den Fokus", (value) => selectedFocus = value),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Center(
@@ -475,7 +475,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   ),
                 ),
                 PressableButton(
-                  onPressed: () => showOptionDialog(goalOptions,
+                  onPressed: () => showOptionDialogGoal(goalOptions,
                       "Wählen Sie das Ziel", (value) => selectedGoal = value),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   child: Center(
@@ -558,7 +558,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     }
   }
 
-  void showOptionDialog(List<String> options, String title,
+  void showOptionDialogFocus(List<String> options, String title,
       void Function(String) onSelected) async {
     String? selection = await showDialog<String>(
       context: context,
@@ -573,6 +573,41 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         title: Text(option),
                         value: option,
                         groupValue: selectedFocus,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            Navigator.of(context).pop(value);
+                          }
+                        },
+                      ))
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selection != null) {
+      setState(() {
+        onSelected(selection);
+      });
+    }
+  }
+
+  void showOptionDialogGoal(List<String> options, String title,
+      void Function(String) onSelected) async {
+    String? selection = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: options
+                  .map((String option) => RadioListTile<String>(
+                        title: Text(option),
+                        value: option,
+                        groupValue: selectedGoal,
                         onChanged: (String? value) {
                           if (value != null) {
                             Navigator.of(context).pop(value);

@@ -18,7 +18,9 @@
             "unterer Ruecken 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0002",
@@ -41,7 +43,9 @@
             "Knie 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0003",
@@ -64,7 +68,9 @@
             "Knie 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0004",
@@ -89,7 +95,9 @@
             " Handgelenke 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0005",
@@ -111,7 +119,9 @@
             "wenig Platz"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0006",
@@ -133,7 +143,9 @@
             "wenig Platz"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0007",
@@ -163,7 +175,7 @@
         "background": "blau_beige",
         "duration": 45,
         "startPose": "Rlwinkl",
-        "endPose": "Rlwinkl",
+        "endPose": "RLwinkl",
         "direction": "links",
         "focus": [
             "Allgemein"
@@ -218,7 +230,9 @@
         "difficulty": 2,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0011",
@@ -350,7 +364,7 @@
         "background": "blau_beige",
         "duration": 48,
         "startPose": "4Fue-ab",
-        "endPose": "Rlstreck",
+        "endPose": "RLstreck",
         "direction": "links",
         "focus": [
             "unterer Ruecken",
@@ -445,7 +459,9 @@
         "difficulty": 4,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0020",
@@ -593,7 +609,9 @@
             " Handgelenk 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0026",
@@ -619,7 +637,9 @@
             " Handgelenk 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0027",
@@ -645,7 +665,9 @@
             " Handgelenk 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0028",
@@ -668,7 +690,9 @@
             "Extension"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0029",
@@ -700,7 +724,7 @@
         "background": "blau_beige",
         "duration": 36,
         "startPose": "RLstreck",
-        "endPose": "Rlstreck",
+        "endPose": "RLstreck",
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
@@ -739,7 +763,9 @@
             " Schulter 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0032",
@@ -789,7 +815,9 @@
             " Handgelenke 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0034",
@@ -815,7 +843,9 @@
             " Handgelenke 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0035",
@@ -887,7 +917,9 @@
             "Knie 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0038",
@@ -911,7 +943,9 @@
             "Knie 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0039",
@@ -1026,7 +1060,9 @@
         "difficulty": 3,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0044",
@@ -1195,7 +1231,7 @@
         "background": "blau_beige",
         "duration": 79,
         "startPose": "RLstreck",
-        "endPose": "Rlstreck",
+        "endPose": "RLstreck",
         "direction": "links",
         "focus": [
             "Allgemein"
@@ -1316,7 +1352,9 @@
             " Handgelenke 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0057",
@@ -1340,7 +1378,9 @@
             " Handgelenke 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0058",
@@ -1363,7 +1403,9 @@
             "Fuss 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0059",
@@ -1371,7 +1413,7 @@
         "background": "blau_weiss",
         "duration": 45,
         "startPose": "LaSi",
-        "endPose": "RL-winkl",
+        "endPose": "RLwinkl",
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
@@ -1412,7 +1454,9 @@
             " Handgelenke 3"
         ],
         "workplaceRelevance": "Aktiv und hebend",
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0061",
@@ -1485,7 +1529,9 @@
             " Nacken 5"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0064",
@@ -1509,7 +1555,9 @@
             " Nacken 4"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0065",
@@ -1563,8 +1611,8 @@
         "name": "Glute Bridge",
         "background": "blau_weiss",
         "duration": 34,
-        "startPose": "Rlwinkl",
-        "endPose": "Rlwinkl",
+        "startPose": "RLwinkl",
+        "endPose": "RLwinkl",
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
@@ -1577,7 +1625,9 @@
         "difficulty": 2,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0068",
@@ -1599,7 +1649,9 @@
             "Knie 4"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0069",
@@ -1621,7 +1673,9 @@
             "Knie 4"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0070",
@@ -1678,8 +1732,8 @@
         "name": "Kaefer",
         "background": "blau_weiss",
         "duration": 44,
-        "startPose": "Rlwinkl",
-        "endPose": "Rlwinkl",
+        "startPose": "RLwinkl",
+        "endPose": "RLwinkl",
         "direction": "rechts",
         "focus": [
             "allgemein"
@@ -1692,15 +1746,17 @@
             "unterer Ruecken 3"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0073",
         "name": "Rolle zu Seitsitz",
         "background": "blau_weiss",
         "duration": 30,
-        "startPose": "Rlwinkl",
-        "endPose": "Rlwinkl",
+        "startPose": "RLwinkl",
+        "endPose": "RLwinkl",
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
@@ -1715,14 +1771,16 @@
             "Knie 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0074",
         "name": "Rolle zu Seitsitz",
         "background": "blau_weiss",
         "duration": 35,
-        "startPose": "Rlwinkl",
+        "startPose": "RLwinkl",
         "endPose": "SL",
         "direction": "rechts",
         "focus": [
@@ -1738,7 +1796,9 @@
             "Knie 2"
         ],
         "workplaceRelevance": null,
-        "logic": []
+        "logic": [
+            "MAIN"
+        ]
     },
     {
         "id": "0075",
@@ -1770,7 +1830,7 @@
         "background": "blau_weiss",
         "duration": 41,
         "startPose": "SL",
-        "endPose": "Rlstreck",
+        "endPose": "RLstreck",
         "direction": "links",
         "focus": [
             "unterer Ruecken",
@@ -1822,7 +1882,7 @@
         "background": "blau_weiss",
         "duration": 42,
         "startPose": "4Fue-ab",
-        "endPose": "Rlstreck",
+        "endPose": "RLstreck",
         "direction": "links",
         "focus": [
             "unterer Ruecken",
@@ -1845,8 +1905,8 @@
         "name": "Tucked Krokodil",
         "background": "blau_weiss",
         "duration": 41,
-        "startPose": "Rlwinkl",
-        "endPose": "Rlwinkl",
+        "startPose": "RLwinkl",
+        "endPose": "RLwinkl",
         "direction": "links",
         "focus": [
             "unterer Ruecken",
@@ -1869,7 +1929,7 @@
         "name": "Abschlussmeditation",
         "background": "blau_weiss",
         "duration": 21,
-        "startPose": "Rlstreck",
+        "startPose": "RLwinkl",
         "endPose": "FS",
         "direction": "links",
         "focus": [
