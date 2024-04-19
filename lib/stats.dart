@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -285,8 +286,9 @@ class ProfilPageState extends State<ProfilPage> {
               ),
               SizedBox(height: 12.0),
               ProgressBarWithPill(
-                  initialProgress:
-                      profilProvider.weeklyDone / profilProvider.weeklyGoal),
+                  initialProgress: min(
+                      profilProvider.weeklyDone / profilProvider.weeklyGoal,
+                      1.0)),
               SizedBox(height: 39.0),
               Text(
                 "Statistiken",
@@ -309,86 +311,61 @@ class ProfilPageState extends State<ProfilPage> {
   Widget _buildRowWithImageAndText(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.center, // Center children horizontally
         children: [
-          Container(
-            margin: EdgeInsets.only(left: 30),
-            height: 105.0,
-            width: 105.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 7,
-                  offset: Offset(0, 3),
-                ),
-              ],
-              image: DecorationImage(
-                image: AssetImage('assets/timo.jpg'),
-                fit: BoxFit.cover,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Profil",
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
-            ),
+              IconButton(
+                icon: Icon(Icons.settings),
+                iconSize: 26.0,
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingsPage(
+                            setAuthenticated: widget.setAuthenticated)),
+                  );
+                },
+              )
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Profil",
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.settings),
-                      iconSize: 26.0,
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsPage(
-                                  setAuthenticated: widget.setAuthenticated)),
-                        );
-                      },
-                    )
-                  ],
-                ),
-                SizedBox(height: 10.0),
-                Consumer<ProfilProvider>(
-                  builder: (context, profilProvider, child) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              "${profilProvider.weeklyDone}",
-                              style: TextStyle(fontSize: 44),
-                            ),
-                            SizedBox(width: 8),
-                            Image.asset('assets/leaf.png',
-                                width: 45, height: 45),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          "Tage diese Woche \n trainiert",
-                          style: TextStyle(fontSize: 22),
-                        ),
-                      ],
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
+          SizedBox(height: 10.0),
+          Consumer<ProfilProvider>(
+            builder: (context, profilProvider, child) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "${profilProvider.weeklyDone}",
+                        style: TextStyle(fontSize: 44),
+                      ),
+                      SizedBox(width: 8),
+                      Image.asset('assets/leaf.png', width: 45, height: 45),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "Tage diese Woche \n trainiert",
+                    style: TextStyle(fontSize: 22),
+                    textAlign: TextAlign
+                        .center, // Center the text within the Text widget
+                  ),
+                ],
+              );
+            },
+          )
         ],
       ),
     );
@@ -396,10 +373,11 @@ class ProfilPageState extends State<ProfilPage> {
 
   Widget _buildRowWithColumns(BuildContext context, int completedLevels) {
     final List<String> options2 = [
-      'Garkein Sport',
-      'Anfänger',
-      'Fortgeschritten',
-      'Experte'
+      'Nicht so oft',
+      'Mehrmals im Monat',
+      'Einmal pro Woche',
+      'Mehrmals pro Woche',
+      'Täglich',
     ];
 
     return Consumer<ProfilProvider>(builder: (context, profilProvider, child) {

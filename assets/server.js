@@ -262,7 +262,7 @@ app.post('/feedback', authenticateToken, async (req, res) => {
   }
 });
 
-async function selectVideoForCategory(category, fitnessLevel, currentEndPose, focus, goal, selectedVideoIds, userId) {
+async function selectVideoForCategory(category, fitnessLevel, currentEndPose, focus, goal, selectedVideoIds, userId, currentDuration, targetDuration) {
     // Constants for video pairing
     let videoPairs = {
         "0034": "0033",
@@ -271,9 +271,10 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
 
     // Attempt sequence to relax search criteria
     let attempts = [
-        { focus: focus, goal: goal },  // First attempt with both focus and goal
-        { focus: null, goal: goal },  // Second attempt without focus
-        { focus: focus, goal: null }  // Third attempt without goal
+        { focus: focus, goal: goal },
+        { focus: null, goal: goal },
+        { focus: focus, goal: null },
+		{ focus: null, goal: null }
     ];
 
     // Fitness level trials
@@ -286,11 +287,22 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
 
     // Categories to try
     let categoriesToTry = category === 'MAIN' ? [category] : [category];
+	
+	const remainingDuration = targetDuration - currentDuration;
+	
+	if (remainingDuration <= 200) { 
+        categoriesToTry = ['WU1', 'WU2','AB1', 'AB2'];
+    }
+	if (remainingDuration <= 100) { 
+        categoriesToTry = ['AB1', 'AB2'];
+    }
+	if (remainingDuration <= 80) { 
+        categoriesToTry = ['AB2'];
+    }
 
-    // Iterate over each attempt to relax search criteria when necessary
     for (const attempt of attempts) {
         for (const currentCategory of categoriesToTry) {
-            if (videoFound) break; // Exit if a video has been found
+            if (videoFound) break;
 
             for (const level of fitnessLevelsToTry) {
                 let matchCriteria = {
@@ -304,10 +316,9 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
 
                 const videos = await Video.find(matchCriteria).sort({ duration: -1 });
 
-                // Filter videos based on user feedback
                 const filteredVideos = videos.filter(video => {
                     const feedback = feedbackMap[video._id];
-                    if (!feedback) return true;  // Include video if no feedback
+                    if (!feedback) return true;
                     return (fitnessLevel <= 2 && feedback.difficulty === 'Einfach') ||
                            (fitnessLevel >= 4 && feedback.difficulty === 'Schwer') ||
                            feedback.difficulty === 'Ok';
@@ -317,7 +328,7 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
                     const randomIndex = Math.floor(Math.random() * filteredVideos.length);
                     videoFound = filteredVideos[randomIndex];
 
-                    // Handle video pairs
+
                     if (videoPairs[videoFound._id] && !selectedVideoIds.includes(videoPairs[videoFound._id])) {
                         const pairVideoId = videoPairs[videoFound._id];
                         const pairVideo = await Video.findById(pairVideoId);
@@ -332,21 +343,26 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
         if (videoFound) break;
     }
 
-    // Final fallback: try additional categories if MAIN was initially chosen and no video found
     if (!videoFound && category === 'MAIN') {
         categoriesToTry = ['WU1', 'WU2', 'AB1', 'AB2'];
         for (const fallbackCategory of categoriesToTry) {
-            const result = await selectVideoForCategory(fallbackCategory, fitnessLevel, currentEndPose, null, null, selectedVideoIds, userId);
+            const result = await selectVideoForCategory(fallbackCategory, fitnessLevel, currentEndPose, null, null, selectedVideoIds, userId, currentDuration, targetDuration)
             if (result) return result;
         }
     }
 	
+	if (!videoFound && category === 'MAIN') {
+		const result = await selectVideoForCategory('MAIN', fitnessLevel, null, null, null, selectedVideoIds, userId, currentDuration, targetDuration)
+		if (result) return result;
+
+    }
+	
 	if(!videoFound && category === 'AB1'){
-		const result = await selectVideoForCategory('AB1', fitnessLevel, null, null, null, selectedVideoIds, userId);
+		const result = await selectVideoForCategory('AB1', fitnessLevel, null, null, null, selectedVideoIds, userId, currentDuration, targetDuration)
 	}
 	
 	if(!videoFound && category === 'AB2'){
-		const result = await selectVideoForCategory('AB2', fitnessLevel, null, null, null, selectedVideoIds, userId);
+		const result = await selectVideoForCategory('AB2', fitnessLevel, null, null, null, selectedVideoIds, userId, currentDuration, targetDuration)
 	}
 
     return videoFound;
@@ -378,7 +394,7 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
 
     // Warmup
     for (const category of ['WU1', 'WU2']) {
-      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user);
+      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user, totalDuration, desiredDuration)
       if (video) {
         selectedVideos.push(video);
 		console.log(selectedVideos);
@@ -390,7 +406,7 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
 
     // Main Exercise Loop
     while (totalDuration < desiredDuration) {
-	let mainVideo = await selectVideoForCategory('MAIN', numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user);
+	let mainVideo = await selectVideoForCategory('MAIN', numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user, totalDuration, desiredDuration)
       if (!mainVideo) break;
 	  selectedVideos.push(mainVideo);
 	  console.log(selectedVideos);
@@ -401,7 +417,7 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
 
     // Cooldown
     for (const category of ['AB1', 'AB2']) {
-      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user);
+      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user, totalDuration, desiredDuration)
       if (video) {
         selectedVideos.push(video);
 		console.log(selectedVideos);
