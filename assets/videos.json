@@ -1189,7 +1189,7 @@
         "background": "blau_beige",
         "duration": 127,
         "startPose": "RLstreck",
-        "endPose": "Abschluss",
+        "endPose": "Rlstreck",
         "direction": "rechts",
         "focus": [
             "Allgemein"
@@ -1995,7 +1995,7 @@
         "background": "blau_weiss",
         "duration": 57,
         "startPose": "RLstreck",
-        "endPose": "Ende",
+        "endPose": "Rlstreck",
         "direction": "rechts",
         "focus": [
             "Allgemein"

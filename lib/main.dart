@@ -533,9 +533,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               shrinkWrap: true,
               itemCount: 20,
               itemBuilder: (BuildContext context, int index) {
-                int minute = index + 1;
+                int minute = 4 + index;
                 return ListTile(
-                  title: Text("$minute Minute${minute > 1 ? 'n' : ''}"),
+                  title: Text("$minute Minuten"),
                   onTap: () => Navigator.of(context).pop(minute * 60),
                 );
               },
