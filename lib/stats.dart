@@ -404,7 +404,7 @@ class ProfilPageState extends State<ProfilPage> {
               child: _buildColumnWithText(
                 dynamicText:
                     "${options2.indexOf(profilProvider.fitnessLevel ?? 'Nicht so oft')}",
-                dynamicText1: "Fitnesslevel",
+                dynamicText1: "Fitness",
               ),
             ),
           ],
