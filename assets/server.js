@@ -262,206 +262,171 @@ app.post('/feedback', authenticateToken, async (req, res) => {
   }
 });
 
-// Helper functions
-function findPairId(currentId, videoPairs) {
-    for (const pair of videoPairs) {
-        if (pair[0] === currentId) return pair[1];
-        if (pair[1] === currentId) return pair[0];
-    }
-    return null;
-}
+async function selectVideoForCategory(category, fitnessLevel, currentEndPose, focus, goal, selectedVideoIds, userId) {
+    // Constants for video pairing
+    let videoPairs = {
+        "0034": "0033",
+        "0036": "0035"
+    };
 
-async function fetchVideoById(videoId) {
-    try {
-        const video = await Video.findOne({ _id: videoId }).exec();
-        if (!video) {
-            console.log(`No video found with ID: ${videoId}`);
-            return null;
-        }
-        return video;
-    } catch (error) {
-        console.error(`Error fetching video with ID ${videoId}:`, error);
-        return null;
-    }
-}
-
-function canAddVideo(currentDuration, videoDuration, targetDuration) {
-    return (currentDuration + videoDuration <= targetDuration);
-}
-
-// Updated selection logic
-async function selectVideoForCategory(category, fitnessLevel, currentEndPose, focus, goal, selectedVideoIds, userId, currentDuration, targetDuration) {
-	
-	focus = focus === 'Allgemein' ? null : focus;
-    goal = goal === 'Allgemein' ? null : goal;
-	
+    // Attempt sequence to relax search criteria
     let attempts = [
-        { focus: focus, goal: goal, category: category },
-        { focus: null, goal: goal, category: category },
-        { focus: focus, goal: null, category: category },
-        { focus: null, goal: null, category: null }
+        { focus: focus, goal: goal },  // First attempt with both focus and goal
+        { focus: null, goal: goal },  // Second attempt without focus
+        { focus: focus, goal: null }  // Third attempt without goal
     ];
 
+    // Fitness level trials
     let fitnessLevelsToTry = [fitnessLevel, ...Array.from({ length: 5 - fitnessLevel }, (_, i) => i + fitnessLevel + 1)];
     let videoFound = null;
 
+    // Fetch user and their feedback
     const user = await User.findById(userId);
     const feedbackMap = user.feedback.reduce((acc, item) => ({...acc, [item.videoId]: item}), {});
 
-    const remainingDuration = targetDuration - currentDuration;
+    // Categories to try
+    let categoriesToTry = category === 'MAIN' ? [category] : [category];
 
+    // Iterate over each attempt to relax search criteria when necessary
     for (const attempt of attempts) {
+        for (const currentCategory of categoriesToTry) {
+            if (videoFound) break; // Exit if a video has been found
+
+            for (const level of fitnessLevelsToTry) {
+                let matchCriteria = {
+                    difficulty: level,
+                    logic: { $in: [currentCategory] },
+                    _id: { $nin: selectedVideoIds }
+                };
+                if (currentEndPose) matchCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');
+                if (attempt.focus !== null) matchCriteria.focus = attempt.focus;
+                if (attempt.goal !== null) matchCriteria.goal = attempt.goal;
+
+                const videos = await Video.find(matchCriteria).sort({ duration: -1 });
+
+                // Filter videos based on user feedback
+                const filteredVideos = videos.filter(video => {
+                    const feedback = feedbackMap[video._id];
+                    if (!feedback) return true;  // Include video if no feedback
+                    return (fitnessLevel <= 2 && feedback.difficulty === 'Einfach') ||
+                           (fitnessLevel >= 4 && feedback.difficulty === 'Schwer') ||
+                           feedback.difficulty === 'Ok';
+                });
+
+                if (filteredVideos.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * filteredVideos.length);
+                    videoFound = filteredVideos[randomIndex];
+
+                    // Handle video pairs
+                    if (videoPairs[videoFound._id] && !selectedVideoIds.includes(videoPairs[videoFound._id])) {
+                        const pairVideoId = videoPairs[videoFound._id];
+                        const pairVideo = await Video.findById(pairVideoId);
+                        if (pairVideo) {
+                            selectedVideoIds.push(pairVideo._id);
+                            return { pairVideo, videoFound };
+                        }
+                    }
+                }
+            }
+        }
         if (videoFound) break;
-
-		let matchCriteria = {
-			_id: { $nin: selectedVideoIds }
-		};
-		if (attempt.category !== null) matchCriteria.category = attempt.category;
-		if (currentEndPose) matchCriteria.startPose = new RegExp('^' + currentEndPose + '$', 'i');
-		if (attempt.focus !== null) matchCriteria.focus = attempt.focus;
-		if (attempt.goal !== null) matchCriteria.goal = attempt.goal;
-		
-		console.log(matchCriteria);
-
-		const videos = await Video.find(matchCriteria).sort({ duration: -1 });
-		const filteredVideos = videos.filter(video => {
-			const feedback = feedbackMap[video._id];
-			if (!feedback) return true;
-			return feedback.difficulty === 'Ok' || Math.random() < (feedback.difficulty === 'Einfach' ? 0.30 : 0.60);
-		});
-
-		for (const video of filteredVideos) {
-			if (canAddVideo(currentDuration, video.duration, targetDuration)) {
-				videoFound = video;
-				break;
-			}
-		}
     }
+
+    // Final fallback: try additional categories if MAIN was initially chosen and no video found
+    if (!videoFound && category === 'MAIN') {
+        categoriesToTry = ['WU1', 'WU2', 'AB1', 'AB2'];
+        for (const fallbackCategory of categoriesToTry) {
+            const result = await selectVideoForCategory(fallbackCategory, fitnessLevel, currentEndPose, null, null, selectedVideoIds, userId);
+            if (result) return result;
+        }
+    }
+	
+	if(!videoFound && category === 'AB1'){
+		const result = await selectVideoForCategory('AB1', fitnessLevel, null, null, null, selectedVideoIds, userId);
+	}
+	
+	if(!videoFound && category === 'AB2'){
+		const result = await selectVideoForCategory('AB2', fitnessLevel, null, null, null, selectedVideoIds, userId);
+	}
+
     return videoFound;
 }
 
-// Main API endpoint
+
+
+
 app.get('/concatenate', authenticateToken, async (req, res) => {
-    try {
-        const user = await User.findOne({ username: req.user.username });
-        if (!user) return res.status(404).send('User not found');
-        
-        const fitnessLevelMap = {
-            'Nicht so oft': 1,
-            'Mehrmals im Monat': 2,
-            'Einmal pro Woche': 3,
-            'Mehrmals pro Woche': 4,
-            'Täglich': 5,
-        };
-        const numericFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
-        const desiredDuration = parseInt(req.query.duration) || 600;
-        let totalDuration = 0;
-        let currentId = null;
-        let currentEndPose = null;
-        let selectedVideos = [];
-        let selectedVideoIds = [];
+  try {
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) return res.status(404).send('User not found');
+    // Initialization
+    const fitnessLevelMap = {
+      'Nicht so oft': 1,
+      'Mehrmals im Monat': 2,
+      'Einmal pro Woche': 3,
+      'Mehrmals pro Woche': 4,
+      'Täglich': 5,
+    };
+    const numericFitnessLevel = fitnessLevelMap[user.fitnessLevel] || 1;
+    const desiredDuration = parseInt(req.query.duration) || 600;
+    const focus = req.query.focus !== 'Allgemein' ? req.query.focus : null;
+    const goal = req.query.goal !== 'Allgemein' ? req.query.goal : null;
+    let totalDuration = 0;
+    let currentEndPose = null;
+    const selectedVideos = [];
+    const selectedVideoIds = [];
 
-        let videoPairs = [
-            ["0036", "0035"],
-            ["0039", "0040"],
-            ["0041", "0042"],
-            ["0033", "0034"],
-            ["0069", "0074"],
-        ];
-
-        // Warmup
-        for (const category of ['WU1', 'WU2']) {
-            let pairId = findPairId(currentId, videoPairs);
-
-            let video;
-            if (pairId && !selectedVideoIds.includes(pairId)) {
-                video = await fetchVideoById(pairId);
-                if (video && canAddVideo(totalDuration, video.duration, desiredDuration)) {
-                    selectedVideos.push(video);
-                    selectedVideoIds.push(video._id);
-                    currentId = null;
-                    currentEndPose = video.endPose;
-                    totalDuration += video.duration;
-                }
-            } else {
-                video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, null, null, selectedVideoIds, user._id, totalDuration, desiredDuration);
-                if (video) {
-                    selectedVideos.push(video);
-                    selectedVideoIds.push(video._id);
-                    currentId = video._id;
-                    currentEndPose = video.endPose;
-                    totalDuration += video.duration;
-                }
-            }
-        }
-
-        // Main Exercise Loop
-        while (totalDuration < desiredDuration) {
-            let pairId = findPairId(currentId, videoPairs);
-
-            let video;
-            if (pairId && !selectedVideoIds.includes(pairId)) {
-                video = await fetchVideoById(pairId);
-                if (video && canAddVideo(totalDuration, video.duration, desiredDuration)) {
-                    selectedVideos.push(video);
-                    selectedVideoIds.push(video._id);
-                    currentId = null;
-                    currentEndPose = video.endPose;
-                    totalDuration += video.duration;
-                }
-            } else {
-                video = await selectVideoForCategory('MAIN', numericFitnessLevel, currentEndPose, null, null, selectedVideoIds, user._id, totalDuration, desiredDuration);
-                if (video) {
-                    selectedVideos.push(video);
-                    selectedVideoIds.push(video._id);
-                    currentId = video._id;
-                    currentEndPose = video.endPose;
-                    totalDuration += video.duration;
-                }
-            }
-        }
-
-        // Cooldown
-        for (const category of ['AB1', 'AB2']) {
-            let pairId = findPairId(currentId, videoPairs);
-
-            let video;
-            if (pairId && !selectedVideoIds.includes(pairId)) {
-                video = await fetchVideoById(pairId);
-                if (video && canAddVideo(totalDuration, video.duration, desiredDuration)) {
-                    selectedVideos.push(video);
-                    selectedVideoIds.push(video._id);
-                    currentId = null;
-                    currentEndPose = video.endPose;
-                    totalDuration += video.duration;
-                }
-            } else {
-                video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, null, null, selectedVideoIds, user._id, totalDuration, desiredDuration);
-                if (video) {
-                    selectedVideos.push(video);
-                    selectedVideoIds.push(video._id);
-                    currentId = video._id;
-                    currentEndPose = video.endPose;
-                    totalDuration += video.duration;
-                }
-            }
-        }
-
-        // Concatenate the videos and respond
-        const listPath = '/var/www/backquest/videos/mylist.txt';
-        const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
-        await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/${video._id}.mp4`), listPath);
-        await concatenateVideos(listPath, outputVideo);
-
-        res.json({
-            message: 'Videos concatenated successfully',
-            totalDuration,
-            selectedVideos: selectedVideos.map(video => video._id),
-        });
-    } catch (error) {
-        console.error('Failed to concatenate videos:', error);
-        res.status(500).send('Failed to concatenate videos');
+    // Warmup
+    for (const category of ['WU1', 'WU2']) {
+      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user);
+      if (video) {
+        selectedVideos.push(video);
+		console.log(selectedVideos);
+        selectedVideoIds.push(video._id);
+        currentEndPose = video.endPose;
+        totalDuration += video.duration;
+      }
     }
+
+    // Main Exercise Loop
+    while (totalDuration < desiredDuration) {
+	let mainVideo = await selectVideoForCategory('MAIN', numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user);
+      if (!mainVideo) break;
+	  selectedVideos.push(mainVideo);
+	  console.log(selectedVideos);
+	  selectedVideoIds.push(mainVideo._id);
+	  currentEndPose = mainVideo.endPose;
+	  totalDuration += mainVideo.duration;
+    }
+
+    // Cooldown
+    for (const category of ['AB1', 'AB2']) {
+      let video = await selectVideoForCategory(category, numericFitnessLevel, currentEndPose, focus, goal, selectedVideoIds, user);
+      if (video) {
+        selectedVideos.push(video);
+		console.log(selectedVideos);
+        selectedVideoIds.push(video._id);
+        currentEndPose = video.endPose;
+        totalDuration += video.duration;
+      }
+    }
+
+    // Concatenate the videos
+    const listPath = '/var/www/backquest/videos/mylist.txt';
+    const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
+    await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/${video.id}.mp4`), listPath);
+    await concatenateVideos(listPath, outputVideo);
+
+    // Response
+    res.json({
+      message: 'Videos concatenated successfully',
+      totalDuration,
+      selectedVideos: selectedVideos.map(video => video.id),
+    });
+  } catch (error) {
+    console.error('Failed to concatenate videos:', error);
+    res.status(500).send('Failed to concatenate videos');
+  }
 });
 
 
