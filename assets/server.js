@@ -277,7 +277,7 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
     ];
 
     // Fitness level trials
-    let fitnessLevelsToTry = [fitnessLevel, ...Array.from({ length: 5 - fitnessLevel }, (_, i) => i + fitnessLevel + 1)];
+    let fitnessLevelsToTry = [1,2,3,4,5];
     let videoFound = null;
 
     // Fetch user and their feedback
@@ -303,19 +303,11 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
                 if (attempt.goal !== null) matchCriteria.goal = attempt.goal;
 
                 const videos = await Video.find(matchCriteria).sort({ duration: -1 });
+				
 
-                // Filter videos based on user feedback
-                const filteredVideos = videos.filter(video => {
-                    const feedback = feedbackMap[video._id];
-                    if (!feedback) return true;  // Include video if no feedback
-                    return (fitnessLevel <= 2 && feedback.difficulty === 'Einfach') ||
-                           (fitnessLevel >= 4 && feedback.difficulty === 'Schwer') ||
-                           feedback.difficulty === 'Ok';
-                });
-
-                if (filteredVideos.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * filteredVideos.length);
-                    videoFound = filteredVideos[randomIndex];
+                if (videos.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * videos.length);
+                    videoFound = videos[randomIndex];
 
                     // Handle video pairs
                     if (videoPairs[videoFound._id] && !selectedVideoIds.includes(videoPairs[videoFound._id])) {
@@ -356,6 +348,7 @@ async function selectVideoForCategory(category, fitnessLevel, currentEndPose, fo
 
 
 app.get('/concatenate', authenticateToken, async (req, res) => {
+	console.log("auth fine")
   try {
     const user = await User.findOne({ username: req.user.username });
     if (!user) return res.status(404).send('User not found');
@@ -375,6 +368,8 @@ app.get('/concatenate', authenticateToken, async (req, res) => {
     let currentEndPose = null;
     const selectedVideos = [];
     const selectedVideoIds = [];
+	
+	console.log(Video);
 
     // Warmup
     for (const category of ['WU1', 'WU2']) {

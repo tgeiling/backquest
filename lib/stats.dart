@@ -12,6 +12,7 @@ import 'services.dart';
 class ProfilProvider extends ChangeNotifier {
   int _weeklyGoal = 0;
   int _weeklyDone = 0;
+  String _fitnessLevel = 'Nicht so oft';
 
   int _completedLevels = 0;
   int _level = 0;
@@ -22,7 +23,6 @@ class ProfilProvider extends ChangeNotifier {
   int? _weight;
   int? _height;
   String? _workplaceEnvironment;
-  String? _fitnessLevel;
 
   String? _expectation;
   List<String> _hasPain = [];
@@ -32,6 +32,7 @@ class ProfilProvider extends ChangeNotifier {
 
   int get weeklyGoal => _weeklyGoal;
   int get weeklyDone => _weeklyDone;
+  String get fitnessLevel => _fitnessLevel;
 
   int get completedLevels => _completedLevels;
   int get level => _level;
@@ -42,7 +43,6 @@ class ProfilProvider extends ChangeNotifier {
   int? get weight => _weight;
   int? get height => _height;
   String? get workplaceEnvironment => _workplaceEnvironment;
-  String? get fitnessLevel => _fitnessLevel;
   String? get expectation => _expectation;
   List<String> get hasPain => _hasPain;
   List<String> get goals => _goals;
@@ -63,7 +63,7 @@ class ProfilProvider extends ChangeNotifier {
     _weight = prefs.getInt('weight');
     _height = prefs.getInt('height');
     _workplaceEnvironment = prefs.getString('workplaceEnvironment');
-    _fitnessLevel = prefs.getString('fitnessLevel');
+    _fitnessLevel = prefs.getString('fitnessLevel') ?? 'Nicht so oft';
     _goals = prefs.getStringList('goals') ?? [];
     _hasPain = prefs.getStringList('hasPain') ?? [];
     _questionnaireDone = prefs.getBool('questionnaireDone');

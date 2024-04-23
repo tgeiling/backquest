@@ -1,3 +1,4 @@
+import 'package:backquest/elements.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -232,26 +233,41 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(labelText: 'Benutzername'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(labelText: 'Passwort'),
               obscureText: true,
             ),
-            ElevatedButton(
-              onPressed: _attemptLogin,
-              child: Text('Login'),
+            Spacer(),
+            PressableButton(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                onPressed: _attemptLogin,
+                child: Container(
+                  width: double
+                      .infinity, // Ensures the button stretches to fill the width
+                  child: Center(
+                      child: Text('Login', style: TextStyle(fontSize: 18))),
+                )),
+            SizedBox(
+              height: 10,
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen()),
-                );
-              },
-              child: Text('Register'),
-            ),
+            PressableButton(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
+                },
+                child: Container(
+                    width: double
+                        .infinity, // Ensures the button stretches to fill the width
+                    child: Center(
+                      child:
+                          Text('Registrieren', style: TextStyle(fontSize: 18)),
+                    ))),
           ],
         ),
       ),

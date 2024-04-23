@@ -28,40 +28,46 @@ class LevelNotifier with ChangeNotifier {
   Future<void> _loadLevels() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<int, Level> tempLevels = {
-      1: Level(id: 1, description: "Description for level 1", minutes: 13),
-      2: Level(id: 2, description: "Description for level 2", minutes: 12),
-      3: Level(id: 3, description: "Description for level 3", minutes: 14),
-      4: Level(id: 4, description: "Description for level 4", minutes: 11),
+      1: Level(
+          id: 1,
+          description: "Erste Schritte zur Rückengesundheit",
+          minutes: 13),
+      2: Level(id: 2, description: "Schritt 2 für deinen Rücken", minutes: 12),
+      3: Level(id: 3, description: "Alle guten Dinge sind 3", minutes: 14),
+      4: Level(id: 4, description: "Fokus auf Unteren Rücken", minutes: 11),
       5: Level(
           id: 5,
-          description: "Description for level 5",
+          description: "Zu einfach? Passe dein Fitnesslevel an",
           reward: "Gold Coin",
           minutes: 6),
-      6: Level(id: 6, description: "Description for level 6", minutes: 6),
-      7: Level(id: 7, description: "Description for level 7", minutes: 6),
-      8: Level(id: 8, description: "Description for level 8", minutes: 6),
-      9: Level(id: 9, description: "Description for level 9", minutes: 6),
+      6: Level(id: 6, description: "Die meisten geben hier auf!", minutes: 6),
+      7: Level(id: 7, description: "Rückenschmerzen hartnäckig?", minutes: 6),
+      8: Level(id: 8, description: "Du bist auf einem gutem Weg", minutes: 6),
+      9: Level(id: 9, description: "Fokus auf Hüfte", minutes: 6),
       10: Level(
           id: 10,
-          description: "Description for level 10",
+          description: "Schon fast 10 Level geschafft",
           reward: "Gold Coin",
           minutes: 6),
-      11: Level(id: 11, description: "Description for level 11", minutes: 6),
-      12: Level(id: 12, description: "Description for level 12", minutes: 6),
-      13: Level(id: 13, description: "Description for level 13", minutes: 6),
-      14: Level(id: 14, description: "Description for level 14", minutes: 6),
+      11: Level(id: 11, description: "Fokus auf Schultern", minutes: 6),
+      12: Level(
+          id: 12,
+          description: "Jetzt hast du bald alles ausprobiert",
+          minutes: 6),
+      13: Level(id: 13, description: "Lange Meditation", minutes: 6),
+      14: Level(id: 14, description: "Fokus auf Unterer Rücken", minutes: 6),
       15: Level(
           id: 15,
-          description: "Description for level 15",
+          description: "Schau wie weit du schon bist!",
           reward: "Gold Coin",
           minutes: 6),
-      16: Level(id: 16, description: "Description for level 16", minutes: 6),
-      17: Level(id: 17, description: "Description for level 17", minutes: 6),
-      18: Level(id: 18, description: "Description for level 18", minutes: 6),
-      19: Level(id: 19, description: "Description for level 19", minutes: 6),
+      16: Level(id: 16, description: "Noch 4 Level!", minutes: 6),
+      17: Level(id: 17, description: "Noch 3 Level!", minutes: 6),
+      18: Level(id: 18, description: "Noch 2 Level!", minutes: 6),
+      19: Level(id: 19, description: "Noch 1 Level!", minutes: 6),
       20: Level(
           id: 20,
-          description: "Description for level 20",
+          description: "20 Übungen machen eine Gewohnheit",
           reward: "Gold Coin",
           minutes: 6),
     };
@@ -233,7 +239,7 @@ class _MainScaffoldState extends State<MainScaffold>
   int level = 0;
 
   void _toggleModal(
-      [String setDescription = "Default Description", int setLevel = 0]) {
+      [String setDescription = "Was passt für dich ?", int setLevel = 0]) {
     setState(() {
       _isModalVisible = !_isModalVisible;
       if (_isModalVisible) {
@@ -350,7 +356,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 SalomonBottomBarItem(
                   icon: Icon(
                     CupertinoIcons.home,
-                    size: 44.0,
+                    size: MediaQuery.of(context).size.width * 0.1,
                     color: Colors.white,
                   ),
                   title: Text("Main"),
@@ -359,7 +365,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 SalomonBottomBarItem(
                   icon: Icon(
                     CupertinoIcons.chart_bar_square,
-                    size: 44.0,
+                    size: MediaQuery.of(context).size.width * 0.1,
                     color: Colors.white,
                   ),
                   title: Text("Stats"),
@@ -447,7 +453,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           Expanded(
             child: GridView.count(
               crossAxisCount: 1,
-              crossAxisSpacing: 10,
+              crossAxisSpacing: 0,
               mainAxisSpacing: 10,
               childAspectRatio: 8 / 1,
               children: <Widget>[
@@ -526,7 +532,16 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Wählen Sie die Dauer"),
+          backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(10.0), // Rounded corners for the dialog
+          ),
+          title: Text(
+            "Wählen Sie die Dauer",
+            style:
+                TextStyle(color: Colors.white), // Title text with white color
+          ),
           content: Container(
             width: double.maxFinite,
             child: ListView.builder(
@@ -535,7 +550,12 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               itemBuilder: (BuildContext context, int index) {
                 int minute = 4 + index;
                 return ListTile(
-                  title: Text("$minute Minuten"),
+                  selectedColor: Colors.green,
+                  title: Text(
+                    "$minute Minuten",
+                    style: TextStyle(
+                        color: Colors.white), // List item text with white color
+                  ),
                   onTap: () => Navigator.of(context).pop(minute * 60),
                 );
               },
@@ -543,7 +563,11 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("Abbrechen"),
+              child: Text(
+                "Abbrechen",
+                style: TextStyle(
+                    color: Colors.white), // Button text with white color
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -564,13 +588,21 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+          title: Text(
+            title,
+            style: TextStyle(color: Colors.white),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: options
                   .map((String option) => RadioListTile<String>(
-                        title: Text(option),
+                        activeColor: Colors.white,
+                        title: Text(
+                          option,
+                          style: TextStyle(color: Colors.white),
+                        ),
                         value: option,
                         groupValue: selectedFocus,
                         onChanged: (String? value) {
@@ -599,13 +631,21 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+          title: Text(
+            title,
+            style: TextStyle(color: Colors.white),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: options
                   .map((String option) => RadioListTile<String>(
-                        title: Text(option),
+                        activeColor: Colors.white,
+                        title: Text(
+                          option,
+                          style: TextStyle(color: Colors.white),
+                        ),
                         value: option,
                         groupValue: selectedGoal,
                         onChanged: (String? value) {
@@ -801,7 +841,11 @@ class LevelCircle extends StatelessWidget {
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          if (isNext || isDone) {
+            onTap();
+          }
+        },
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         child: Stack(

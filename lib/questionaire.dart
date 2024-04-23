@@ -608,6 +608,8 @@ class _QuestionPage5State extends State<QuestionPage5> {
                           painAreas[key] = value!;
                         });
                       },
+                      checkColor: Colors.white,
+                      activeColor: Colors.green,
                     );
                   }).toList(),
                 ),
@@ -623,6 +625,8 @@ class _QuestionPage5State extends State<QuestionPage5> {
                           painAreas[key] = value!;
                         });
                       },
+                      checkColor: Colors.white,
+                      activeColor: Colors.green,
                     );
                   }).toList(),
                 ),
