@@ -231,6 +231,13 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Center(
+                child: GreyContainer(
+                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      scale: 2,
+                    ))),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(labelText: 'Benutzername'),
@@ -245,8 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 onPressed: _attemptLogin,
                 child: Container(
-                  width: double
-                      .infinity, // Ensures the button stretches to fill the width
+                  width: double.infinity,
                   child: Center(
                       child: Text('Login', style: TextStyle(fontSize: 18))),
                 )),
@@ -298,11 +304,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Register Failed'),
-            content: Text('Invalid username or password. Please try again.'),
+            title: Text('Registrierung Fehlgeschlagen'),
+            content: Text('Falscher Benutzername und Passwort'),
             actions: <Widget>[
               TextButton(
-                child: Text('Close'),
+                child: Text('Schließen'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -317,23 +323,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register')),
+      appBar: AppBar(title: Text('Registrierung')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Center(
+                child: GreyContainer(
+                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      scale: 2,
+                    ))),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(labelText: 'Benutzername'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(labelText: 'Passwort'),
               obscureText: true,
             ),
-            ElevatedButton(
+            Spacer(),
+            PressableButton(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               onPressed: _attemptRegister,
-              child: Text('Register'),
+              child: Container(
+                  width: double
+                      .infinity, // Ensures the button stretches to fill the width
+                  child: Center(
+                      child: Text('Registrieren',
+                          style: TextStyle(fontSize: 18)))),
             ),
           ],
         ),

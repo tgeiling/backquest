@@ -163,7 +163,7 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
         color: isGoalSelected(goal) ? null : Colors.grey[850],
       ),
       child: ListTile(
-        title: Text('$goal Tage',
+        title: Text('$goal Einheiten',
             style: TextStyle(
                 color: isGoalSelected(goal) ? Colors.white : Colors.grey[400])),
         onTap: () {
@@ -191,7 +191,7 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
             child: Text('Wöchentliche Übungen Ziele:',
                 style: Theme.of(context).textTheme.headline6),
           ),
-          for (int i = 2; i <= 12; i++) goalTile(i),
+          for (int i = 1; i <= 12; i++) goalTile(i),
         ],
       ),
       floatingActionButton: PressableButton(

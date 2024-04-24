@@ -944,27 +944,44 @@ class QuestionPage8 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text("Congratulations!"),
-              content: Text("You're all set to start."),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    onFinish();
-                  },
-                  child: Text("Start"),
-                ),
-              ],
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacer(),
+          Text(
+            'Fast Fertig!',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
             ),
-          );
-        },
-        child: Text("Finish"),
+            textAlign: TextAlign.left,
+          ),
+          Text(
+            'In der App bekommst du dein eigenes Trainings Video passend auf deine Bedürfnisse geschnitten. Du kannst die Level hochklettern um schwierigere Übungen Freizuschalten oder erstmal Entspannt Übungen starten über den Pfeil in der Ecke.',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          Spacer(),
+          PressableButton(
+            onPressed: () {
+              onFinish();
+            },
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text("Fertig",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
       ),
     );
   }
@@ -1218,6 +1235,8 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
 
   @override
   Widget build(BuildContext context) {
+    double baseSize = MediaQuery.of(context).size.width * 0.1;
+
     return Card(
       color: Colors.grey.shade500.withOpacity(0.3),
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -1272,7 +1291,10 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                                 selectedColor: Colors.green,
                                 label: Text(
                                   difficulty,
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: baseSize * 0.3,
+                                  ),
                                 ),
                                 selected: selectedDifficulty == difficulty,
                                 onSelected: (bool selected) {
@@ -1310,56 +1332,64 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Text('Schmerzbereiche wählen'),
-              content: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 5.0,
-                  children: [
-                    'Unterer Rücken',
-                    'Oberer Rücken',
-                    'Linke Schulter',
-                    'Rechte Schulter',
-                    'Linker Arm',
-                    'Rechter Arm',
-                    'Nacken',
-                    'Hüfte',
-                    'Linkes Knie',
-                    'Rechtes Knie'
-                  ]
-                      .map((area) => FilterChip(
-                            label: Text(area),
-                            selected: tempSelectedPainAreas.contains(area),
-                            onSelected: (bool selected) {
-                              setDialogState(() {
-                                if (selected) {
-                                  tempSelectedPainAreas.add(area);
-                                } else {
-                                  tempSelectedPainAreas.remove(area);
-                                }
-                              });
-                            },
-                          ))
-                      .toList(),
+            return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: Colors.green
+                            .shade800, // This sets the primary color used in button text, focus colors in the dialog
+                      ),
                 ),
-              ),
-              actions: [
-                TextButton(
-                  child: Text('Abbrechen'),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                TextButton(
-                  child: Text('Speichern'),
-                  onPressed: () {
-                    setState(() {
-                      selectedPainAreas = tempSelectedPainAreas;
-                      _updateFeedback();
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
+                child: AlertDialog(
+                  title: Text('Schmerzbereiche wählen'),
+                  content: SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 5.0,
+                      children: [
+                        'Unterer Rücken',
+                        'Oberer Rücken',
+                        'Linke Schulter',
+                        'Rechte Schulter',
+                        'Linker Arm',
+                        'Rechter Arm',
+                        'Nacken',
+                        'Hüfte',
+                        'Linkes Knie',
+                        'Rechtes Knie'
+                      ]
+                          .map((area) => FilterChip(
+                                selectedColor: Colors.green.shade300,
+                                label: Text(area),
+                                selected: tempSelectedPainAreas.contains(area),
+                                onSelected: (bool selected) {
+                                  setDialogState(() {
+                                    if (selected) {
+                                      tempSelectedPainAreas.add(area);
+                                    } else {
+                                      tempSelectedPainAreas.remove(area);
+                                    }
+                                  });
+                                },
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: Text('Abbrechen'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    TextButton(
+                      child: Text('Speichern'),
+                      onPressed: () {
+                        setState(() {
+                          selectedPainAreas = tempSelectedPainAreas;
+                          _updateFeedback();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ));
           },
         );
       },

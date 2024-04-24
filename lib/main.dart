@@ -195,6 +195,15 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Backquest',
       theme: ThemeData(
+        primaryColor: Colors.green,
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         fontFamily: 'Roboto',
         textTheme: TextTheme(
           titleLarge: TextStyle(
