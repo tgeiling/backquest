@@ -365,7 +365,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 SalomonBottomBarItem(
                   icon: Icon(
                     CupertinoIcons.home,
-                    size: MediaQuery.of(context).size.width * 0.1,
+                    size: MediaQuery.of(context).size.width * 0.09,
                     color: Colors.white,
                   ),
                   title: Text("Main"),
@@ -374,7 +374,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 SalomonBottomBarItem(
                   icon: Icon(
                     CupertinoIcons.chart_bar_square,
-                    size: MediaQuery.of(context).size.width * 0.1,
+                    size: MediaQuery.of(context).size.width * 0.09,
                     color: Colors.white,
                   ),
                   title: Text("Stats"),
