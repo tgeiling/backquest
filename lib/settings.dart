@@ -443,16 +443,15 @@ class _PainSettingPageState extends State<PainSettingPage> {
         area,
         style: TextStyle(color: Colors.white),
       ),
+      side: MaterialStateBorderSide.resolveWith(
+        (states) => BorderSide(width: 1.0, color: Colors.white),
+      ),
       value: painAreas[area],
       onChanged: (bool? value) {
         setState(() {
           painAreas[area] = value!;
         });
       },
-      secondary: Icon(
-        Icons.healing,
-        color: Colors.white,
-      ),
       hoverColor: Colors.white,
       checkColor: Colors.white,
       activeColor: Colors.green,
@@ -483,8 +482,7 @@ class _PainSettingPageState extends State<PainSettingPage> {
         body: ListView(
           padding: EdgeInsets.all(16.0),
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+            Container(
               child: Text('Wähle die Bereiche, in denen du Schmerzen hast.',
                   style: Theme.of(context).textTheme.headline6),
             ),
