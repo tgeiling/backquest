@@ -504,6 +504,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
 
   Widget _buildRoundedSelectBox(String labelText, String? selectedValue,
       List<String> items, String prefKey) {
+    // Ensure that a value is selected, defaulting to the first item if none is selected
     selectedValue ??= items.first;
 
     return Column(
@@ -514,22 +515,34 @@ class _QuestionPage4State extends State<QuestionPage4> {
           child: Text(
             labelText,
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
         ),
         Container(
-          height: 60,
+          height: 50,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(30.0),
+            color: Colors.grey.withOpacity(0.7), // Darker background color
+            borderRadius: BorderRadius.circular(10.0), // Less-rounded corners
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                offset: Offset(0, 2), // Slight shadow to create depth
+              )
+            ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.0),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedValue,
               icon: Icon(Icons.arrow_drop_down, color: Colors.white),
               isDense: true,
               isExpanded: true,
+              dropdownColor:
+                  Colors.grey[800], // Background color of the dropdown menu
               onChanged: (String? newValue) {
                 setState(() {
                   switch (prefKey) {
@@ -546,7 +559,11 @@ class _QuestionPage4State extends State<QuestionPage4> {
               items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value, style: TextStyle(color: Colors.black)),
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                        color: Colors.white), // White text for visibility
+                  ),
                 );
               }).toList(),
             ),
@@ -570,14 +587,14 @@ class _QuestionPage5State extends State<QuestionPage5> {
   Map<String, bool> painAreas = {
     'Unterer Rücken': false,
     'Oberer Rücken': false,
-    'Linke Schulter': false,
-    'Rechte Schulter': false,
-    'Linker Arm': false,
-    'Rechter Arm': false,
     'Nacken': false,
+    'Knie': false,
+    'Hand gelenke': false,
+    'Füße': false,
+    'Sprung gelenk': false,
     'Hüfte': false,
-    'Linkes Knie': false,
-    'Rechtes Knie': false,
+    'Kiefer': false,
+    'Schulter': false,
   };
 
   @override
@@ -690,15 +707,19 @@ class QuestionPage6 extends StatefulWidget {
 }
 
 class _QuestionPage6State extends State<QuestionPage6> {
-  String _selectedGoal1 = "Better Posture";
-  String _selectedGoal2 = "Pain Relief";
-  String _selectedGoal3 = "More Flexibility";
+  String _selectedGoal1 = 'Rückenschmerzen vorbeugen';
+  String _selectedGoal2 = 'Beweglicher werden';
+  String _selectedGoal3 = 'Gewohnheit bilden';
   String _additionalPersonalGoal = "";
 
   final List<String> personalGoalsOptions = [
-    'Better Posture',
-    'Pain Relief',
-    'More Flexibility'
+    'Rückenschmerzen vorbeugen',
+    'Beweglicher werden',
+    'Gewohnheit bilden',
+    'Stärker werden',
+    'Mehr Energie',
+    'Stressabbau',
+    'Haltung verbessern'
   ];
   _saveSelectedOption(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
@@ -737,15 +758,30 @@ class _QuestionPage6State extends State<QuestionPage6> {
                       personalGoalsOptions, 'selectedGoal3'),
                   SizedBox(height: 50),
                   TextField(
+                    style: TextStyle(
+                        color: Colors.white), // Sets the text color to white
                     decoration: InputDecoration(
                       hintText: "Schreibe Dein Ziel",
-                      fillColor: Colors.white,
+                      hintStyle: TextStyle(
+                          color: Colors
+                              .white70), // Hint text in a semi-transparent white color
+                      fillColor: Colors.grey.withOpacity(
+                          0.7), // Background color similar to the select boxes
                       filled: true,
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 16.0,
+                          horizontal: 12.0), // Padding for additional height
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                            10.0), // Matches the corner radius of the select boxes
+                        borderSide: BorderSide
+                            .none, // Removes the border to make it seamless
+                      ),
                     ),
                     onChanged: (value) {
                       _additionalPersonalGoal = value;
                     },
-                  ),
+                  )
                 ],
               ),
             ),
@@ -805,22 +841,34 @@ class _QuestionPage6State extends State<QuestionPage6> {
           child: Text(
             labelText,
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
         ),
         Container(
-          height: 60,
+          height: 50,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(30.0),
+            color: Colors.grey.withOpacity(0.7), // Darker background color
+            borderRadius: BorderRadius.circular(10.0), // Less-rounded corners
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 4,
+                offset: Offset(0, 2), // Slight shadow to create depth
+              )
+            ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.0),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedValue,
               icon: Icon(Icons.arrow_drop_down, color: Colors.white),
               isDense: true,
               isExpanded: true,
+              dropdownColor:
+                  Colors.grey[800], // Background color of the dropdown menu
               onChanged: (String? newValue) {
                 setState(() {
                   switch (prefKey) {
@@ -840,7 +888,11 @@ class _QuestionPage6State extends State<QuestionPage6> {
               items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value, style: TextStyle(color: Colors.black)),
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                        color: Colors.white), // White text for visibility
+                  ),
                 );
               }).toList(),
             ),
@@ -975,7 +1027,7 @@ class QuestionPage8 extends StatelessWidget {
             },
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: Center(
-                child: Text("Fertig",
+                child: Text("Fertigstellen",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -1347,14 +1399,14 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       children: [
                         'Unterer Rücken',
                         'Oberer Rücken',
-                        'Linke Schulter',
-                        'Rechte Schulter',
-                        'Linker Arm',
-                        'Rechter Arm',
                         'Nacken',
+                        'Knie',
+                        'Hand gelenke',
+                        'Füße',
+                        'Sprung gelenk',
                         'Hüfte',
-                        'Linkes Knie',
-                        'Rechtes Knie'
+                        'Kiefer',
+                        'Schulter',
                       ]
                           .map((area) => FilterChip(
                                 selectedColor: Colors.green.shade300,

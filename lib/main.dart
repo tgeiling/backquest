@@ -395,10 +395,11 @@ class _MainScaffoldState extends State<MainScaffold>
       return Container(
         child: GestureDetector(
           onTap: _toggleModal,
-          child: PressableButton(
+          child: /* PressableButton(
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             child: Icon(Icons.arrow_upward, color: Colors.white, size: 24),
-          ),
+          ), */
+              Text(""),
         ),
       );
     }
@@ -447,7 +448,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Passen Sie Ihr Training an",
+              "Passe dein Training an!",
               style: TextStyle(fontSize: 24, color: Colors.white),
             ),
           ),
@@ -861,30 +862,32 @@ class LevelCircle extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              margin: EdgeInsets.symmetric(vertical: 5),
-              width: 95,
-              height: 95,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(imageName),
-                  fit: BoxFit.contain,
-                ),
-              ),
-              child: Container(
-                padding: EdgeInsets.only(right: 0, bottom: 15),
-                child: Center(
-                  child: StrokeText(
-                    text: "$level",
-                    textStyle: TextStyle(
-                        fontSize: 34,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                    strokeColor: Colors.black,
-                    strokeWidth: 2,
+                margin: EdgeInsets.symmetric(vertical: 5),
+                width: 95,
+                height: 95,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(imageName),
+                    fit: BoxFit.contain,
                   ),
                 ),
-              ),
-            ),
+                child: Container(
+                  padding: EdgeInsets.only(right: 0, bottom: 15),
+                  child: Center(
+                    child: (isDone || isNext)
+                        ? StrokeText(
+                            text: "$level",
+                            textStyle: TextStyle(
+                                fontSize: 34,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                            strokeColor: Colors.black,
+                            strokeWidth: 2,
+                          )
+                        : SizedBox
+                            .shrink(), // Empty widget if the conditions aren't met
+                  ),
+                )),
             if (isNext)
               Positioned(
                 top: 65,

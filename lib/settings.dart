@@ -415,14 +415,14 @@ class _PainSettingPageState extends State<PainSettingPage> {
   static final Map<String, bool> allPainAreas = {
     'Unterer Rücken': false,
     'Oberer Rücken': false,
-    'Linke Schulter': false,
-    'Rechte Schulter': false,
-    'Linker Arm': false,
-    'Rechter Arm': false,
     'Nacken': false,
+    'Knie': false,
+    'Hand gelenke': false,
+    'Füße': false,
+    'Sprung gelenk': false,
     'Hüfte': false,
-    'Linkes Knie': false,
-    'Rechtes Knie': false,
+    'Kiefer': false,
+    'Schulter': false,
   };
 
   @override

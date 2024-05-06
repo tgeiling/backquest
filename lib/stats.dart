@@ -275,8 +275,9 @@ class ProfilPageState extends State<ProfilPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Woche",
-                    style: TextStyle(fontSize: 16.0),
+                    "Einheiten pro Woche",
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "${profilProvider.weeklyDone}/${profilProvider.weeklyGoal}",
@@ -315,17 +316,11 @@ class ProfilPageState extends State<ProfilPage> {
         crossAxisAlignment:
             CrossAxisAlignment.center, // Center children horizontally
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Profil",
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              IconButton(
+          Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
                 icon: Icon(Icons.settings),
-                iconSize: 26.0,
+                iconSize: 40.0,
                 color: Colors.white,
                 onPressed: () {
                   Navigator.push(
@@ -335,9 +330,7 @@ class ProfilPageState extends State<ProfilPage> {
                             setAuthenticated: widget.setAuthenticated)),
                   );
                 },
-              )
-            ],
-          ),
+              )),
           SizedBox(height: 10.0),
           Consumer<ProfilProvider>(
             builder: (context, profilProvider, child) {
@@ -349,15 +342,15 @@ class ProfilPageState extends State<ProfilPage> {
                     children: <Widget>[
                       Text(
                         "${profilProvider.weeklyDone}",
-                        style: TextStyle(fontSize: 44),
+                        style: TextStyle(fontSize: 85),
                       ),
                       SizedBox(width: 8),
-                      Image.asset('assets/leaf.png', width: 45, height: 45),
+                      Image.asset('assets/leaf.png', width: 80, height: 80),
                     ],
                   ),
                   SizedBox(height: 4),
                   Text(
-                    "Tage diese Woche \n trainiert",
+                    "Wochen in Folge!",
                     style: TextStyle(fontSize: 22),
                     textAlign: TextAlign
                         .center, // Center the text within the Text widget
@@ -389,7 +382,7 @@ class ProfilPageState extends State<ProfilPage> {
             Expanded(
               child: _buildColumnWithText(
                 dynamicText: "${completedLevels}",
-                dynamicText1: "Übungen",
+                dynamicText1: "Einheiten",
               ),
             ),
             SizedBox(width: 12.0),
