@@ -1249,7 +1249,8 @@ class _SecondPageState extends State<SecondPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(16),
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, bottom: 36, top: 16),
                 child: PressableButton(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 28),
                   onPressed: _sendFeedback,

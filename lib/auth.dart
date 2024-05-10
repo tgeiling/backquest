@@ -143,6 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
             profilProvider.setWeeklyDone(profileData['weeklyDone']);
           }
 
+          if (profileData.containsKey('weeklyStreak')) {
+            profilProvider.setWeeklyStreak(profileData['weeklyStreak']);
+          }
+
+          if (profileData.containsKey('lastUpdateString')) {
+            profilProvider.setLastUpdateString(profileData['lastUpdateString']);
+          }
+
           if (profileData.containsKey('painAreas')) {
             List<dynamic> painAreasDynamic = profileData['painAreas'];
             List<String> painAreas = painAreasDynamic

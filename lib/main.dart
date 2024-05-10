@@ -144,7 +144,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool? _authenticated;
   final AuthService _authService = AuthService();
 
@@ -154,6 +154,13 @@ class _MyAppState extends State<MyApp> {
     _checkAuthentication();
     Future.microtask(() =>
         Provider.of<ProfilProvider>(context, listen: false).loadInitialData());
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      Provider.of<ProfilProvider>(context, listen: false).loadInitialData();
+    }
   }
 
   Future<void> _checkAuthentication() async {

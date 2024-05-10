@@ -12,6 +12,8 @@ import 'services.dart';
 class ProfilProvider extends ChangeNotifier {
   int _weeklyGoal = 0;
   int _weeklyDone = 0;
+  int _weeklyStreak = 0;
+  String _lastUpdateString = "";
   String _fitnessLevel = 'Nicht so oft';
 
   int _completedLevels = 0;
@@ -32,6 +34,8 @@ class ProfilProvider extends ChangeNotifier {
 
   int get weeklyGoal => _weeklyGoal;
   int get weeklyDone => _weeklyDone;
+  int get weeklyStreak => _weeklyStreak;
+  String get lastUpdateString => _lastUpdateString;
   String get fitnessLevel => _fitnessLevel;
 
   int get completedLevels => _completedLevels;
@@ -57,6 +61,8 @@ class ProfilProvider extends ChangeNotifier {
 
     _weeklyGoal = prefs.getInt('weeklyGoal') ?? 0;
     _weeklyDone = prefs.getInt('weeklyDone') ?? 0;
+    _weeklyStreak = prefs.getInt('weeklyStreak') ?? 0;
+    _lastUpdateString = prefs.getString('lastUpdateString') ?? "";
 
     _birthdate = DateTime.tryParse(prefs.getString('birthdate') ?? '');
     _gender = prefs.getString('gender');
@@ -75,6 +81,27 @@ class ProfilProvider extends ChangeNotifier {
           .toList();
     }
 
+    DateTime? lastUpdate =
+        _lastUpdateString != "" ? DateTime.parse(_lastUpdateString) : null;
+
+    print(lastUpdate);
+    print(_lastUpdateString);
+
+    final now = DateTime.now();
+    final daysSinceLastUpdate =
+        lastUpdate != null ? now.difference(lastUpdate).inDays : null;
+
+    final currentWeek = weekNumber(now);
+    final lastUpdateWeek = lastUpdate != null ? weekNumber(lastUpdate) : null;
+
+    if (lastUpdateWeek != null && currentWeek != lastUpdateWeek) {
+      _weeklyDone = 0;
+    }
+
+    if (daysSinceLastUpdate != null && daysSinceLastUpdate >= 14) {
+      _weeklyStreak = 0;
+    }
+
     notifyListeners();
   }
 
@@ -86,9 +113,11 @@ class ProfilProvider extends ChangeNotifier {
   Future<void> setWeeklyDone([int? number]) async {
     final prefs = await SharedPreferences.getInstance();
 
-    final lastUpdateString = prefs.getString('lastWeeklyDoneUpdate');
     DateTime? lastUpdate =
-        lastUpdateString != null ? DateTime.parse(lastUpdateString) : null;
+        _lastUpdateString != "" ? DateTime.parse(_lastUpdateString) : null;
+
+    print(lastUpdate);
+    print(_lastUpdateString);
 
     final now = DateTime.now();
     final currentWeek = weekNumber(now);
@@ -96,9 +125,12 @@ class ProfilProvider extends ChangeNotifier {
         lastUpdate != null ? weekNumber(lastUpdate) : currentWeek;
 
     if (number == null) {
-      print(_weeklyDone);
+      if (lastUpdate == null) {
+        _weeklyStreak += 1;
+      }
       if (currentWeek != lastUpdateWeek) {
-        _weeklyDone = 0;
+        _weeklyDone += 1;
+        _weeklyStreak += 1;
       } else {
         _weeklyDone += 1;
       }
@@ -107,6 +139,8 @@ class ProfilProvider extends ChangeNotifier {
         if (token != null) {
           updateProfile(
             token: token,
+            lastUpdateString: _lastUpdateString,
+            weeklyStreak: _weeklyStreak,
             weeklyDone: _weeklyDone,
           ).then((success) {
             if (success) {
@@ -120,10 +154,11 @@ class ProfilProvider extends ChangeNotifier {
         }
       });
 
-      await prefs.setString('lastWeeklyDoneUpdate', now.toIso8601String());
+      setLastUpdateString(now.toIso8601String());
       await prefs.setInt('weeklyDone', _weeklyDone);
+      await prefs.setInt('weeklyStreak', _weeklyStreak);
     } else {
-      await prefs.setInt('weeklyDone', number!);
+      await prefs.setInt('weeklyDone', number);
     }
     notifyListeners();
   }
@@ -132,6 +167,20 @@ class ProfilProvider extends ChangeNotifier {
     _weeklyGoal = weeklyGoal;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('weeklyGoal', _weeklyGoal);
+    notifyListeners();
+  }
+
+  Future<void> setWeeklyStreak(int weeklyStreak) async {
+    _weeklyStreak = weeklyStreak;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('weeklyStreak', weeklyStreak);
+    notifyListeners();
+  }
+
+  Future<void> setLastUpdateString(String lastUpdateString) async {
+    _lastUpdateString = lastUpdateString;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastUpdateString', lastUpdateString);
     notifyListeners();
   }
 
@@ -341,7 +390,7 @@ class ProfilPageState extends State<ProfilPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "${profilProvider.weeklyDone}",
+                        "${profilProvider.weeklyStreak}",
                         style: TextStyle(fontSize: 85),
                       ),
                       SizedBox(width: 8),
