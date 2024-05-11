@@ -154,11 +154,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _checkAuthentication();
     Future.microtask(() =>
         Provider.of<ProfilProvider>(context, listen: false).loadInitialData());
+    WidgetsBinding.instance.addObserver(this);
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance
+        .removeObserver(this); // Unsubscribe to avoid memory leaks
+    super.dispose();
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
+      print("App is resumed - reopen");
       Provider.of<ProfilProvider>(context, listen: false).loadInitialData();
     }
   }
