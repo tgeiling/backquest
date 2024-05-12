@@ -12,6 +12,7 @@ import 'questionaire.dart';
 import 'elements.dart';
 import 'auth.dart';
 import 'services.dart';
+import 'settings.dart';
 
 class LevelNotifier with ChangeNotifier {
   Map<int, Level> _levels = {};
@@ -297,15 +298,14 @@ class _MainScaffoldState extends State<MainScaffold>
     showDialog<String>(
       context: context,
       builder: (context) {
-        String selectedSubscription = 'Monatlich'; // Default selection
+        String selectedSubscription = 'Monatlich';
 
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Dialog(
-            backgroundColor:
-                Color.fromRGBO(97, 184, 115, 1), // Green background
+            backgroundColor: Color.fromRGBO(97, 184, 115, 1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Rounded corners
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -403,8 +403,14 @@ class _MainScaffoldState extends State<MainScaffold>
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     onPressed: () {
                       Navigator.of(context).pop(selectedSubscription);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PaymentSettingPage(
+                                subscriptionType: selectedSubscription!),
+                          ));
                     },
-                    child: Text('Buy Now'),
+                    child: Text('Jetzt kaufen'),
                   ),
                 ],
               ),
@@ -415,7 +421,6 @@ class _MainScaffoldState extends State<MainScaffold>
     ).then((selectedSubscription) {
       if (selectedSubscription != null) {
         print("Selected Subscription: $selectedSubscription");
-        // Proceed to payment processing logic here
       }
     });
   }

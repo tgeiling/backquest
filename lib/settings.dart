@@ -613,8 +613,8 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
           body: ListView(
             padding: EdgeInsets.all(16.0),
             children: [
-              subscriptionOption('Yearly', '€100/year'),
-              subscriptionOption('Monthly', '€10/month'),
+              subscriptionOption('Jährlich', '€100/year'),
+              subscriptionOption('Monatlich', '€10/month'),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -686,6 +686,31 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 
+  Widget typeTile(String subType) {
+    return Container(
+      width: 130,
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF59c977),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF48a160),
+            offset: Offset(0, 5),
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Text(
+        subType == 'Jährlich'
+            ? "Jährlich: \n 65,99 € \n Jahr"
+            : "Monatlich: \n 10,99 € \n Monat",
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -704,12 +729,24 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
                 style: TextStyle(color: Colors.white)),
             iconTheme: IconThemeData(color: Colors.white),
           ),
-          body: ListView(
-            padding: EdgeInsets.all(16.0),
+          body: Column(
             children: [
-              methodTile('Credit Card'),
-              methodTile('PayPal'),
-              methodTile('Direct Debit'),
+              SizedBox(
+                height: 50,
+              ),
+              typeTile(widget
+                  .subscriptionType), // Assuming this is a custom widget or method that returns a widget.
+              Expanded(
+                // This will contain the ListView and allow it to expand within the confines of the Column.
+                child: ListView(
+                  padding: EdgeInsets.all(16.0),
+                  children: [
+                    methodTile('Credit Card'),
+                    methodTile('PayPal'),
+                    methodTile('Direct Debit'),
+                  ],
+                ),
+              ),
             ],
           ),
           floatingActionButton: FloatingActionButton(
