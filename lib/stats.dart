@@ -96,10 +96,44 @@ class ProfilProvider extends ChangeNotifier {
 
     if (lastUpdateWeek != null && currentWeek != lastUpdateWeek) {
       _weeklyDone = 0;
+
+      getAuthToken().then((token) {
+        if (token != null) {
+          updateProfile(
+            token: token,
+            weeklyDone: _weeklyDone,
+          ).then((success) {
+            if (success) {
+              print("Profile updated successfully.");
+            } else {
+              print("Failed to update profile.");
+            }
+          });
+        } else {
+          print("No auth token available.");
+        }
+      });
     }
 
     if (daysSinceLastUpdate != null && daysSinceLastUpdate >= 14) {
       _weeklyStreak = 0;
+
+      getAuthToken().then((token) {
+        if (token != null) {
+          updateProfile(
+            token: token,
+            weeklyStreak: _weeklyStreak,
+          ).then((success) {
+            if (success) {
+              print("Profile updated successfully.");
+            } else {
+              print("Failed to update profile.");
+            }
+          });
+        } else {
+          print("No auth token available.");
+        }
+      });
     }
 
     notifyListeners();

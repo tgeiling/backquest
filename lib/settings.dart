@@ -50,6 +50,8 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.logout,
                   onTileTap: setAuthenticated,
                 ),
+                SettingsTile(
+                    title: 'Backquest abonnieren', icon: Icons.payments_sharp),
               ],
             ).toList(),
           ),
@@ -109,6 +111,11 @@ class SettingsTile extends StatelessWidget {
           _authService.logout();
           onTileTap?.call(false);
           Navigator.pop(context);
+        } else if (title == 'Backquest abonnieren') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SubscriptionSettingPage()),
+          );
         } else {
           Navigator.push(
             context,
@@ -529,5 +536,206 @@ class _PainSettingPageState extends State<PainSettingPage> {
         ),
       )
     ]);
+  }
+}
+
+class SubscriptionSettingPage extends StatefulWidget {
+  const SubscriptionSettingPage({Key? key}) : super(key: key);
+
+  @override
+  _SubscriptionSettingPageState createState() =>
+      _SubscriptionSettingPageState();
+}
+
+class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
+  String? selectedSubscription; // Nullable to handle no initial selection
+
+  bool isSubscriptionSelected(String subscription) {
+    return selectedSubscription == subscription;
+  }
+
+  Widget subscriptionOption(String type, String price) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedSubscription = type;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: isSubscriptionSelected(type)
+              ? const Color(0xFF59c977)
+              : Colors.grey.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: isSubscriptionSelected(type)
+                  ? const Color(0xFF48a160)
+                  : Colors.transparent,
+              offset: Offset(0, 5),
+              blurRadius: 0,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ListTile(
+          title: Text('$type: $price',
+              style: TextStyle(
+                  color: isSubscriptionSelected(type)
+                      ? Colors.white
+                      : Colors.grey[400],
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          "assets/settingsbg.PNG",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: Text('Choose Your Subscription',
+                style: TextStyle(color: Colors.white)),
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          body: ListView(
+            padding: EdgeInsets.all(16.0),
+            children: [
+              subscriptionOption('Yearly', '€100/year'),
+              subscriptionOption('Monthly', '€10/month'),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentSettingPage(
+                        subscriptionType: selectedSubscription!),
+                  ));
+            },
+            child: Icon(Icons.check, color: Colors.white),
+            backgroundColor: Colors.green,
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class PaymentSettingPage extends StatefulWidget {
+  final String subscriptionType;
+
+  const PaymentSettingPage({Key? key, required this.subscriptionType})
+      : super(key: key);
+
+  @override
+  _PaymentSettingPageState createState() => _PaymentSettingPageState();
+}
+
+class _PaymentSettingPageState extends State<PaymentSettingPage> {
+  String? selectedPaymentMethod;
+
+  bool isMethodSelected(String method) {
+    return selectedPaymentMethod == method;
+  }
+
+  Widget methodTile(String method) {
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: isMethodSelected(method)
+            ? const Color(0xFF59c977)
+            : Colors.grey.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: isMethodSelected(method)
+                ? const Color(0xFF48a160)
+                : Colors.transparent,
+            offset: Offset(0, 5),
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(method,
+            style: TextStyle(
+                color: isMethodSelected(method)
+                    ? Colors.white
+                    : Colors.grey[400])),
+        onTap: () {
+          setState(() {
+            selectedPaymentMethod = method;
+          });
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          "assets/settingsbg.PNG",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: Text('Payment Method for ${widget.subscriptionType}',
+                style: TextStyle(color: Colors.white)),
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          body: ListView(
+            padding: EdgeInsets.all(16.0),
+            children: [
+              methodTile('Credit Card'),
+              methodTile('PayPal'),
+              methodTile('Direct Debit'),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Confirmation"),
+                  content: Text(
+                      "You have selected the $selectedPaymentMethod method."),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text("OK")),
+                  ],
+                ),
+              );
+            },
+            child: Icon(
+              Icons.check,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.green,
+          ),
+        )
+      ],
+    );
   }
 }

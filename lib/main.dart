@@ -159,8 +159,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance
-        .removeObserver(this); // Unsubscribe to avoid memory leaks
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -168,7 +167,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      print("App is resumed - reopen");
       Provider.of<ProfilProvider>(context, listen: false).loadInitialData();
     }
   }
@@ -271,6 +269,153 @@ class _MainScaffoldState extends State<MainScaffold>
       if (_isModalVisible) {
         modalDescription = setDescription;
         level = setLevel;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLaunchAndShowDialog();
+  }
+
+  Future<void> checkLaunchAndShowDialog() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int launchCount = (prefs.getInt('launchCount') ?? 0) + 1;
+    await prefs.setInt('launchCount', launchCount);
+
+    print(launchCount);
+
+    if (launchCount % 2 == 0 || launchCount == 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showSubscriptionDialog();
+      });
+    }
+  }
+
+  void showSubscriptionDialog() {
+    showDialog<String>(
+      context: context,
+      builder: (context) {
+        String selectedSubscription = 'Monatlich'; // Default selection
+
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Dialog(
+            backgroundColor:
+                Color.fromRGBO(97, 184, 115, 1), // Green background
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Rounded corners
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 10),
+                  Image.asset(
+                    "assets/logo2.png",
+                    width: 40,
+                  ),
+                  SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                        "Willst du unseren service länger nutzen? Wir versprechen dir das wir backquest immer weiter entwickeln"),
+                  ),
+                  SizedBox(height: 18),
+                  Center(
+                    child: Text(
+                        "Wähle eine Zahlungsmethode für unbegrenzeten Zugang zu unserer App"),
+                  ),
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedSubscription = 'Jährlich';
+                          });
+                        },
+                        child: Container(
+                          width: 130,
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: selectedSubscription == 'Jährlich'
+                                ? const Color(0xFF59c977)
+                                : Colors.grey.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: selectedSubscription == 'Jährlich'
+                                    ? const Color(0xFF48a160)
+                                    : Colors.transparent,
+                                offset: Offset(0, 5),
+                                blurRadius: 0,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            "Jährlich: \n 65,99 € \n Jahr",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedSubscription = 'Monatlich';
+                          });
+                        },
+                        child: Container(
+                          width: 130,
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: selectedSubscription == 'Monatlich'
+                                ? const Color(0xFF59c977)
+                                : Colors.grey.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: selectedSubscription == 'Monatlich'
+                                    ? const Color(0xFF48a160)
+                                    : Colors.transparent,
+                                offset: Offset(0, 5),
+                                blurRadius: 0,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            "Monatlich: \n 10,99 € \n Monat",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  PressableButton(
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    onPressed: () {
+                      Navigator.of(context).pop(selectedSubscription);
+                    },
+                    child: Text('Buy Now'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    ).then((selectedSubscription) {
+      if (selectedSubscription != null) {
+        print("Selected Subscription: $selectedSubscription");
+        // Proceed to payment processing logic here
       }
     });
   }
