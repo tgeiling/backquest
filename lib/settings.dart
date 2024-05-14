@@ -734,10 +734,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
               SizedBox(
                 height: 50,
               ),
-              typeTile(widget
-                  .subscriptionType), // Assuming this is a custom widget or method that returns a widget.
+              typeTile(widget.subscriptionType),
               Expanded(
-                // This will contain the ListView and allow it to expand within the confines of the Column.
                 child: ListView(
                   padding: EdgeInsets.all(16.0),
                   children: [

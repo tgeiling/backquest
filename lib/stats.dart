@@ -334,13 +334,27 @@ class ProfilPageState extends State<ProfilPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double startingPadding;
+    double spacerBox;
+
+    if (isSmallScreen) {
+      startingPadding = 0;
+      spacerBox = 10;
+    } else {
+      startingPadding = MediaQuery.of(context).size.height * 0.06;
+      spacerBox = MediaQuery.of(context).size.height * 0.02;
+    }
+
     return SafeArea(
         child: Container(
       width: double.maxFinite,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16.0,
-          vertical: 56.0,
+          vertical: startingPadding,
         ),
         child:
             Consumer<ProfilProvider>(builder: (context, profilProvider, child) {
@@ -348,10 +362,10 @@ class ProfilPageState extends State<ProfilPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildRowWithImageAndText(context),
-              SizedBox(height: 39.0),
+              SizedBox(height: spacerBox),
               Text(
                 "Ziele",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
               SizedBox(height: 23.0),
               Row(
@@ -359,12 +373,11 @@ class ProfilPageState extends State<ProfilPage> {
                 children: [
                   Text(
                     "Einheiten pro Woche",
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   Text(
                     "${profilProvider.weeklyDone}/${profilProvider.weeklyGoal}",
-                    style: TextStyle(fontSize: 16.0),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
@@ -376,7 +389,7 @@ class ProfilPageState extends State<ProfilPage> {
               SizedBox(height: 39.0),
               Text(
                 "Statistiken",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
               SizedBox(height: 14.0),
               Consumer<ProfilProvider>(
@@ -393,17 +406,33 @@ class ProfilPageState extends State<ProfilPage> {
   }
 
   Widget _buildRowWithImageAndText(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double bigNumberFontSize;
+    double leafDimensions;
+    double settingsIconSize;
+
+    if (isSmallScreen) {
+      bigNumberFontSize = 60;
+      leafDimensions = 60;
+      settingsIconSize = 25;
+    } else {
+      bigNumberFontSize = 85;
+      leafDimensions = 80;
+      settingsIconSize = 40;
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.center, // Center children horizontally
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Align(
               alignment: Alignment.topRight,
               child: IconButton(
                 icon: Icon(Icons.settings),
-                iconSize: 40.0,
+                iconSize: settingsIconSize,
                 color: Colors.white,
                 onPressed: () {
                   Navigator.push(
@@ -425,16 +454,17 @@ class ProfilPageState extends State<ProfilPage> {
                     children: <Widget>[
                       Text(
                         "${profilProvider.weeklyStreak}",
-                        style: TextStyle(fontSize: 85),
+                        style: TextStyle(fontSize: bigNumberFontSize),
                       ),
                       SizedBox(width: 8),
-                      Image.asset('assets/leaf.png', width: 80, height: 80),
+                      Image.asset('assets/leaf.png',
+                          width: leafDimensions, height: leafDimensions),
                     ],
                   ),
                   SizedBox(height: 4),
                   Text(
                     "Wochen in Folge!",
-                    style: TextStyle(fontSize: 22),
+                    style: Theme.of(context).textTheme.displayMedium,
                     textAlign: TextAlign
                         .center, // Center the text within the Text widget
                   ),
@@ -489,75 +519,6 @@ class ProfilPageState extends State<ProfilPage> {
     });
   }
 
-  Widget _buildRowWithViews(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 13.0),
-      child: Row(
-        children: [
-          Container(
-            height: 48.0,
-            width: 48.0,
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey[800]!,
-                width: 2.0,
-              ),
-            ),
-          ),
-          SizedBox(width: 8.0),
-          Container(
-            height: 48.0,
-            width: 48.0,
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey[800]!,
-                width: 2.0,
-              ),
-            ),
-          ),
-          SizedBox(width: 8.0),
-          Container(
-            height: 48.0,
-            width: 48.0,
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey[800]!,
-                width: 2.0,
-              ),
-            ),
-          ),
-          SizedBox(width: 8.0),
-          Container(
-            height: 48.0,
-            width: 48.0,
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: Colors.grey[800]!,
-                width: 2.0,
-              ),
-            ),
-          ),
-          SizedBox(width: 22.0),
-          Text(
-            "lbl_alle_anzeigen",
-            style: TextStyle(
-              fontSize: 16.0,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildColumnWithText({
     required String dynamicText,
     required String dynamicText1,
@@ -583,11 +544,15 @@ class ProfilPageState extends State<ProfilPage> {
             SizedBox(height: 5.0),
             Text(
               dynamicText,
-              style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[900]),
+              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    color: Colors.blueGrey[900],
+                  ),
             ),
             Text(
               dynamicText1,
-              style: TextStyle(fontSize: 16.0, color: Colors.lime[900]),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.lime[900],
+                  ),
             ),
           ],
         ),

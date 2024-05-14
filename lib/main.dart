@@ -172,6 +172,45 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  TextTheme buildTextTheme(BuildContext context) {
+    var baseTextStyle = TextStyle(
+      fontFamily: 'Roboto',
+      color: Colors.white,
+      letterSpacing: 0.4,
+    );
+
+    // Determine screen width for responsive sizing
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Define responsive sizes based on screen width
+    double smallTextSize = screenWidth < 360 ? 11.0 : 16.0;
+    double normalTextSize = screenWidth < 360 ? 12.0 : 18.0;
+    double largeTextSize = screenWidth < 360 ? 16.0 : 20.0;
+    double xLargeTextSize = screenWidth < 360 ? 18.0 : 22.0;
+    double xxLargeTextSize = screenWidth < 360 ? 20.0 : 24.0;
+
+    double labelLarge = screenWidth < 360 ? 14.0 : 18.0;
+
+    return TextTheme(
+      displayLarge: baseTextStyle.copyWith(fontSize: xxLargeTextSize),
+      displayMedium: baseTextStyle.copyWith(fontSize: xLargeTextSize),
+      displaySmall: baseTextStyle.copyWith(fontSize: largeTextSize),
+      headlineLarge: baseTextStyle.copyWith(
+          fontSize: largeTextSize, fontWeight: FontWeight.bold),
+      headlineMedium: baseTextStyle.copyWith(
+          fontSize: normalTextSize, fontWeight: FontWeight.bold),
+      headlineSmall: baseTextStyle.copyWith(
+          fontSize: smallTextSize, fontWeight: FontWeight.bold),
+      titleLarge: baseTextStyle.copyWith(fontSize: largeTextSize),
+      titleMedium: baseTextStyle.copyWith(fontSize: normalTextSize),
+      titleSmall: baseTextStyle.copyWith(fontSize: smallTextSize),
+      labelLarge: baseTextStyle.copyWith(fontSize: labelLarge),
+      bodyLarge: baseTextStyle.copyWith(fontSize: normalTextSize),
+      bodyMedium: baseTextStyle.copyWith(fontSize: smallTextSize),
+      bodySmall: baseTextStyle.copyWith(fontSize: smallTextSize - 2),
+    );
+  }
+
   Future<void> _checkAuthentication() async {
     final expired = await _authService.isTokenExpired();
     setState(() {
@@ -221,17 +260,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
         ),
         fontFamily: 'Roboto',
-        textTheme: TextTheme(
-          titleLarge: TextStyle(
-            fontSize: 24.0,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14.0,
-            color: Colors.white,
-          ),
-        ),
+        textTheme: buildTextTheme(context),
       ),
       home: _authenticated!
           ? (questionaireDone
@@ -299,6 +328,19 @@ class _MainScaffoldState extends State<MainScaffold>
       context: context,
       builder: (context) {
         String selectedSubscription = 'Monatlich';
+        double screenWidth = MediaQuery.of(context).size.width;
+        bool isSmallScreen = screenWidth < 360;
+
+        double rectangleBoxWidth;
+        double rectangleBoxPadding;
+
+        if (isSmallScreen) {
+          rectangleBoxWidth = screenWidth * 0.30;
+          rectangleBoxPadding = 16;
+        } else {
+          rectangleBoxWidth = screenWidth * 0.33;
+          rectangleBoxPadding = 20;
+        }
 
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -320,10 +362,12 @@ class _MainScaffoldState extends State<MainScaffold>
                     width: 40,
                   ),
                   SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                        "Willst du unseren service länger nutzen? Wir versprechen dir das wir backquest immer weiter entwickeln"),
-                  ),
+                  if (!isSmallScreen)
+                    Center(
+                      child: Text(
+                        "Willst du unseren service länger nutzen? Wir versprechen dir das wir backquest immer weiter entwickeln",
+                      ),
+                    ),
                   SizedBox(height: 18),
                   Center(
                     child: Text(
@@ -340,8 +384,8 @@ class _MainScaffoldState extends State<MainScaffold>
                           });
                         },
                         child: Container(
-                          width: 130,
-                          padding: EdgeInsets.all(20),
+                          width: rectangleBoxWidth,
+                          padding: EdgeInsets.all(rectangleBoxPadding),
                           decoration: BoxDecoration(
                             color: selectedSubscription == 'Jährlich'
                                 ? const Color(0xFF59c977)
@@ -359,8 +403,8 @@ class _MainScaffoldState extends State<MainScaffold>
                             ],
                           ),
                           child: Text(
-                            "Jährlich: \n 65,99 € \n Jahr",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            "Jährlich \n 65,99 € \n Jahr",
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                       ),
@@ -372,8 +416,8 @@ class _MainScaffoldState extends State<MainScaffold>
                           });
                         },
                         child: Container(
-                          width: 130,
-                          padding: EdgeInsets.all(20),
+                          width: rectangleBoxWidth,
+                          padding: EdgeInsets.all(rectangleBoxPadding),
                           decoration: BoxDecoration(
                             color: selectedSubscription == 'Monatlich'
                                 ? const Color(0xFF59c977)
@@ -391,8 +435,8 @@ class _MainScaffoldState extends State<MainScaffold>
                             ],
                           ),
                           child: Text(
-                            "Monatlich: \n 10,99 € \n Monat",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            "Monatlich \n 10,99 € \n Monat",
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                       ),
@@ -427,6 +471,17 @@ class _MainScaffoldState extends State<MainScaffold>
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double modalHeight;
+
+    if (isSmallScreen) {
+      modalHeight = 250;
+    } else {
+      modalHeight = 380;
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -489,7 +544,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 ),
               ),
               child: Container(
-                height: 380,
+                height: modalHeight,
                 width: double.maxFinite,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -513,8 +568,19 @@ class _MainScaffoldState extends State<MainScaffold>
   }
 
   Widget _buildBottomNavigationBar() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double navHeight;
+
+    if (isSmallScreen) {
+      navHeight = 60;
+    } else {
+      navHeight = 90;
+    }
+
     return Container(
-      height: 90,
+      height: navHeight,
       child: Column(
         children: [
           Container(
@@ -608,15 +674,38 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double modalPadding;
+    double smallPressableVerticalPadding;
+    double smallPressableHorizontalPadding;
+    double bigPressableVerticalPadding;
+    double aspectRatioItems;
+
+    if (isSmallScreen) {
+      modalPadding = 8;
+      smallPressableVerticalPadding = 0;
+      smallPressableHorizontalPadding = 0;
+      bigPressableVerticalPadding = 4;
+      aspectRatioItems = 10;
+    } else {
+      modalPadding = 16;
+      smallPressableVerticalPadding = 8;
+      smallPressableHorizontalPadding = 12;
+      bigPressableVerticalPadding = 14;
+      aspectRatioItems = 8;
+    }
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(modalPadding),
       child: Column(
         children: [
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
               "Passe dein Training an!",
-              style: TextStyle(fontSize: 24, color: Colors.white),
+              style: Theme.of(context).textTheme.displayLarge,
             ),
           ),
           SizedBox(height: 4),
@@ -624,7 +713,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             alignment: Alignment.centerLeft,
             child: Text(
               widget.description,
-              style: TextStyle(fontSize: 18, color: Colors.grey.shade300),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           Expanded(
@@ -632,41 +721,44 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               crossAxisCount: 1,
               crossAxisSpacing: 0,
               mainAxisSpacing: 10,
-              childAspectRatio: 8 / 1,
+              childAspectRatio: aspectRatioItems / 1,
               children: <Widget>[
                 PressableButton(
                   onPressed: () => showDurationDialog(),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding: EdgeInsets.symmetric(
+                      vertical: smallPressableVerticalPadding,
+                      horizontal: smallPressableHorizontalPadding),
                   child: Center(
-                    child: Text("Dauer: ${selectedDuration ~/ 60} Minuten",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        )),
+                    child: Text(
+                      "Dauer: ${selectedDuration ~/ 60} Minuten",
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
                   ),
                 ),
                 PressableButton(
                   onPressed: () => showOptionDialogFocus(focusOptions,
                       "Wählen Sie den Fokus", (value) => selectedFocus = value),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding: EdgeInsets.symmetric(
+                      vertical: smallPressableVerticalPadding,
+                      horizontal: smallPressableHorizontalPadding),
                   child: Center(
-                    child: Text("Fokus: $selectedFocus",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        )),
+                    child: Text(
+                      "Fokus: $selectedFocus",
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
                   ),
                 ),
                 PressableButton(
                   onPressed: () => showOptionDialogGoal(goalOptions,
                       "Wählen Sie das Ziel", (value) => selectedGoal = value),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding: EdgeInsets.symmetric(
+                      vertical: smallPressableVerticalPadding,
+                      horizontal: smallPressableHorizontalPadding),
                   child: Center(
-                    child: Text("Ziel: $selectedGoal",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        )),
+                    child: Text(
+                      "Ziel: $selectedGoal",
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
                   ),
                 ),
               ],
@@ -691,13 +783,13 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                 ),
               );
             },
-            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+            padding: EdgeInsets.symmetric(
+                vertical: bigPressableVerticalPadding, horizontal: 12),
             child: Center(
-                child: Text("Jetzt starten",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
+                child: Text(
+              "Jetzt starten",
+              style: Theme.of(context).textTheme.labelLarge,
+            )),
           ),
         ],
       ),
@@ -1015,6 +1107,29 @@ class LevelCircle extends StatelessWidget {
       imageName = 'assets/button_locked.png';
     }
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double levelNumberFontSize;
+    double levelNumberFontPadding;
+    double buttonDimension;
+    double startFontSize;
+    double startAbsoluteTopValue;
+
+    if (isSmallScreen) {
+      levelNumberFontSize = 28;
+      levelNumberFontPadding = 10;
+      buttonDimension = 70;
+      startFontSize = 12;
+      startAbsoluteTopValue = 50;
+    } else {
+      levelNumberFontSize = 34;
+      buttonDimension = 95;
+      levelNumberFontPadding = 15;
+      startFontSize = 15;
+      startAbsoluteTopValue = 65;
+    }
+
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -1030,8 +1145,8 @@ class LevelCircle extends StatelessWidget {
           children: [
             Container(
                 margin: EdgeInsets.symmetric(vertical: 5),
-                width: 95,
-                height: 95,
+                width: buttonDimension,
+                height: buttonDimension,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(imageName),
@@ -1039,13 +1154,14 @@ class LevelCircle extends StatelessWidget {
                   ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.only(right: 0, bottom: 15),
+                  padding:
+                      EdgeInsets.only(right: 0, bottom: levelNumberFontPadding),
                   child: Center(
                     child: (isDone || isNext)
                         ? StrokeText(
                             text: "$level",
                             textStyle: TextStyle(
-                                fontSize: 34,
+                                fontSize: levelNumberFontSize,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                             strokeColor: Colors.black,
@@ -1057,7 +1173,7 @@ class LevelCircle extends StatelessWidget {
                 )),
             if (isNext)
               Positioned(
-                top: 65,
+                top: startAbsoluteTopValue,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
@@ -1077,7 +1193,7 @@ class LevelCircle extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.grey.shade800,
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: startFontSize,
                     ),
                   ),
                 ),

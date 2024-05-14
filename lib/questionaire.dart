@@ -120,19 +120,14 @@ class QuestionPage1 extends StatelessWidget {
           Spacer(),
           Text(
             'Erzähle uns ein wenig mehr über Dich,',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
             textAlign: TextAlign.left,
           ),
           Text(
             'damit wir das Rückenprogramm individuell auf Dich zuschneiden können.',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-            ),
+            style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
           Spacer(),
@@ -174,6 +169,20 @@ class _QuestionPage2State extends State<QuestionPage2> {
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isSmallScreen = screenHeight < 600;
+    bool isMidScreen = screenHeight >= 600 && screenHeight < 800;
+
+    double datePickerHeight;
+
+    if (isSmallScreen) {
+      datePickerHeight = 150;
+    } else if (isMidScreen) {
+      datePickerHeight = 250;
+    } else {
+      datePickerHeight = 400;
+    }
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -183,16 +192,16 @@ class _QuestionPage2State extends State<QuestionPage2> {
           Spacer(),
           Text(
             'Erst einmal zwei persönliche Fragen.',
-            style: TextStyle(fontSize: 22, color: Colors.white),
+            style: Theme.of(context).textTheme.displayMedium,
           ),
           SizedBox(height: 32),
           Text(
             'Wann bist du geboren?',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: Theme.of(context).textTheme.labelLarge,
           ),
           Container(
               width: double.maxFinite,
-              height: 400,
+              height: datePickerHeight,
               child: CupertinoTheme(
                 data: CupertinoThemeData(
                   brightness: Brightness.dark,
@@ -211,7 +220,7 @@ class _QuestionPage2State extends State<QuestionPage2> {
           SizedBox(height: 24),
           Text(
             'Was ist Dein Geschlecht?',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: Theme.of(context).textTheme.labelLarge,
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
@@ -245,7 +254,7 @@ class _QuestionPage2State extends State<QuestionPage2> {
                   : _genderSliderValue == 1
                       ? 'Weiblich'
                       : 'Divers',
-              style: TextStyle(color: Colors.white, fontSize: 22),
+              style: Theme.of(context).textTheme.displayMedium,
             ),
           ),
           Spacer(),
@@ -310,6 +319,20 @@ class _QuestionPage3State extends State<QuestionPage3> {
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double sizedBoxTopHeight;
+    double sizedBoxDivider;
+
+    if (isSmallScreen) {
+      sizedBoxTopHeight = 30;
+      sizedBoxDivider = 10;
+    } else {
+      sizedBoxTopHeight = 80;
+      sizedBoxDivider = 44;
+    }
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -319,15 +342,15 @@ class _QuestionPage3State extends State<QuestionPage3> {
           Spacer(),
           Text(
             'Nun gehen wir mehr ins Detail.',
-            style: TextStyle(fontSize: 22, color: Colors.white),
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-          SizedBox(height: 80),
+          SizedBox(height: sizedBoxTopHeight),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Wie groß bist Du? (cm)',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
                 value: _currentHeight,
@@ -339,13 +362,13 @@ class _QuestionPage3State extends State<QuestionPage3> {
               ),
             ],
           ),
-          SizedBox(height: 44),
+          SizedBox(height: sizedBoxDivider),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Wieviel wiegst Du? (kg)',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
                 value: _currentWeight,
@@ -452,7 +475,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
           Spacer(),
           Text(
             'Weiter zu Deinem Alltag.',
-            style: TextStyle(fontSize: 22, color: Colors.white),
+            style: Theme.of(context).textTheme.displayMedium,
           ),
           SizedBox(height: 50),
           _buildRoundedSelectBox('Was trifft auf Deinen Arbeitsalltag zu?',
@@ -514,11 +537,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           child: Text(
             labelText,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: Theme.of(context).textTheme.labelLarge,
           ),
         ),
         Container(
@@ -603,14 +622,15 @@ class _QuestionPage5State extends State<QuestionPage5> {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
     return Container(
-      padding: EdgeInsets.all(32.0),
       child: Column(
         children: [
           Spacer(),
-          Text(
-            'Jetzt werden wir noch spezifischer für das Programm.',
-            style: TextStyle(fontSize: 22, color: Colors.white),
-          ),
+          Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Text(
+                'Jetzt werden wir noch spezifischer für das Programm.',
+                style: Theme.of(context).textTheme.displayMedium,
+              )),
           SizedBox(height: 16),
           Row(
             children: [
@@ -618,7 +638,10 @@ class _QuestionPage5State extends State<QuestionPage5> {
                 child: Column(
                   children: keys.take(5).map((String key) {
                     return CheckboxListTile(
-                      title: Text(key, style: TextStyle(color: Colors.white)),
+                      title: Text(
+                        key,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
                       value: painAreas[key],
                       onChanged: (bool? value) {
                         setState(() {
@@ -635,7 +658,10 @@ class _QuestionPage5State extends State<QuestionPage5> {
                 child: Column(
                   children: keys.skip(5).map((String key) {
                     return CheckboxListTile(
-                      title: Text(key, style: TextStyle(color: Colors.white)),
+                      title: Text(
+                        key,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
                       value: painAreas[key],
                       onChanged: (bool? value) {
                         setState(() {
@@ -651,46 +677,48 @@ class _QuestionPage5State extends State<QuestionPage5> {
             ],
           ),
           Spacer(),
-          PressableButton(
-            onPressed: () {
-              widget.pageController.nextPage(
-                duration: Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
+          Padding(
+              padding: EdgeInsets.only(bottom: 32.0, right: 32.0, left: 32.0),
+              child: PressableButton(
+                onPressed: () {
+                  widget.pageController.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
 
-              profilProvider.setHasPain(painAreas.entries
-                  .where((entry) => entry.value)
-                  .map((entry) => entry.key)
-                  .toList());
+                  profilProvider.setHasPain(painAreas.entries
+                      .where((entry) => entry.value)
+                      .map((entry) => entry.key)
+                      .toList());
 
-              getAuthToken().then((token) {
-                if (token != null) {
-                  updateProfile(
-                    token: token,
-                    painAreas: painAreas.entries
-                        .where((entry) => entry.value)
-                        .map((entry) => entry.key)
-                        .toList(),
-                  ).then((success) {
-                    if (success) {
-                      print("Profile updated successfully.");
+                  getAuthToken().then((token) {
+                    if (token != null) {
+                      updateProfile(
+                        token: token,
+                        painAreas: painAreas.entries
+                            .where((entry) => entry.value)
+                            .map((entry) => entry.key)
+                            .toList(),
+                      ).then((success) {
+                        if (success) {
+                          print("Profile updated successfully.");
+                        } else {
+                          print("Failed to update profile.");
+                        }
+                      });
                     } else {
-                      print("Failed to update profile.");
+                      print("No auth token available.");
                     }
                   });
-                } else {
-                  print("No auth token available.");
-                }
-              });
-            },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
-                child: Text("Weiter",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
-          ),
+                },
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                child: Center(
+                    child: Text("Weiter",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ))),
+              )),
         ],
       ),
     );
@@ -730,6 +758,24 @@ class _QuestionPage6State extends State<QuestionPage6> {
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isSmallScreen = screenHeight < 600;
+    bool isMidScreen = screenHeight >= 600 && screenHeight < 800;
+
+    double sizedBoxHeight1;
+    double sizedBoxHeight2;
+
+    if (isSmallScreen) {
+      sizedBoxHeight1 = 30;
+      sizedBoxHeight2 = 10;
+    } else if (isMidScreen) {
+      sizedBoxHeight1 = 60;
+      sizedBoxHeight2 = 20;
+    } else {
+      sizedBoxHeight1 = 100;
+      sizedBoxHeight2 = 50;
+    }
+
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(
@@ -740,23 +786,22 @@ class _QuestionPage6State extends State<QuestionPage6> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 100),
+                  SizedBox(height: sizedBoxHeight1),
                   Text(
                     'Zum Schluss noch etwas Persönliches von Dir.',
-                    style: TextStyle(fontSize: 22, color: Colors.white),
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: sizedBoxHeight2),
                   _buildRoundedSelectBox(
                       'Was sind deine 3 Ziele die du durch die App erwartest?',
                       _selectedGoal1,
                       personalGoalsOptions,
                       'selectedGoal1'),
-                  SizedBox(height: 10),
                   _buildRoundedSelectBox('', _selectedGoal2,
                       personalGoalsOptions, 'selectedGoal2'),
                   _buildRoundedSelectBox('', _selectedGoal3,
                       personalGoalsOptions, 'selectedGoal3'),
-                  SizedBox(height: 50),
+                  SizedBox(height: sizedBoxHeight2),
                   TextField(
                     style: TextStyle(
                         color: Colors.white), // Sets the text color to white
@@ -833,18 +878,28 @@ class _QuestionPage6State extends State<QuestionPage6> {
 
   Widget _buildRoundedSelectBox(String labelText, String selectedValue,
       List<String> items, String prefKey) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isSmallScreen = screenHeight < 600;
+    bool isMidScreen = screenHeight >= 600 && screenHeight < 800;
+
+    double itemPadding;
+
+    if (isSmallScreen) {
+      itemPadding = 2;
+    } else if (isMidScreen) {
+      itemPadding = 6;
+    } else {
+      itemPadding = 12;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          padding:
+              EdgeInsets.symmetric(horizontal: 12.0, vertical: itemPadding),
           child: Text(
             labelText,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: Theme.of(context).textTheme.labelLarge,
           ),
         ),
         Container(
@@ -860,7 +915,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
               )
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: itemPadding),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedValue,
@@ -890,8 +945,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
                   value: value,
                   child: Text(
                     value,
-                    style: TextStyle(
-                        color: Colors.white), // White text for visibility
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                 );
               }).toList(),
@@ -927,8 +981,8 @@ class _QuestionPage7State extends State<QuestionPage7> {
         children: [
           Spacer(),
           Text(
-            'Als letztes, setzte deine Ziele Fest!',
-            style: TextStyle(fontSize: 22, color: Colors.white),
+            'Als letztes, setzte dein Ziel Fest!',
+            style: Theme.of(context).textTheme.displayMedium,
           ),
           SizedBox(height: 80),
           Row(
@@ -936,7 +990,7 @@ class _QuestionPage7State extends State<QuestionPage7> {
             children: [
               Text(
                 'Wöchentliches Ziel: ',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
                 value: _weeklyGoal,
@@ -1005,19 +1059,14 @@ class QuestionPage8 extends StatelessWidget {
           Spacer(),
           Text(
             'Fast Fertig!',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
             textAlign: TextAlign.left,
           ),
           Text(
             'In der App bekommst du dein eigenes Trainings Video passend auf deine Bedürfnisse geschnitten. Du kannst die Level hochklettern um schwierigere Übungen Freizuschalten oder erstmal Entspannt Übungen starten über den Pfeil in der Ecke.',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-            ),
+            style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
           Spacer(),
@@ -1077,6 +1126,17 @@ class FirstPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double bigHeaderFontSize;
+
+    if (isSmallScreen) {
+      bigHeaderFontSize = 22;
+    } else {
+      bigHeaderFontSize = 40;
+    }
+
     return Scaffold(
         body: Container(
       decoration: BoxDecoration(
@@ -1102,7 +1162,7 @@ class FirstPage extends StatelessWidget {
                     child: Text(
                       'Gib deinem Coach jetzt ein kurzes Feedback zu deinen Übungen.',
                       style: TextStyle(
-                        fontSize: 40.0,
+                        fontSize: bigHeaderFontSize,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -1113,10 +1173,7 @@ class FirstPage extends StatelessWidget {
                     width: MediaQuery.of(context).size.width - 70,
                     child: Text(
                       'Damit kann das Trainingsprogramm noch besser auf dich zugeschnitten werden.',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
-                      ),
+                      style: Theme.of(context).textTheme.labelLarge,
                     ))),
             Spacer(),
             Center(
@@ -1125,10 +1182,7 @@ class FirstPage extends StatelessWidget {
                 onPressed: onPressedWeiter,
                 child: Text(
                   "Los geht's",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
             ),
@@ -1144,10 +1198,9 @@ class FirstPage extends StatelessWidget {
                 },
                 child: Text(
                   'Überspringen',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Colors.grey,
+                      ),
                 ),
               ),
             ),
@@ -1256,7 +1309,7 @@ class _SecondPageState extends State<SecondPage> {
                   onPressed: _sendFeedback,
                   child: Text(
                     'Abschließen',
-                    style: TextStyle(fontSize: 18),
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
               )
@@ -1290,6 +1343,26 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
   Widget build(BuildContext context) {
     double baseSize = MediaQuery.of(context).size.width * 0.1;
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallScreen = screenWidth < 360;
+
+    double wrapSpacing;
+    double wrapItemVerticalPadding;
+    double wrapItemHorizontalPadding;
+    double thumbnailDimensions;
+
+    if (isSmallScreen) {
+      wrapSpacing = 0;
+      wrapItemVerticalPadding = 1;
+      wrapItemHorizontalPadding = 2;
+      thumbnailDimensions = 70;
+    } else {
+      wrapSpacing = 8;
+      wrapItemVerticalPadding = 2;
+      wrapItemHorizontalPadding = 4;
+      thumbnailDimensions = 80;
+    }
+
     return Card(
       color: Colors.grey.shade500.withOpacity(0.3),
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -1301,8 +1374,8 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
         child: Row(
           children: <Widget>[
             Container(
-              height: 80.0,
-              width: 80.0,
+              height: thumbnailDimensions,
+              width: thumbnailDimensions,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(color: Colors.white, width: 2.0),
@@ -1336,7 +1409,7 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       ],
                     ),
                     Wrap(
-                      spacing: 8.0,
+                      spacing: wrapSpacing,
                       children: ['Einfach', 'Ok', 'Schwer']
                           .map((difficulty) => ChoiceChip(
                                 backgroundColor: Colors.grey.shade700,
@@ -1349,6 +1422,9 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                                     fontSize: baseSize * 0.3,
                                   ),
                                 ),
+                                labelPadding: EdgeInsets.symmetric(
+                                    vertical: wrapItemVerticalPadding,
+                                    horizontal: wrapItemHorizontalPadding),
                                 selected: selectedDifficulty == difficulty,
                                 onSelected: (bool selected) {
                                   setState(() => selectedDifficulty =
@@ -1393,6 +1469,7 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       ),
                 ),
                 child: AlertDialog(
+                  backgroundColor: Color.fromRGBO(97, 184, 115, 1),
                   title: Text('Schmerzbereiche wählen'),
                   content: SingleChildScrollView(
                     child: Wrap(
@@ -1411,6 +1488,7 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       ]
                           .map((area) => FilterChip(
                                 selectedColor: Colors.green.shade300,
+                                backgroundColor: Colors.grey.shade600,
                                 label: Text(area),
                                 selected: tempSelectedPainAreas.contains(area),
                                 onSelected: (bool selected) {
@@ -1428,11 +1506,17 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                   ),
                   actions: [
                     TextButton(
-                      child: Text('Abbrechen'),
+                      child: Text(
+                        'Abbrechen',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     TextButton(
-                      child: Text('Speichern'),
+                      child: Text(
+                        'Speichern',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
                       onPressed: () {
                         setState(() {
                           selectedPainAreas = tempSelectedPainAreas;

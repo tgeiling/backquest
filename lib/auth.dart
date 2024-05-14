@@ -234,6 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -241,19 +242,22 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Center(
                 child: GreyContainer(
-                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-                    child: Image.asset(
-                      'assets/logo.png',
-                      scale: 2,
-                    ))),
+              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+              child: Image.asset('assets/logo.png',
+                  width: MediaQuery.of(context).size.width * 0.15),
+            )),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Benutzername'),
+              decoration: InputDecoration(
+                labelText: 'Benutzername',
+              ),
+              style: TextStyle(color: Colors.black),
             ),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Passwort'),
               obscureText: true,
+              style: TextStyle(color: Colors.black),
             ),
             Spacer(),
             PressableButton(
@@ -331,6 +335,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text('Registrierung')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -346,10 +351,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(labelText: 'Benutzername'),
+              style: TextStyle(color: Colors.black),
             ),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Passwort'),
+              style: TextStyle(color: Colors.black),
               obscureText: true,
             ),
             Spacer(),
