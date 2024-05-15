@@ -8,9 +8,13 @@ import 'auth.dart';
 
 class SettingsPage extends StatelessWidget {
   final Function(bool) setAuthenticated;
+  final VoidCallback setQuestionnairDone;
 
-  const SettingsPage({Key? key, required this.setAuthenticated})
-      : super(key: key);
+  const SettingsPage({
+    Key? key,
+    required this.setAuthenticated,
+    required this.setQuestionnairDone,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,12 @@ class SettingsPage extends StatelessWidget {
                     title: 'Datenschutzerklärung', icon: Icons.privacy_tip),
                 SettingsTile(title: 'Impressum', icon: Icons.info_outline),
                 SettingsTile(
+                  title: 'Login',
+                  icon: Icons.login,
+                  onTileTap: setAuthenticated,
+                  onTileTap2: setQuestionnairDone,
+                ),
+                SettingsTile(
                   title: 'Logout',
                   icon: Icons.logout,
                   onTileTap: setAuthenticated,
@@ -63,12 +73,14 @@ class SettingsTile extends StatelessWidget {
   final String title;
   final IconData icon;
   final Function(bool)? onTileTap;
+  final VoidCallback? onTileTap2;
 
   const SettingsTile({
     Key? key,
     required this.title,
     required this.icon,
     this.onTileTap,
+    this.onTileTap2,
   }) : super(key: key);
 
   @override
@@ -107,6 +119,15 @@ class SettingsTile extends StatelessWidget {
                       initialFitnessLevel: profilProvider.fitnessLevel,
                     )),
           );
+        } else if (title == 'Login') {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoginScreen(
+                  setAuthenticated: onTileTap?.call(true),
+                  setQuestionnairDone: onTileTap2!,
+                ),
+              ));
         } else if (title == 'Logout') {
           _authService.logout();
           onTileTap?.call(false);

@@ -83,6 +83,22 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/guestnode', (req, res) => {
+	console.log("guestnode is triggered")
+  try {
+    const guestToken = jwt.sign(
+      {},
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.json({ accessToken: guestToken });
+  } catch (error) {
+    console.error('Error generating guest token:', error);
+    res.status(500).send('Failed to generate guest token');
+  }
+});
+
 app.post('/updateProfile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });

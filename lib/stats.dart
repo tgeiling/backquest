@@ -295,20 +295,27 @@ class ProfilProvider extends ChangeNotifier {
 
 class ProfilPage extends StatefulWidget {
   final Function(bool) setAuthenticated;
+  final VoidCallback setQuestionnairDone;
+  final bool Function() isLoggedIn;
 
   const ProfilPage({
     Key? key,
     required this.setAuthenticated,
+    required this.setQuestionnairDone,
+    required this.isLoggedIn,
   }) : super(key: key);
 
   @override
   ProfilPageState createState() => ProfilPageState();
 
-  static Widget builder(BuildContext context, Function(bool) setAuth) {
+  static Widget builder(BuildContext context, Function(bool) setAuth,
+      VoidCallback setQuestDone, bool Function() isLoggedIn) {
     return ChangeNotifierProvider(
       create: (context) => ProfilProvider(),
       child: ProfilPage(
         setAuthenticated: setAuth,
+        setQuestionnairDone: setQuestDone,
+        isLoggedIn: isLoggedIn,
       ),
     );
   }
@@ -423,26 +430,74 @@ class ProfilPageState extends State<ProfilPage> {
       settingsIconSize = 40;
     }
 
+    bool loggedIn = !widget.isLoggedIn();
+    print("visibilty $loggedIn");
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: Icon(Icons.settings),
-                iconSize: settingsIconSize,
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SettingsPage(
-                            setAuthenticated: widget.setAuthenticated)),
-                  );
-                },
-              )),
+          Row(
+            mainAxisAlignment:
+                MainAxisAlignment.end, // This aligns children to the right
+            children: [
+              Stack(
+                children: [
+                  Container(
+                      width: 150,
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(Icons.settings),
+                        iconSize: settingsIconSize,
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SettingsPage(
+                                      setAuthenticated: widget.setAuthenticated,
+                                      setQuestionnairDone:
+                                          widget.setQuestionnairDone,
+                                    )),
+                          );
+                        },
+                      )),
+                  Positioned(
+                    top: 12,
+                    left: 30,
+                    child: Visibility(
+                      visible: loggedIn,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          "LOGIN",
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           SizedBox(height: 10.0),
           Consumer<ProfilProvider>(
             builder: (context, profilProvider, child) {

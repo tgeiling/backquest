@@ -147,6 +147,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool? _authenticated;
+  bool? _loggedIn;
   final AuthService _authService = AuthService();
 
   @override
@@ -212,15 +213,38 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _checkAuthentication() async {
-    final expired = await _authService.isTokenExpired();
-    setState(() {
-      _setAuthenticated(!expired);
-    });
+    bool isGuest = await _authService.isGuestToken();
+    bool tokenExpired = await _authService.isTokenExpired();
+
+    if (!tokenExpired) {
+      setState(() {
+        _setAuthenticated(true);
+        _setLoggedIn(isGuest);
+      });
+    } else {
+      await _authService.setGuestToken();
+      tokenExpired = await _authService.isTokenExpired();
+      setState(() {
+        _setAuthenticated(!tokenExpired);
+        _setLoggedIn(false);
+      });
+    }
   }
 
   void _setAuthenticated(bool authenticated) {
     setState(() => _authenticated = authenticated);
+    _setLoggedIn(authenticated);
     _checkQuestionnaireCompletion();
+  }
+
+  void _setLoggedIn(bool loggedIn) {
+    setState(() {
+      _loggedIn = loggedIn;
+    });
+  }
+
+  bool isLoggedIn() {
+    return _loggedIn ?? false;
   }
 
   Future<void> _checkQuestionnaireCompletion() async {
@@ -248,37 +272,42 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     return MaterialApp(
-      title: 'Backquest',
-      theme: ThemeData(
-        primaryColor: Colors.green,
-        inputDecorationTheme: InputDecorationTheme(
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.green),
-          ),
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
-        ),
-        fontFamily: 'Roboto',
-        textTheme: buildTextTheme(context),
-      ),
-      home: _authenticated!
-          ? (questionaireDone
-              ? MainScaffold(setAuthenticated: _setAuthenticated)
-              : QuestionnaireScreen(
-                  checkQuestionaire: _checkQuestionnaireCompletion))
-          : LoginScreen(
-              setAuthenticated: _setAuthenticated,
-              setQuestionnairDone: _checkQuestionnaireCompletion,
+        title: 'Backquest',
+        theme: ThemeData(
+          primaryColor: Colors.green,
+          inputDecorationTheme: InputDecorationTheme(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.green),
             ),
-    );
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+          fontFamily: 'Roboto',
+          textTheme: buildTextTheme(context),
+        ),
+        home: questionaireDone
+            ? MainScaffold(
+                setAuthenticated: _setAuthenticated,
+                setQuestionnairDone: _checkQuestionnaireCompletion,
+                isLoggedIn: isLoggedIn,
+              )
+            : QuestionnaireScreen(
+                checkQuestionaire: _checkQuestionnaireCompletion));
   }
 }
 
 class MainScaffold extends StatefulWidget {
   final Function(bool) setAuthenticated;
+  final VoidCallback setQuestionnairDone;
+  final bool Function() isLoggedIn;
 
-  MainScaffold({Key? key, required this.setAuthenticated}) : super(key: key);
+  MainScaffold(
+      {Key? key,
+      required this.setAuthenticated,
+      required this.setQuestionnairDone,
+      required this.isLoggedIn})
+      : super(key: key);
 
   @override
   _MainScaffoldState createState() => _MainScaffoldState();
@@ -523,8 +552,11 @@ class _MainScaffoldState extends State<MainScaffold>
                         ],
                       ),
                     ),
-                    child:
-                        ProfilPage(setAuthenticated: widget.setAuthenticated)),
+                    child: ProfilPage(
+                      setAuthenticated: widget.setAuthenticated,
+                      setQuestionnairDone: widget.setQuestionnairDone,
+                      isLoggedIn: widget.isLoggedIn,
+                    )),
               ],
             ),
           ),

@@ -36,6 +36,7 @@ class AuthService {
 
   Future<void> logout() async {
     await storage.delete(key: 'authToken');
+    await setGuestToken();
   }
 
   Future<bool> register(String username, String password) async {
@@ -51,6 +52,43 @@ class AuthService {
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
     return false;
+  }
+
+  Future<void> setGuestToken() async {
+    final token = await getGuestToken();
+    if (token != null) {
+      await storage.write(key: 'authToken', value: token);
+    } else {
+      print('No token received, unable to store.');
+    }
+  }
+
+  Future<String?> getGuestToken() async {
+    final response = await http.post(Uri.parse('$baseUrl/guestnode'));
+    if (response.statusCode == 200) {
+      final token = jsonDecode(response.body)['accessToken'];
+
+      return token;
+    } else {
+      print('Failed to obtain guest token with status: ${response.statusCode}');
+      return null;
+    }
+  }
+
+  Future<bool> isGuestToken() async {
+    final token = await storage.read(key: 'authToken');
+    if (token == null) return false;
+
+    try {
+      final payload = token.split('.')[1];
+      final decoded = utf8.decode(base64.decode(base64.normalize(payload)));
+      final payloadMap = json.decode(decoded) as Map<String, dynamic>;
+      // Assume guest tokens have a 'guest' claim set to true
+      return payloadMap['guest'] == true;
+    } catch (e) {
+      print("Error decoding token: $e");
+      return false; // If there's an error, assume it's not a guest token
+    }
   }
 
   Future<bool> isTokenExpired() async {
@@ -204,6 +242,8 @@ class _LoginScreenState extends State<LoginScreen> {
           profilProvider.loadInitialData();
 
           widget.setAuthenticated(true);
+          Navigator.pop(context);
+          Navigator.pop(context);
         } else {
           print("Failed to fetch profile data after login");
         }
