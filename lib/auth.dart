@@ -77,17 +77,28 @@ class AuthService {
 
   Future<bool> isGuestToken() async {
     final token = await storage.read(key: 'authToken');
-    if (token == null) return false;
+    if (token == null) {
+      print("No token found");
+      return false;
+    }
 
     try {
-      final payload = token.split('.')[1];
-      final decoded = utf8.decode(base64.decode(base64.normalize(payload)));
-      final payloadMap = json.decode(decoded) as Map<String, dynamic>;
-      // Assume guest tokens have a 'guest' claim set to true
-      return payloadMap['guest'] == true;
+      final response = await http.post(
+        Uri.parse('$baseUrl/validateToken'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': token}),
+      );
+
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        return !result['isValid'];
+      } else {
+        print('Failed to validate token: ${response.body}');
+        return true;
+      }
     } catch (e) {
-      print("Error decoding token: $e");
-      return false; // If there's an error, assume it's not a guest token
+      print("Error sending token validation request: $e");
+      return true;
     }
   }
 

@@ -99,6 +99,21 @@ app.post('/guestnode', (req, res) => {
   }
 });
 
+app.post('/validateToken', async (req, res) => {
+  const { token } = req.body;
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findOne({ username: decoded.username });
+    if (user) {
+      res.json({ isValid: true });
+    } else {
+      res.json({ isValid: false, reason: "No user found" });
+    }
+  } catch (error) {
+    res.status(400).send({ isValid: false, reason: "Invalid token" });
+  }
+});
+
 app.post('/updateProfile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });

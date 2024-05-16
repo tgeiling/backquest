@@ -13,6 +13,7 @@ import 'elements.dart';
 import 'auth.dart';
 import 'services.dart';
 import 'settings.dart';
+import 'download.dart';
 
 class LevelNotifier with ChangeNotifier {
   Map<int, Level> _levels = {};
@@ -216,11 +217,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     bool isGuest = await _authService.isGuestToken();
     bool tokenExpired = await _authService.isTokenExpired();
 
-    if (isGuest) {
+    if (!isGuest) {
       setState(() {
         _setAuthenticated(true);
       });
-    } else if (!isGuest) {
+    } else if (isGuest) {
       setState(() {
         _setAuthenticated(false);
       });
@@ -560,6 +561,20 @@ class _MainScaffoldState extends State<MainScaffold>
                       setQuestionnairDone: widget.setQuestionnairDone,
                       isLoggedIn: widget.isLoggedIn,
                     )),
+                Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(97, 184, 115, 0.9),
+                          Color.fromRGBO(0, 59, 46, 0.9),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: DownloadScreen(),
+                    )),
               ],
             ),
           ),
@@ -624,6 +639,7 @@ class _MainScaffoldState extends State<MainScaffold>
           ),
           Expanded(
             child: SalomonBottomBar(
+              margin: EdgeInsets.symmetric(horizontal: 50),
               backgroundColor: Color.fromRGBO(0, 59, 46, 0.9),
               currentIndex: _currentIndex,
               onTap: (i) {
@@ -646,6 +662,15 @@ class _MainScaffoldState extends State<MainScaffold>
                     color: Colors.white,
                   ),
                   title: Text("Stats"),
+                  selectedColor: Colors.white,
+                ),
+                SalomonBottomBarItem(
+                  icon: Icon(
+                    CupertinoIcons.cloud_download,
+                    size: MediaQuery.of(context).size.width * 0.09,
+                    color: Colors.white,
+                  ),
+                  title: Text("Download"),
                   selectedColor: Colors.white,
                 ),
               ],
