@@ -49,11 +49,11 @@ class SettingsPage extends StatelessWidget {
                 SettingsTile(
                     title: 'Datenschutzerklärung', icon: Icons.privacy_tip),
                 SettingsTile(title: 'Impressum', icon: Icons.info_outline),
-                SettingsTile(
+                LoginTile(
                   title: 'Login',
                   icon: Icons.login,
-                  onTileTap: setAuthenticated,
-                  onTileTap2: setQuestionnairDone,
+                  setAuthenticated: setAuthenticated,
+                  setQuestionnairDone: setQuestionnairDone,
                 ),
                 SettingsTile(
                   title: 'Logout',
@@ -73,14 +73,12 @@ class SettingsTile extends StatelessWidget {
   final String title;
   final IconData icon;
   final Function(bool)? onTileTap;
-  final VoidCallback? onTileTap2;
 
   const SettingsTile({
     Key? key,
     required this.title,
     required this.icon,
     this.onTileTap,
-    this.onTileTap2,
   }) : super(key: key);
 
   @override
@@ -119,15 +117,6 @@ class SettingsTile extends StatelessWidget {
                       initialFitnessLevel: profilProvider.fitnessLevel,
                     )),
           );
-        } else if (title == 'Login') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginScreen(
-                  setAuthenticated: onTileTap?.call(true),
-                  setQuestionnairDone: onTileTap2!,
-                ),
-              ));
         } else if (title == 'Logout') {
           _authService.logout();
           onTileTap?.call(false);
@@ -143,6 +132,42 @@ class SettingsTile extends StatelessWidget {
             MaterialPageRoute(builder: (context) => DetailView(title: title)),
           );
         }
+      },
+    );
+  }
+}
+
+class LoginTile extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Function(bool) setAuthenticated;
+  final VoidCallback setQuestionnairDone;
+
+  const LoginTile({
+    Key? key,
+    required this.title,
+    required this.icon,
+    required this.setAuthenticated,
+    required this.setQuestionnairDone,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: Colors.white,
+      ),
+      title: Text(title, style: TextStyle(color: Colors.white)),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(
+                setAuthenticated: setAuthenticated,
+                setQuestionnairDone: setQuestionnairDone,
+              ),
+            ));
       },
     );
   }

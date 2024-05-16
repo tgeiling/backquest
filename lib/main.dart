@@ -216,10 +216,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     bool isGuest = await _authService.isGuestToken();
     bool tokenExpired = await _authService.isTokenExpired();
 
-    if (!tokenExpired) {
+    if (isGuest) {
       setState(() {
         _setAuthenticated(true);
-        _setLoggedIn(isGuest);
+      });
+    } else if (!isGuest) {
+      setState(() {
+        _setAuthenticated(false);
       });
     } else {
       await _authService.setGuestToken();
