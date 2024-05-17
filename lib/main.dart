@@ -141,6 +141,9 @@ void main() {
   );
 }
 
+GlobalKey<DownloadScreenState> downloadScreenKey =
+    GlobalKey<DownloadScreenState>();
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -324,14 +327,18 @@ class _MainScaffoldState extends State<MainScaffold>
   bool _isModalVisible = false;
   String modalDescription = "Declaring Description";
   int level = 0;
+  bool isVideoPlayer = true;
 
   void _toggleModal(
-      [String setDescription = "Was passt für dich ?", int setLevel = 0]) {
+      [String setDescription = "Was passt für dich ?",
+      int setLevel = 0,
+      bool setIsVideoPlayer = true]) {
     setState(() {
       _isModalVisible = !_isModalVisible;
       if (_isModalVisible) {
         modalDescription = setDescription;
         level = setLevel;
+        isVideoPlayer = setIsVideoPlayer;
       }
     });
   }
@@ -573,7 +580,10 @@ class _MainScaffoldState extends State<MainScaffold>
                       ),
                     ),
                     child: Center(
-                      child: DownloadScreen(),
+                      child: DownloadScreen(
+                        toggleModal: _toggleModal,
+                        key: downloadScreenKey,
+                      ),
                     )),
               ],
             ),
@@ -604,6 +614,7 @@ class _MainScaffoldState extends State<MainScaffold>
                   child: CustomBottomModal(
                     description: modalDescription,
                     levelId: level,
+                    isVideoPlayer: isVideoPlayer,
                   ),
                 ),
               ),
@@ -703,8 +714,13 @@ class CustomBottomModal extends StatefulWidget {
   final String description;
   final int levelId;
 
+  final bool isVideoPlayer;
+
   CustomBottomModal(
-      {Key? key, required this.description, required this.levelId})
+      {Key? key,
+      required this.description,
+      required this.levelId,
+      required this.isVideoPlayer})
       : super(key: key);
 
   @override
@@ -826,28 +842,33 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           SizedBox(height: 30),
           PressableButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => VideoCombinerScreen(
-                    levelId: widget.levelId,
-                    levelNotifier:
-                        Provider.of<LevelNotifier>(context, listen: false),
-                    profilProvider:
-                        Provider.of<ProfilProvider>(context, listen: false),
-                    focus: selectedFocus,
-                    goal: selectedGoal,
-                    duration: selectedDuration,
-                  ),
-                ),
-              );
-            },
+            onPressed: widget.isVideoPlayer
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoCombinerScreen(
+                          levelId: 1, // example value
+                          levelNotifier: Provider.of<LevelNotifier>(context,
+                              listen: false),
+                          profilProvider: Provider.of<ProfilProvider>(context,
+                              listen: false),
+                          focus: selectedFocus,
+                          goal: selectedGoal,
+                          duration: selectedDuration,
+                        ),
+                      ),
+                    );
+                  }
+                : () {
+                    downloadScreenKey.currentState!.combineAndDownloadVideo(
+                        'your_focus', 'your_goal', 600);
+                  },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
             child: Center(
                 child: Text(
-              "Jetzt starten",
+              widget.isVideoPlayer ? "Jetzt starten" : "Video erstellen",
               style: Theme.of(context).textTheme.labelLarge,
             )),
           ),
@@ -1059,7 +1080,7 @@ class Level {
 }
 
 class LevelSelectionScreen extends StatefulWidget {
-  final Function(String, int) toggleModal;
+  final Function(String, int, bool) toggleModal;
 
   LevelSelectionScreen({required this.toggleModal});
 
@@ -1122,7 +1143,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             level: level.id,
             onTap: () {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                widget.toggleModal(level.description, level.id);
+                widget.toggleModal(level.description, level.id, true);
               });
             },
             isTreasureLevel: level.id % 4 == 0,

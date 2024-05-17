@@ -7,20 +7,28 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'elements.dart';
+import 'video.dart';
 
 class DownloadScreen extends StatefulWidget {
+  final Function(String, int, bool) toggleModal;
+
+  DownloadScreen({
+    required Key key,
+    required this.toggleModal,
+  }) : super(key: key);
+
   @override
-  _DownloadScreenState createState() => _DownloadScreenState();
+  DownloadScreenState createState() => DownloadScreenState();
 }
 
-class _DownloadScreenState extends State<DownloadScreen> {
+class DownloadScreenState extends State<DownloadScreen> {
   bool _isLoading = false;
-  List<String> _downloadedVideos = ["video 1", "video 2"];
+  List<String> _downloadedVideos = [];
 
   @override
   void initState() {
     super.initState();
-    //_fetchDownloadedVideos();
+    _fetchDownloadedVideos();
   }
 
   Future<void> _fetchDownloadedVideos() async {
@@ -39,6 +47,31 @@ class _DownloadScreenState extends State<DownloadScreen> {
   Future<void> _saveDownloadedVideos() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('downloadedVideos', _downloadedVideos);
+  }
+
+  Future<void> combineAndDownloadVideo(
+      String focus, String goal, int duration) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await combineVideos(focus, goal, duration: duration);
+
+    await Future.delayed(Duration(seconds: 2));
+
+    final String outputVideoUrl = 'http://135.125.218.147:3000/video';
+
+    try {
+      await _downloadVideo(outputVideoUrl);
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('Error downloading video: $e');
+    }
   }
 
   Future<void> _downloadVideo(String videoUrl) async {
@@ -95,8 +128,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _downloadedVideos = ["video 1", "video 2"];
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -154,7 +185,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
                         vertical: 10.0, horizontal: 12.0),
                     child: PressableButton(
                       onPressed: () {
-                        //nothin
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          widget.toggleModal("", 0, false);
+                        });
                       },
                       padding:
                           EdgeInsets.symmetric(vertical: 8, horizontal: 12),
