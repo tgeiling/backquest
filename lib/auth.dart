@@ -77,10 +77,6 @@ class AuthService {
 
   Future<bool> isGuestToken() async {
     final token = await storage.read(key: 'authToken');
-    if (token == null) {
-      print("No token found");
-      return false;
-    }
 
     try {
       final response = await http.post(

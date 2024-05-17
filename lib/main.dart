@@ -224,16 +224,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       setState(() {
         _setAuthenticated(true);
       });
-    } else if (isGuest) {
-      setState(() {
-        _setAuthenticated(false);
-      });
     } else {
       await _authService.setGuestToken();
-      tokenExpired = await _authService.isTokenExpired();
       setState(() {
-        _setAuthenticated(!tokenExpired);
-        _setLoggedIn(false);
+        _setAuthenticated(false);
       });
     }
   }
@@ -862,7 +856,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   }
                 : () {
                     downloadScreenKey.currentState!.combineAndDownloadVideo(
-                        'your_focus', 'your_goal', 600);
+                        selectedFocus, selectedGoal, selectedDuration);
                   },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
