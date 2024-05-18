@@ -11,6 +11,7 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 import 'elements.dart';
+import 'questionaire.dart';
 import 'video.dart';
 
 class DownloadScreen extends StatefulWidget {
@@ -30,6 +31,7 @@ class DownloadScreenState extends State<DownloadScreen> {
   List<String> _downloadedVideos = [];
   List<String> _downloadedVideoNames = [];
   List<String> _downloadedVideoDetails = [];
+  List<List<String>> _downloadedSelectedVideos = [];
 
   @override
   void initState() {
@@ -43,6 +45,10 @@ class DownloadScreenState extends State<DownloadScreen> {
     _downloadedVideoNames = prefs.getStringList('downloadedVideoNames') ?? [];
     _downloadedVideoDetails =
         prefs.getStringList('downloadedVideoDetails') ?? [];
+    _downloadedSelectedVideos =
+        (prefs.getStringList('downloadedSelectedVideos') ?? [])
+            .map((e) => List<String>.from(json.decode(e)))
+            .toList();
     setState(() {});
   }
 
@@ -51,6 +57,10 @@ class DownloadScreenState extends State<DownloadScreen> {
     prefs.setStringList('downloadedVideos', _downloadedVideos);
     prefs.setStringList('downloadedVideoNames', _downloadedVideoNames);
     prefs.setStringList('downloadedVideoDetails', _downloadedVideoDetails);
+    prefs.setStringList(
+      'downloadedSelectedVideos',
+      _downloadedSelectedVideos.map((e) => json.encode(e)).toList(),
+    );
   }
 
   Future<void> combineAndDownloadVideo(
@@ -66,7 +76,8 @@ class DownloadScreenState extends State<DownloadScreen> {
     final String outputVideoUrl = 'http://135.125.218.147:3000/video';
 
     try {
-      await _downloadVideo(outputVideoUrl, focus, goal, duration);
+      await _downloadVideo(
+          outputVideoUrl, focus, goal, duration, selectedVideos);
       setState(() {
         _isLoading = false;
       });
@@ -78,8 +89,8 @@ class DownloadScreenState extends State<DownloadScreen> {
     }
   }
 
-  Future<void> _downloadVideo(
-      String videoUrl, String focus, String goal, int duration) async {
+  Future<void> _downloadVideo(String videoUrl, String focus, String goal,
+      int duration, List<String> selectedVideos) async {
     setState(() {
       _isLoading = true;
     });
@@ -90,7 +101,7 @@ class DownloadScreenState extends State<DownloadScreen> {
       if (response.statusCode == 200) {
         final directory = await getApplicationDocumentsDirectory();
         String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-        String nameTimestamp = DateFormat('MMdd').format(DateTime.now());
+        String nameTimestamp = DateFormat('MMdd HH:mm').format(DateTime.now());
         final filePath = '${directory.path}/video_$timestamp.mp4';
         final displayName = 'Einheit ${nameTimestamp}';
         final file = File(filePath);
@@ -101,12 +112,15 @@ class DownloadScreenState extends State<DownloadScreen> {
           _downloadedVideoNames.add(displayName);
           _downloadedVideoDetails
               .add('$focus, $goal, ${_formatDuration(duration)}');
+          _downloadedSelectedVideos.add(selectedVideos);
           _isLoading = false;
         });
 
         _saveDownloadedVideos();
 
         QuickAlert.show(
+          backgroundColor: Colors.grey.shade900,
+          textColor: Colors.white,
           context: context,
           type: QuickAlertType.success,
           title: 'Download Complete',
@@ -117,6 +131,8 @@ class DownloadScreenState extends State<DownloadScreen> {
           _isLoading = false;
         });
         QuickAlert.show(
+          backgroundColor: Colors.grey.shade700,
+          textColor: Colors.white,
           context: context,
           type: QuickAlertType.error,
           title: 'Download Failed',
@@ -128,6 +144,8 @@ class DownloadScreenState extends State<DownloadScreen> {
         _isLoading = false;
       });
       QuickAlert.show(
+        backgroundColor: Colors.grey.shade700,
+        textColor: Colors.white,
         context: context,
         type: QuickAlertType.error,
         title: 'Download Error',
@@ -143,11 +161,12 @@ class DownloadScreenState extends State<DownloadScreen> {
     return '${minutes}min ${seconds}s';
   }
 
-  void _playVideo(String videoPath) {
+  void _playVideo(String videoPath, List<String> selectedVideos) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => VideoPlayerScreen(videoPath: videoPath),
+        builder: (context) => VideoPlayerScreen(
+            videoPath: videoPath, selectedVideos: selectedVideos),
       ),
     );
   }
@@ -206,7 +225,8 @@ class DownloadScreenState extends State<DownloadScreen> {
                                         icon: Icon(Icons.play_arrow,
                                             color: Colors.white),
                                         onPressed: () => _playVideo(
-                                            _downloadedVideos[index]),
+                                            _downloadedVideos[index],
+                                            _downloadedSelectedVideos[index]),
                                       ),
                                       IconButton(
                                         icon: Icon(Icons.delete,
@@ -217,6 +237,8 @@ class DownloadScreenState extends State<DownloadScreen> {
                                             _downloadedVideoNames
                                                 .removeAt(index);
                                             _downloadedVideoDetails
+                                                .removeAt(index);
+                                            _downloadedSelectedVideos
                                                 .removeAt(index);
                                           });
                                           _saveDownloadedVideos();
@@ -262,8 +284,12 @@ class DownloadScreenState extends State<DownloadScreen> {
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoPath;
+  final List<String> selectedVideos;
 
-  VideoPlayerScreen({required this.videoPath});
+  VideoPlayerScreen({
+    required this.videoPath,
+    required this.selectedVideos,
+  });
 
   @override
   _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
@@ -272,6 +298,24 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   late VideoPlayerController _controller;
   ChewieController? _chewieController;
+
+  bool hasBeenUpdated = false;
+
+  Duration lastWatchedPosition = Duration.zero;
+  Duration watchedDuration = Duration.zero;
+
+  void videoProgressListener() {
+    if (_chewieController != null) {
+      final duration = _chewieController!.videoPlayerController.value.duration;
+      final halfwayDuration = duration * 0.1;
+
+      watchedDuration += Duration(milliseconds: 500);
+
+      if (watchedDuration > halfwayDuration && !hasBeenUpdated) {
+        hasBeenUpdated = true;
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -286,6 +330,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           );
         });
       });
+    _controller.addListener(videoProgressListener);
   }
 
   @override
@@ -299,7 +344,39 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Video Player'),
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            if (hasBeenUpdated) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AfterVideoView(videoIds: widget.selectedVideos)),
+              );
+            } else {
+              QuickAlert.show(
+                backgroundColor: Colors.grey.shade700,
+                textColor: Colors.white,
+                context: context,
+                type: QuickAlertType.error,
+                title: 'Noch nicht geschafft',
+                text: 'Möchtest du deine Trainingssitzung wirklich beenden?',
+                confirmBtnText: 'zurück',
+                onConfirmBtnTap: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                showCancelBtn: true,
+                cancelBtnText: 'bleiben',
+              );
+            }
+          },
+        ),
       ),
       body: Center(
         child: _controller.value.isInitialized
