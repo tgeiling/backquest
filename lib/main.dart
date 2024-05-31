@@ -224,6 +224,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       setState(() {
         _setAuthenticated(true);
       });
+      if (tokenExpired) {
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(
+            setAuthenticated: _setAuthenticated,
+            setQuestionnairDone: _checkQuestionnaireCompletion,
+          ),
+        );
+      }
     } else {
       await _authService.setGuestToken();
       setState(() {
