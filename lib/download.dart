@@ -198,65 +198,59 @@ class DownloadScreenState extends State<DownloadScreen> {
             : Column(
                 children: [
                   Expanded(
-                    child: _downloadedVideos.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: _downloadedVideos.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(vertical: 8.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.all(16.0),
-                                  title: Text(
-                                    _downloadedVideoNames[index],
-                                    style: TextStyle(color: Colors.white),
+                      child: _downloadedVideos.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: _downloadedVideos.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(12.0),
                                   ),
-                                  subtitle: Text(
-                                    _downloadedVideoDetails[index],
-                                    style: TextStyle(color: Colors.white70),
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(16.0),
+                                    title: Text(
+                                      _downloadedVideoNames[index],
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    subtitle: Text(
+                                      _downloadedVideoDetails[index],
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.play_arrow,
+                                              color: Colors.white),
+                                          onPressed: () => _playVideo(
+                                              _downloadedVideos[index],
+                                              _downloadedSelectedVideos[index]),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.delete,
+                                              color: Colors.white),
+                                          onPressed: () async {
+                                            setState(() {
+                                              _downloadedVideos.removeAt(index);
+                                              _downloadedVideoNames
+                                                  .removeAt(index);
+                                              _downloadedVideoDetails
+                                                  .removeAt(index);
+                                              _downloadedSelectedVideos
+                                                  .removeAt(index);
+                                            });
+                                            _saveDownloadedVideos();
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.play_arrow,
-                                            color: Colors.white),
-                                        onPressed: () => _playVideo(
-                                            _downloadedVideos[index],
-                                            _downloadedSelectedVideos[index]),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete,
-                                            color: Colors.white),
-                                        onPressed: () async {
-                                          setState(() {
-                                            _downloadedVideos.removeAt(index);
-                                            _downloadedVideoNames
-                                                .removeAt(index);
-                                            _downloadedVideoDetails
-                                                .removeAt(index);
-                                            _downloadedSelectedVideos
-                                                .removeAt(index);
-                                          });
-                                          _saveDownloadedVideos();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : Center(
-                            child: Text(
-                              'No saved videos.',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                  ),
+                                );
+                              },
+                            )
+                          : Text("")),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 12.0),

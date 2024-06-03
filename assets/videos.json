@@ -20,7 +20,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0002",
@@ -45,7 +46,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0003",
@@ -70,7 +72,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0004",
@@ -97,7 +100,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0005",
@@ -121,7 +125,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0006",
@@ -145,7 +150,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0007",
@@ -167,7 +173,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0008",
@@ -189,7 +196,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0009",
@@ -211,7 +219,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0010",
@@ -232,7 +241,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0011",
@@ -256,7 +266,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0012",
@@ -280,7 +291,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0013",
@@ -306,7 +318,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0014",
@@ -331,7 +344,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0015",
@@ -356,7 +370,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0016",
@@ -383,7 +398,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0017",
@@ -410,7 +426,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0018",
@@ -437,7 +454,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0019",
@@ -461,7 +479,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0020",
@@ -486,7 +505,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0021",
@@ -511,7 +531,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0022",
@@ -535,7 +556,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0023",
@@ -559,7 +581,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0024",
@@ -583,7 +606,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0025",
@@ -611,7 +635,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0026",
@@ -639,7 +664,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0027",
@@ -667,7 +693,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0028",
@@ -692,7 +719,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0029",
@@ -716,7 +744,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0030",
@@ -740,7 +769,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0031",
@@ -765,7 +795,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0032",
@@ -789,7 +820,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0033",
@@ -817,7 +849,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0034",
@@ -845,7 +878,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0035",
@@ -869,7 +903,8 @@
         "logic": [
             "WU2",
             " AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0036",
@@ -893,7 +928,8 @@
         "logic": [
             "WU2",
             " AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0037",
@@ -919,7 +955,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0038",
@@ -945,7 +982,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0039",
@@ -969,7 +1007,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0040",
@@ -977,7 +1016,7 @@
         "background": "blau_beige",
         "duration": 37,
         "startPose": "SchSi",
-        "endPose": "SChSi",
+        "endPose": "SchSi",
         "direction": "links",
         "focus": [
             "oberer Ruecken",
@@ -993,7 +1032,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0041",
@@ -1017,7 +1057,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0042",
@@ -1041,7 +1082,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0043",
@@ -1062,7 +1104,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0044",
@@ -1085,7 +1128,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0045",
@@ -1109,7 +1153,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0046",
@@ -1133,7 +1178,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0047",
@@ -1157,7 +1203,8 @@
         "logic": [
             "WU2",
             " AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0048",
@@ -1181,7 +1228,8 @@
         "logic": [
             "WU2",
             " AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0049",
@@ -1202,7 +1250,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0050",
@@ -1223,7 +1272,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0051",
@@ -1244,7 +1294,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0052",
@@ -1265,7 +1316,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0053",
@@ -1286,7 +1338,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0054",
@@ -1307,7 +1360,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0055",
@@ -1328,7 +1382,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0056",
@@ -1354,7 +1409,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0057",
@@ -1380,7 +1436,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0058",
@@ -1405,7 +1462,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0059",
@@ -1429,7 +1487,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0060",
@@ -1456,7 +1515,8 @@
         "workplaceRelevance": "Aktiv und hebend",
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0061",
@@ -1480,7 +1540,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0062",
@@ -1504,7 +1565,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0063",
@@ -1531,7 +1593,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0064",
@@ -1557,7 +1620,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0065",
@@ -1581,7 +1645,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0066",
@@ -1604,7 +1669,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0067",
@@ -1627,7 +1693,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0068",
@@ -1651,7 +1718,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0069",
@@ -1675,7 +1743,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0070",
@@ -1700,7 +1769,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0071",
@@ -1725,7 +1795,8 @@
         "workplaceRelevance": null,
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0072",
@@ -1748,7 +1819,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0073",
@@ -1773,7 +1845,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0074",
@@ -1798,7 +1871,8 @@
         "workplaceRelevance": null,
         "logic": [
             "MAIN"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0075",
@@ -1822,7 +1896,8 @@
         "workplaceRelevance": "Sitzend",
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0076",
@@ -1848,7 +1923,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0077",
@@ -1874,7 +1950,8 @@
         "workplaceRelevance": null,
         "logic": [
             "AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0078",
@@ -1892,13 +1969,14 @@
             "Beweglichkeit",
             " Entspannung"
         ],
-        "difficulty": 1,
+        "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
             " AB1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0079",
@@ -1917,12 +1995,13 @@
             "Kraft",
             " Beweglichkeit"
         ],
-        "difficulty": 2,
+        "difficulty": 3,
         "caution": [],
         "workplaceRelevance": "Hebend",
         "logic": [
             "WU2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0080",
@@ -1940,12 +2019,13 @@
         "goal": [
             "Entspannung"
         ],
-        "difficulty": 1,
+        "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0081",
@@ -1961,12 +2041,13 @@
         "goal": [
             "Entspannung"
         ],
-        "difficulty": 2,
+        "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0082",
@@ -1982,12 +2063,13 @@
         "goal": [
             "Entspannung"
         ],
-        "difficulty": 1,
+        "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU1"
-        ]
+        ],
+        "combine": null
     },
     {
         "id": "0083",
@@ -2003,11 +2085,1280 @@
         "goal": [
             "Entspannung"
         ],
-        "difficulty": 1,
+        "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "AB2"
-        ]
+        ],
+        "combine": null
+    },
+    {
+        "id": "0084",
+        "name": "Stand Schulter kreisen",
+        "background": "blau_beige",
+        "duration": 25,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Schulterguertel"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2",
+            " AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0085",
+        "name": "Gegraetschte Vorbeuge Side to Side",
+        "background": "blau_beige",
+        "duration": 45,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " oberer Ruecken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": 88.0
+    },
+    {
+        "id": "0086",
+        "name": "Gegraetschte Vorbeuge mit Rotation",
+        "background": "blau_beige",
+        "duration": 58,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " BWS"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 5,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": 85.0
+    },
+    {
+        "id": "0087",
+        "name": "Mountain Pose zu Jefferson Curl",
+        "background": "blau_beige",
+        "duration": 52,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "unterer Ruecken",
+            " oberer Ruecken",
+            " Beinrueckseite"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0088",
+        "name": "Gegraetschte Vorbeuge runterrollen",
+        "background": "blau_beige",
+        "duration": 40,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " unterer Ruecken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0089",
+        "name": "Easy Hocke zu Vorbeuge",
+        "background": "blau_beige",
+        "duration": 55,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " Beinrueckseite",
+            " Sprungelenke"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 2,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0090",
+        "name": "Hocke reinkommen",
+        "background": "blau_beige",
+        "duration": 21,
+        "startPose": "Stand",
+        "endPose": "Hocke",
+        "direction": "links",
+        "focus": [
+            "Sprunggelenke",
+            " Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0091",
+        "name": "Hocke Rotation zu Vorbeuge",
+        "background": "blau_beige",
+        "duration": 46,
+        "startPose": "Hocke",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Sprungelenke",
+            " Huefte",
+            " BWS",
+            " Beinrueckseite"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 4,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": 90.0
+    },
+    {
+        "id": "0092",
+        "name": "Kniebeuge Schwingen",
+        "background": "blau_beige",
+        "duration": 28,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Sprunggelenke",
+            " Oberschenkel"
+        ],
+        "goal": [
+            "Kraft",
+            " Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2",
+            " MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0093",
+        "name": "Abschluss Schulter kreisen mit nachspUeren",
+        "background": "blau_beige",
+        "duration": 43,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Schulterguertel"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0094",
+        "name": "Einfache Gegraetschte Vorbeuge Side to Side",
+        "background": "blau_beige",
+        "duration": 52,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " oberer Ruecken"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 1,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": 88.0
+    },
+    {
+        "id": "0095",
+        "name": "Einfache Gegraetschte Vorbeuge Rotation",
+        "background": "blau_beige",
+        "duration": 73,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " BWS"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 2,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": 88.0
+    },
+    {
+        "id": "0096",
+        "name": "Mountain Pose zu Jefferson Curl2",
+        "background": "blau_beige",
+        "duration": 57,
+        "startPose": "Stand",
+        "endPose": "4Fue_ab",
+        "direction": "links",
+        "focus": [
+            "unterer Ruecken",
+            " oberer Ruecken",
+            " Beinrueckseite"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0097",
+        "name": "Mountain Pose zu Jefferson Curl3",
+        "background": "blau_beige",
+        "duration": 55,
+        "startPose": "Stand",
+        "endPose": "4Fue_auf",
+        "direction": "links",
+        "focus": [
+            "unterer Ruecken",
+            " oberer Ruecken",
+            " Beinrueckseite"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0098",
+        "name": "Hocke reinkommen2",
+        "background": "blau_beige",
+        "duration": 24,
+        "startPose": "Stand",
+        "endPose": "Hocke",
+        "direction": "links",
+        "focus": [
+            "Sprunggelenke",
+            " Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0099",
+        "name": "Hocke Rotation zu Vorbeuge leicht",
+        "background": "blau_beige",
+        "duration": 54,
+        "startPose": "Hocke",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Sprunggelenke",
+            " Huefte",
+            " BWS"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": 98.0
+    },
+    {
+        "id": "0100",
+        "name": "HUefte lockern",
+        "background": "blau_beige",
+        "duration": 35,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0101",
+        "name": "Stand HUeft CARs",
+        "background": "blau_beige",
+        "duration": 67,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 4,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0102",
+        "name": "Fusskreise",
+        "background": "blau_beige",
+        "duration": 61,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Fuesse",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 1,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0103",
+        "name": "Fusskreise abgehoben",
+        "background": "blau_beige",
+        "duration": 52,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Fuesse",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0104",
+        "name": "Fuss 8er",
+        "background": "blau_beige",
+        "duration": 57,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Fuesse",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0105",
+        "name": "Fusskreise Knie gehoben",
+        "background": "blau_beige",
+        "duration": 48,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Fuesse",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0106",
+        "name": "Fuss 8er Knie gehoben",
+        "background": "blau_beige",
+        "duration": 51,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Fuesse",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 4,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0107",
+        "name": "Schwingendes oeffnen",
+        "background": "blau_beige",
+        "duration": 32,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0108",
+        "name": "Schulter fallen lassen",
+        "background": "blau_beige",
+        "duration": 26,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS",
+            " Nacken"
+        ],
+        "goal": [
+            "Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0109",
+        "name": "Abschluss schwingen",
+        "background": "blau_beige",
+        "duration": 28,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS"
+        ],
+        "goal": [
+            "Entspannung",
+            " Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0110",
+        "name": "Stand BWS oeffnen",
+        "background": "blau_beige",
+        "duration": 41,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS"
+        ],
+        "goal": [
+            "Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0111",
+        "name": "Hocke reinkommen 10s",
+        "background": "blau_beige",
+        "duration": 9,
+        "startPose": "Stand",
+        "endPose": "Hocke",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0112",
+        "name": "Hocke Rotieren Ferse abheben",
+        "background": "blau_beige",
+        "duration": 25,
+        "startPose": "Hocke",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " Sprungelenke",
+            " BWS"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 4,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0113",
+        "name": "Stand Schulterkreise",
+        "background": "blau_beige",
+        "duration": 31,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Schulterguertel"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0114",
+        "name": "Stand Arme auswringen",
+        "background": "blau_beige",
+        "duration": 38,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Schulterguertel"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1",
+            " MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0115",
+        "name": "Stand Halbe Nackenkreise",
+        "background": "blau_beige",
+        "duration": 36,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Nacken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0116",
+        "name": "Stand Halbe Nackenkreise Daumen ausdrehen",
+        "background": "blau_beige",
+        "duration": 48,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Nacken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0117",
+        "name": "Stand ganze Nackenkreise",
+        "background": "blau_beige",
+        "duration": 38,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "Nacken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 4,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0118",
+        "name": "Jefferson Curl",
+        "background": "blau_beige",
+        "duration": 63,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "unterer Ruecken",
+            " oberer Ruecken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0119",
+        "name": "HUeftschwUenge",
+        "background": "blau_beige",
+        "duration": 35,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1",
+            " AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0120",
+        "name": " Seitliche SchwUenge",
+        "background": "blau_beige",
+        "duration": 30,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": 119.0
+    },
+    {
+        "id": "0121",
+        "name": " SchwUenge zur Decke",
+        "background": "blau_beige",
+        "duration": 29,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS",
+            " unterer Ruecken",
+            " oberer Ruecken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1"
+        ],
+        "combine": 120.0
+    },
+    {
+        "id": "0122",
+        "name": " Hocke reinkommen",
+        "background": "blau_beige",
+        "duration": 33,
+        "startPose": "Stand",
+        "endPose": "Hocke",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " Sprunggelenke"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0123",
+        "name": " Hocke zu Vorbeuge kurz",
+        "background": "blau_beige",
+        "duration": 11,
+        "startPose": "Hocke",
+        "endPose": "Hocke",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " Sprunggelenke",
+            " Beinrueckseite"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 4,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0124",
+        "name": " SchwUenge zur Schulter",
+        "background": "blau_beige",
+        "duration": 21,
+        "startPose": "Stand",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "BWS",
+            " Schulter"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "WU1",
+            " AB1"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0125",
+        "name": " Hip Articulation kurz",
+        "background": "blau_beige",
+        "duration": 52,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0126",
+        "name": " Hip Articulation lang",
+        "background": "blau_beige",
+        "duration": 95,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0127",
+        "name": " Hip Reach und Rotieren kurz",
+        "background": "blau_beige",
+        "duration": 71,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " BWS"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0128",
+        "name": "Hip Reach und Rotieren lang",
+        "background": "blau_beige",
+        "duration": 144,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte",
+            " BWS"
+        ],
+        "goal": [
+            "Beweglichkeit"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0129",
+        "name": "Hip Swifel leicht",
+        "background": "blau_beige",
+        "duration": 50,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 2,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0130",
+        "name": "Hip Swifel",
+        "background": "blau_beige",
+        "duration": 37,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0131",
+        "name": " Hip Swifel lehnen",
+        "background": "blau_beige",
+        "duration": 48,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0132",
+        "name": "Hip Swifel reach gehalten",
+        "background": "blau_beige",
+        "duration": 97,
+        "startPose": "BrSi",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [
+            "Huefte"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 3,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "MAIN"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0133",
+        "name": "Abschluss CP zu Stand",
+        "background": "blau_beige",
+        "duration": 34,
+        "startPose": "CP",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [
+            "oberer Ruecken"
+        ],
+        "goal": [
+            "Beweglichkeit",
+            " Entspannung"
+        ],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [
+            "AB2"
+        ],
+        "combine": null
+    },
+    {
+        "id": "0134",
+        "name": "Uebergang Breitsitz 4FUessl-ab",
+        "background": "blau_beige",
+        "duration": 7,
+        "startPose": "BrSi",
+        "endPose": "4Fue_ab",
+        "direction": "links",
+        "focus": [],
+        "goal": [],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": null
+    },
+    {
+        "id": "0135",
+        "name": "Uebergang Breitsitz zu 4FUessl-auf",
+        "background": "blau_beige",
+        "duration": 6,
+        "startPose": "BrSi",
+        "endPose": "4Fue_auf",
+        "direction": "links",
+        "focus": [],
+        "goal": [],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": null
+    },
+    {
+        "id": "0136",
+        "name": "Uebergang Vorbeuge zu 4FUessler",
+        "background": "blau_beige",
+        "duration": 4,
+        "startPose": "VB",
+        "endPose": "4Fue_auf",
+        "direction": "links",
+        "focus": [],
+        "goal": [],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": null
+    },
+    {
+        "id": "0137",
+        "name": "Uebergang Vorbeuge zu Breitsitz",
+        "background": "blau_beige",
+        "duration": 7,
+        "startPose": "VB",
+        "endPose": "BrSi",
+        "direction": "links",
+        "focus": [],
+        "goal": [],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": null
+    },
+    {
+        "id": "0138",
+        "name": "Uebergang Gegraetschte Vorbeuge zu 4FUessler",
+        "background": "blau_beige",
+        "duration": 9,
+        "startPose": "GrVB",
+        "endPose": "4Fue_ab",
+        "direction": "links",
+        "focus": [],
+        "goal": [],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": null
+    },
+    {
+        "id": "0139",
+        "name": "Uebergang Gegraetschte Vorbeuge zu Stand",
+        "background": "blau_beige",
+        "duration": 8,
+        "startPose": "GrVB",
+        "endPose": "Stand",
+        "direction": "links",
+        "focus": [],
+        "goal": [],
+        "difficulty": 0,
+        "caution": [],
+        "workplaceRelevance": null,
+        "logic": [],
+        "combine": null
     }
 ]

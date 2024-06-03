@@ -15,6 +15,7 @@ const VideoSchema = new mongoose.Schema({
   caution: [String],
   workplaceRelevance: String,
   logic: [String],
+  combine: String,
 });
 
 const Video = mongoose.model('Video', VideoSchema);
