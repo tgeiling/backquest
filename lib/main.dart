@@ -217,23 +217,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _checkAuthentication() async {
+    print("bro this is not triggering");
+    // when this waits for a token it waits for ever because of no connection
     bool isGuest = await _authService.isGuestToken();
     bool tokenExpired = await _authService.isTokenExpired();
+    //replace for actual logic
+    bool noConnection = true;
 
     if (!isGuest) {
       setState(() {
         _setAuthenticated(true);
       });
       if (tokenExpired) {
-        MaterialPageRoute(
+        setState(() {
+          _setAuthenticated(false);
+        });
+        // show message for no token
+        /* MaterialPageRoute(
           builder: (context) => LoginScreen(
             setAuthenticated: _setAuthenticated,
             setQuestionnairDone: _checkQuestionnaireCompletion,
           ),
-        );
+        ); */
       }
     } else {
       await _authService.setGuestToken();
+      //maybe say here that connection failed save response from setGuesttoken and set bool for it
       setState(() {
         _setAuthenticated(false);
       });
@@ -274,12 +283,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if (_authenticated == null) {
+    /* if (_authenticated == null) {
       return MaterialApp(
         home: CircularProgressIndicator(),
       );
     }
-
+ */
     return MaterialApp(
         title: 'Backquest',
         theme: ThemeData(
@@ -297,6 +306,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         home: questionaireDone
             ? MainScaffold(
+                authenticated: _authenticated == null ? false : true,
                 setAuthenticated: _setAuthenticated,
                 setQuestionnairDone: _checkQuestionnaireCompletion,
                 isLoggedIn: isLoggedIn,
@@ -310,13 +320,15 @@ class MainScaffold extends StatefulWidget {
   final Function(bool) setAuthenticated;
   final VoidCallback setQuestionnairDone;
   final bool Function() isLoggedIn;
+  final bool authenticated;
 
-  MainScaffold(
-      {Key? key,
-      required this.setAuthenticated,
-      required this.setQuestionnairDone,
-      required this.isLoggedIn})
-      : super(key: key);
+  MainScaffold({
+    Key? key,
+    required this.setAuthenticated,
+    required this.setQuestionnairDone,
+    required this.isLoggedIn,
+    required this.authenticated,
+  }) : super(key: key);
 
   @override
   _MainScaffoldState createState() => _MainScaffoldState();
@@ -527,6 +539,7 @@ class _MainScaffoldState extends State<MainScaffold>
     return Scaffold(
       body: Stack(
         children: [
+          //if condition to show authenticated status and connection status as banner
           GestureDetector(
             onTap: () {
               if (_isModalVisible) {
