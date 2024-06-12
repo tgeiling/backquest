@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
@@ -5,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stroke_text/stroke_text.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'stats.dart';
 import 'video.dart';
@@ -153,6 +156,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool? _authenticated;
   bool? _loggedIn;
   final AuthService _authService = AuthService();
+  late Connectivity _connectivity;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  bool _isConnected = true;
 
   @override
   void initState() {
@@ -161,12 +167,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     Future.microtask(() =>
         Provider.of<ProfilProvider>(context, listen: false).loadInitialData());
     WidgetsBinding.instance.addObserver(this);
+
+    // Initialize connectivity
+    _connectivity = Connectivity();
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      _updateConnectionStatus(result);
+    });
+    _checkInitialConnectivity();
   }
 
   @override
   void dispose() {
+    _connectivitySubscription.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _updateConnectionStatus(List<ConnectivityResult> results) {
+    setState(() {
+      _isConnected = !results.contains(ConnectivityResult.none);
+    });
+  }
+
+  Future<void> _checkInitialConnectivity() async {
+    List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+    _updateConnectionStatus(results);
   }
 
   @override
@@ -218,11 +244,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _checkAuthentication() async {
     print("bro this is not triggering");
-    // when this waits for a token it waits for ever because of no connection
     bool isGuest = await _authService.isGuestToken();
     bool tokenExpired = await _authService.isTokenExpired();
-    //replace for actual logic
-    bool noConnection = true;
 
     if (!isGuest) {
       setState(() {
@@ -232,8 +255,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         setState(() {
           _setAuthenticated(false);
         });
-        // show message for no token
-        /* MaterialPageRoute(
+/*         MaterialPageRoute(
           builder: (context) => LoginScreen(
             setAuthenticated: _setAuthenticated,
             setQuestionnairDone: _checkQuestionnaireCompletion,
@@ -283,36 +305,46 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    /* if (_authenticated == null) {
-      return MaterialApp(
-        home: CircularProgressIndicator(),
-      );
-    }
- */
     return MaterialApp(
-        title: 'Backquest',
-        theme: ThemeData(
-          primaryColor: Colors.green,
-          inputDecorationTheme: InputDecorationTheme(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.green),
-            ),
-            labelStyle: TextStyle(
-              color: Colors.black,
-            ),
+      title: 'Backquest',
+      theme: ThemeData(
+        primaryColor: Colors.green,
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
           ),
-          fontFamily: 'Roboto',
-          textTheme: buildTextTheme(context),
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
         ),
-        home: questionaireDone
-            ? MainScaffold(
-                authenticated: _authenticated == null ? false : true,
-                setAuthenticated: _setAuthenticated,
-                setQuestionnairDone: _checkQuestionnaireCompletion,
-                isLoggedIn: isLoggedIn,
-              )
-            : QuestionnaireScreen(
-                checkQuestionaire: _checkQuestionnaireCompletion));
+        fontFamily: 'Roboto',
+        textTheme: buildTextTheme(context),
+      ),
+      home: Stack(
+        children: [
+          questionaireDone
+              ? MainScaffold(
+                  authenticated: _authenticated == null ? false : true,
+                  setAuthenticated: _setAuthenticated,
+                  setQuestionnairDone: _checkQuestionnaireCompletion,
+                  isLoggedIn: isLoggedIn,
+                )
+              : QuestionnaireScreen(
+                  checkQuestionaire: _checkQuestionnaireCompletion),
+          if (!_isConnected || (_authenticated == false && _isConnected))
+            Positioned(
+              top: 70,
+              left: 16,
+              right: 16,
+              child: GreyContainer(
+                padding: EdgeInsets.all(8.0),
+                child:
+                    !_isConnected ? NoConnectionWidget() : AuthenticateWidget(),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 

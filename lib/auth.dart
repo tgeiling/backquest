@@ -64,13 +64,18 @@ class AuthService {
   }
 
   Future<String?> getGuestToken() async {
-    final response = await http.post(Uri.parse('$baseUrl/guestnode'));
-    if (response.statusCode == 200) {
-      final token = jsonDecode(response.body)['accessToken'];
-
-      return token;
-    } else {
-      print('Failed to obtain guest token with status: ${response.statusCode}');
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/guestnode'));
+      if (response.statusCode == 200) {
+        final token = jsonDecode(response.body)['accessToken'];
+        return token;
+      } else {
+        print(
+            'Failed to obtain guest token with status: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error occurred: $e');
       return null;
     }
   }

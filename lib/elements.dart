@@ -154,3 +154,45 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
     );
   }
 }
+
+class NoConnectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'Keine Internetverbindung',
+          style: Theme.of(context).textTheme.displayMedium,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 4.0),
+        Text(
+          'Bitte überprüfen Sie Ihre Netzwerkeinstellungen.',
+          style: Theme.of(context).textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
+class AuthenticateWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'Bitte über Login authentifizieren',
+          style: Theme.of(context).textTheme.displayMedium,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 4.0),
+        Text(
+          'Sie müssen sich anmelden, um fortzufahren.',
+          style: Theme.of(context).textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
