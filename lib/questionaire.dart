@@ -11,7 +11,7 @@ import 'services.dart';
 import 'elements.dart';
 import 'stats.dart';
 
-bool questionaireDone = false;
+late bool questionaireDone = false;
 
 class QuestionnaireScreen extends StatefulWidget {
   final VoidCallback checkQuestionaire;

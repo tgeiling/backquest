@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:neumorphic_ui/neumorphic_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -159,6 +160,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late Connectivity _connectivity;
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   bool _isConnected = true;
+  bool _showConnectionMessage = true;
+  bool _isLoading = true; // New state variable for loading
 
   @override
   void initState() {
@@ -187,6 +190,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _updateConnectionStatus(List<ConnectivityResult> results) {
     setState(() {
       _isConnected = !results.contains(ConnectivityResult.none);
+      _showConnectionMessage =
+          !_isConnected || (_authenticated == false && _isConnected);
     });
   }
 
@@ -243,7 +248,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _checkAuthentication() async {
-    print("bro this is not triggering");
+    setState(() {
+      _isLoading = true;
+    });
+
     bool isGuest = await _authService.isGuestToken();
     bool tokenExpired = await _authService.isTokenExpired();
 
@@ -255,20 +263,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         setState(() {
           _setAuthenticated(false);
         });
-/*         MaterialPageRoute(
-          builder: (context) => LoginScreen(
-            setAuthenticated: _setAuthenticated,
-            setQuestionnairDone: _checkQuestionnaireCompletion,
-          ),
-        ); */
       }
     } else {
       await _authService.setGuestToken();
-      //maybe say here that connection failed save response from setGuesttoken and set bool for it
       setState(() {
         _setAuthenticated(false);
       });
     }
+
+    _checkQuestionnaireCompletion();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _setAuthenticated(bool authenticated) {
@@ -322,24 +328,38 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ),
       home: Stack(
         children: [
-          questionaireDone
-              ? MainScaffold(
-                  authenticated: _authenticated == null ? false : true,
-                  setAuthenticated: _setAuthenticated,
-                  setQuestionnairDone: _checkQuestionnaireCompletion,
-                  isLoggedIn: isLoggedIn,
-                )
-              : QuestionnaireScreen(
-                  checkQuestionaire: _checkQuestionnaireCompletion),
-          if (!_isConnected || (_authenticated == false && _isConnected))
+          if (_isLoading) // Show CircularProgressIndicator while loading
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            questionaireDone
+                ? MainScaffold(
+                    authenticated: _authenticated == null ? false : true,
+                    setAuthenticated: _setAuthenticated,
+                    setQuestionnairDone: _checkQuestionnaireCompletion,
+                    isLoggedIn: isLoggedIn,
+                  )
+                : QuestionnaireScreen(
+                    checkQuestionaire: _checkQuestionnaireCompletion),
+          if (_showConnectionMessage)
             Positioned(
               top: 70,
               left: 16,
               right: 16,
-              child: GreyContainer(
+              child: GreenContainer(
                 padding: EdgeInsets.all(8.0),
-                child:
-                    !_isConnected ? NoConnectionWidget() : AuthenticateWidget(),
+                child: !_isConnected
+                    ? NoConnectionWidget(onDismiss: () {
+                        setState(() {
+                          _showConnectionMessage = false;
+                        });
+                      })
+                    : AuthenticateWidget(onDismiss: () {
+                        setState(() {
+                          _showConnectionMessage = false;
+                        });
+                      }),
               ),
             ),
         ],

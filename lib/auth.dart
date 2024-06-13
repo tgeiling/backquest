@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:backquest/elements.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -80,6 +82,35 @@ class AuthService {
     }
   }
 
+/*   Future<bool> isGuestToken() async {
+    final token = await storage.read(key: 'authToken');
+
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/validateToken'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'token': token}),
+          )
+          .timeout(Duration(seconds: 1)); // Set a timeout of 5 seconds
+
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        return !result['isValid'];
+      } else {
+        print('Failed to validate token: ${response.body}');
+        return true;
+      }
+    } catch (e) {
+      if (e is TimeoutException) {
+        print('Token validation request timed out');
+      } else {
+        print("Error sending token validation request: $e");
+      }
+      return true; // Assume guest token on error or timeout
+    }
+  } */
+
   Future<bool> isGuestToken() async {
     final token = await storage.read(key: 'authToken');
 
@@ -102,6 +133,24 @@ class AuthService {
       return true;
     }
   }
+
+  /* Future<bool> isGuestToken() async {
+    final token = await storage.read(key: 'authToken');
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/validateToken'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'token': token}),
+    );
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      return !result['isValid'];
+    } else {
+      print('Failed to validate token: ${response.body}');
+      return true;
+    }
+  } */
 
   Future<bool> isTokenExpired() async {
     final token = await storage.read(key: 'authToken');

@@ -95,6 +95,37 @@ class GreyContainer extends StatelessWidget {
   }
 }
 
+class GreenContainer extends StatelessWidget {
+  final Widget child;
+  final EdgeInsets padding;
+
+  GreenContainer({
+    Key? key,
+    required this.child,
+    this.padding = const EdgeInsets.all(8.0),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: const Color(0xFF59c977),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF48a160),
+            offset: Offset(0, 5),
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
 class ProgressBarWithPill extends StatefulWidget {
   final double initialProgress;
 
@@ -156,20 +187,38 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
 }
 
 class NoConnectionWidget extends StatelessWidget {
+  final VoidCallback onDismiss;
+
+  NoConnectionWidget({required this.onDismiss});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
-        Text(
-          'Keine Internetverbindung',
-          style: Theme.of(context).textTheme.displayMedium,
-          textAlign: TextAlign.center,
+        Align(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Keine Internetverbindung',
+                style: Theme.of(context).textTheme.displayMedium,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 4.0),
+              Text(
+                'Bitte stellen sie eine Verbindung her',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
-        SizedBox(height: 4.0),
-        Text(
-          'Bitte überprüfen Sie Ihre Netzwerkeinstellungen.',
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
+        Positioned(
+          top: -15,
+          right: -10,
+          child: DismissButton(onPressed: onDismiss),
         ),
       ],
     );
@@ -177,22 +226,66 @@ class NoConnectionWidget extends StatelessWidget {
 }
 
 class AuthenticateWidget extends StatelessWidget {
+  final VoidCallback onDismiss;
+
+  AuthenticateWidget({required this.onDismiss});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
-        Text(
-          'Bitte über Login authentifizieren',
-          style: Theme.of(context).textTheme.displayMedium,
-          textAlign: TextAlign.center,
+        Align(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Bitte über Login authentifizieren',
+                style: Theme.of(context).textTheme.displayMedium,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 4.0),
+              Text(
+                'Sie müssen sich anmelden, um fortzufahren.',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
-        SizedBox(height: 4.0),
-        Text(
-          'Sie müssen sich anmelden, um fortzufahren.',
-          style: Theme.of(context).textTheme.bodyMedium,
-          textAlign: TextAlign.center,
+        Positioned(
+          top: -15,
+          right: -10,
+          child: DismissButton(onPressed: onDismiss),
         ),
       ],
+    );
+  }
+}
+
+class DismissButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  DismissButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.close,
+          color: Colors.grey[800],
+          size: 20.0,
+        ),
+      ),
     );
   }
 }

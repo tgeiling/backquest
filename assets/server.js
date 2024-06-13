@@ -14,13 +14,23 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(helmet());
 
+const caPath = '/etc/ssl/certs/ca-certificates.crt';
+
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
+const options = {
   serverSelectionTimeoutMS: 45000,
   connectTimeoutMS: 45000,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+  tls: true,
+  tlsCAFile: caPath,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+console.log('Mongoose connection options:', options);
+
+mongoose.connect(process.env.MONGO_URI, options)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log('MongoDB connection error:', err));
 
 const UserSchema = new mongoose.Schema({
   username: String,
