@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(helmet());
 
+// Path to the CA bundle you found
 const caPath = '/etc/ssl/certs/ca-certificates.crt';
 
 // MongoDB connection
@@ -22,8 +23,6 @@ const options = {
   connectTimeoutMS: 45000,
   tls: true,
   tlsCAFile: caPath,
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
 };
 
 console.log('Mongoose connection options:', options);
