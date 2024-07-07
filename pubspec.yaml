@@ -39,7 +39,6 @@ dependencies:
   shared_preferences: ^2.0.6
   video_player: ^2.2.18
   chewie: ^1.4.0
-  neumorphic_ui: ^1.0.1
   salomon_bottom_bar: ^3.3.2
   quickalert: ^1.0.2
   stroke_text: ^0.0.2

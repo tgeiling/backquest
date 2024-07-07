@@ -288,14 +288,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  neumorphic_ui:
-    dependency: "direct main"
-    description:
-      name: neumorphic_ui
-      sha256: "5f1e0bf0e0a2a1f1deb374705d83c86443d4b00191049fdac6f0b9c756ce62a1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   nm:
     dependency: transitive
     description:
