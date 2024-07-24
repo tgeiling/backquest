@@ -212,7 +212,7 @@ Future<void> combineVideos(
   final token = await getAuthToken();
 
   try {
-    final response = await http.get(
+    final response = await http.post(
       Uri.parse(urlWithParams),
       headers: {
         "Authorization": "Bearer $token",
