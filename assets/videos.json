@@ -3278,7 +3278,9 @@
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "TRANSITION"
+        ],
         "combine": null
     },
     {
@@ -3294,7 +3296,9 @@
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "TRANSITION"
+        ],
         "combine": null
     },
     {
@@ -3310,7 +3314,9 @@
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "TRANSITION"
+        ],
         "combine": null
     },
     {
@@ -3326,7 +3332,9 @@
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "TRANSITION"
+        ],
         "combine": null
     },
     {
@@ -3342,7 +3350,9 @@
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "TRANSITION"
+        ],
         "combine": null
     },
     {
@@ -3358,7 +3368,9 @@
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "TRANSITION"
+        ],
         "combine": null
     }
 ]

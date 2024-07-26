@@ -203,20 +203,20 @@ Future<void> combineVideos(
 }) async {
   final String baseUrl = 'http://135.125.218.147:3000/concatenate';
 
-  final String encodedFocus = Uri.encodeComponent(focus);
-  final String encodedGoal = Uri.encodeComponent(goal);
-
-  final String urlWithParams =
-      "$baseUrl?duration=$duration&focus=$encodedFocus&goal=$encodedGoal";
-
   final token = await getAuthToken();
 
   try {
     final response = await http.post(
-      Uri.parse(urlWithParams),
+      Uri.parse(baseUrl),
       headers: {
         "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
       },
+      body: json.encode({
+        "duration": duration,
+        "focus": focus,
+        "goal": goal,
+      }),
     );
 
     if (response.statusCode == 200) {

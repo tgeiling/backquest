@@ -1250,7 +1250,7 @@ class LevelCircle extends StatelessWidget {
     if (isDone) {
       imageName = 'assets/button_green.png';
     } else if (isNext) {
-      imageName = 'assets/button_grey.png';
+      imageName = 'assets/button_mint.png';
     } else {
       imageName = 'assets/button_locked.png';
     }
@@ -1319,7 +1319,21 @@ class LevelCircle extends StatelessWidget {
                             .shrink(), // Empty widget if the conditions aren't met
                   ),
                 )),
-            if (isNext)
+            if (isNext) ...[
+              Positioned(
+                top: 0,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 3.0,
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 top: startAbsoluteTopValue,
                 child: Container(
@@ -1346,6 +1360,7 @@ class LevelCircle extends StatelessWidget {
                   ),
                 ),
               ),
+            ]
           ],
         ),
       ),
