@@ -298,7 +298,7 @@ app.post('/feedback', authenticateToken, async (req, res) => {
 });
 
 
-async function selectVideos(user, duration, focus, goal) {
+async function selectVideos(userFitnessLevel, duration, focus, goal) {
   const transitionVideos = ['0134', '0135', '0136', '0137', '0138', '0139'];
   const warmUpParts = ['WU1', 'WU2'];
   const endParts = ['AB1', 'AB2'];
@@ -309,7 +309,7 @@ async function selectVideos(user, duration, focus, goal) {
     'Mehrmals pro Woche': 4,
     'Täglich': 5,
   };
-  const userFitnessLevel = fitnessLevelMap[user.fitnessLevel];
+  const fitnessLevel = fitnessLevelMap[userFitnessLevel];
   const allFitnessLevels = Object.values(fitnessLevelMap);
   const videoCriteria = {
     WU1: [],
@@ -353,7 +353,7 @@ async function selectVideos(user, duration, focus, goal) {
 
   // Select one video from each warm-up category
   for (const part of warmUpParts) {
-    const video = selectVideoByCategory(part, [userFitnessLevel], focus, goal);
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
@@ -365,7 +365,7 @@ async function selectVideos(user, duration, focus, goal) {
 
   // Calculate the duration for AB1 and AB2
   const endPartDurations = endParts.reduce((sum, part) => {
-    const video = selectVideoByCategory(part, [userFitnessLevel], focus, goal);
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
     return sum + (video ? video.duration : 0);
   }, 0);
 
@@ -376,14 +376,14 @@ async function selectVideos(user, duration, focus, goal) {
     const remainingDuration = duration - totalDuration - endPartDurations;
     if (remainingDuration <= 0) break;
 
-    const video = selectVideoByCategory('MAIN', [userFitnessLevel], focus, goal);
+    const video = selectVideoByCategory('MAIN', [fitnessLevel], focus, goal);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
       mainVideoCount++;
       console.log(`Selected Main video: ${video.id}`);
     } else {
-      const transitionVideo = selectVideoByCategory('TRANSITION', [userFitnessLevel], focus, goal);
+      const transitionVideo = selectVideoByCategory('TRANSITION', [fitnessLevel], focus, goal);
       if (transitionVideo) {
         selectedVideos.push(transitionVideo);
         totalDuration += transitionVideo.duration;
@@ -407,7 +407,7 @@ async function selectVideos(user, duration, focus, goal) {
 
   // Select one video from each end category
   for (const part of endParts) {
-    const video = selectVideoByCategory(part, [userFitnessLevel], focus, goal);
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
@@ -421,16 +421,13 @@ async function selectVideos(user, duration, focus, goal) {
   return { selectedVideos, totalDuration };
 }
 
-
 app.post('/concatenate', authenticateToken, async (req, res) => {
   try {
-	console.log(req.body);
-	console.log('#######################################');
-    const { duration, focus = 'Allgemein', goal = 'Allgemein' } = req.body;
-    const user = await User.findOne({ username: req.user.username });
-    if (!user) return res.status(404).send('User not found');
+    console.log(req.body);
+    console.log('#######################################');
+    const { duration, focus = 'Allgemein', goal = 'Allgemein', userFitnessLevel } = req.body;
 
-    const { selectedVideos, totalDuration } = await selectVideos(user, duration, focus, goal);
+    const { selectedVideos, totalDuration } = await selectVideos(userFitnessLevel, duration, focus, goal);
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
 

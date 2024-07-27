@@ -64,7 +64,12 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       _isLoading = true;
     });
 
-    await combineVideos(widget.focus, widget.goal, duration: widget.duration);
+    await combineVideos(
+      widget.focus,
+      widget.goal,
+      duration: widget.duration,
+      userFitnessLevel: widget.profilProvider.fitnessLevel ?? 'Nicht so oft',
+    );
 
     await Future.delayed(Duration(seconds: 2));
 
@@ -200,6 +205,7 @@ Future<void> combineVideos(
   String focus,
   String goal, {
   int duration = 600,
+  required String userFitnessLevel,
 }) async {
   final String baseUrl = 'http://135.125.218.147:3000/concatenate';
 
@@ -213,6 +219,7 @@ Future<void> combineVideos(
         "Content-Type": "application/json",
       },
       body: json.encode({
+        "userFittnesLevel": userFitnessLevel,
         "duration": duration,
         "focus": focus,
         "goal": goal,
