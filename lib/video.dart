@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:backquest/stats.dart';
 import 'package:chewie/chewie.dart';
@@ -26,7 +25,8 @@ class VideoCombinerScreen extends StatefulWidget {
   final String goal;
   final int duration;
 
-  VideoCombinerScreen({
+  const VideoCombinerScreen({
+    super.key,
     required this.levelNotifier,
     required this.profilProvider,
     required this.levelId,
@@ -66,9 +66,9 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 
     await combineVideos(widget.focus, widget.goal, duration: widget.duration);
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
-    final String outputVideoUrl = 'http://135.125.218.147:3000/video';
+    const String outputVideoUrl = 'http://135.125.218.147:3000/video';
 
     _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
     await _videoPlayerController!.initialize();
@@ -100,7 +100,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       final duration = _chewieController!.videoPlayerController.value.duration;
       final halfwayDuration = duration * 0.1;
 
-      watchedDuration += Duration(milliseconds: 500);
+      watchedDuration += const Duration(milliseconds: 500);
 
       print("#################################");
       print(watchedDuration);
@@ -125,7 +125,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: Colors.white,
           ),
@@ -159,7 +159,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       ),
       body: Center(
         child: _isLoading
-            ? Center(
+            ? const Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -184,7 +184,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
                     controller: _chewieController!,
                   )
                 : Container(
-                    child: Text('Waiting for video...'),
+                    child: const Text('Waiting for video...'),
                   ),
       ),
     );
@@ -201,7 +201,7 @@ Future<void> combineVideos(
   String goal, {
   int duration = 600,
 }) async {
-  final String baseUrl = 'http://135.125.218.147:3000/concatenate';
+  const String baseUrl = 'http://135.125.218.147:3000/concatenate';
 
   final String encodedFocus = Uri.encodeComponent(focus);
   final String encodedGoal = Uri.encodeComponent(goal);

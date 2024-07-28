@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -139,7 +139,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => LevelNotifier()),
         ChangeNotifierProvider(create: (context) => ProfilProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -148,6 +148,8 @@ GlobalKey<DownloadScreenState> downloadScreenKey =
     GlobalKey<DownloadScreenState>();
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -208,7 +210,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   TextTheme buildTextTheme(BuildContext context) {
-    var baseTextStyle = TextStyle(
+    var baseTextStyle = const TextStyle(
       fontFamily: 'Roboto',
       color: Colors.white,
       letterSpacing: 0.4,
@@ -315,7 +317,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       title: 'Backquest',
       theme: ThemeData(
         primaryColor: Colors.green,
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.green),
           ),
@@ -326,10 +328,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         fontFamily: 'Roboto',
         textTheme: buildTextTheme(context),
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('de'), // German
+      ],
       home: Stack(
         children: [
           if (_isLoading) // Show CircularProgressIndicator while loading
-            Center(
+            const Center(
               child: CircularProgressIndicator(),
             )
           else
@@ -348,7 +359,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               left: 16,
               right: 16,
               child: GreenContainer(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: !_isConnected
                     ? NoConnectionWidget(onDismiss: () {
                         setState(() {
@@ -374,7 +385,7 @@ class MainScaffold extends StatefulWidget {
   final bool Function() isLoggedIn;
   final bool authenticated;
 
-  MainScaffold({
+  const MainScaffold({
     Key? key,
     required this.setAuthenticated,
     required this.setQuestionnairDone,
@@ -388,7 +399,7 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold>
     with SingleTickerProviderStateMixin {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   int _currentIndex = 0;
   bool _isModalVisible = false;
   String modalDescription = "Declaring Description";
@@ -451,7 +462,7 @@ class _MainScaffoldState extends State<MainScaffold>
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Dialog(
-            backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+            backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -462,24 +473,24 @@ class _MainScaffoldState extends State<MainScaffold>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Image.asset(
                     "assets/logo2.png",
                     width: 40,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if (!isSmallScreen)
-                    Center(
+                    const Center(
                       child: Text(
                         "Willst du unseren service länger nutzen? Wir versprechen dir das wir backquest immer weiter entwickeln",
                       ),
                     ),
-                  SizedBox(height: 18),
-                  Center(
+                  const SizedBox(height: 18),
+                  const Center(
                     child: Text(
                         "Wähle eine Zahlungsmethode für unbegrenzeten Zugang zu unserer App"),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -502,7 +513,7 @@ class _MainScaffoldState extends State<MainScaffold>
                                 color: selectedSubscription == 'Jährlich'
                                     ? const Color(0xFF48a160)
                                     : Colors.transparent,
-                                offset: Offset(0, 5),
+                                offset: const Offset(0, 5),
                                 blurRadius: 0,
                                 spreadRadius: 0,
                               ),
@@ -514,7 +525,7 @@ class _MainScaffoldState extends State<MainScaffold>
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       InkWell(
                         onTap: () {
                           setState(() {
@@ -534,7 +545,7 @@ class _MainScaffoldState extends State<MainScaffold>
                                 color: selectedSubscription == 'Monatlich'
                                     ? const Color(0xFF48a160)
                                     : Colors.transparent,
-                                offset: Offset(0, 5),
+                                offset: const Offset(0, 5),
                                 blurRadius: 0,
                                 spreadRadius: 0,
                               ),
@@ -548,19 +559,20 @@ class _MainScaffoldState extends State<MainScaffold>
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   PressableButton(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
                     onPressed: () {
                       Navigator.of(context).pop(selectedSubscription);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => PaymentSettingPage(
-                                subscriptionType: selectedSubscription!),
+                                subscriptionType: selectedSubscription),
                           ));
                     },
-                    child: Text('Jetzt kaufen'),
+                    child: const Text('Jetzt kaufen'),
                   ),
                 ],
               ),
@@ -608,7 +620,7 @@ class _MainScaffoldState extends State<MainScaffold>
               },
               children: [
                 Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -620,7 +632,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     ),
                     child: LevelSelectionScreen(toggleModal: _toggleModal)),
                 Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -636,7 +648,7 @@ class _MainScaffoldState extends State<MainScaffold>
                       isLoggedIn: widget.isLoggedIn,
                     )),
                 Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -656,21 +668,21 @@ class _MainScaffoldState extends State<MainScaffold>
             ),
           ),
           AnimatedPositioned(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             bottom: _isModalVisible ? 0 : -450,
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
                 color: Color.fromRGBO(0, 59, 46, 0.9),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
               ),
-              child: Container(
+              child: SizedBox(
                 height: modalHeight,
                 width: double.maxFinite,
                 child: GestureDetector(
@@ -707,7 +719,7 @@ class _MainScaffoldState extends State<MainScaffold>
       navHeight = 90;
     }
 
-    return Container(
+    return SizedBox(
       height: navHeight,
       child: Column(
         children: [
@@ -717,8 +729,8 @@ class _MainScaffoldState extends State<MainScaffold>
           ),
           Expanded(
             child: SalomonBottomBar(
-              margin: EdgeInsets.symmetric(horizontal: 50),
-              backgroundColor: Color.fromRGBO(0, 59, 46, 0.9),
+              margin: const EdgeInsets.symmetric(horizontal: 50),
+              backgroundColor: const Color.fromRGBO(0, 59, 46, 0.9),
               currentIndex: _currentIndex,
               onTap: (i) {
                 _pageController.jumpToPage(i);
@@ -730,7 +742,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     size: MediaQuery.of(context).size.width * 0.09,
                     color: Colors.white,
                   ),
-                  title: Text("Main"),
+                  title: const Text("Main"),
                   selectedColor: Colors.white,
                 ),
                 SalomonBottomBarItem(
@@ -739,7 +751,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     size: MediaQuery.of(context).size.width * 0.09,
                     color: Colors.white,
                   ),
-                  title: Text("Stats"),
+                  title: const Text("Stats"),
                   selectedColor: Colors.white,
                 ),
                 SalomonBottomBarItem(
@@ -748,7 +760,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     size: MediaQuery.of(context).size.width * 0.09,
                     color: Colors.white,
                   ),
-                  title: Text("Download"),
+                  title: const Text("Download"),
                   selectedColor: Colors.white,
                 ),
               ],
@@ -770,7 +782,7 @@ class _MainScaffoldState extends State<MainScaffold>
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             child: Icon(Icons.arrow_upward, color: Colors.white, size: 24),
           ), */
-              Text(""),
+              const Text(""),
         ),
       );
     }
@@ -783,7 +795,7 @@ class CustomBottomModal extends StatefulWidget {
 
   final bool isVideoPlayer;
 
-  CustomBottomModal(
+  const CustomBottomModal(
       {Key? key,
       required this.description,
       required this.levelId,
@@ -851,7 +863,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               style: Theme.of(context).textTheme.displayLarge,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -907,7 +919,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               ],
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           PressableButton(
             onPressed: widget.isVideoPlayer
                 ? () {
@@ -949,17 +961,17 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           shape: RoundedRectangleBorder(
             borderRadius:
                 BorderRadius.circular(10.0), // Rounded corners for the dialog
           ),
-          title: Text(
+          title: const Text(
             "Wählen Sie die Dauer",
             style:
                 TextStyle(color: Colors.white), // Title text with white color
           ),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
               shrinkWrap: true,
@@ -970,7 +982,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   selectedColor: Colors.green,
                   title: Text(
                     "$minute Minuten",
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white), // List item text with white color
                   ),
                   onTap: () => Navigator.of(context).pop(minute * 60),
@@ -980,7 +992,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(
+              child: const Text(
                 "Abbrechen",
                 style: TextStyle(
                     color: Colors.white), // Button text with white color
@@ -1005,10 +1017,10 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           title: Text(
             title,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -1018,7 +1030,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         activeColor: Colors.white,
                         title: Text(
                           option,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         value: option,
                         groupValue: selectedFocus,
@@ -1048,10 +1060,10 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromRGBO(97, 184, 115, 1),
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           title: Text(
             title,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           content: SingleChildScrollView(
             child: Column(
@@ -1061,7 +1073,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         activeColor: Colors.white,
                         title: Text(
                           option,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         value: option,
                         groupValue: selectedGoal,
@@ -1088,10 +1100,12 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
 
 class CompletedLevelsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
+  const CompletedLevelsAppBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(color: Colors.grey, width: 2.0),
         ),
@@ -1108,12 +1122,14 @@ class CompletedLevelsAppBar extends StatelessWidget
                 return Row(
                   children: [
                     Image.asset('assets/crownIcon.png', height: 24),
-                    SizedBox(width: 8),
-                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 8),
+                    Text("$completedLevels",
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(width: 20),
                     Image.asset('assets/fireIcon.png', height: 24),
-                    SizedBox(width: 8),
-                    Text("$completedLevels", style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: 8),
+                    Text("$completedLevels",
+                        style: const TextStyle(fontSize: 20)),
                   ],
                 );
               },
@@ -1128,7 +1144,7 @@ class CompletedLevelsAppBar extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 1.0);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0);
 }
 
 class Level {
@@ -1149,7 +1165,7 @@ class Level {
 class LevelSelectionScreen extends StatefulWidget {
   final Function(String, int, bool) toggleModal;
 
-  LevelSelectionScreen({required this.toggleModal});
+  const LevelSelectionScreen({super.key, required this.toggleModal});
 
   @override
   _LevelSelectionScreenState createState() => _LevelSelectionScreenState();
@@ -1236,7 +1252,8 @@ class LevelCircle extends StatelessWidget {
   final bool isDone;
   final bool isNext;
 
-  LevelCircle({
+  const LevelCircle({
+    super.key,
     required this.level,
     required this.onTap,
     this.isTreasureLevel = false,
@@ -1292,7 +1309,7 @@ class LevelCircle extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-                margin: EdgeInsets.symmetric(vertical: 5),
+                margin: const EdgeInsets.symmetric(vertical: 5),
                 width: buttonDimension,
                 height: buttonDimension,
                 decoration: BoxDecoration(
@@ -1315,7 +1332,7 @@ class LevelCircle extends StatelessWidget {
                             strokeColor: Colors.black,
                             strokeWidth: 2,
                           )
-                        : SizedBox
+                        : const SizedBox
                             .shrink(), // Empty widget if the conditions aren't met
                   ),
                 )),
@@ -1323,7 +1340,8 @@ class LevelCircle extends StatelessWidget {
               Positioned(
                 top: startAbsoluteTopValue,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(12),
@@ -1332,7 +1350,7 @@ class LevelCircle extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 1,
                         blurRadius: 3,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),

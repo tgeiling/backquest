@@ -21,16 +21,16 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
-          title: Text("Einstellungen", style: TextStyle(color: Colors.white)),
+          title: const Text("Einstellungen", style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
         body: Stack(children: <Widget>[
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/settingsbg.PNG'),
                 fit: BoxFit.cover,
@@ -41,14 +41,14 @@ class SettingsPage extends StatelessWidget {
             children: ListTile.divideTiles(
               context: context,
               tiles: [
-                SettingsTile(title: 'Ziele anpassen', icon: Icons.bar_chart),
-                SettingsTile(
+                const SettingsTile(title: 'Ziele anpassen', icon: Icons.bar_chart),
+                const SettingsTile(
                     title: 'Schmerzen anpassen', icon: Icons.sports_tennis),
-                SettingsTile(title: 'Fitnesslevel anpassen', icon: Icons.bolt),
-                SettingsTile(title: 'AGB', icon: Icons.article),
-                SettingsTile(
+                const SettingsTile(title: 'Fitnesslevel anpassen', icon: Icons.bolt),
+                const SettingsTile(title: 'AGB', icon: Icons.article),
+                const SettingsTile(
                     title: 'Datenschutzerklärung', icon: Icons.privacy_tip),
-                SettingsTile(title: 'Impressum', icon: Icons.info_outline),
+                const SettingsTile(title: 'Impressum', icon: Icons.info_outline),
                 LoginTile(
                   title: 'Login',
                   icon: Icons.login,
@@ -60,7 +60,7 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.logout,
                   onTileTap: setAuthenticated,
                 ),
-                SettingsTile(
+                const SettingsTile(
                     title: 'Backquest abonnieren', icon: Icons.payments_sharp),
               ],
             ).toList(),
@@ -85,13 +85,13 @@ class SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
 
-    final AuthService _authService = AuthService();
+    final AuthService authService = AuthService();
     return ListTile(
       leading: Icon(
         icon,
         color: Colors.white,
       ),
-      title: Text(title, style: TextStyle(color: Colors.white)),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: () {
         if (title == 'Ziele anpassen') {
           Navigator.push(
@@ -118,13 +118,13 @@ class SettingsTile extends StatelessWidget {
                     )),
           );
         } else if (title == 'Logout') {
-          _authService.logout();
+          authService.logout();
           onTileTap?.call(false);
           Navigator.pop(context);
         } else if (title == 'Backquest abonnieren') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SubscriptionSettingPage()),
+            MaterialPageRoute(builder: (context) => const SubscriptionSettingPage()),
           );
         } else {
           Navigator.push(
@@ -158,7 +158,7 @@ class LoginTile extends StatelessWidget {
         icon,
         color: Colors.white,
       ),
-      title: Text(title, style: TextStyle(color: Colors.white)),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: () {
         Navigator.push(
             context,
@@ -218,7 +218,7 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
 
   Widget goalTile(int goal) {
     return Container(
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: isGoalSelected(goal)
             ? const Color(0xFF59c977)
@@ -230,7 +230,7 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
             color: isGoalSelected(goal)
                 ? const Color(0xFF48a160)
                 : Colors.transparent,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
             blurRadius: 0,
             spreadRadius: 0,
           ),
@@ -269,26 +269,26 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
           title:
-              Text('Setze deine Ziele', style: TextStyle(color: Colors.white)),
+              const Text('Setze deine Ziele', style: TextStyle(color: Colors.white)),
         ),
         body: ListView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text('Wöchentliche Übungen Ziele:',
-                  style: Theme.of(context).textTheme.headline6),
+                  style: Theme.of(context).textTheme.titleLarge),
             ),
             for (int i = 1; i <= 12; i++) goalTile(i),
           ],
         ),
         floatingActionButton: PressableButton(
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          child: Icon(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          child: const Icon(
             Icons.check,
             color: Colors.white,
             size: 24,
@@ -347,7 +347,7 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
 
   Widget goalTile(String goal) {
     return Container(
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: isGoalSelected(goal)
             ? const Color(0xFF59c977)
@@ -359,7 +359,7 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
             color: isGoalSelected(goal)
                 ? const Color(0xFF48a160)
                 : Colors.transparent,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
             blurRadius: 0,
             spreadRadius: 0,
           ),
@@ -393,26 +393,26 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
-          title: Text('Setze deine Fitnesslevel',
+          title: const Text('Setze deine Fitnesslevel',
               style: TextStyle(color: Colors.white)),
         ),
         body: ListView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text('Welches Fitnesslevel hast du jetzt ?',
-                  style: Theme.of(context).textTheme.headline6),
+                  style: Theme.of(context).textTheme.titleLarge),
             ),
             ...options2.map((option) => goalTile(option)).toList(),
           ],
         ),
         floatingActionButton: PressableButton(
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          child: Icon(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          child: const Icon(
             Icons.check,
             color: Colors.white,
             size: 24,
@@ -483,21 +483,21 @@ class _PainSettingPageState extends State<PainSettingPage> {
     super.initState();
     painAreas = Map<String, bool>.from(allPainAreas);
     // Set the initial state for the pain areas that are selected
-    widget.initialSelectedPainAreas.forEach((area) {
+    for (var area in widget.initialSelectedPainAreas) {
       if (painAreas.containsKey(area)) {
         painAreas[area] = true;
       }
-    });
+    }
   }
 
   Widget painAreaTile(String area) {
     return CheckboxListTile(
       title: Text(
         area,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
-      side: MaterialStateBorderSide.resolveWith(
-        (states) => BorderSide(width: 1.0, color: Colors.white),
+      side: WidgetStateBorderSide.resolveWith(
+        (states) => const BorderSide(width: 1.0, color: Colors.white),
       ),
       value: painAreas[area],
       onChanged: (bool? value) {
@@ -526,25 +526,25 @@ class _PainSettingPageState extends State<PainSettingPage> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
           title:
-              Text('Setze deine Ziele', style: TextStyle(color: Colors.white)),
+              const Text('Setze deine Ziele', style: TextStyle(color: Colors.white)),
         ),
         body: ListView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           children: [
             Container(
               child: Text('Wähle die Bereiche, in denen du Schmerzen hast.',
-                  style: Theme.of(context).textTheme.headline6),
+                  style: Theme.of(context).textTheme.titleLarge),
             ),
             ...allPainAreas.keys.map((key) => painAreaTile(key)).toList(),
           ],
         ),
         floatingActionButton: PressableButton(
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          child: Icon(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          child: const Icon(
             Icons.check,
             color: Colors.white,
             size: 24,
@@ -564,16 +564,16 @@ class _PainSettingPageState extends State<PainSettingPage> {
                       .toList(),
                 ).then((success) {
                   if (success) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("Profil erfolgreich aktualisiert.")));
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content:
                             Text("Fehler beim Aktualisieren des Profils.")));
                   }
                 });
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("Kein Authentifizierungstoken verfügbar.")));
               }
             });
@@ -608,7 +608,7 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
         });
       },
       child: Container(
-        margin: EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: isSubscriptionSelected(type)
               ? const Color(0xFF59c977)
@@ -619,7 +619,7 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
               color: isSubscriptionSelected(type)
                   ? const Color(0xFF48a160)
                   : Colors.transparent,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
               blurRadius: 0,
               spreadRadius: 0,
             ),
@@ -652,12 +652,12 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: Text('Choose Your Subscription',
+            title: const Text('Choose Your Subscription',
                 style: TextStyle(color: Colors.white)),
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: ListView(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             children: [
               subscriptionOption('Jährlich', '€100/year'),
               subscriptionOption('Monatlich', '€10/month'),
@@ -672,8 +672,8 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
                         subscriptionType: selectedSubscription!),
                   ));
             },
-            child: Icon(Icons.check, color: Colors.white),
             backgroundColor: Colors.green,
+            child: const Icon(Icons.check, color: Colors.white),
           ),
         )
       ],
@@ -700,7 +700,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
 
   Widget methodTile(String method) {
     return Container(
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: isMethodSelected(method)
             ? const Color(0xFF59c977)
@@ -711,7 +711,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
             color: isMethodSelected(method)
                 ? const Color(0xFF48a160)
                 : Colors.transparent,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
             blurRadius: 0,
             spreadRadius: 0,
           ),
@@ -735,13 +735,13 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   Widget typeTile(String subType) {
     return Container(
       width: 130,
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF59c977),
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: const Color(0xFF48a160),
+            color: Color(0xFF48a160),
             offset: Offset(0, 5),
             blurRadius: 0,
             spreadRadius: 0,
@@ -752,7 +752,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         subType == 'Jährlich'
             ? "Jährlich: \n 65,99 € \n Jahr"
             : "Monatlich: \n 10,99 € \n Monat",
-        style: TextStyle(color: Colors.white, fontSize: 18),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
     );
   }
@@ -772,18 +772,18 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             title: Text('Payment Method for ${widget.subscriptionType}',
-                style: TextStyle(color: Colors.white)),
-            iconTheme: IconThemeData(color: Colors.white),
+                style: const TextStyle(color: Colors.white)),
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               typeTile(widget.subscriptionType),
               Expanded(
                 child: ListView(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   children: [
                     methodTile('Credit Card'),
                     methodTile('PayPal'),
@@ -798,22 +798,22 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text("Confirmation"),
+                  title: const Text("Confirmation"),
                   content: Text(
                       "You have selected the $selectedPaymentMethod method."),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text("OK")),
+                        child: const Text("OK")),
                   ],
                 ),
               );
             },
-            child: Icon(
+            backgroundColor: Colors.green,
+            child: const Icon(
               Icons.check,
               color: Colors.white,
             ),
-            backgroundColor: Colors.green,
           ),
         )
       ],

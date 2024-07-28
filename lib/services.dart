@@ -68,8 +68,9 @@ Future<bool> updateProfile({
   if (lastUpdateString != null) body['lastUpdateString'] = lastUpdateString;
   if (completedLevels != null) body['completedLevels'] = completedLevels;
   if (painAreas != null) body['painAreas'] = painAreas;
-  if (workplaceEnvironment != null)
+  if (workplaceEnvironment != null) {
     body['workplaceEnvironment'] = workplaceEnvironment;
+  }
   if (fitnessLevel != null) body['fitnessLevel'] = fitnessLevel;
   if (expectation != null) body['expectation'] = expectation;
   if (personalGoal != null) body['personalGoal'] = personalGoal;
