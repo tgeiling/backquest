@@ -64,12 +64,13 @@ class DownloadScreenState extends State<DownloadScreen> {
   }
 
   Future<void> combineAndDownloadVideo(
-      String focus, String goal, int duration) async {
+      String focus, String goal, int duration, String userFitnessLevel) async {
     setState(() {
       _isLoading = true;
     });
 
-    await combineVideos(focus, goal, duration: duration);
+    await combineVideos(focus, goal,
+        duration: duration, userFitnessLevel: userFitnessLevel);
 
     await Future.delayed(const Duration(seconds: 2));
 

@@ -941,7 +941,10 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   }
                 : () {
                     downloadScreenKey.currentState!.combineAndDownloadVideo(
-                        selectedFocus, selectedGoal, selectedDuration);
+                        selectedFocus,
+                        selectedGoal,
+                        selectedDuration,
+                        ProfilProvider().fitnessLevel);
                   },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
