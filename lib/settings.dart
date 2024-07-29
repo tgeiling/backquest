@@ -24,7 +24,8 @@ class SettingsPage extends StatelessWidget {
           iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
-          title: const Text("Einstellungen", style: TextStyle(color: Colors.white)),
+          title: const Text("Einstellungen",
+              style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -41,14 +42,17 @@ class SettingsPage extends StatelessWidget {
             children: ListTile.divideTiles(
               context: context,
               tiles: [
-                const SettingsTile(title: 'Ziele anpassen', icon: Icons.bar_chart),
+                const SettingsTile(
+                    title: 'Ziele anpassen', icon: Icons.bar_chart),
                 const SettingsTile(
                     title: 'Schmerzen anpassen', icon: Icons.sports_tennis),
-                const SettingsTile(title: 'Fitnesslevel anpassen', icon: Icons.bolt),
+                const SettingsTile(
+                    title: 'Fitnesslevel anpassen', icon: Icons.bolt),
                 const SettingsTile(title: 'AGB', icon: Icons.article),
                 const SettingsTile(
                     title: 'Datenschutzerklärung', icon: Icons.privacy_tip),
-                const SettingsTile(title: 'Impressum', icon: Icons.info_outline),
+                const SettingsTile(
+                    title: 'Impressum', icon: Icons.info_outline),
                 LoginTile(
                   title: 'Login',
                   icon: Icons.login,
@@ -124,7 +128,8 @@ class SettingsTile extends StatelessWidget {
         } else if (title == 'Backquest abonnieren') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SubscriptionSettingPage()),
+            MaterialPageRoute(
+                builder: (context) => const SubscriptionSettingPage()),
           );
         } else {
           Navigator.push(
@@ -272,8 +277,8 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
           iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
-          title:
-              const Text('Setze deine Ziele', style: TextStyle(color: Colors.white)),
+          title: const Text('Setze deine Ziele',
+              style: TextStyle(color: Colors.white)),
         ),
         body: ListView(
           padding: const EdgeInsets.all(16.0),
@@ -496,8 +501,9 @@ class _PainSettingPageState extends State<PainSettingPage> {
         area,
         style: const TextStyle(color: Colors.white),
       ),
-      side: WidgetStateBorderSide.resolveWith(
-        (states) => const BorderSide(width: 1.0, color: Colors.white),
+      side: BorderSide(
+        width: 1.0,
+        color: Colors.white,
       ),
       value: painAreas[area],
       onChanged: (bool? value) {
@@ -529,8 +535,8 @@ class _PainSettingPageState extends State<PainSettingPage> {
           iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
-          title:
-              const Text('Setze deine Ziele', style: TextStyle(color: Colors.white)),
+          title: const Text('Setze deine Ziele',
+              style: TextStyle(color: Colors.white)),
         ),
         body: ListView(
           padding: const EdgeInsets.all(16.0),

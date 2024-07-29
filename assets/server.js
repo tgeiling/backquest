@@ -336,11 +336,12 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
     }
   }
 
-  const selectVideoByCategory = (category, fitnessLevels, focus, goal) => {
+  const selectVideoByCategory = (category, fitnessLevels, focus, goal, startPose = null) => {
     let candidates = videoCriteria[category].filter(video =>
       (video.difficulty === 0 || fitnessLevels.includes(video.difficulty)) &&
       (focus === 'Allgemein' || video.focus.includes(focus)) &&
-      (goal === 'Allgemein' || video.goal.includes(goal))
+      (goal === 'Allgemein' || video.goal.includes(goal)) &&
+      (!startPose || video.startPose === startPose)
     );
     if (candidates.length > 0) {
       return candidates[Math.floor(Math.random() * candidates.length)];
@@ -350,13 +351,15 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
 
   let selectedVideos = [];
   let totalDuration = 0;
+  let lastEndPose = null;
 
   // Select one video from each warm-up category
   for (const part of warmUpParts) {
-    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal, lastEndPose);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
+      lastEndPose = video.endPose;
       console.log(`Selected ${part} video: ${video.id}`);
     } else {
       console.warn(`No ${part} video found`);
@@ -376,26 +379,29 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
     const remainingDuration = duration - totalDuration - endPartDurations;
     if (remainingDuration <= 0) break;
 
-    const video = selectVideoByCategory('MAIN', [fitnessLevel], focus, goal);
+    const video = selectVideoByCategory('MAIN', [fitnessLevel], focus, goal, lastEndPose);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
+      lastEndPose = video.endPose;
       mainVideoCount++;
       console.log(`Selected Main video: ${video.id}`);
     } else {
-      const transitionVideo = selectVideoByCategory('TRANSITION', [fitnessLevel], focus, goal);
+      const transitionVideo = selectVideoByCategory('TRANSITION', [fitnessLevel], focus, goal, lastEndPose);
       if (transitionVideo) {
         selectedVideos.push(transitionVideo);
         totalDuration += transitionVideo.duration;
+        lastEndPose = transitionVideo.endPose;
         console.log(`Selected additional video: ${transitionVideo.id}`);
       } else {
         // If no videos found for the specific fitness level, focus, and goal, try with all fitness levels, focus, and goal
         console.log('No videos found for specific criteria, trying with all fitness levels, focus, and goal.');
-        const videoWithAllLevels = selectVideoByCategory('MAIN', allFitnessLevels, 'Allgemein', 'Allgemein') || 
-                                   selectVideoByCategory('TRANSITION', allFitnessLevels, 'Allgemein', 'Allgemein');
+        const videoWithAllLevels = selectVideoByCategory('MAIN', allFitnessLevels, 'Allgemein', 'Allgemein', lastEndPose) || 
+                                   selectVideoByCategory('TRANSITION', allFitnessLevels, 'Allgemein', 'Allgemein', lastEndPose);
         if (videoWithAllLevels) {
           selectedVideos.push(videoWithAllLevels);
           totalDuration += videoWithAllLevels.duration;
+          lastEndPose = videoWithAllLevels.endPose;
           console.log(`Selected additional video with all criteria: ${videoWithAllLevels.id}`);
         } else {
           console.warn('No MAIN or TRANSITION video found to fill remaining duration');
@@ -407,10 +413,11 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
 
   // Select one video from each end category
   for (const part of endParts) {
-    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal, lastEndPose);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
+      lastEndPose = video.endPose;
       console.log(`Selected ${part} video: ${video.id}`);
     } else {
       console.warn(`No ${part} video found`);
@@ -420,6 +427,7 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
   console.log(`Selected ${mainVideoCount} MAIN videos`);
   return { selectedVideos, totalDuration };
 }
+
 
 app.post('/concatenate', authenticateToken, async (req, res) => {
   try {
