@@ -14,20 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(helmet());
 
-// Path to the CA bundle you found
-const caPath = '/etc/ssl/certs/ca-certificates.crt';
-
-// MongoDB connection
-const options = {
-  serverSelectionTimeoutMS: 45000,
-  connectTimeoutMS: 45000,
-  tls: true,
-  tlsCAFile: caPath,
-};
-
-console.log('Mongoose connection options:', options);
-
-mongoose.connect(process.env.MONGO_URI, options)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
@@ -311,7 +298,10 @@ app.post('/feedback', authenticateToken, async (req, res) => {
 });
 
 
-async function selectVideos(user, duration, focus, goal) {
+async function selectVideos(userFitnessLevel, duration, focus, goal) {
+  const transitionVideos = ['0134', '0135', '0136', '0137', '0138', '0139'];
+  const warmUpParts = ['WU1', 'WU2'];
+  const endParts = ['AB1', 'AB2'];
   const fitnessLevelMap = {
     'Nicht so oft': 1,
     'Mehrmals im Monat': 2,
@@ -319,38 +309,21 @@ async function selectVideos(user, duration, focus, goal) {
     'Mehrmals pro Woche': 4,
     'Täglich': 5,
   };
-
-  let fitnessLevels = [
-    fitnessLevelMap[user.fitnessLevel]
-  ];
-  
-  // Adjust fitness levels priority based on user's current fitness level
-  const fitnessLevel = fitnessLevelMap[user.fitnessLevel];
-  if (fitnessLevel === 1) {
-    fitnessLevels.push(2, 3, 4, 5);
-  } else if (fitnessLevel === 2) {
-    fitnessLevels.push(1, 3, 4, 5);
-  } else if (fitnessLevel === 3) {
-    fitnessLevels.push(4, 5, 1, 2);
-  } else if (fitnessLevel === 4) {
-    fitnessLevels.push(5, 1, 2, 3);
-  } else if (fitnessLevel === 5) {
-    fitnessLevels.push(1, 2, 3, 4);
-  }
-
-  const transitionVideos = ['0134', '0135', '0136', '0137', '0138', '0139'];
-  const mandatoryParts = ['WU1', 'WU2', 'AB1', 'AB2'];
+  const fitnessLevel = fitnessLevelMap[userFitnessLevel];
+  const allFitnessLevels = Object.values(fitnessLevelMap);
   const videoCriteria = {
     WU1: [],
     WU2: [],
     MAIN: [],
     AB1: [],
     AB2: [],
-    TRANSITION: []
+    TRANSITION: [],
   };
 
   const videos = await Video.find({});
+  console.log(`Found ${videos.length} videos in database`);
 
+  // Categorize the videos
   for (const video of videos) {
     if (transitionVideos.includes(video.id)) {
       videoCriteria.TRANSITION.push(video);
@@ -363,19 +336,14 @@ async function selectVideos(user, duration, focus, goal) {
     }
   }
 
-  const selectVideoByCriteria = (logic, remainingDuration) => {
-    for (const level of fitnessLevels) {
-      const filteredVideos = videoCriteria[logic].filter(video => 
-        video.difficulty === 0 || video.difficulty === level &&
-        (focus === 'Allgemein' || video.focus.includes(focus)) &&
-        (goal === 'Allgemein' || video.goal.includes(goal)) &&
-        (!user.painAreas.length || user.painAreas.some(painArea => video.focus.includes(painArea))) &&
-        video.duration <= remainingDuration
-      );
-      
-      if (filteredVideos.length > 0) {
-        return filteredVideos[Math.floor(Math.random() * filteredVideos.length)];
-      }
+  const selectVideoByCategory = (category, fitnessLevels, focus, goal) => {
+    let candidates = videoCriteria[category].filter(video =>
+      (video.difficulty === 0 || fitnessLevels.includes(video.difficulty)) &&
+      (focus === 'Allgemein' || video.focus.includes(focus)) &&
+      (goal === 'Allgemein' || video.goal.includes(goal))
+    );
+    if (candidates.length > 0) {
+      return candidates[Math.floor(Math.random() * candidates.length)];
     }
     return null;
   };
@@ -383,36 +351,83 @@ async function selectVideos(user, duration, focus, goal) {
   let selectedVideos = [];
   let totalDuration = 0;
 
-  for (const part of mandatoryParts) {
-    const video = selectVideoByCriteria(part, duration - totalDuration);
+  // Select one video from each warm-up category
+  for (const part of warmUpParts) {
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
-    }
-  }
-
-  while (totalDuration < duration) {
-    const video = selectVideoByCriteria('MAIN', duration - totalDuration) ||
-                  selectVideoByCriteria('TRANSITION', duration - totalDuration);
-
-    if (video) {
-      selectedVideos.push(video);
-      totalDuration += video.duration;
+      console.log(`Selected ${part} video: ${video.id}`);
     } else {
-      break;
+      console.warn(`No ${part} video found`);
     }
   }
 
+  // Calculate the duration for AB1 and AB2
+  const endPartDurations = endParts.reduce((sum, part) => {
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
+    return sum + (video ? video.duration : 0);
+  }, 0);
+
+  // Select MAIN and TRANSITION videos to fill the middle part
+  let mainVideoCount = 0;
+
+  while (totalDuration < duration - endPartDurations) {
+    const remainingDuration = duration - totalDuration - endPartDurations;
+    if (remainingDuration <= 0) break;
+
+    const video = selectVideoByCategory('MAIN', [fitnessLevel], focus, goal);
+    if (video) {
+      selectedVideos.push(video);
+      totalDuration += video.duration;
+      mainVideoCount++;
+      console.log(`Selected Main video: ${video.id}`);
+    } else {
+      const transitionVideo = selectVideoByCategory('TRANSITION', [fitnessLevel], focus, goal);
+      if (transitionVideo) {
+        selectedVideos.push(transitionVideo);
+        totalDuration += transitionVideo.duration;
+        console.log(`Selected additional video: ${transitionVideo.id}`);
+      } else {
+        // If no videos found for the specific fitness level, focus, and goal, try with all fitness levels, focus, and goal
+        console.log('No videos found for specific criteria, trying with all fitness levels, focus, and goal.');
+        const videoWithAllLevels = selectVideoByCategory('MAIN', allFitnessLevels, 'Allgemein', 'Allgemein') || 
+                                   selectVideoByCategory('TRANSITION', allFitnessLevels, 'Allgemein', 'Allgemein');
+        if (videoWithAllLevels) {
+          selectedVideos.push(videoWithAllLevels);
+          totalDuration += videoWithAllLevels.duration;
+          console.log(`Selected additional video with all criteria: ${videoWithAllLevels.id}`);
+        } else {
+          console.warn('No MAIN or TRANSITION video found to fill remaining duration');
+          break;
+        }
+      }
+    }
+  }
+
+  // Select one video from each end category
+  for (const part of endParts) {
+    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
+    if (video) {
+      selectedVideos.push(video);
+      totalDuration += video.duration;
+      console.log(`Selected ${part} video: ${video.id}`);
+    } else {
+      console.warn(`No ${part} video found`);
+    }
+  }
+
+  console.log(`Selected ${mainVideoCount} MAIN videos`);
   return { selectedVideos, totalDuration };
 }
 
 app.post('/concatenate', authenticateToken, async (req, res) => {
   try {
-    const { duration, focus = 'Allgemein', goal = 'Allgemein' } = req.body;
-    const user = await User.findOne({ username: req.user.username });
-    if (!user) return res.status(404).send('User not found');
+    console.log(req.body);
+    console.log('#######################################');
+    const { duration, focus = 'Allgemein', goal = 'Allgemein', userFitnessLevel } = req.body;
 
-    const { selectedVideos, totalDuration } = await selectVideos(user, duration, focus, goal);
+    const { selectedVideos, totalDuration } = await selectVideos(userFitnessLevel, duration, focus, goal);
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
 

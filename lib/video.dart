@@ -64,7 +64,12 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       _isLoading = true;
     });
 
-    await combineVideos(widget.focus, widget.goal, duration: widget.duration);
+    await combineVideos(
+      widget.focus,
+      widget.goal,
+      duration: widget.duration,
+      userFitnessLevel: widget.profilProvider.fitnessLevel ?? 'Nicht so oft',
+    );
 
     await Future.delayed(const Duration(seconds: 2));
 
@@ -200,23 +205,25 @@ Future<void> combineVideos(
   String focus,
   String goal, {
   int duration = 600,
+  required String userFitnessLevel,
 }) async {
   const String baseUrl = 'http://135.125.218.147:3000/concatenate';
-
-  final String encodedFocus = Uri.encodeComponent(focus);
-  final String encodedGoal = Uri.encodeComponent(goal);
-
-  final String urlWithParams =
-      "$baseUrl?duration=$duration&focus=$encodedFocus&goal=$encodedGoal";
 
   final token = await getAuthToken();
 
   try {
-    final response = await http.get(
-      Uri.parse(urlWithParams),
+    final response = await http.post(
+      Uri.parse(baseUrl),
       headers: {
         "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
       },
+      body: json.encode({
+        "userFittnesLevel": userFitnessLevel,
+        "duration": duration,
+        "focus": focus,
+        "goal": goal,
+      }),
     );
 
     if (response.statusCode == 200) {
