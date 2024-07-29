@@ -11,12 +11,12 @@ import 'services.dart';
 import 'elements.dart';
 import 'stats.dart';
 
-late bool questionaireDone = false;
+bool questionaireDone = false;
 
 class QuestionnaireScreen extends StatefulWidget {
   final VoidCallback checkQuestionaire;
 
-  QuestionnaireScreen({Key? key, required this.checkQuestionaire})
+  const QuestionnaireScreen({Key? key, required this.checkQuestionaire})
       : super(key: key);
 
   @override
@@ -76,7 +76,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -88,7 +88,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
           ),
           child: PageView(
             controller: _pageController,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               QuestionPage1(pageController: _pageController),
               QuestionPage2(pageController: _pageController),
@@ -107,17 +107,17 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
 class QuestionPage1 extends StatelessWidget {
   final PageController pageController;
 
-  QuestionPage1({required this.pageController});
+  const QuestionPage1({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(),
+          const Spacer(),
           Text(
             'Erzähle uns ein wenig mehr über Dich,',
             style: Theme.of(context).textTheme.displayMedium!.copyWith(
@@ -130,16 +130,16 @@ class QuestionPage1 extends StatelessWidget {
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
-          Spacer(),
+          const Spacer(),
           PressableButton(
             onPressed: () {
               pageController.nextPage(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
             },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: const Center(
                 child: Text("Weiter",
                     style: TextStyle(
                       color: Colors.white,
@@ -155,7 +155,7 @@ class QuestionPage1 extends StatelessWidget {
 class QuestionPage2 extends StatefulWidget {
   final PageController pageController;
 
-  QuestionPage2({required this.pageController});
+  const QuestionPage2({super.key, required this.pageController});
 
   @override
   _QuestionPage2State createState() => _QuestionPage2State();
@@ -183,129 +183,135 @@ class _QuestionPage2State extends State<QuestionPage2> {
       datePickerHeight = 400;
     }
 
-    return Container(
-      padding: EdgeInsets.all(32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Spacer(),
-          Text(
-            'Erst einmal zwei persönliche Fragen.',
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-          SizedBox(height: 32),
-          Text(
-            'Wann bist du geboren?',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          Container(
-              width: double.maxFinite,
-              height: datePickerHeight,
-              child: CupertinoTheme(
-                data: CupertinoThemeData(
-                  brightness: Brightness.dark,
+    return Localizations.override(
+        context: context,
+        locale: const Locale('de'),
+        child: Container(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Spacer(),
+              Text(
+                'Erst einmal zwei persönliche Fragen.',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'Wann bist du geboren?',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              SizedBox(
+                  width: double.maxFinite,
+                  height: datePickerHeight,
+                  child: CupertinoTheme(
+                    data: const CupertinoThemeData(
+                      brightness: Brightness.dark,
+                    ),
+                    child: CupertinoDatePicker(
+                      dateOrder: DatePickerDateOrder.dmy,
+                      initialDateTime: selectedDate,
+                      mode: CupertinoDatePickerMode.date,
+                      onDateTimeChanged: (DateTime newDate) {
+                        setState(() {
+                          selectedDate = newDate;
+                        });
+                      },
+                    ),
+                  )),
+              const SizedBox(height: 24),
+              Text(
+                'Was ist Dein Geschlecht?',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: Colors.white,
+                  inactiveTrackColor: Colors.white.withOpacity(0.5),
+                  trackHeight: 4.0,
+                  thumbShape:
+                      const RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                  thumbColor: Colors.white,
+                  overlayColor: Colors.white.withAlpha(32),
+                  overlayShape:
+                      const RoundSliderOverlayShape(overlayRadius: 28.0),
+                  tickMarkShape: const RoundSliderTickMarkShape(),
+                  activeTickMarkColor: Colors.white,
+                  inactiveTickMarkColor: Colors.white.withOpacity(0.5),
                 ),
-                child: CupertinoDatePicker(
-                  dateOrder: DatePickerDateOrder.dmy,
-                  initialDateTime: selectedDate,
-                  mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: (DateTime newDate) {
+                child: Slider(
+                  value: _genderSliderValue,
+                  min: 0,
+                  max: 2,
+                  divisions: 2,
+                  onChanged: (value) {
                     setState(() {
-                      selectedDate = newDate;
+                      _genderSliderValue = value;
                     });
                   },
                 ),
-              )),
-          SizedBox(height: 24),
-          Text(
-            'Was ist Dein Geschlecht?',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: Colors.white,
-              inactiveTrackColor: Colors.white.withOpacity(0.5),
-              trackHeight: 4.0,
-              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-              thumbColor: Colors.white,
-              overlayColor: Colors.white.withAlpha(32),
-              overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-              tickMarkShape: RoundSliderTickMarkShape(),
-              activeTickMarkColor: Colors.white,
-              inactiveTickMarkColor: Colors.white.withOpacity(0.5),
-            ),
-            child: Slider(
-              value: _genderSliderValue,
-              min: 0,
-              max: 2,
-              divisions: 2,
-              onChanged: (value) {
-                setState(() {
-                  _genderSliderValue = value;
-                });
-              },
-            ),
-          ),
-          Center(
-            child: Text(
-              _genderSliderValue == 0
-                  ? 'Männlich'
-                  : _genderSliderValue == 1
-                      ? 'Weiblich'
-                      : 'Divers',
-              style: Theme.of(context).textTheme.displayMedium,
-            ),
-          ),
-          Spacer(),
-          PressableButton(
-            onPressed: () {
-              widget.pageController.nextPage(
-                duration: Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-              profilProvider.setBirthdate(selectedDate);
-              String gender = _genderSliderValue == 0
-                  ? "male"
-                  : (_genderSliderValue == 1 ? "female" : "other");
-              profilProvider.setGender(gender);
+              ),
+              Center(
+                child: Text(
+                  _genderSliderValue == 0
+                      ? 'Männlich'
+                      : _genderSliderValue == 1
+                          ? 'Weiblich'
+                          : 'Divers',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              const Spacer(),
+              PressableButton(
+                onPressed: () {
+                  widget.pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                  profilProvider.setBirthdate(selectedDate);
+                  String gender = _genderSliderValue == 0
+                      ? "male"
+                      : (_genderSliderValue == 1 ? "female" : "other");
+                  profilProvider.setGender(gender);
 
-              getAuthToken().then((token) {
-                if (token != null) {
-                  updateProfile(
-                    token: token,
-                    birthdate: selectedDate,
-                    gender: gender,
-                  ).then((success) {
-                    if (success) {
-                      print("Profile updated successfully.");
+                  getAuthToken().then((token) {
+                    if (token != null) {
+                      updateProfile(
+                        token: token,
+                        birthdate: selectedDate,
+                        gender: gender,
+                      ).then((success) {
+                        if (success) {
+                          print("Profile updated successfully.");
+                        } else {
+                          print("Failed to update profile.");
+                        }
+                      });
                     } else {
-                      print("Failed to update profile.");
+                      print("No auth token available.");
                     }
                   });
-                } else {
-                  print("No auth token available.");
-                }
-              });
-            },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
-                child: Text("Weiter",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
+                },
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                child: const Center(
+                    child: Text("Weiter",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ))),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
 
 class QuestionPage3 extends StatefulWidget {
   final PageController pageController;
 
-  QuestionPage3({required this.pageController});
+  const QuestionPage3({super.key, required this.pageController});
 
   @override
   _QuestionPage3State createState() => _QuestionPage3State();
@@ -334,12 +340,12 @@ class _QuestionPage3State extends State<QuestionPage3> {
     }
 
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(),
+          const Spacer(),
           Text(
             'Nun gehen wir mehr ins Detail.',
             style: Theme.of(context).textTheme.displayMedium,
@@ -357,7 +363,8 @@ class _QuestionPage3State extends State<QuestionPage3> {
                 minValue: 100,
                 maxValue: 220,
                 textStyle: TextStyle(color: Colors.grey.shade400),
-                selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+                selectedTextStyle:
+                    const TextStyle(color: Colors.white, fontSize: 24),
                 onChanged: (value) => setState(() => _currentHeight = value),
               ),
             ],
@@ -375,16 +382,17 @@ class _QuestionPage3State extends State<QuestionPage3> {
                 minValue: 20,
                 maxValue: 200,
                 textStyle: TextStyle(color: Colors.grey.shade400),
-                selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+                selectedTextStyle:
+                    const TextStyle(color: Colors.white, fontSize: 24),
                 onChanged: (value) => setState(() => _currentWeight = value),
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           PressableButton(
             onPressed: () {
               widget.pageController.nextPage(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
 
@@ -409,8 +417,8 @@ class _QuestionPage3State extends State<QuestionPage3> {
                 }
               });
             },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: const Center(
                 child: Text("Weiter",
                     style: TextStyle(
                       color: Colors.white,
@@ -426,7 +434,7 @@ class _QuestionPage3State extends State<QuestionPage3> {
 class QuestionPage4 extends StatefulWidget {
   final PageController pageController;
 
-  QuestionPage4({required this.pageController});
+  const QuestionPage4({super.key, required this.pageController});
 
   @override
   _QuestionPage4State createState() => _QuestionPage4State();
@@ -467,27 +475,27 @@ class _QuestionPage4State extends State<QuestionPage4> {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(),
+          const Spacer(),
           Text(
             'Weiter zu Deinem Alltag.',
             style: Theme.of(context).textTheme.displayMedium,
           ),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           _buildRoundedSelectBox('Was trifft auf Deinen Arbeitsalltag zu?',
               _selectedOption1, options1, 'everyDaySituation'),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           _buildRoundedSelectBox('Wie oft treibst du Sport?', _selectedOption2,
               options2, 'fitnessLevel'),
-          Spacer(),
+          const Spacer(),
           PressableButton(
             onPressed: () {
               widget.pageController.nextPage(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
 
@@ -512,8 +520,8 @@ class _QuestionPage4State extends State<QuestionPage4> {
                 }
               });
             },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: const Center(
                 child: Text("Weiter",
                     style: TextStyle(
                       color: Colors.white,
@@ -534,7 +542,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           child: Text(
             labelText,
             style: Theme.of(context).textTheme.labelLarge,
@@ -545,7 +553,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
           decoration: BoxDecoration(
             color: Colors.grey.withOpacity(0.7), // Darker background color
             borderRadius: BorderRadius.circular(10.0), // Less-rounded corners
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 4,
@@ -553,11 +561,11 @@ class _QuestionPage4State extends State<QuestionPage4> {
               )
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedValue,
-              icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
               isDense: true,
               isExpanded: true,
               dropdownColor:
@@ -580,7 +588,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
                   value: value,
                   child: Text(
                     value,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white), // White text for visibility
                   ),
                 );
@@ -596,7 +604,7 @@ class _QuestionPage4State extends State<QuestionPage4> {
 class QuestionPage5 extends StatefulWidget {
   final PageController pageController;
 
-  QuestionPage5({required this.pageController});
+  const QuestionPage5({super.key, required this.pageController});
 
   @override
   _QuestionPage5State createState() => _QuestionPage5State();
@@ -624,14 +632,14 @@ class _QuestionPage5State extends State<QuestionPage5> {
     return Container(
       child: Column(
         children: [
-          Spacer(),
+          const Spacer(),
           Padding(
-              padding: EdgeInsets.all(32.0),
+              padding: const EdgeInsets.all(32.0),
               child: Text(
                 'Jetzt werden wir noch spezifischer für das Programm.',
                 style: Theme.of(context).textTheme.displayMedium,
               )),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -676,13 +684,14 @@ class _QuestionPage5State extends State<QuestionPage5> {
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Padding(
-              padding: EdgeInsets.only(bottom: 32.0, right: 32.0, left: 32.0),
+              padding:
+                  const EdgeInsets.only(bottom: 32.0, right: 32.0, left: 32.0),
               child: PressableButton(
                 onPressed: () {
                   widget.pageController.nextPage(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
 
@@ -711,8 +720,9 @@ class _QuestionPage5State extends State<QuestionPage5> {
                     }
                   });
                 },
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: Center(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                child: const Center(
                     child: Text("Weiter",
                         style: TextStyle(
                           color: Colors.white,
@@ -728,7 +738,7 @@ class _QuestionPage5State extends State<QuestionPage5> {
 class QuestionPage6 extends StatefulWidget {
   final PageController pageController;
 
-  QuestionPage6({required this.pageController});
+  const QuestionPage6({super.key, required this.pageController});
 
   @override
   _QuestionPage6State createState() => _QuestionPage6State();
@@ -777,7 +787,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
     }
 
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -803,17 +813,17 @@ class _QuestionPage6State extends State<QuestionPage6> {
                       personalGoalsOptions, 'selectedGoal3'),
                   SizedBox(height: sizedBoxHeight2),
                   TextField(
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white), // Sets the text color to white
                     decoration: InputDecoration(
                       hintText: "Schreibe Dein Ziel",
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                           color: Colors
                               .white70), // Hint text in a semi-transparent white color
                       fillColor: Colors.grey.withOpacity(
                           0.7), // Background color similar to the select boxes
                       filled: true,
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                           vertical: 16.0,
                           horizontal: 12.0), // Padding for additional height
                       border: OutlineInputBorder(
@@ -834,7 +844,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
           PressableButton(
             onPressed: () {
               widget.pageController.nextPage(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
 
@@ -863,8 +873,8 @@ class _QuestionPage6State extends State<QuestionPage6> {
                 }
               });
             },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: const Center(
                 child: Text("Weiter",
                     style: TextStyle(
                       color: Colors.white,
@@ -907,7 +917,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
           decoration: BoxDecoration(
             color: Colors.grey.withOpacity(0.7), // Darker background color
             borderRadius: BorderRadius.circular(10.0), // Less-rounded corners
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 4,
@@ -919,7 +929,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedValue,
-              icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
               isDense: true,
               isExpanded: true,
               dropdownColor:
@@ -960,7 +970,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
 class QuestionPage7 extends StatefulWidget {
   final PageController pageController;
 
-  QuestionPage7({required this.pageController});
+  const QuestionPage7({super.key, required this.pageController});
 
   @override
   _QuestionPage7State createState() => _QuestionPage7State();
@@ -974,17 +984,17 @@ class _QuestionPage7State extends State<QuestionPage7> {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(),
+          const Spacer(),
           Text(
             'Als letztes, setzte dein Ziel Fest!',
             style: Theme.of(context).textTheme.displayMedium,
           ),
-          SizedBox(height: 80),
+          const SizedBox(height: 80),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -997,16 +1007,17 @@ class _QuestionPage7State extends State<QuestionPage7> {
                 minValue: 1,
                 maxValue: 12,
                 textStyle: TextStyle(color: Colors.grey.shade400),
-                selectedTextStyle: TextStyle(color: Colors.white, fontSize: 24),
+                selectedTextStyle:
+                    const TextStyle(color: Colors.white, fontSize: 24),
                 onChanged: (value) => setState(() => _weeklyGoal = value),
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           PressableButton(
             onPressed: () {
               widget.pageController.nextPage(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
 
@@ -1029,8 +1040,8 @@ class _QuestionPage7State extends State<QuestionPage7> {
                 }
               });
             },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: const Center(
                 child: Text("Weiter",
                     style: TextStyle(
                       color: Colors.white,
@@ -1046,17 +1057,17 @@ class _QuestionPage7State extends State<QuestionPage7> {
 class QuestionPage8 extends StatelessWidget {
   final VoidCallback onFinish;
 
-  QuestionPage8({required this.onFinish});
+  const QuestionPage8({super.key, required this.onFinish});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacer(),
+          const Spacer(),
           Text(
             'Fast Fertig!',
             style: Theme.of(context).textTheme.displayLarge!.copyWith(
@@ -1069,13 +1080,13 @@ class QuestionPage8 extends StatelessWidget {
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
-          Spacer(),
+          const Spacer(),
           PressableButton(
             onPressed: () {
               onFinish();
             },
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: const Center(
                 child: Text("Fertigstellen",
                     style: TextStyle(
                       color: Colors.white,
@@ -1091,7 +1102,7 @@ class QuestionPage8 extends StatelessWidget {
 class AfterVideoView extends StatefulWidget {
   final List<String> videoIds;
 
-  AfterVideoView({Key? key, required this.videoIds}) : super(key: key);
+  const AfterVideoView({Key? key, required this.videoIds}) : super(key: key);
 
   @override
   _AfterVideoViewState createState() => _AfterVideoViewState();
@@ -1108,7 +1119,7 @@ class _AfterVideoViewState extends State<AfterVideoView> {
         children: [
           FirstPage(
               onPressedWeiter: () => _pageController.nextPage(
-                  duration: Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut)),
           SecondPage(
             videoIds: widget.videoIds,
@@ -1122,7 +1133,7 @@ class _AfterVideoViewState extends State<AfterVideoView> {
 class FirstPage extends StatelessWidget {
   final VoidCallback onPressedWeiter;
 
-  FirstPage({required this.onPressedWeiter});
+  const FirstPage({super.key, required this.onPressedWeiter});
 
   @override
   Widget build(BuildContext context) {
@@ -1139,7 +1150,7 @@ class FirstPage extends StatelessWidget {
 
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -1155,9 +1166,9 @@ class FirstPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Spacer(),
+            const Spacer(),
             Center(
-                child: Container(
+                child: SizedBox(
                     width: MediaQuery.of(context).size.width - 70,
                     child: Text(
                       'Gib deinem Coach jetzt ein kurzes Feedback zu deinen Übungen.',
@@ -1167,18 +1178,19 @@ class FirstPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ))),
-            SizedBox(height: 18.0),
+            const SizedBox(height: 18.0),
             Center(
-                child: Container(
+                child: SizedBox(
                     width: MediaQuery.of(context).size.width - 70,
                     child: Text(
                       'Damit kann das Trainingsprogramm noch besser auf dich zugeschnitten werden.',
                       style: Theme.of(context).textTheme.labelLarge,
                     ))),
-            Spacer(),
+            const Spacer(),
             Center(
               child: PressableButton(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 17),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 17),
                 onPressed: onPressedWeiter,
                 child: Text(
                   "Los geht's",
@@ -1186,10 +1198,11 @@ class FirstPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Center(
               child: PressableButton(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 color: Colors.grey.shade100,
                 shadowColor: Colors.grey.shade300,
                 onPressed: () {
@@ -1204,7 +1217,7 @@ class FirstPage extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(),
+            const Spacer(),
           ],
         ),
       ),
@@ -1254,11 +1267,11 @@ class _SecondPageState extends State<SecondPage> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Feedback sent successfully!'),
         ));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Failed to send feedback.'),
         ));
       }
@@ -1276,10 +1289,10 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(97, 184, 115, 0.9),
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 0.9),
         ),
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -1302,10 +1315,11 @@ class _SecondPageState extends State<SecondPage> {
                 ),
               ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, bottom: 36, top: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, bottom: 36, top: 16),
                 child: PressableButton(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 28),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 28),
                   onPressed: _sendFeedback,
                   child: Text(
                     'Abschließen',
@@ -1365,12 +1379,12 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
 
     return Card(
       color: Colors.grey.shade500.withOpacity(0.3),
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Padding(
-        padding: EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           children: <Widget>[
             Container(
@@ -1390,7 +1404,7 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -1399,10 +1413,10 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       children: [
                         Text(
                           'Übung ${widget.index + 1}',
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         IconButton(
-                          icon: Icon(Icons.flash_on),
+                          icon: const Icon(Icons.flash_on),
                           onPressed: _showPainLocationDialog,
                           color: Colors.white,
                         ),
@@ -1469,8 +1483,8 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       ),
                 ),
                 child: AlertDialog(
-                  backgroundColor: Color.fromRGBO(97, 184, 115, 1),
-                  title: Text('Schmerzbereiche wählen'),
+                  backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+                  title: const Text('Schmerzbereiche wählen'),
                   content: SingleChildScrollView(
                     child: Wrap(
                       spacing: 5.0,

@@ -20,7 +20,7 @@ const VideoSchema = new mongoose.Schema({
 
 const Video = mongoose.model('Video', VideoSchema);
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://admin:OD9quYgeiM0pb8F7oE6V@mongodb-636d15e7-o421a53a3.database.cloud.ovh.net/admin?replicaSet=replicaset', {
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://admin:Zp71ncVXTlHDC03U2Sms@mongodb-636d15e7-o421a53a3.database.cloud.ovh.net/admin?replicaSet=replicaset', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 45000,

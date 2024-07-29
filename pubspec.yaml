@@ -45,7 +45,9 @@ dependencies:
   numberpicker: ^2.1.2
   scroll_date_picker: ^3.7.3
   flutter_spinkit: ^5.2.1
-  intl: ^0.19.0
+  intl: ^0.18.1
+  flutter_localizations:
+    sdk: flutter
 
 
 flutter_icons:
@@ -100,6 +102,7 @@ flutter:
     - assets/leaf.png
     - assets/button_green.png
     - assets/button_grey.png
+    - assets/button_mint.png
     - assets/button_locked.png
     - assets/settingsbg.PNG
     - assets/fragen/birddogwippenlinks.jpg

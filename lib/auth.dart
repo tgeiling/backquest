@@ -14,7 +14,7 @@ import 'main.dart';
 
 class AuthService {
   final String baseUrl = 'http://135.125.218.147:3000';
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   Future<bool> login(String username, String password) async {
     final response = await http.post(
@@ -159,7 +159,7 @@ class AuthService {
     final expiration = getTokenExpiration(token);
     if (expiration == null) return true;
 
-    return expiration.isBefore(DateTime.now().add(Duration(minutes: 1)));
+    return expiration.isBefore(DateTime.now().add(const Duration(minutes: 1)));
   }
 
   DateTime? getTokenExpiration(String token) {
@@ -184,7 +184,7 @@ class LoginScreen extends StatefulWidget {
   final Function(bool) setAuthenticated;
   final VoidCallback setQuestionnairDone;
 
-  LoginScreen({
+  const LoginScreen({
     Key? key,
     required this.setAuthenticated,
     required this.setQuestionnairDone,
@@ -316,11 +316,11 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Login Failed'),
-            content: Text('Invalid username or password. Please try again.'),
+            title: const Text('Login Failed'),
+            content: const Text('Invalid username or password. Please try again.'),
             actions: <Widget>[
               TextButton(
-                child: Text('Close'),
+                child: const Text('Close'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -336,51 +336,51 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Center(
                 child: GreyContainer(
-              padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
               child: Image.asset('assets/logo.png',
                   width: MediaQuery.of(context).size.width * 0.15),
             )),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Benutzername',
               ),
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Passwort'),
+              decoration: const InputDecoration(labelText: 'Passwort'),
               obscureText: true,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
-            Spacer(),
+            const Spacer(),
             PressableButton(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 onPressed: _attemptLogin,
-                child: Container(
+                child: const SizedBox(
                   width: double.infinity,
                   child: Center(
                       child: Text('Login', style: TextStyle(fontSize: 18))),
                 )),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             PressableButton(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
                   );
                 },
-                child: Container(
+                child: const SizedBox(
                     width: double
                         .infinity, // Ensures the button stretches to fill the width
                     child: Center(
@@ -395,6 +395,8 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -417,11 +419,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Registrierung Fehlgeschlagen'),
-            content: Text('Falscher Benutzername und Passwort'),
+            title: const Text('Registrierung Fehlgeschlagen'),
+            content: const Text('Falscher Benutzername und Passwort'),
             actions: <Widget>[
               TextButton(
-                child: Text('Schließen'),
+                child: const Text('Schließen'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -437,34 +439,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text('Registrierung')),
+      appBar: AppBar(title: const Text('Registrierung')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Center(
                 child: GreyContainer(
-                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
                     child: Image.asset(
                       'assets/logo.png',
                       scale: 2,
                     ))),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Benutzername'),
-              style: TextStyle(color: Colors.black),
+              decoration: const InputDecoration(labelText: 'Benutzername'),
+              style: const TextStyle(color: Colors.black),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Passwort'),
-              style: TextStyle(color: Colors.black),
+              decoration: const InputDecoration(labelText: 'Passwort'),
+              style: const TextStyle(color: Colors.black),
               obscureText: true,
             ),
-            Spacer(),
+            const Spacer(),
             PressableButton(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               onPressed: _attemptRegister,
-              child: Container(
+              child: const SizedBox(
                   width: double
                       .infinity, // Ensures the button stretches to fill the width
                   child: Center(
