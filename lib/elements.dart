@@ -7,7 +7,7 @@ class PressableButton extends StatefulWidget {
   final Color color;
   final Color shadowColor;
 
-  PressableButton({
+  const PressableButton({
     Key? key,
     required this.child,
     required this.padding,
@@ -40,7 +40,7 @@ class _PressableButtonState extends State<PressableButton> {
       onPointerDown: _onPointerDown,
       onPointerUp: _onPointerUp,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: 100),
         padding: widget.padding,
         decoration: BoxDecoration(
           color: widget.color,
@@ -50,7 +50,7 @@ class _PressableButtonState extends State<PressableButton> {
               : [
                   BoxShadow(
                     color: widget.shadowColor,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 5),
                     blurRadius: 0,
                   ),
                 ],
@@ -68,7 +68,7 @@ class GreyContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
 
-  GreyContainer({
+  const GreyContainer({
     Key? key,
     required this.child,
     this.padding = const EdgeInsets.all(8.0),
@@ -84,7 +84,7 @@ class GreyContainer extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.grey[300]!,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
             blurRadius: 0,
             spreadRadius: 0,
           ),
@@ -99,7 +99,7 @@ class GreenContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
 
-  GreenContainer({
+  const GreenContainer({
     Key? key,
     required this.child,
     this.padding = const EdgeInsets.all(8.0),
@@ -112,9 +112,9 @@ class GreenContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF59c977),
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: const Color(0xFF48a160),
+            color: Color(0xFF48a160),
             offset: Offset(0, 5),
             blurRadius: 0,
             spreadRadius: 0,
@@ -160,11 +160,11 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
     return Stack(
       children: [
         ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF59c977)),
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF59c977)),
               minHeight: 20,
             )),
         Positioned(
@@ -172,7 +172,7 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
           top: (20 - 10) / 2,
           bottom: (20 - 4) / 2,
           child: AnimatedContainer(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             width: pillWidth,
             height: 4,
             decoration: BoxDecoration(
@@ -189,7 +189,7 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
 class NoConnectionWidget extends StatelessWidget {
   final VoidCallback onDismiss;
 
-  NoConnectionWidget({required this.onDismiss});
+  const NoConnectionWidget({super.key, required this.onDismiss});
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +206,7 @@ class NoConnectionWidget extends StatelessWidget {
                 style: Theme.of(context).textTheme.displayMedium,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 4.0),
+              const SizedBox(height: 4.0),
               Text(
                 'Bitte stellen sie eine Verbindung her',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -228,7 +228,7 @@ class NoConnectionWidget extends StatelessWidget {
 class AuthenticateWidget extends StatelessWidget {
   final VoidCallback onDismiss;
 
-  AuthenticateWidget({required this.onDismiss});
+  const AuthenticateWidget({super.key, required this.onDismiss});
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +245,7 @@ class AuthenticateWidget extends StatelessWidget {
                 style: Theme.of(context).textTheme.displayMedium,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 4.0),
+              const SizedBox(height: 4.0),
               Text(
                 'Sie müssen sich anmelden, um fortzufahren.',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -267,7 +267,7 @@ class AuthenticateWidget extends StatelessWidget {
 class DismissButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  DismissButton({required this.onPressed});
+  const DismissButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

@@ -17,7 +17,7 @@ import 'video.dart';
 class DownloadScreen extends StatefulWidget {
   final Function(String, int, bool) toggleModal;
 
-  DownloadScreen({
+  const DownloadScreen({
     required Key key,
     required this.toggleModal,
   }) : super(key: key);
@@ -71,9 +71,9 @@ class DownloadScreenState extends State<DownloadScreen> {
 
     await combineVideos(focus, goal, duration: duration);
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
-    final String outputVideoUrl = 'http://135.125.218.147:3000/video';
+    const String outputVideoUrl = 'http://135.125.218.147:3000/video';
 
     try {
       await _downloadVideo(
@@ -103,7 +103,7 @@ class DownloadScreenState extends State<DownloadScreen> {
         String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
         String nameTimestamp = DateFormat('MMdd HH:mm').format(DateTime.now());
         final filePath = '${directory.path}/video_$timestamp.mp4';
-        final displayName = 'Einheit ${nameTimestamp}';
+        final displayName = 'Einheit $nameTimestamp';
         final file = File(filePath);
         await file.writeAsBytes(response.bodyBytes);
 
@@ -177,13 +177,13 @@ class DownloadScreenState extends State<DownloadScreen> {
       backgroundColor: Colors.transparent,
       body: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: _isLoading
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Center(
+                  const Center(
                     child: SpinKitCubeGrid(
                       color: Colors.white,
                       size: 90.0,
@@ -203,33 +203,33 @@ class DownloadScreenState extends State<DownloadScreen> {
                               itemCount: _downloadedVideos.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(12.0),
                                   ),
                                   child: ListTile(
-                                    contentPadding: EdgeInsets.all(16.0),
+                                    contentPadding: const EdgeInsets.all(16.0),
                                     title: Text(
                                       _downloadedVideoNames[index],
-                                      style: TextStyle(color: Colors.white),
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                     subtitle: Text(
                                       _downloadedVideoDetails[index],
-                                      style: TextStyle(color: Colors.white70),
+                                      style: const TextStyle(color: Colors.white70),
                                     ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.play_arrow,
+                                          icon: const Icon(Icons.play_arrow,
                                               color: Colors.white),
                                           onPressed: () => _playVideo(
                                               _downloadedVideos[index],
                                               _downloadedSelectedVideos[index]),
                                         ),
                                         IconButton(
-                                          icon: Icon(Icons.delete,
+                                          icon: const Icon(Icons.delete,
                                               color: Colors.white),
                                           onPressed: () async {
                                             setState(() {
@@ -250,7 +250,7 @@ class DownloadScreenState extends State<DownloadScreen> {
                                 );
                               },
                             )
-                          : Text("")),
+                          : const Text("")),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 12.0),
@@ -261,7 +261,7 @@ class DownloadScreenState extends State<DownloadScreen> {
                         });
                       },
                       padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                       child: Center(
                           child: Text(
                         "Video erstellen",
@@ -280,7 +280,7 @@ class VideoPlayerScreen extends StatefulWidget {
   final String videoPath;
   final List<String> selectedVideos;
 
-  VideoPlayerScreen({
+  const VideoPlayerScreen({super.key, 
     required this.videoPath,
     required this.selectedVideos,
   });
@@ -303,7 +303,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       final duration = _chewieController!.videoPlayerController.value.duration;
       final halfwayDuration = duration * 0.1;
 
-      watchedDuration += Duration(milliseconds: 500);
+      watchedDuration += const Duration(milliseconds: 500);
 
       if (watchedDuration > halfwayDuration && !hasBeenUpdated) {
         hasBeenUpdated = true;
@@ -340,7 +340,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: Colors.white,
           ),
@@ -375,7 +375,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       body: Center(
         child: _controller.value.isInitialized
             ? Chewie(controller: _chewieController!)
-            : CircularProgressIndicator(),
+            : const CircularProgressIndicator(),
       ),
       backgroundColor: Colors.black,
     );

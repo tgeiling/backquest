@@ -287,10 +287,6 @@ class ProfilProvider extends ChangeNotifier {
     await prefs.setString('feedback', feedbackJson);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
 
 class ProfilPage extends StatefulWidget {
@@ -356,7 +352,7 @@ class ProfilPageState extends State<ProfilPage> {
     }
 
     return SafeArea(
-        child: Container(
+        child: SizedBox(
       width: double.maxFinite,
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -374,7 +370,7 @@ class ProfilPageState extends State<ProfilPage> {
                 "Ziele",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              SizedBox(height: 23.0),
+              const SizedBox(height: 23.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -388,17 +384,17 @@ class ProfilPageState extends State<ProfilPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               ProgressBarWithPill(
                   initialProgress: min(
                       profilProvider.weeklyDone / profilProvider.weeklyGoal,
                       1.0)),
-              SizedBox(height: 39.0),
+              const SizedBox(height: 39.0),
               Text(
                 "Statistiken",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              SizedBox(height: 14.0),
+              const SizedBox(height: 14.0),
               Consumer<ProfilProvider>(
                 builder: (context, provider, child) {
                   return _buildRowWithColumns(
@@ -434,7 +430,7 @@ class ProfilPageState extends State<ProfilPage> {
     print("visibilty $loggedIn");
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -448,7 +444,7 @@ class ProfilPageState extends State<ProfilPage> {
                       width: 150,
                       alignment: Alignment.centerRight,
                       child: IconButton(
-                        icon: Icon(Icons.settings),
+                        icon: const Icon(Icons.settings),
                         iconSize: settingsIconSize,
                         color: Colors.white,
                         onPressed: () {
@@ -470,7 +466,7 @@ class ProfilPageState extends State<ProfilPage> {
                       visible: loggedIn,
                       child: Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(12),
@@ -479,7 +475,7 @@ class ProfilPageState extends State<ProfilPage> {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 1,
                               blurRadius: 3,
-                              offset: Offset(0, 3),
+                              offset: const Offset(0, 3),
                             ),
                           ],
                         ),
@@ -498,7 +494,7 @@ class ProfilPageState extends State<ProfilPage> {
               ),
             ],
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Consumer<ProfilProvider>(
             builder: (context, profilProvider, child) {
               return Column(
@@ -511,12 +507,12 @@ class ProfilPageState extends State<ProfilPage> {
                         "${profilProvider.weeklyStreak}",
                         style: TextStyle(fontSize: bigNumberFontSize),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Image.asset('assets/leaf.png',
                           width: leafDimensions, height: leafDimensions),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     "Wochen in Folge!",
                     style: Theme.of(context).textTheme.displayMedium,
@@ -542,25 +538,25 @@ class ProfilPageState extends State<ProfilPage> {
     ];
 
     return Consumer<ProfilProvider>(builder: (context, profilProvider, child) {
-      return Container(
+      return SizedBox(
         width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: _buildColumnWithText(
-                dynamicText: "${completedLevels}",
+                dynamicText: "$completedLevels",
                 dynamicText1: "Einheiten",
               ),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: _buildColumnWithText(
                 dynamicText: "${profilProvider.hasPain.length}",
                 dynamicText1: "Schmerzen",
               ),
             ),
-            SizedBox(width: 12.0),
+            const SizedBox(width: 12.0),
             Expanded(
               child: _buildColumnWithText(
                 dynamicText:
@@ -580,11 +576,11 @@ class ProfilPageState extends State<ProfilPage> {
   }) {
     return SizedBox(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
         decoration: BoxDecoration(
-          color: Color(0xFFf5f2f2),
+          color: const Color(0xFFf5f2f2),
           borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Color(0xFFb3b3b3),
               offset: Offset(0, 5),
@@ -596,7 +592,7 @@ class ProfilPageState extends State<ProfilPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 5.0),
+            const SizedBox(height: 5.0),
             Text(
               dynamicText,
               style: Theme.of(context).textTheme.displayMedium!.copyWith(
