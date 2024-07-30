@@ -33,8 +33,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit"
@@ -59,8 +59,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit"
@@ -85,17 +85,17 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
+            "oberer Ruecken",
             ""
         ],
         "goal": [
             "Kraft",
-            " Beweglichkeit"
+            "Beweglichkeit"
         ],
         "difficulty": 3,
         "caution": [
             "Schulter 2",
-            " Handgelenke 2"
+            "Handgelenke 2"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -116,7 +116,7 @@
         ],
         "goal": [
             "Entspannung",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 2,
         "caution": [
@@ -141,7 +141,7 @@
         ],
         "goal": [
             "Entspannung",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 2,
         "caution": [
@@ -166,7 +166,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -189,7 +189,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -212,7 +212,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -254,12 +254,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter"
+            "oberer Ruecken",
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -279,12 +279,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter"
+            "oberer Ruecken",
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -304,16 +304,16 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [
             "Extension",
-            " Knie 4"
+            "Knie 4"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -331,11 +331,11 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [
@@ -357,8 +357,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Huefte"
+            "oberer Ruecken",
+            "Huefte"
         ],
         "goal": [
             "Entspannung"
@@ -383,13 +383,13 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter"
+            "oberer Ruecken",
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung",
-            " Haltung"
+            "Entspannung",
+            "Haltung"
         ],
         "difficulty": 2,
         "caution": [
@@ -411,13 +411,13 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter"
+            "oberer Ruecken",
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung",
-            " Haltung"
+            "Entspannung",
+            "Haltung"
         ],
         "difficulty": 2,
         "caution": [
@@ -439,13 +439,13 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter"
+            "oberer Ruecken",
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung",
-            " Haltung"
+            "Entspannung",
+            "Haltung"
         ],
         "difficulty": 1,
         "caution": [
@@ -467,12 +467,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung",
-            " Haltung"
+            "Entspannung",
+            "Haltung"
         ],
         "difficulty": 4,
         "caution": [],
@@ -492,8 +492,8 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Knie"
+            "Huefte",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit"
@@ -518,8 +518,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Knie"
+            "Huefte",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit"
@@ -544,7 +544,7 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichekeit"
@@ -569,7 +569,7 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit"
@@ -594,7 +594,7 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit"
@@ -619,18 +619,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter",
-            " Nacken"
+            "oberer Ruecken",
+            "Schulter",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [
             "Knie 2",
-            " Handgelenk 2"
+            "Handgelenk 2"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -648,18 +648,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter",
-            " Nacken"
+            "oberer Ruecken",
+            "Schulter",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [
             "Knie 2",
-            " Handgelenk 2"
+            "Handgelenk 2"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -677,18 +677,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Schulter",
-            " Nacken"
+            "oberer Ruecken",
+            "Schulter",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [
             "Knie 2",
-            " Handgelenk 2"
+            "Handgelenk 2"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -706,11 +706,11 @@
         "direction": "links",
         "focus": [
             "Schulter",
-            " unterer Ruecken"
+            "unterer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [
@@ -732,12 +732,12 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Knie"
+            "Huefte",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -757,12 +757,12 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Knie"
+            "Huefte",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -782,7 +782,7 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Kraft "
@@ -790,7 +790,7 @@
         "difficulty": 4,
         "caution": [
             "Handgelenk 4",
-            " Schulter 3"
+            "Schulter 3"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -808,12 +808,12 @@
         "direction": "rechts",
         "focus": [
             "Fuesse",
-            " Sprunggelenke",
-            " unterer Ruecken"
+            "Sprunggelenke",
+            "unterer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [],
@@ -833,18 +833,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
+            "oberer Ruecken",
             ""
         ],
         "goal": [
             "Kraft",
-            " Beweglichkeit",
-            " Haltung"
+            "Beweglichkeit",
+            "Haltung"
         ],
         "difficulty": 4,
         "caution": [
             "Schulter 3",
-            " Handgelenke 3"
+            "Handgelenke 3"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -862,18 +862,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
+            "oberer Ruecken",
             ""
         ],
         "goal": [
             "Kraft",
-            " Beweglichkeit",
-            " Haltung"
+            "Beweglichkeit",
+            "Haltung"
         ],
         "difficulty": 4,
         "caution": [
             "Schulter 3",
-            " Handgelenke 3"
+            "Handgelenke 3"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -891,18 +891,18 @@
         "direction": "links",
         "focus": [
             "Nacken",
-            " Kiefer"
+            "Kiefer"
         ],
         "goal": [
             "Beweglichekeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
@@ -916,18 +916,18 @@
         "direction": "rechts",
         "focus": [
             "Nacken",
-            " Kiefer"
+            "Kiefer"
         ],
         "goal": [
             "Beweglichekeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
@@ -941,9 +941,9 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Huefte",
-            " Schulter"
+            "oberer Ruecken",
+            "Huefte",
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit"
@@ -968,12 +968,12 @@
         "direction": "links",
         "focus": [
             "oberer Ruecken",
-            " Nacken",
-            " Kiefer"
+            "Nacken",
+            "Kiefer"
         ],
         "goal": [
             "Beweglichkeit",
-            " Kraft"
+            "Kraft"
         ],
         "difficulty": 3,
         "caution": [
@@ -995,12 +995,12 @@
         "direction": "links",
         "focus": [
             "oberer Ruecken",
-            " Nacken",
-            " Kiefer"
+            "Nacken",
+            "Kiefer"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [],
@@ -1020,12 +1020,12 @@
         "direction": "links",
         "focus": [
             "oberer Ruecken",
-            " Nacken",
-            " Kiefer"
+            "Nacken",
+            "Kiefer"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [],
@@ -1045,12 +1045,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Knie"
+            "Huefte",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -1070,12 +1070,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Knie"
+            "Huefte",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -1117,8 +1117,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Nacken",
-            " Kiefer"
+            "Nacken",
+            "Kiefer"
         ],
         "goal": [
             "Kraft"
@@ -1141,12 +1141,12 @@
         "direction": "links",
         "focus": [
             "Knie",
-            " unterer Ruecken",
-            " Huefte"
+            "unterer Ruecken",
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [],
@@ -1166,12 +1166,12 @@
         "direction": "links",
         "focus": [
             "Knie",
-            " unterer Ruecken",
-            " Huefte"
+            "unterer Ruecken",
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [],
@@ -1191,18 +1191,18 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspnnaung"
+            "Entspnnaung"
         ],
         "difficulty": 1,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
@@ -1216,18 +1216,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspnnaung"
+            "Entspnnaung"
         ],
         "difficulty": 1,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
@@ -1395,8 +1395,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1404,7 +1404,7 @@
         "difficulty": 2,
         "caution": [
             "Knie 3",
-            " Handgelenke 3"
+            "Handgelenke 3"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -1422,8 +1422,8 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1431,7 +1431,7 @@
         "difficulty": 2,
         "caution": [
             "Knie 3",
-            " Handgelenke 3"
+            "Handgelenke 3"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -1449,11 +1449,11 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Fuesse "
+            "Fuesse "
         ],
         "goal": [
             "Beweglichkeit",
-            " Kraft"
+            "Kraft"
         ],
         "difficulty": 4,
         "caution": [
@@ -1475,12 +1475,12 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " "
+            "oberer Ruecken",
+            ""
         ],
         "goal": [
             "Beweglichkeit",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -1500,17 +1500,17 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Kraft",
-            " Haltung"
+            "Haltung"
         ],
         "difficulty": 3,
         "caution": [
             "Knie 4",
-            " Handgelenke 3"
+            "Handgelenke 3"
         ],
         "workplaceRelevance": "Aktiv und hebend",
         "logic": [
@@ -1528,12 +1528,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -1553,12 +1553,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -1578,17 +1578,17 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Kraft"
+            "Kraft"
         ],
         "difficulty": 4,
         "caution": [
             "Handgelenke 5",
-            " Nacken 5"
+            "Nacken 5"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -1606,8 +1606,8 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Nacken"
+            "oberer Ruecken",
+            "Nacken"
         ],
         "goal": [
             "Kraft"
@@ -1615,7 +1615,7 @@
         "difficulty": 3,
         "caution": [
             "Handgelenke 4",
-            " Nacken 4"
+            "Nacken 4"
         ],
         "workplaceRelevance": null,
         "logic": [
@@ -1633,7 +1633,7 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1658,8 +1658,8 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Fuesse",
-            " Knie"
+            "Fuesse",
+            "Knie"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1682,8 +1682,8 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Knie",
-            " Fuesse"
+            "Knie",
+            "Fuesse"
         ],
         "goal": [
             "Kraft"
@@ -1706,7 +1706,7 @@
         "direction": "links",
         "focus": [
             "allgemein",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Kraft"
@@ -1731,7 +1731,7 @@
         "direction": "mix",
         "focus": [
             "allgemein",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Kraft"
@@ -1756,8 +1756,8 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Fuesse"
+            "Huefte",
+            "Fuesse"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1782,8 +1782,8 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " Huefte",
-            " Fuesse"
+            "Huefte",
+            "Fuesse"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1832,11 +1832,11 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [
@@ -1858,11 +1858,11 @@
         "direction": "rechts",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [
@@ -1884,7 +1884,7 @@
         "direction": "rechts",
         "focus": [
             "Allgemein",
-            " Handgelenke"
+            "Handgelenke"
         ],
         "goal": [
             "Beweglichkeit"
@@ -1909,12 +1909,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Knie",
-            " Huefte"
+            "Knie",
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [
@@ -1936,12 +1936,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Knie",
-            " Huefte"
+            "Knie",
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [
@@ -1963,18 +1963,18 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " allgemein"
+            "allgemein"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
@@ -1988,12 +1988,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " Nacken",
-            " Kiefer"
+            "Nacken",
+            "Kiefer"
         ],
         "goal": [
             "Kraft",
-            " Beweglichkeit"
+            "Beweglichkeit"
         ],
         "difficulty": 3,
         "caution": [],
@@ -2013,8 +2013,8 @@
         "direction": "links",
         "focus": [
             "Allgemein",
-            " Nacken",
-            " Kiefer"
+            "Nacken",
+            "Kiefer"
         ],
         "goal": [
             "Entspannung"
@@ -2095,25 +2095,25 @@
     },
     {
         "id": "0084",
-        "name": "Stand Schulter kreisen",
+        "name": "StandSchulter kreisen",
         "background": "blau_beige",
         "duration": 25,
         "startPose": "Stand",
         "endPose": "Stand",
         "direction": "links",
         "focus": [
-            "Schulterguertel"
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
@@ -2127,16 +2127,18 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "MAIN"
+        ],
         "combine": 88.0
     },
     {
@@ -2149,7 +2151,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " BWS"
+            "BWS"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2157,7 +2159,9 @@
         "difficulty": 5,
         "caution": [],
         "workplaceRelevance": null,
-        "logic": [],
+        "logic": [
+            "MAIN"
+        ],
         "combine": 85.0
     },
     {
@@ -2170,12 +2174,12 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Beinrueckseite"
+            "oberer Ruecken",
+            "Beinrueckseite"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2195,11 +2199,11 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " unterer Ruecken"
+            "unterer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2219,8 +2223,8 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " Beinrueckseite",
-            " Sprungelenke"
+            "Beinrueckseite",
+            "Sprungelenke"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2243,7 +2247,7 @@
         "direction": "links",
         "focus": [
             "Sprunggelenke",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2266,9 +2270,9 @@
         "direction": "links",
         "focus": [
             "Sprungelenke",
-            " Huefte",
-            " BWS",
-            " Beinrueckseite"
+            "Huefte",
+            "BWS",
+            "Beinrueckseite"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2291,35 +2295,35 @@
         "direction": "links",
         "focus": [
             "Sprunggelenke",
-            " Oberschenkel"
+            "Oberschenkel"
         ],
         "goal": [
             "Kraft",
-            " Beweglichkeit"
+            "Beweglichkeit"
         ],
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU2",
-            " MAIN"
+            "MAIN"
         ],
         "combine": null
     },
     {
         "id": "0093",
-        "name": "Abschluss Schulter kreisen mit nachspUeren",
+        "name": "AbschlussSchulter kreisen mit nachspUeren",
         "background": "blau_beige",
         "duration": 43,
         "startPose": "Stand",
         "endPose": "Stand",
         "direction": "links",
         "focus": [
-            "Schulterguertel"
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2339,7 +2343,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2362,7 +2366,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " BWS"
+            "BWS"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2381,16 +2385,16 @@
         "background": "blau_beige",
         "duration": 57,
         "startPose": "Stand",
-        "endPose": "4Fue_ab",
+        "endPose": "4Fue-ab",
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Beinrueckseite"
+            "oberer Ruecken",
+            "Beinrueckseite"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2406,16 +2410,16 @@
         "background": "blau_beige",
         "duration": 55,
         "startPose": "Stand",
-        "endPose": "4Fue_auf",
+        "endPose": "4Fue-auf",
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken",
-            " Beinrueckseite"
+            "oberer Ruecken",
+            "Beinrueckseite"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2435,7 +2439,7 @@
         "direction": "links",
         "focus": [
             "Sprunggelenke",
-            " Huefte"
+            "Huefte"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2458,8 +2462,8 @@
         "direction": "links",
         "focus": [
             "Sprunggelenke",
-            " Huefte",
-            " BWS"
+            "Huefte",
+            "BWS"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2526,11 +2530,11 @@
         "direction": "links",
         "focus": [
             "Fuesse",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 1,
         "caution": [],
@@ -2550,11 +2554,11 @@
         "direction": "links",
         "focus": [
             "Fuesse",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2574,11 +2578,11 @@
         "direction": "links",
         "focus": [
             "Fuesse",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2590,7 +2594,7 @@
     },
     {
         "id": "0105",
-        "name": "Fusskreise Knie gehoben",
+        "name": "FusskreiseKnie gehoben",
         "background": "blau_beige",
         "duration": 48,
         "startPose": "Stand",
@@ -2598,11 +2602,11 @@
         "direction": "links",
         "focus": [
             "Fuesse",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [],
@@ -2614,7 +2618,7 @@
     },
     {
         "id": "0106",
-        "name": "Fuss 8er Knie gehoben",
+        "name": "Fuss 8erKnie gehoben",
         "background": "blau_beige",
         "duration": 51,
         "startPose": "Stand",
@@ -2622,11 +2626,11 @@
         "direction": "links",
         "focus": [
             "Fuesse",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 4,
         "caution": [],
@@ -2649,7 +2653,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2669,7 +2673,7 @@
         "direction": "links",
         "focus": [
             "BWS",
-            " Nacken"
+            "Nacken"
         ],
         "goal": [
             "Entspannung"
@@ -2695,7 +2699,7 @@
         ],
         "goal": [
             "Entspannung",
-            " Beweglichkeit"
+            "Beweglichkeit"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2737,7 +2741,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2760,8 +2764,8 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " Sprungelenke",
-            " BWS"
+            "Sprungelenke",
+            "BWS"
         ],
         "goal": [
             "Beweglichkeit"
@@ -2776,18 +2780,18 @@
     },
     {
         "id": "0113",
-        "name": "Stand Schulterkreise",
+        "name": "StandSchulterkreise",
         "background": "blau_beige",
         "duration": 31,
         "startPose": "Stand",
         "endPose": "Stand",
         "direction": "links",
         "focus": [
-            "Schulterguertel"
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2806,24 +2810,24 @@
         "endPose": "Stand",
         "direction": "links",
         "focus": [
-            "Schulterguertel"
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU1",
-            " MAIN"
+            "MAIN"
         ],
         "combine": null
     },
     {
         "id": "0115",
-        "name": "Stand Halbe Nackenkreise",
+        "name": "Stand HalbeNackenkreise",
         "background": "blau_beige",
         "duration": 36,
         "startPose": "Stand",
@@ -2834,7 +2838,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2846,7 +2850,7 @@
     },
     {
         "id": "0116",
-        "name": "Stand Halbe Nackenkreise Daumen ausdrehen",
+        "name": "Stand HalbeNackenkreise Daumen ausdrehen",
         "background": "blau_beige",
         "duration": 48,
         "startPose": "Stand",
@@ -2857,7 +2861,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2869,7 +2873,7 @@
     },
     {
         "id": "0117",
-        "name": "Stand ganze Nackenkreise",
+        "name": "Stand ganzeNackenkreise",
         "background": "blau_beige",
         "duration": 38,
         "startPose": "Stand",
@@ -2880,7 +2884,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 4,
         "caution": [],
@@ -2900,11 +2904,11 @@
         "direction": "links",
         "focus": [
             "unterer Ruecken",
-            " oberer Ruecken"
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2927,20 +2931,20 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU1",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
     {
         "id": "0120",
-        "name": " Seitliche SchwUenge",
+        "name": "Seitliche SchwUenge",
         "background": "blau_beige",
         "duration": 30,
         "startPose": "Stand",
@@ -2951,7 +2955,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2963,7 +2967,7 @@
     },
     {
         "id": "0121",
-        "name": " SchwUenge zur Decke",
+        "name": "SchwUenge zur Decke",
         "background": "blau_beige",
         "duration": 29,
         "startPose": "Stand",
@@ -2971,12 +2975,12 @@
         "direction": "links",
         "focus": [
             "BWS",
-            " unterer Ruecken",
-            " oberer Ruecken"
+            "unterer Ruecken",
+            "oberer Ruecken"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -2988,7 +2992,7 @@
     },
     {
         "id": "0122",
-        "name": " Hocke reinkommen",
+        "name": "Hocke reinkommen",
         "background": "blau_beige",
         "duration": 33,
         "startPose": "Stand",
@@ -2996,7 +3000,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " Sprunggelenke"
+            "Sprunggelenke"
         ],
         "goal": [
             "Beweglichkeit"
@@ -3011,7 +3015,7 @@
     },
     {
         "id": "0123",
-        "name": " Hocke zu Vorbeuge kurz",
+        "name": "Hocke zu Vorbeuge kurz",
         "background": "blau_beige",
         "duration": 11,
         "startPose": "Hocke",
@@ -3019,8 +3023,8 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " Sprunggelenke",
-            " Beinrueckseite"
+            "Sprunggelenke",
+            "Beinrueckseite"
         ],
         "goal": [
             "Beweglichkeit"
@@ -3035,7 +3039,7 @@
     },
     {
         "id": "0124",
-        "name": " SchwUenge zur Schulter",
+        "name": "SchwUenge zurSchulter",
         "background": "blau_beige",
         "duration": 21,
         "startPose": "Stand",
@@ -3043,24 +3047,24 @@
         "direction": "links",
         "focus": [
             "BWS",
-            " Schulter"
+            "Schulter"
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
         "workplaceRelevance": null,
         "logic": [
             "WU1",
-            " AB1"
+            "AB1"
         ],
         "combine": null
     },
     {
         "id": "0125",
-        "name": " Hip Articulation kurz",
+        "name": "Hip Articulation kurz",
         "background": "blau_beige",
         "duration": 52,
         "startPose": "BrSi",
@@ -3071,7 +3075,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -3083,7 +3087,7 @@
     },
     {
         "id": "0126",
-        "name": " Hip Articulation lang",
+        "name": "Hip Articulation lang",
         "background": "blau_beige",
         "duration": 95,
         "startPose": "BrSi",
@@ -3094,7 +3098,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -3106,7 +3110,7 @@
     },
     {
         "id": "0127",
-        "name": " Hip Reach und Rotieren kurz",
+        "name": "Hip Reach und Rotieren kurz",
         "background": "blau_beige",
         "duration": 71,
         "startPose": "BrSi",
@@ -3114,7 +3118,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " BWS"
+            "BWS"
         ],
         "goal": [
             "Beweglichkeit"
@@ -3137,7 +3141,7 @@
         "direction": "links",
         "focus": [
             "Huefte",
-            " BWS"
+            "BWS"
         ],
         "goal": [
             "Beweglichkeit"
@@ -3163,7 +3167,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 2,
         "caution": [],
@@ -3186,7 +3190,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [],
@@ -3198,7 +3202,7 @@
     },
     {
         "id": "0131",
-        "name": " Hip Swifel lehnen",
+        "name": "Hip Swifel lehnen",
         "background": "blau_beige",
         "duration": 48,
         "startPose": "BrSi",
@@ -3209,7 +3213,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [],
@@ -3232,7 +3236,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 3,
         "caution": [],
@@ -3255,7 +3259,7 @@
         ],
         "goal": [
             "Beweglichkeit",
-            " Entspannung"
+            "Entspannung"
         ],
         "difficulty": 0,
         "caution": [],
@@ -3271,7 +3275,7 @@
         "background": "blau_beige",
         "duration": 7,
         "startPose": "BrSi",
-        "endPose": "4Fue_ab",
+        "endPose": "4Fue-ab",
         "direction": "links",
         "focus": [],
         "goal": [],
@@ -3289,7 +3293,7 @@
         "background": "blau_beige",
         "duration": 6,
         "startPose": "BrSi",
-        "endPose": "4Fue_auf",
+        "endPose": "4Fue-auf",
         "direction": "links",
         "focus": [],
         "goal": [],
@@ -3307,7 +3311,7 @@
         "background": "blau_beige",
         "duration": 4,
         "startPose": "VB",
-        "endPose": "4Fue_auf",
+        "endPose": "4Fue-uf",
         "direction": "links",
         "focus": [],
         "goal": [],
@@ -3343,7 +3347,7 @@
         "background": "blau_beige",
         "duration": 9,
         "startPose": "GrVB",
-        "endPose": "4Fue_ab",
+        "endPose": "4Fue-ab",
         "direction": "links",
         "focus": [],
         "goal": [],

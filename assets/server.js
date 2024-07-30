@@ -298,10 +298,15 @@ app.post('/feedback', authenticateToken, async (req, res) => {
 });
 
 
+
 async function selectVideos(userFitnessLevel, duration, focus, goal) {
   const transitionVideos = ['0134', '0135', '0136', '0137', '0138', '0139'];
   const warmUpParts = ['WU1', 'WU2'];
   const endParts = ['AB1', 'AB2'];
+  const pairsToPlayConsecutively = [
+    ['0002', '0003'], ['0018', '0019'], ['0029', '0030'], ['0061', '0062'], ['0011', '0012'], ['0045', '0046'],
+    ['0039', '0040'], ['0077', '0078'], ['0042', '0041']
+  ];
   const fitnessLevelMap = {
     'Nicht so oft': 1,
     'Mehrmals im Monat': 2,
@@ -310,7 +315,6 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
     'Täglich': 5,
   };
   const fitnessLevel = fitnessLevelMap[userFitnessLevel];
-  const allFitnessLevels = Object.values(fitnessLevelMap);
   const videoCriteria = {
     WU1: [],
     WU2: [],
@@ -336,15 +340,57 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
     }
   }
 
-  const selectVideoByCategory = (category, fitnessLevels, focus, goal, startPose = null) => {
+  const selectVideoByPose = (category, startPose = null, usedVideos = new Set()) => {
     let candidates = videoCriteria[category].filter(video =>
-      (video.difficulty === 0 || fitnessLevels.includes(video.difficulty)) &&
-      (focus === 'Allgemein' || video.focus.includes(focus)) &&
-      (goal === 'Allgemein' || video.goal.includes(goal)) &&
-      (!startPose || video.startPose === startPose)
+      (!startPose || video.startPose === startPose) && !usedVideos.has(video.id)
     );
     if (candidates.length > 0) {
-      return candidates[Math.floor(Math.random() * candidates.length)];
+      const selected = candidates[Math.floor(Math.random() * candidates.length)];
+      usedVideos.add(selected.id);
+      return selected;
+    }
+    return null;
+  };
+
+  const selectRandomTransitionVideo = (usedVideos = new Set()) => {
+    let candidates = videoCriteria.TRANSITION.filter(video => !usedVideos.has(video.id));
+    if (candidates.length > 0) {
+      const selected = candidates[Math.floor(Math.random() * candidates.length)];
+      usedVideos.add(selected.id);
+      return selected;
+    }
+    return null;
+  };
+
+  const selectVideoByFocus = (category, focus, usedVideos = new Set()) => {
+    let candidates = videoCriteria[category].filter(video =>
+      video.focus.some(f => f.trim() === focus.trim()) && !usedVideos.has(video.id)
+    );
+    if (candidates.length > 0) {
+      const selected = candidates[Math.floor(Math.random() * candidates.length)];
+      usedVideos.add(selected.id);
+      return selected;
+    }
+    return null;
+  };
+
+  const selectVideoByGoal = (category, goal, usedVideos = new Set()) => {
+    let candidates = videoCriteria[category].filter(video =>
+      video.goal.some(g => g.trim() === goal.trim()) && !usedVideos.has(video.id)
+    );
+    if (candidates.length > 0) {
+      const selected = candidates[Math.floor(Math.random() * candidates.length)];
+      usedVideos.add(selected.id);
+      return selected;
+    }
+    return null;
+  };
+
+  const checkConsecutivePair = (videoId) => {
+    for (let pair of pairsToPlayConsecutively) {
+      if (pair[0] === videoId) {
+        return pair[1];
+      }
     }
     return null;
   };
@@ -352,23 +398,39 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
   let selectedVideos = [];
   let totalDuration = 0;
   let lastEndPose = null;
+  let focusMatchedCount = 0;
+  let goalMatchedCount = 0;
+  let usedVideos = new Set();
+
+  // Determine how many focus and goal videos to include based on duration
+  let focusVideosToInclude = Math.max(1, Math.floor((duration - 240) / 200) + 1);
+  let goalVideosToInclude = Math.max(1, Math.floor((duration - 240) / 200) + 1);
 
   // Select one video from each warm-up category
   for (const part of warmUpParts) {
-    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal, lastEndPose);
+    let video = selectVideoByPose(part, lastEndPose, usedVideos);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
       lastEndPose = video.endPose;
       console.log(`Selected ${part} video: ${video.id}`);
     } else {
-      console.warn(`No ${part} video found`);
+      // If no matching video found, select any video
+      video = selectVideoByPose(part, null, usedVideos);
+      if (video) {
+        selectedVideos.push(video);
+        totalDuration += video.duration;
+        lastEndPose = video.endPose;
+        console.log(`Selected ${part} video without pose match: ${video.id}`);
+      } else {
+        console.warn(`No ${part} video found`);
+      }
     }
   }
 
   // Calculate the duration for AB1 and AB2
   const endPartDurations = endParts.reduce((sum, part) => {
-    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal);
+    const video = selectVideoByPose(part, lastEndPose, usedVideos) || selectVideoByPose(part, null, usedVideos);
     return sum + (video ? video.duration : 0);
   }, 0);
 
@@ -379,46 +441,82 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
     const remainingDuration = duration - totalDuration - endPartDurations;
     if (remainingDuration <= 0) break;
 
-    const video = selectVideoByCategory('MAIN', [fitnessLevel], focus, goal, lastEndPose);
+    let video = null;
+
+    // Ensure that we select enough focus videos based on the duration
+    if (focusMatchedCount < focusVideosToInclude && focus !== 'Allgemein') {
+      video = selectVideoByFocus('MAIN', focus, usedVideos);
+      if (video) {
+        focusMatchedCount++;
+        console.log(`Selected Main video by focus: ${video.id}`);
+      }
+    }
+
+    // Ensure that we select enough goal videos based on the duration
+    if (!video && goalMatchedCount < goalVideosToInclude && goal !== 'Allgemein') {
+      video = selectVideoByGoal('MAIN', goal, usedVideos);
+      if (video) {
+        goalMatchedCount++;
+        console.log(`Selected Main video by goal: ${video.id}`);
+      }
+    }
+
+    if (!video) {
+      video = selectVideoByPose('MAIN', lastEndPose, usedVideos);
+    }
+
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
       lastEndPose = video.endPose;
       mainVideoCount++;
       console.log(`Selected Main video: ${video.id}`);
+
+      let consecutiveVideoId = checkConsecutivePair(video.id);
+      if (consecutiveVideoId && !usedVideos.has(consecutiveVideoId)) {
+        let consecutiveVideo = videos.find(v => v.id === consecutiveVideoId);
+        if (consecutiveVideo) {
+          selectedVideos.push(consecutiveVideo);
+          totalDuration += consecutiveVideo.duration;
+          lastEndPose = consecutiveVideo.endPose;
+          usedVideos.add(consecutiveVideo.id);
+          console.log(`Selected consecutive video: ${consecutiveVideo.id}`);
+        }
+      }
     } else {
-      const transitionVideo = selectVideoByCategory('TRANSITION', [fitnessLevel], focus, goal, lastEndPose);
+      let transitionVideo = selectRandomTransitionVideo(usedVideos);
       if (transitionVideo) {
         selectedVideos.push(transitionVideo);
         totalDuration += transitionVideo.duration;
-        lastEndPose = transitionVideo.endPose;
-        console.log(`Selected additional video: ${transitionVideo.id}`);
+        lastEndPose = null; // Ignore matching poses for the next video
+        console.log(`Selected transition video: ${transitionVideo.id}`);
       } else {
-        // If no videos found for the specific fitness level, focus, and goal, try with all fitness levels, focus, and goal
-        console.log('No videos found for specific criteria, trying with all fitness levels, focus, and goal.');
-        const videoWithAllLevels = selectVideoByCategory('MAIN', allFitnessLevels, 'Allgemein', 'Allgemein', lastEndPose) || 
-                                   selectVideoByCategory('TRANSITION', allFitnessLevels, 'Allgemein', 'Allgemein', lastEndPose);
-        if (videoWithAllLevels) {
-          selectedVideos.push(videoWithAllLevels);
-          totalDuration += videoWithAllLevels.duration;
-          lastEndPose = videoWithAllLevels.endPose;
-          console.log(`Selected additional video with all criteria: ${videoWithAllLevels.id}`);
-        } else {
-          console.warn('No MAIN or TRANSITION video found to fill remaining duration');
-          break;
-        }
+        console.warn('No TRANSITION video found to fill remaining duration');
+        break;
       }
     }
   }
 
   // Select one video from each end category
   for (const part of endParts) {
-    const video = selectVideoByCategory(part, [fitnessLevel], focus, goal, lastEndPose);
+    let video = selectVideoByPose(part, lastEndPose, usedVideos) || selectVideoByPose(part, null, usedVideos);
     if (video) {
       selectedVideos.push(video);
       totalDuration += video.duration;
       lastEndPose = video.endPose;
       console.log(`Selected ${part} video: ${video.id}`);
+
+      let consecutiveVideoId = checkConsecutivePair(video.id);
+      if (consecutiveVideoId && !usedVideos.has(consecutiveVideoId)) {
+        let consecutiveVideo = videos.find(v => v.id === consecutiveVideoId);
+        if (consecutiveVideo) {
+          selectedVideos.push(consecutiveVideo);
+          totalDuration += consecutiveVideo.duration;
+          lastEndPose = consecutiveVideo.endPose;
+          usedVideos.add(consecutiveVideo.id);
+          console.log(`Selected consecutive video: ${consecutiveVideo.id}`);
+        }
+      }
     } else {
       console.warn(`No ${part} video found`);
     }
@@ -427,6 +525,10 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
   console.log(`Selected ${mainVideoCount} MAIN videos`);
   return { selectedVideos, totalDuration };
 }
+
+
+
+
 
 
 app.post('/concatenate', authenticateToken, async (req, res) => {
