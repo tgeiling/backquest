@@ -414,6 +414,18 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
       totalDuration += video.duration;
       lastEndPose = video.endPose;
       console.log(`Selected ${part} video: ${video.id}`);
+
+      let consecutiveVideoId = checkConsecutivePair(video.id);
+      if (consecutiveVideoId && !usedVideos.has(consecutiveVideoId)) {
+        let consecutiveVideo = videos.find(v => v.id === consecutiveVideoId);
+        if (consecutiveVideo) {
+          selectedVideos.push(consecutiveVideo);
+          totalDuration += consecutiveVideo.duration;
+          lastEndPose = consecutiveVideo.endPose;
+          usedVideos.add(consecutiveVideo.id);
+          console.log(`Selected consecutive video: ${consecutiveVideo.id}`);
+        }
+      }
     } else {
       // If no matching video found, select any video
       video = selectVideoByPose(part, null, usedVideos);
@@ -525,6 +537,7 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
   console.log(`Selected ${mainVideoCount} MAIN videos`);
   return { selectedVideos, totalDuration };
 }
+
 
 
 

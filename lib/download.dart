@@ -26,7 +26,8 @@ class DownloadScreen extends StatefulWidget {
   DownloadScreenState createState() => DownloadScreenState();
 }
 
-class DownloadScreenState extends State<DownloadScreen> {
+class DownloadScreenState extends State<DownloadScreen>
+    with AutomaticKeepAliveClientMixin<DownloadScreen> {
   bool _isLoading = false;
   List<String> _downloadedVideos = [];
   List<String> _downloadedVideoNames = [];
@@ -174,6 +175,7 @@ class DownloadScreenState extends State<DownloadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -204,7 +206,8 @@ class DownloadScreenState extends State<DownloadScreen> {
                               itemCount: _downloadedVideos.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(12.0),
@@ -213,11 +216,13 @@ class DownloadScreenState extends State<DownloadScreen> {
                                     contentPadding: const EdgeInsets.all(16.0),
                                     title: Text(
                                       _downloadedVideoNames[index],
-                                      style: const TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     subtitle: Text(
                                       _downloadedVideoDetails[index],
-                                      style: const TextStyle(color: Colors.white70),
+                                      style: const TextStyle(
+                                          color: Colors.white70),
                                     ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -261,8 +266,8 @@ class DownloadScreenState extends State<DownloadScreen> {
                           widget.toggleModal("", 0, false);
                         });
                       },
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
                       child: Center(
                           child: Text(
                         "Video erstellen",
@@ -275,13 +280,17 @@ class DownloadScreenState extends State<DownloadScreen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoPath;
   final List<String> selectedVideos;
 
-  const VideoPlayerScreen({super.key, 
+  const VideoPlayerScreen({
+    super.key,
     required this.videoPath,
     required this.selectedVideos,
   });
