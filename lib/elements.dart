@@ -164,7 +164,8 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: Colors.grey[300],
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF59c977)),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF59c977)),
               minHeight: 20,
             )),
         Positioned(

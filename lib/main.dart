@@ -162,6 +162,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   bool _isConnected = true;
   bool _showConnectionMessage = true;
+  bool _showAuthenticateMessage = true;
   bool _isLoading = true; // New state variable for loading
 
   @override
@@ -282,6 +283,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     setState(() => _authenticated = authenticated);
     _setLoggedIn(authenticated);
     _checkQuestionnaireCompletion();
+    _showAuthenticateMessage = !authenticated;
   }
 
   void _setLoggedIn(bool loggedIn) {
@@ -346,7 +348,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           else
             questionaireDone
                 ? MainScaffold(
-                    authenticated: _authenticated == null ? false : true,
+                    authenticated: _authenticated ?? false,
                     setAuthenticated: _setAuthenticated,
                     setQuestionnairDone: _checkQuestionnaireCompletion,
                     isLoggedIn: isLoggedIn,
@@ -359,18 +361,26 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               left: 16,
               right: 16,
               child: GreenContainer(
+                  padding: const EdgeInsets.all(8.0),
+                  child: NoConnectionWidget(onDismiss: () {
+                    setState(() {
+                      _showConnectionMessage = false;
+                    });
+                  })),
+            ),
+          if (_showAuthenticateMessage)
+            Positioned(
+              top: 70,
+              left: 16,
+              right: 16,
+              child: GreenContainer(
                 padding: const EdgeInsets.all(8.0),
-                child: !_isConnected
-                    ? NoConnectionWidget(onDismiss: () {
-                        setState(() {
-                          _showConnectionMessage = false;
-                        });
-                      })
-                    : AuthenticateWidget(onDismiss: () {
-                        setState(() {
-                          _showConnectionMessage = false;
-                        });
-                      }),
+                child: AuthenticateWidget(onDismiss: () {
+                  setState(() {
+                    print("turn off");
+                    _showAuthenticateMessage = false;
+                  });
+                }),
               ),
             ),
         ],
@@ -693,6 +703,7 @@ class _MainScaffoldState extends State<MainScaffold>
                   child: CustomBottomModal(
                     description: modalDescription,
                     levelId: level,
+                    authenticated: widget.authenticated,
                     isVideoPlayer: isVideoPlayer,
                   ),
                 ),
@@ -792,15 +803,16 @@ class _MainScaffoldState extends State<MainScaffold>
 class CustomBottomModal extends StatefulWidget {
   final String description;
   final int levelId;
-
+  final bool authenticated;
   final bool isVideoPlayer;
 
-  const CustomBottomModal(
-      {Key? key,
-      required this.description,
-      required this.levelId,
-      required this.isVideoPlayer})
-      : super(key: key);
+  const CustomBottomModal({
+    Key? key,
+    required this.description,
+    required this.levelId,
+    required this.authenticated,
+    required this.isVideoPlayer,
+  }) : super(key: key);
 
   @override
   _CustomBottomModalState createState() => _CustomBottomModalState();
@@ -851,6 +863,36 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       bigPressableVerticalPadding = 14;
       aspectRatioItems = 8;
     }
+
+    bool isDateSevenDaysAgo(String isoDateString) {
+      // Parse the ISO 8601 formatted date string to a DateTime object
+      DateTime parsedDate = DateTime.parse(isoDateString).toLocal();
+
+      // Get the current date and time
+      DateTime currentDate = DateTime.now().toLocal();
+
+      // Calculate the date 7 days ago from the current date
+      DateTime sevenDaysAgo = currentDate.subtract(Duration(days: 7)).toLocal();
+
+      // Print statements for debugging
+      print("Parsed Date: ${parsedDate.toIso8601String()}");
+      print("Current Date: ${currentDate.toIso8601String()}");
+      print("Seven Days Ago: ${sevenDaysAgo.toIso8601String()}");
+
+      // Compare the dates (only the date part, not the time)
+      bool isSevenDaysAgo = parsedDate.isBefore(sevenDaysAgo) ||
+          parsedDate.isAtSameMomentAs(sevenDaysAgo);
+
+      // Print the comparison result
+      print("Is Parsed Date Seven Days Ago? $isSevenDaysAgo");
+
+      return isSevenDaysAgo;
+    }
+
+    // Fetch the last update string from profilProvider
+    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
+    final bool readyForNextVideo =
+        isDateSevenDaysAgo(profilProvider.lastUpdateString);
 
     return Padding(
       padding: EdgeInsets.all(modalPadding),
@@ -921,31 +963,60 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           const SizedBox(height: 30),
           PressableButton(
-            onPressed: widget.isVideoPlayer
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VideoCombinerScreen(
-                          levelId: 1, // example value
-                          levelNotifier: Provider.of<LevelNotifier>(context,
-                              listen: false),
-                          profilProvider: Provider.of<ProfilProvider>(context,
-                              listen: false),
-                          focus: selectedFocus,
-                          goal: selectedGoal,
-                          duration: selectedDuration,
-                        ),
-                      ),
-                    );
-                  }
-                : () {
-                    downloadScreenKey.currentState!.combineAndDownloadVideo(
-                        selectedFocus,
-                        selectedGoal,
-                        selectedDuration,
-                        ProfilProvider().fitnessLevel);
-                  },
+            onPressed: widget.authenticated // Check if authenticated
+                ? widget.isVideoPlayer
+                    ? () {
+                        // Action when authenticated and isVideoPlayer is true
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VideoCombinerScreen(
+                              levelId: widget.levelId,
+                              levelNotifier: Provider.of<LevelNotifier>(context,
+                                  listen: false),
+                              profilProvider: Provider.of<ProfilProvider>(
+                                  context,
+                                  listen: false),
+                              focus: selectedFocus,
+                              goal: selectedGoal,
+                              duration: selectedDuration,
+                            ),
+                          ),
+                        );
+                      }
+                    : () {
+                        // Action when authenticated and isVideoPlayer is false
+                        downloadScreenKey.currentState!.combineAndDownloadVideo(
+                            selectedFocus,
+                            selectedGoal,
+                            selectedDuration,
+                            ProfilProvider().fitnessLevel);
+                      }
+                : readyForNextVideo
+                    ? () {
+                        // Action when ready for next video
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VideoCombinerScreen(
+                              levelId: widget.levelId,
+                              levelNotifier: Provider.of<LevelNotifier>(context,
+                                  listen: false),
+                              profilProvider: Provider.of<ProfilProvider>(
+                                  context,
+                                  listen: false),
+                              focus: selectedFocus,
+                              goal: selectedGoal,
+                              duration: selectedDuration,
+                            ),
+                          ),
+                        );
+                      }
+                    : () {
+                        // Show dialog when not ready for next video
+                        showVideoRestrictionDialog(
+                            profilProvider.lastUpdateString);
+                      },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
             child: Center(
@@ -956,6 +1027,42 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
         ],
       ),
+    );
+  }
+
+  void showVideoRestrictionDialog(String lastUpdateString) {
+    // Calculate the next available video time
+    DateTime lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();
+    DateTime nextAvailableDate = lastUpdateDate.add(Duration(days: 7));
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Video Restriction"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text("You can only watch one video per week."),
+              const SizedBox(height: 8),
+              Text("Next video available on:"),
+              Text(
+                "${nextAvailableDate.day.toString().padLeft(2, '0')}-${nextAvailableDate.month.toString().padLeft(2, '0')}-${nextAvailableDate.year} "
+                "at ${nextAvailableDate.hour.toString().padLeft(2, '0')}:${nextAvailableDate.minute.toString().padLeft(2, '0')}",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

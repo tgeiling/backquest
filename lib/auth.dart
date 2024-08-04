@@ -159,7 +159,9 @@ class AuthService {
     final expiration = getTokenExpiration(token);
     if (expiration == null) return true;
 
-    return expiration.isBefore(DateTime.now().add(const Duration(minutes: 1)));
+    return expiration.isBefore(DateTime.now()
+        .subtract(const Duration(days: 120))
+        .add(const Duration(minutes: 1)));
   }
 
   DateTime? getTokenExpiration(String token) {
@@ -317,7 +319,8 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Login Failed'),
-            content: const Text('Invalid username or password. Please try again.'),
+            content:
+                const Text('Invalid username or password. Please try again.'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Close'),
@@ -362,7 +365,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const Spacer(),
             PressableButton(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 onPressed: _attemptLogin,
                 child: const SizedBox(
                   width: double.infinity,
@@ -373,11 +377,13 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 10,
             ),
             PressableButton(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterScreen()),
                   );
                 },
                 child: const SizedBox(
@@ -446,7 +452,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           children: [
             Center(
                 child: GreyContainer(
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 18),
                     child: Image.asset(
                       'assets/logo.png',
                       scale: 2,
