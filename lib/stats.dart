@@ -30,6 +30,7 @@ class ProfilProvider extends ChangeNotifier {
   List<String> _hasPain = [];
   List<String> _goals = [];
   bool? _questionnaireDone;
+  bool? _payedSubscription;
   List<ExerciseFeedback> _feedback = [];
 
   int get weeklyGoal => _weeklyGoal;
@@ -51,6 +52,7 @@ class ProfilProvider extends ChangeNotifier {
   List<String> get hasPain => _hasPain;
   List<String> get goals => _goals;
   bool? get questionnaireDone => _questionnaireDone;
+  bool? get payedSubscription => _payedSubscription;
   List<ExerciseFeedback> get feedback => _feedback;
 
   Future<void> loadInitialData() async {
@@ -73,6 +75,7 @@ class ProfilProvider extends ChangeNotifier {
     _goals = prefs.getStringList('goals') ?? [];
     _hasPain = prefs.getStringList('hasPain') ?? [];
     _questionnaireDone = prefs.getBool('questionnaireDone');
+    _payedSubscription = prefs.getBool('payedSubscription');
     String? feedbackJson = prefs.getString('feedback');
     if (feedbackJson != null) {
       List<dynamic> feedbackList = json.decode(feedbackJson);
@@ -281,12 +284,18 @@ class ProfilProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setPayedSubscription(bool payedSubscription) async {
+    _payedSubscription = payedSubscription;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('payedSubscription', payedSubscription);
+    notifyListeners();
+  }
+
   Future<void> setFeedback(List<ExerciseFeedback> feedback) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String feedbackJson = json.encode(feedback.map((f) => f.toJson()).toList());
     await prefs.setString('feedback', feedbackJson);
   }
-
 }
 
 class ProfilPage extends StatefulWidget {
@@ -465,8 +474,8 @@ class ProfilPageState extends State<ProfilPage> {
                     child: Visibility(
                       visible: loggedIn,
                       child: Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(12),

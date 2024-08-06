@@ -279,6 +279,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 .setQuestionnaireDone(profileData['questionnaireDone']);
           }
 
+          if (profileData.containsKey('payedSubscription')) {
+            profilProvider
+                .setPayedSubscription(profileData['payedSubscription']);
+          }
+
           if (profileData.containsKey('feedback')) {
             List<ExerciseFeedback> feedbackList =
                 (profileData['feedback'] as List)

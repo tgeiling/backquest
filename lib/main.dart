@@ -372,7 +372,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     });
                   })),
             ),
-          if (_showAuthenticateMessage)
+          if (_showAuthenticateMessage && questionaireDone)
             Positioned(
               top: 70,
               left: 16,
@@ -895,8 +895,11 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
 
     // Fetch the last update string from profilProvider
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
-    final bool readyForNextVideo =
-        isDateSevenDaysAgo(profilProvider.lastUpdateString);
+    final bool readyForNextVideo = profilProvider.lastUpdateString == ""
+        ? true
+        : isDateSevenDaysAgo(profilProvider.lastUpdateString);
+
+    bool payedUp = profilProvider.payedSubscription == true ? true : false;
 
     return Padding(
       padding: EdgeInsets.all(modalPadding),
@@ -967,7 +970,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           const SizedBox(height: 30),
           PressableButton(
-            onPressed: widget.authenticated // Check if authenticated
+            onPressed: widget.authenticated && payedUp
                 ? widget.isVideoPlayer
                     ? () {
                         // Action when authenticated and isVideoPlayer is true
@@ -1039,27 +1042,61 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     DateTime lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();
     DateTime nextAvailableDate = lastUpdateDate.add(Duration(days: 7));
 
+    // Calculate days until the next available date
+    int daysUntilNextVideo =
+        nextAvailableDate.difference(DateTime.now()).inDays;
+
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Video Restriction"),
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(10.0), // Rounded corners for the dialog
+          ),
+          title: Text(
+            "Videoeinschränkung",
+            style: Theme.of(context).textTheme.displayMedium, // Use text theme
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Text("You can only watch one video per week."),
-              const SizedBox(height: 8),
-              Text("Next video available on:"),
               Text(
-                "${nextAvailableDate.day.toString().padLeft(2, '0')}-${nextAvailableDate.month.toString().padLeft(2, '0')}-${nextAvailableDate.year} "
-                "at ${nextAvailableDate.hour.toString().padLeft(2, '0')}:${nextAvailableDate.minute.toString().padLeft(2, '0')}",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                "Sie können nur ein Video pro Woche ansehen. Nächstes Video verfügbar in:",
+                style: Theme.of(context).textTheme.bodyLarge, // Use text theme
+              ),
+              const SizedBox(height: 20),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '$daysUntilNextVideo ',
+                      style: TextStyle(
+                        fontSize: 36, // Large font size for the number
+                        fontWeight: FontWeight.bold, // Bold font weight
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'Tage',
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.displayLarge?.fontSize,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text("OK"),
+              child: Text(
+                "OK",
+                style:
+                    Theme.of(context).textTheme.displayMedium, // Use text theme
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },

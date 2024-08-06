@@ -53,6 +53,7 @@ Future<bool> updateProfile({
   String? expectation,
   List<String>? personalGoal,
   bool? questionnaireDone,
+  bool? payedSubscription,
   List<ExerciseFeedback>? feedback,
 }) async {
   final Uri apiUrl = Uri.parse('http://135.125.218.147:3000/updateProfile');
@@ -75,6 +76,7 @@ Future<bool> updateProfile({
   if (expectation != null) body['expectation'] = expectation;
   if (personalGoal != null) body['personalGoal'] = personalGoal;
   if (questionnaireDone != null) body['questionnaireDone'] = questionnaireDone;
+  if (payedSubscription != null) body['payedSubscription'] = payedSubscription;
   if (feedback != null) body['feedback'] = feedback;
 
   try {

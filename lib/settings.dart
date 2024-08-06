@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/quickalert.dart';
 
 import 'auth.dart';
 
@@ -22,11 +23,14 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
+    bool payedUp = profilProvider.payedSubscription == true ? true : false;
+
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           iconTheme: const IconThemeData(
-            color: Colors.white, // Sets the color of the back arrow to white
+            color: Colors.white,
           ),
           title: const Text("Einstellungen",
               style: TextStyle(color: Colors.white)),
@@ -68,8 +72,9 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.logout,
                   onTileTap: setAuthenticated,
                 ),
-                const SettingsTile(
-                    title: 'Backquest abonnieren', icon: Icons.payments_sharp),
+                SettingsTile(
+                    title: payedUp ? "Mein Abonnement" : 'Backquest abonnieren',
+                    icon: Icons.payments_sharp),
               ],
             ).toList(),
           ),
@@ -134,6 +139,11 @@ class SettingsTile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => const SubscriptionSettingPage()),
+          );
+        } else if (title == 'Mein Abonnement') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
           );
         } else {
           Navigator.push(
@@ -595,6 +605,38 @@ class _PainSettingPageState extends State<PainSettingPage> {
   }
 }
 
+class MySubscriptionPage extends StatefulWidget {
+  const MySubscriptionPage({Key? key}) : super(key: key);
+
+  @override
+  _MySubscriptionPageState createState() => _MySubscriptionPageState();
+}
+
+class _MySubscriptionPageState extends State<MySubscriptionPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          "assets/settingsbg.PNG",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              title: const Text('Choose Your Subscription',
+                  style: TextStyle(color: Colors.white)),
+              iconTheme: const IconThemeData(color: Colors.white),
+            ),
+            body: Text("you are subscribed"))
+      ],
+    );
+  }
+}
+
 class SubscriptionSettingPage extends StatefulWidget {
   const SubscriptionSettingPage({Key? key}) : super(key: key);
 
@@ -758,17 +800,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentData!['clientSecret'],
           merchantDisplayName: 'BackQuest',
-          customerId: paymentIntentData![
-              'customer'], // Optional: if using customer data
-          customerEphemeralKeySecret: paymentIntentData![
-              'ephemeralKey'], // Optional: if using customer data
-          googlePay: const PaymentSheetGooglePay(
-            merchantCountryCode: 'DE',
-            testEnv: true,
-          ),
-          applePay: const PaymentSheetApplePay(
-            merchantCountryCode: 'DE',
-          ),
+          customerId: paymentIntentData!['customer'],
+          customerEphemeralKeySecret: paymentIntentData!['ephemeralKey'],
           style: ThemeMode.system,
         ),
       );
@@ -787,39 +820,71 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
             null; // Clear payment intent data after successful payment
       });
 
-      showDialog(
+      // Show success QuickAlert
+      QuickAlert.show(
+        backgroundColor: Colors.grey.shade900,
+        textColor: Colors.white,
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Payment Success'),
-          content: const Text('Your payment was successful!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+        type: QuickAlertType.success, // Use success alert type
+        title: 'Zahlung Erfolgreich',
+        text: 'Danke, dass Sie BackQuest abonniert haben! '
+            'Sie haben jetzt unbegrenzten Zugriff auf unsere Videos und Kurse. '
+            'Wenn Sie das Abo kündigen möchten, gehen Sie unter Ihren Einstellungen '
+            'auf "Abonnement Infos" und dann auf "Kündigen".',
       );
-    } catch (e) {
-      print('Error displaying payment sheet: $e');
 
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Payment Failed'),
-          content: Text('Error: $e'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      final profilProvider =
+          Provider.of<ProfilProvider>(context, listen: false);
+
+      profilProvider.setPayedSubscription(true);
+
+      getAuthToken().then((token) {
+        if (token != null) {
+          updateProfile(
+            token: token,
+            payedSubscription: true,
+          ).then((success) {
+            if (success) {
+              print("Profile updated successfully.");
+            } else {
+              print("Failed to update profile.");
+            }
+          });
+        } else {
+          print("No auth token available.");
+        }
+      });
+    } catch (e) {
+      // Check if the error is a cancellation
+      if (e is StripeException && e.error.code == FailureCode.Canceled) {
+        // Show cancellation alert
+        QuickAlert.show(
+          backgroundColor: Colors.grey.shade900,
+          textColor: Colors.white,
+          context: context,
+          type: QuickAlertType.info, // Use info alert type for cancellation
+          title: 'Zahlung Abgebrochen',
+          text: 'Es wurde nichts abgebucht!',
+        );
+      } else {
+        // Show error dialog for other types of errors
+        print('Error displaying payment sheet: $e');
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Payment Failed'),
+            content: Text('Error: $e'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 

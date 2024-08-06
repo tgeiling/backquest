@@ -36,6 +36,7 @@ const UserSchema = new mongoose.Schema({
   fitnessLevel: String,
   personalGoal: [String],
   questionnaireDone: Boolean,
+  payedSubscription: Boolean,
   feedback: [{
     videoId: String,
     difficulty: String,
@@ -132,6 +133,7 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
     if (req.body.fitnessLevel) user.fitnessLevel = req.body.fitnessLevel;
     if (req.body.personalGoal) user.personalGoal = req.body.personalGoal;
 	if (req.body.questionnaireDone) user.questionnaireDone = req.body.questionnaireDone;
+	if (req.body.payedSubscription) user.payedSubscription = req.body.payedSubscription;
 	if (req.body.feedback) user.feedback = req.body.feedback;
 
     await user.save();
@@ -165,6 +167,7 @@ app.get('/profile', authenticateToken, async (req, res) => {
       fitnessLevel: user.fitnessLevel,
       personalGoal: user.personalGoal,
 	  questionnaireDone: user.questionnaireDone,
+	  payedSubscription: user.payedSubscription,
 	  feedback: user.feedback,
     };
 
@@ -196,6 +199,7 @@ app.get('/userFeedback', async (req, res) => {
         fitnessLevel: user.fitnessLevel,
         personalGoal: user.personalGoal,
         questionnaireDone: user.questionnaireDone,
+		payedSubscription: user.payedSubscription,
         feedback: user.feedback
       }
     }));
