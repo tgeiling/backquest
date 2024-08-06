@@ -1560,4 +1560,11 @@ please see styles_device_defaults.xml.
     <style name="NotificationTombstoneAction" parent="NotificationAction">
         <item name="textColor">#555555</item>
     </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
 </resources>

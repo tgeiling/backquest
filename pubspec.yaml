@@ -46,6 +46,7 @@ dependencies:
   scroll_date_picker: ^3.7.3
   flutter_spinkit: ^5.2.1
   intl: 0.18.1
+  flutter_stripe: ^11.0.0
   flutter_localizations:
     sdk: flutter
 

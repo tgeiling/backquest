@@ -8,6 +8,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 import 'stats.dart';
 import 'video.dart';
@@ -133,6 +134,9 @@ class LevelNotifier with ChangeNotifier {
 }
 
 void main() {
+  Stripe.publishableKey =
+      "pk_live_51PBtQnKV1aUD2cRr8fWRW5dsN7dgSVLLGv0RUff0OOgobnsFgkq2QRCp591n2w6EwqTZiIOggx1NEJrvHOXoK5ro00VusyEn8w";
+
   runApp(
     MultiProvider(
       providers: [

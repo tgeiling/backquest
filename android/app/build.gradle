@@ -29,10 +29,20 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
+    namespace 'com.tgeiling.backquest'
+
+    lintOptions {
+        warningsAsErrors true
+        checkReleaseBuilds true
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
     }
 
     kotlinOptions {
@@ -78,8 +88,10 @@ flutter {
 }
 
 dependencies {
+    
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	implementation platform('com.google.firebase:firebase-bom:30.2.0')
 	implementation 'com.google.firebase:firebase-analytics'
-    implementation files('libs/bcprov-jdk15to18-173.jar')
+    implementation 'org.bouncycastle:bcprov-jdk15to18:1.69'
+    implementation 'com.stripe:stripe-android:20.11.0' // Update to the latest version
 }

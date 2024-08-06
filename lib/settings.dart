@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:backquest/elements.dart';
 import 'package:backquest/services.dart';
 import 'package:backquest/stats.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
 
 import 'auth.dart';
 
@@ -600,7 +604,7 @@ class SubscriptionSettingPage extends StatefulWidget {
 }
 
 class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
-  String? selectedSubscription; // Nullable to handle no initial selection
+  String? selectedSubscription;
 
   bool isSubscriptionSelected(String subscription) {
     return selectedSubscription == subscription;
@@ -699,9 +703,175 @@ class PaymentSettingPage extends StatefulWidget {
 
 class _PaymentSettingPageState extends State<PaymentSettingPage> {
   String? selectedPaymentMethod;
+  Map<String, dynamic>? paymentIntentData;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure the Stripe publishable key is set
+    Stripe.publishableKey =
+        'pk_test_51PBtQnKV1aUD2cRrKz3GJYDnCUSQ1VF6Pt6mCtFihoqCt07YN3NswdlTXTkIKvJbsxyrHXqvaJ8TIx2mFLm0xfFO007VfAcNCV'; // Replace with your actual key
+  }
 
   bool isMethodSelected(String method) {
     return selectedPaymentMethod == method;
+  }
+
+  Future<void> createPaymentIntent(String amount, String currency) async {
+    try {
+      // Replace with your server endpoint
+      const String serverEndpoint =
+          'http://135.125.218.147:3000/create-payment-intent';
+
+      final response = await http.post(
+        Uri.parse(serverEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'amount': amount, // Amount in cents
+          'currency': currency,
+          'payment_method_types': ['card'],
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        paymentIntentData = json.decode(response.body);
+        print(
+            'Payment intent created successfully: ${paymentIntentData!['clientSecret']}');
+      } else {
+        print('Failed to create payment intent: ${response.body}');
+      }
+    } catch (e) {
+      print('Error creating payment intent: $e');
+    }
+  }
+
+  Future<void> initializePaymentSheet() async {
+    try {
+      // Ensure that payment intent data is not null
+      if (paymentIntentData == null) {
+        throw Exception('Payment intent data is null');
+      }
+
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: paymentIntentData!['clientSecret'],
+          merchantDisplayName: 'BackQuest',
+          customerId: paymentIntentData![
+              'customer'], // Optional: if using customer data
+          customerEphemeralKeySecret: paymentIntentData![
+              'ephemeralKey'], // Optional: if using customer data
+          googlePay: const PaymentSheetGooglePay(
+            merchantCountryCode: 'DE',
+            testEnv: true,
+          ),
+          applePay: const PaymentSheetApplePay(
+            merchantCountryCode: 'DE',
+          ),
+          style: ThemeMode.system,
+        ),
+      );
+      print('Payment sheet initialized successfully');
+    } catch (e) {
+      print('Error initializing payment sheet: $e');
+    }
+  }
+
+  Future<void> displayPaymentSheet() async {
+    try {
+      await Stripe.instance.presentPaymentSheet();
+
+      setState(() {
+        paymentIntentData =
+            null; // Clear payment intent data after successful payment
+      });
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Payment Success'),
+          content: const Text('Your payment was successful!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      print('Error displaying payment sheet: $e');
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Payment Failed'),
+          content: Text('Error: $e'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void handlePayment() async {
+    try {
+      if (selectedPaymentMethod == 'Credit Card') {
+        await createPaymentIntent(
+          widget.subscriptionType == 'Jährlich'
+              ? '6599'
+              : '1099', // Amount in cents
+          'eur',
+        );
+        if (paymentIntentData != null) {
+          await initializePaymentSheet();
+          await displayPaymentSheet();
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Error'),
+            content:
+                const Text('Selected payment method is not supported yet.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error handling payment: $e');
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Payment Error'),
+          content: Text('An error occurred: $e'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Widget methodTile(String method) {
@@ -800,21 +970,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Confirmation"),
-                  content: Text(
-                      "You have selected the $selectedPaymentMethod method."),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text("OK")),
-                  ],
-                ),
-              );
-            },
+            onPressed: handlePayment,
             backgroundColor: Colors.green,
             child: const Icon(
               Icons.check,
