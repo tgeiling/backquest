@@ -13,6 +13,7 @@
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <!-- App Declaration -->
     <application
@@ -56,23 +57,6 @@
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
-
-        <!-- Stripe Payment Activity -->
-        <activity
-            android:name="com.stripe.android.view.PaymentAuthWebViewActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/StripeDefaultTheme"
-            android:hardwareAccelerated="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="backquest"
-                    android:host="stripe-redirect" />
-            </intent-filter>
-        </activity>
         <!-- Stripe Redirect Scheme -->
         <!-- Replace 'backquest' with your actual app scheme. -->
         <meta-data

@@ -5,8 +5,8 @@ import 'package:backquest/services.dart';
 import 'package:backquest/stats.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:quickalert/quickalert.dart';
 
 import 'auth.dart';
@@ -745,187 +745,164 @@ class PaymentSettingPage extends StatefulWidget {
 
 class _PaymentSettingPageState extends State<PaymentSettingPage> {
   String? selectedPaymentMethod;
-  Map<String, dynamic>? paymentIntentData;
+  late InAppPurchase inAppPurchase;
+  bool available = true;
+  List<ProductDetails> products = [];
+  List<PurchaseDetails> purchases = [];
 
   @override
   void initState() {
     super.initState();
-    // Ensure the Stripe publishable key is set
-    Stripe.publishableKey =
-        'pk_test_51PBtQnKV1aUD2cRrKz3GJYDnCUSQ1VF6Pt6mCtFihoqCt07YN3NswdlTXTkIKvJbsxyrHXqvaJ8TIx2mFLm0xfFO007VfAcNCV'; // Replace with your actual key
+    inAppPurchase = InAppPurchase.instance;
+    initializeInAppPurchase();
+  }
+
+  // Initialize the in-app purchase system
+  Future<void> initializeInAppPurchase() async {
+    try {
+      final bool isAvailable = await inAppPurchase.isAvailable();
+      setState(() {
+        available = isAvailable;
+      });
+
+      print('In-App Purchase availability: $available');
+
+      if (available) {
+        const Set<String> productIds = {'02', '01'};
+        final ProductDetailsResponse response =
+            await inAppPurchase.queryProductDetails(productIds);
+        if (response.error != null) {
+          print('Error retrieving product details: ${response.error}');
+          return;
+        }
+
+        if (response.productDetails.isEmpty) {
+          print('No products found.');
+        } else {
+          setState(() {
+            products = response.productDetails;
+          });
+          print('Products retrieved: ${products.length}');
+        }
+
+        // Listen to purchase updates
+        inAppPurchase.purchaseStream
+            .listen((List<PurchaseDetails> purchaseDetailsList) {
+          _handlePurchaseUpdates(purchaseDetailsList);
+        });
+      }
+    } catch (e) {
+      print('Error initializing in-app purchase: $e');
+    }
+  }
+
+  // Handle purchase updates
+  void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) {
+    for (var purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.purchased ||
+          purchaseDetails.status == PurchaseStatus.restored) {
+        // Verify purchase here if necessary
+        _verifyPurchase(purchaseDetails);
+        if (purchaseDetails.pendingCompletePurchase) {
+          inAppPurchase.completePurchase(purchaseDetails);
+        }
+      } else if (purchaseDetails.status == PurchaseStatus.error) {
+        // Handle error
+        print('Purchase Error: ${purchaseDetails.error}');
+      }
+    }
+
+    setState(() {
+      purchases = purchaseDetailsList;
+    });
+  }
+
+  // Verify purchase (e.g., by checking server-side)
+  Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
+    try {
+      // Simulate verification and unlocking features
+      if (purchaseDetails.productID == '02' ||
+          purchaseDetails.productID == '01') {
+        // Update subscription status in provider
+        final profilProvider =
+            Provider.of<ProfilProvider>(context, listen: false);
+        profilProvider.setPayedSubscription(true);
+
+        // Show success message
+        QuickAlert.show(
+          backgroundColor: Colors.grey.shade900,
+          textColor: Colors.white,
+          context: context,
+          type: QuickAlertType.success,
+          title: 'Zahlung Erfolgreich',
+          text: 'Danke, dass Sie BackQuest abonniert haben! '
+              'Sie haben jetzt unbegrenzten Zugriff auf unsere Videos und Kurse. '
+              'Wenn Sie das Abo kündigen möchten, gehen Sie unter Ihren Einstellungen '
+              'auf "Abonnement Infos" und dann auf "Kündigen".',
+        );
+      }
+    } catch (e) {
+      print('Error verifying purchase: $e');
+    }
   }
 
   bool isMethodSelected(String method) {
     return selectedPaymentMethod == method;
   }
 
-  Future<void> createPaymentIntent(String amount, String currency) async {
+  // Purchase a product
+  void _purchaseProduct(ProductDetails productDetails) {
     try {
-      // Replace with your server endpoint
-      const String serverEndpoint =
-          'http://135.125.218.147:3000/create-payment-intent';
-
-      final response = await http.post(
-        Uri.parse(serverEndpoint),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'amount': amount, // Amount in cents
-          'currency': currency,
-          'payment_method_types': ['card'],
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        paymentIntentData = json.decode(response.body);
-        print(
-            'Payment intent created successfully: ${paymentIntentData!['clientSecret']}');
-      } else {
-        print('Failed to create payment intent: ${response.body}');
-      }
+      final PurchaseParam purchaseParam =
+          PurchaseParam(productDetails: productDetails);
+      inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
     } catch (e) {
-      print('Error creating payment intent: $e');
+      print('Error purchasing product: $e');
     }
   }
 
-  Future<void> initializePaymentSheet() async {
-    try {
-      // Ensure that payment intent data is not null
-      if (paymentIntentData == null) {
-        throw Exception('Payment intent data is null');
-      }
-
-      await Stripe.instance.initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntentData!['clientSecret'],
-          merchantDisplayName: 'BackQuest',
-          customerId: paymentIntentData!['customer'],
-          customerEphemeralKeySecret: paymentIntentData!['ephemeralKey'],
-          style: ThemeMode.system,
-        ),
-      );
-      print('Payment sheet initialized successfully');
-    } catch (e) {
-      print('Error initializing payment sheet: $e');
-    }
-  }
-
-  Future<void> displayPaymentSheet() async {
-    try {
-      await Stripe.instance.presentPaymentSheet();
-
-      setState(() {
-        paymentIntentData =
-            null; // Clear payment intent data after successful payment
-      });
-
-      // Show success QuickAlert
-      QuickAlert.show(
-        backgroundColor: Colors.grey.shade900,
-        textColor: Colors.white,
-        context: context,
-        type: QuickAlertType.success, // Use success alert type
-        title: 'Zahlung Erfolgreich',
-        text: 'Danke, dass Sie BackQuest abonniert haben! '
-            'Sie haben jetzt unbegrenzten Zugriff auf unsere Videos und Kurse. '
-            'Wenn Sie das Abo kündigen möchten, gehen Sie unter Ihren Einstellungen '
-            'auf "Abonnement Infos" und dann auf "Kündigen".',
-      );
-
-      final profilProvider =
-          Provider.of<ProfilProvider>(context, listen: false);
-
-      profilProvider.setPayedSubscription(true);
-
-      getAuthToken().then((token) {
-        if (token != null) {
-          updateProfile(
-            token: token,
-            payedSubscription: true,
-          ).then((success) {
-            if (success) {
-              print("Profile updated successfully.");
-            } else {
-              print("Failed to update profile.");
-            }
-          });
-        } else {
-          print("No auth token available.");
-        }
-      });
-    } catch (e) {
-      // Check if the error is a cancellation
-      if (e is StripeException && e.error.code == FailureCode.Canceled) {
-        // Show cancellation alert
-        QuickAlert.show(
-          backgroundColor: Colors.grey.shade900,
-          textColor: Colors.white,
-          context: context,
-          type: QuickAlertType.info, // Use info alert type for cancellation
-          title: 'Zahlung Abgebrochen',
-          text: 'Es wurde nichts abgebucht!',
-        );
-      } else {
-        // Show error dialog for other types of errors
-        print('Error displaying payment sheet: $e');
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Payment Failed'),
-            content: Text('Error: $e'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    }
-  }
-
+  // Handle payment
   void handlePayment() async {
-    try {
-      if (selectedPaymentMethod == 'Credit Card') {
-        await createPaymentIntent(
-          widget.subscriptionType == 'Jährlich'
-              ? '6599'
-              : '1099', // Amount in cents
-          'eur',
-        );
-        if (paymentIntentData != null) {
-          await initializePaymentSheet();
-          await displayPaymentSheet();
-        }
-      } else {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Error'),
-            content:
-                const Text('Selected payment method is not supported yet.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error handling payment: $e');
+    if (!available) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Payment Error'),
-          content: Text('An error occurred: $e'),
+          backgroundColor: Colors.green,
+          title: const Text('Error'),
+          content: const Text('In-App Purchases are not available.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    ProductDetails? product;
+    try {
+      if (widget.subscriptionType == 'Jährlich') {
+        product = products.firstWhere((product) => product.id == '02');
+      } else {
+        product = products.firstWhere((product) => product.id == '01');
+      }
+    } catch (e) {
+      product = null;
+      print('Error finding product: $e');
+    }
+
+    if (product != null) {
+      _purchaseProduct(product);
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Selected subscription type is not available.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -959,11 +936,12 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         ],
       ),
       child: ListTile(
-        title: Text(method,
-            style: TextStyle(
-                color: isMethodSelected(method)
-                    ? Colors.white
-                    : Colors.grey[400])),
+        title: Text(
+          method,
+          style: TextStyle(
+              color:
+                  isMethodSelected(method) ? Colors.white : Colors.grey[400]),
+        ),
         onTap: () {
           setState(() {
             selectedPaymentMethod = method;
@@ -1012,8 +990,10 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: Text('Payment Method for ${widget.subscriptionType}',
-                style: const TextStyle(color: Colors.white)),
+            title: Text(
+              'Payment Method for ${widget.subscriptionType}',
+              style: const TextStyle(color: Colors.white),
+            ),
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: Column(
@@ -1026,9 +1006,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    methodTile('Credit Card'),
-                    methodTile('PayPal'),
-                    methodTile('Direct Debit'),
+                    methodTile(
+                        'In-App Purchase'), // Change this to reflect in-app purchase
                   ],
                 ),
               ),

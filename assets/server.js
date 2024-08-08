@@ -7,7 +7,6 @@ const helmet = require('helmet');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -621,46 +620,6 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
-
-app.post('/create-payment-intent', async (req, res) => {
-  try {
-    // Log the incoming request
-    console.log('Received request to create payment intent');
-    console.log('Request headers:', req.headers);
-    console.log('Request body:', req.body);
-
-    const { amount, currency } = req.body;
-
-    // Log the parameters that will be sent to Stripe
-    console.log(`Creating payment intent with amount: ${amount}, currency: ${currency}`);
-
-    // Create a PaymentIntent with the specified amount and currency
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency,
-      payment_method_types: ['card'],
-    });
-
-    // Log the response from Stripe
-    console.log('Payment intent created successfully:', paymentIntent);
-
-    // Respond with the client secret
-    res.json({
-      clientSecret: paymentIntent.client_secret,
-    });
-  } catch (error) {
-    // Log the error details
-    console.error('Error creating payment intent:', error);
-
-    // Send error response
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// A protected route
-app.get('/protected', authenticateToken, (req, res) => {
-  res.json({ message: 'Welcome to the protected route!', user: req.user });
-});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
