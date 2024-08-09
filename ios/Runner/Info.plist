@@ -35,7 +35,6 @@
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<key>NSCameraUsageDescription</key>
 	<string>Kamerazugriff ist erforderlich, um Karten zu scannen.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Der Zugriff auf die Fotobibliothek wird für die Verarbeitung von Kartenbildern benötigt.</string>
