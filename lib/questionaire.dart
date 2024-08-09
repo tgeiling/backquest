@@ -1397,7 +1397,7 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.asset(
-                  "assets/thumbnails/${widget.videoId}.PNG",
+                  "assets/thumbnails/${widget.videoId}.jpg",
                   fit: BoxFit.cover,
                 ),
               ),
