@@ -1111,6 +1111,12 @@ class AfterVideoView extends StatefulWidget {
 class _AfterVideoViewState extends State<AfterVideoView> {
   final PageController _pageController = PageController();
 
+  List<String> get filteredVideoIds {
+    return widget.videoIds
+        .where((id) => id.compareTo("0133") < 0 || id.compareTo("0139") > 0)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1122,7 +1128,7 @@ class _AfterVideoViewState extends State<AfterVideoView> {
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut)),
           SecondPage(
-            videoIds: widget.videoIds,
+            videoIds: filteredVideoIds,
           ),
         ],
       ),
