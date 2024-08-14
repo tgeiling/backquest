@@ -31,6 +31,8 @@ class ProfilProvider extends ChangeNotifier {
   List<String> _goals = [];
   bool? _questionnaireDone;
   bool? _payedSubscription;
+  String? _subType;
+  DateTime? _subStarted;
   List<ExerciseFeedback> _feedback = [];
 
   int get weeklyGoal => _weeklyGoal;
@@ -53,6 +55,8 @@ class ProfilProvider extends ChangeNotifier {
   List<String> get goals => _goals;
   bool? get questionnaireDone => _questionnaireDone;
   bool? get payedSubscription => _payedSubscription;
+  String? get subType => _subType;
+  DateTime? get subStarted => _subStarted;
   List<ExerciseFeedback> get feedback => _feedback;
 
   Future<void> loadInitialData() async {
@@ -76,6 +80,8 @@ class ProfilProvider extends ChangeNotifier {
     _hasPain = prefs.getStringList('hasPain') ?? [];
     _questionnaireDone = prefs.getBool('questionnaireDone');
     _payedSubscription = prefs.getBool('payedSubscription');
+    _subType = prefs.getString('subType');
+    _subStarted = DateTime.tryParse(prefs.getString('subStarted') ?? '');
     String? feedbackJson = prefs.getString('feedback');
     if (feedbackJson != null) {
       List<dynamic> feedbackList = json.decode(feedbackJson);
@@ -288,6 +294,20 @@ class ProfilProvider extends ChangeNotifier {
     _payedSubscription = payedSubscription;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('payedSubscription', payedSubscription);
+    notifyListeners();
+  }
+
+  Future<void> setSubType(String subType) async {
+    _subType = subType;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('subType', subType);
+    notifyListeners();
+  }
+
+  Future<void> setSubStarted(DateTime subStarted) async {
+    _subStarted = subStarted;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('birthdate', subStarted.toIso8601String());
     notifyListeners();
   }
 

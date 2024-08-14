@@ -530,7 +530,7 @@ class _MainScaffoldState extends State<MainScaffold>
                             ],
                           ),
                           child: Text(
-                            "Jährlich \n 65,99 € \n Jahr",
+                            "Jährlich \n 49,99 € \n Jahr",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
@@ -562,7 +562,7 @@ class _MainScaffoldState extends State<MainScaffold>
                             ],
                           ),
                           child: Text(
-                            "Monatlich \n 10,99 € \n Monat",
+                            "Monatlich \n 5,99 € \n Monat",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),

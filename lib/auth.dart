@@ -284,6 +284,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 .setPayedSubscription(profileData['payedSubscription']);
           }
 
+          if (profileData.containsKey('subType')) {
+            profilProvider
+                .setSubType(profileData['subType']);
+          }
+
+          if (profileData.containsKey('subStarted')) {
+            profilProvider
+                .setSubStarted(profileData['subStarted']);
+          }
+
           if (profileData.containsKey('feedback')) {
             List<ExerciseFeedback> feedbackList =
                 (profileData['feedback'] as List)

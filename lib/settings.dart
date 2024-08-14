@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:intl/intl.dart';
 
 import 'auth.dart';
 
@@ -613,8 +614,17 @@ class MySubscriptionPage extends StatefulWidget {
 }
 
 class _MySubscriptionPageState extends State<MySubscriptionPage> {
+  String? activeSubscription;
+  DateTime? subscriptionStartDate;
+
   @override
   Widget build(BuildContext context) {
+    final profilProvider = Provider.of<ProfilProvider>(context);
+
+    // Directly assign the DateTime object
+    activeSubscription = profilProvider.subType;
+    subscriptionStartDate = profilProvider.subStarted; // This is now DateTime
+
     return Stack(
       children: <Widget>[
         Image.asset(
@@ -624,15 +634,95 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
           fit: BoxFit.cover,
         ),
         Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
             backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              title: const Text('Choose Your Subscription',
-                  style: TextStyle(color: Colors.white)),
-              iconTheme: const IconThemeData(color: Colors.white),
+            title: const Text(
+              'Dein Abonnement',
+              style: TextStyle(color: Colors.white),
             ),
-            body: Text("you are subscribed"))
+            iconTheme: const IconThemeData(color: Colors.white),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  "Aktives Abonnement",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                const SizedBox(height: 20),
+                _buildSubscriptionTile(
+                  context,
+                  "Jährlich",
+                  activeSubscription == "Jährlich",
+                  subscriptionStartDate,
+                ),
+                const SizedBox(height: 10),
+                _buildSubscriptionTile(
+                  context,
+                  "Monatlich",
+                  activeSubscription == "Monatlich",
+                  subscriptionStartDate,
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _buildSubscriptionTile(BuildContext context, String subType,
+      bool isActive, DateTime? startDate) {
+    final formattedDate = startDate != null
+        ? DateFormat('dd. MMMM yyyy', 'de_DE').format(startDate)
+        : 'Datum nicht verfügbar';
+
+    return Container(
+      width: 130,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFF59c977) : Colors.grey[800],
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: isActive ? const Color(0xFF48a160) : Colors.transparent,
+            offset: const Offset(0, 5),
+            blurRadius: 0,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            subType == 'Jährlich'
+                ? "Jährlich: \n 49,99 € \n Jahr"
+                : "Monatlich: \n 5,99 € \n Monat",
+            style: const TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          if (isActive && startDate != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
+                'Begonnen am: $formattedDate',
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+            ),
+          if (isActive)
+            const Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Icon(
+                Icons.check,
+                color: Colors.green,
+                size: 20,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -711,8 +801,8 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
           body: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              subscriptionOption('Jährlich', '€100/year'),
-              subscriptionOption('Monatlich', '€10/month'),
+              subscriptionOption('Jährlich', '€49.99/Jahr'),
+              subscriptionOption('Monatlich', '€5.99/Monat'),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -768,31 +858,34 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       print('In-App Purchase availability: $available');
 
       if (available) {
-        const Set<String> productIds = {'02', '01'};
+        const Set<String> productIds = {'03', '04'};
         final ProductDetailsResponse response =
             await inAppPurchase.queryProductDetails(productIds);
+        
+        
         if (response.error != null) {
-          print('Error retrieving product details: ${response.error}');
-          return;
+          print('Error querying product details: ${response.error}');
         }
 
         if (response.productDetails.isEmpty) {
-          print('No products found.');
+          print('No products found. This could be due to the following reasons:');
+          print('- The product IDs might be incorrect.');
+          print('- The products may not be configured correctly in the App Store Connect or Google Play Console.');
+          print('- The app might not be connected to the internet.');
+          print('- There might be a problem with the in-app purchase service.');
         } else {
-          setState(() {
-            products = response.productDetails;
-          });
-          print('Products retrieved: ${products.length}');
+          // Log the fetched products
+          products = response.productDetails;
+          print('Found ${products.length} products.');
+          for (var product in products) {
+            print('Product found: ${product.title}, id: ${product.id}');
+          }
         }
-
-        // Listen to purchase updates
-        inAppPurchase.purchaseStream
-            .listen((List<PurchaseDetails> purchaseDetailsList) {
-          _handlePurchaseUpdates(purchaseDetailsList);
-        });
+      } else {
+        print('In-App Purchase is not available on this device.');
       }
     } catch (e) {
-      print('Error initializing in-app purchase: $e');
+      print('An error occurred during in-app purchase initialization: $e');
     }
   }
 
@@ -821,12 +914,15 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
       // Simulate verification and unlocking features
-      if (purchaseDetails.productID == '02' ||
-          purchaseDetails.productID == '01') {
+
+      if (purchaseDetails.productID == '03' ||
+          purchaseDetails.productID == '04') {
         // Update subscription status in provider
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
         profilProvider.setPayedSubscription(true);
+        profilProvider.setSubType(purchaseDetails.productID == '03' ? 'Monatlich' : 'Jährlich');
+        profilProvider.setSubStarted(DateTime.now());
 
         // Show success message
         QuickAlert.show(
@@ -969,8 +1065,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       ),
       child: Text(
         subType == 'Jährlich'
-            ? "Jährlich: \n 65,99 € \n Jahr"
-            : "Monatlich: \n 10,99 € \n Monat",
+            ? "Jährlich: \n 49,99 € \n Jahr"
+            : "Monatlich: \n 5,99 € \n Monat",
         style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
     );
