@@ -606,24 +606,15 @@ class _PainSettingPageState extends State<PainSettingPage> {
   }
 }
 
-class MySubscriptionPage extends StatefulWidget {
+class MySubscriptionPage extends StatelessWidget {
   const MySubscriptionPage({Key? key}) : super(key: key);
-
-  @override
-  _MySubscriptionPageState createState() => _MySubscriptionPageState();
-}
-
-class _MySubscriptionPageState extends State<MySubscriptionPage> {
-  String? activeSubscription;
-  DateTime? subscriptionStartDate;
 
   @override
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context);
 
-    // Directly assign the DateTime object
-    activeSubscription = profilProvider.subType;
-    subscriptionStartDate = profilProvider.subStarted; // This is now DateTime
+    final String? activeSubscription = profilProvider.subType;
+    final DateTime? subscriptionStartDate = profilProvider.subStarted;
 
     return Stack(
       children: <Widget>[
@@ -727,6 +718,7 @@ class _MySubscriptionPageState extends State<MySubscriptionPage> {
   }
 }
 
+
 class SubscriptionSettingPage extends StatefulWidget {
   const SubscriptionSettingPage({Key? key}) : super(key: key);
 
@@ -807,12 +799,16 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PaymentSettingPage(
-                        subscriptionType: selectedSubscription!),
-                  ));
+              if (selectedSubscription != null) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PaymentSettingPage(
+                          subscriptionType: selectedSubscription!),
+                    ));
+              } else {
+                // Show a message to select a subscription
+              }
             },
             backgroundColor: Colors.green,
             child: const Icon(Icons.check, color: Colors.white),
@@ -822,6 +818,7 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
     );
   }
 }
+
 
 class PaymentSettingPage extends StatefulWidget {
   final String subscriptionType;
@@ -855,31 +852,19 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         available = isAvailable;
       });
 
-      print('In-App Purchase availability: $available');
-
       if (available) {
-        const Set<String> productIds = {'03', '04'};
+        const Set<String> productIds = {'01', '02'};
         final ProductDetailsResponse response =
             await inAppPurchase.queryProductDetails(productIds);
-        
-        
+
         if (response.error != null) {
           print('Error querying product details: ${response.error}');
         }
 
         if (response.productDetails.isEmpty) {
           print('No products found. This could be due to the following reasons:');
-          print('- The product IDs might be incorrect.');
-          print('- The products may not be configured correctly in the App Store Connect or Google Play Console.');
-          print('- The app might not be connected to the internet.');
-          print('- There might be a problem with the in-app purchase service.');
         } else {
-          // Log the fetched products
           products = response.productDetails;
-          print('Found ${products.length} products.');
-          for (var product in products) {
-            print('Product found: ${product.title}, id: ${product.id}');
-          }
         }
       } else {
         print('In-App Purchase is not available on this device.');
@@ -894,13 +879,11 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     for (var purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
-        // Verify purchase here if necessary
         _verifyPurchase(purchaseDetails);
         if (purchaseDetails.pendingCompletePurchase) {
           inAppPurchase.completePurchase(purchaseDetails);
         }
       } else if (purchaseDetails.status == PurchaseStatus.error) {
-        // Handle error
         print('Purchase Error: ${purchaseDetails.error}');
       }
     }
@@ -910,31 +893,23 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     });
   }
 
-  // Verify purchase (e.g., by checking server-side)
+  // Verify purchase
   Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
-      // Simulate verification and unlocking features
-
-      if (purchaseDetails.productID == '03' ||
-          purchaseDetails.productID == '04') {
-        // Update subscription status in provider
+      if (purchaseDetails.productID == '01' || purchaseDetails.productID == '02') {
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
         profilProvider.setPayedSubscription(true);
-        profilProvider.setSubType(purchaseDetails.productID == '03' ? 'Monatlich' : 'Jährlich');
+        profilProvider.setSubType(purchaseDetails.productID == '01' ? 'Monatlich' : 'Jährlich');
         profilProvider.setSubStarted(DateTime.now());
 
-        // Show success message
         QuickAlert.show(
           backgroundColor: Colors.grey.shade900,
           textColor: Colors.white,
           context: context,
           type: QuickAlertType.success,
           title: 'Zahlung Erfolgreich',
-          text: 'Danke, dass Sie BackQuest abonniert haben! '
-              'Sie haben jetzt unbegrenzten Zugriff auf unsere Videos und Kurse. '
-              'Wenn Sie das Abo kündigen möchten, gehen Sie unter Ihren Einstellungen '
-              'auf "Abonnement Infos" und dann auf "Kündigen".',
+          text: 'Danke, dass Sie BackQuest abonniert haben!',
         );
       }
     } catch (e) {
@@ -988,7 +963,6 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       }
     } catch (e) {
       product = null;
-      print('Error finding product: $e');
     }
 
     if (product != null) {
@@ -1102,8 +1076,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    methodTile(
-                        'In-App Purchase'), // Change this to reflect in-app purchase
+                    methodTile('In-App Purchase'),
                   ],
                 ),
               ),
@@ -1122,3 +1095,4 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 }
+
