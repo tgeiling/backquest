@@ -131,6 +131,27 @@ class SettingsTile extends StatelessWidget {
                       initialFitnessLevel: profilProvider.fitnessLevel,
                     )),
           );
+        } else if (title == 'AGB') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AGB(),
+            ),
+          );
+        } else if (title == 'Datenschutzerklärung') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Datasecurity(),
+            ),
+          );
+        } else if (title == 'Impressum') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Impressum(),
+            ),
+          );
         } else if (title == 'Logout') {
           authService.logout();
           onTileTap?.call(false);
@@ -1092,6 +1113,173 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           ),
         )
       ],
+    );
+  }
+}
+
+class AGB extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('AGB'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Text(
+            '''
+Allgemeine Geschäftsbedingungen (AGB)
+
+1. Geltungsbereich
+Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für die Nutzung der mobilen Anwendung "Backpain App" (im Folgenden "App") von ktg-marketing, Timo Geiling, Niederwöllstädter Str. 14, 61184 Karben (im Folgenden "Anbieter"). Mit der Registrierung und Nutzung der App akzeptieren Sie diese AGB.
+
+2. Vertragsgegenstand
+Die App bietet Inhalte und Funktionen zur Unterstützung bei Rückenschmerzen. Der Zugriff auf bestimmte Inhalte und Funktionen ist kostenpflichtig und erfolgt im Rahmen eines Abonnementmodells.
+
+3. Registrierung und Benutzerkonto
+Die Nutzung der App erfordert die Erstellung eines Benutzerkontos. Bei der Registrierung sind die erforderlichen Daten vollständig und wahrheitsgemäß anzugeben. Der Nutzer ist verpflichtet, die Zugangsdaten geheim zu halten und den Anbieter unverzüglich über einen Missbrauch des Kontos zu informieren.
+
+4. Abonnement und In-App-Käufe
+Bestimmte Inhalte und Funktionen der App sind kostenpflichtig und können im Rahmen eines Abonnements oder durch In-App-Käufe freigeschaltet werden. Die Abrechnung erfolgt über den jeweiligen App Store (Apple App Store oder Google Play Store). Die Preise und Abonnementbedingungen sind in der App angegeben. Das Abonnement verlängert sich automatisch, es sei denn, es wird mindestens 24 Stunden vor Ablauf der aktuellen Periode gekündigt.
+
+5. Widerrufsrecht
+Nutzer haben das Recht, den Vertrag innerhalb von 14 Tagen ohne Angabe von Gründen zu widerrufen. Um das Widerrufsrecht auszuüben, muss der Nutzer den Anbieter über die Kontaktinformationen in der Impressum-Seite der App informieren. Bei digitalen Inhalten erlischt das Widerrufsrecht, wenn der Nutzer dem Beginn der Ausführung zugestimmt hat.
+
+6. Haftung
+Der Anbieter haftet nur für Schäden, die durch Vorsatz oder grobe Fahrlässigkeit verursacht wurden. Für leichte Fahrlässigkeit haftet der Anbieter nur bei der Verletzung wesentlicher Vertragspflichten (Kardinalpflichten). Die Haftung ist auf den vorhersehbaren, typischerweise eintretenden Schaden begrenzt.
+
+7. Datenschutz
+Die Erhebung und Verarbeitung personenbezogener Daten erfolgt gemäß der Datenschutzerklärung, die in der App verfügbar ist.
+
+8. Änderungen der AGB
+Der Anbieter behält sich das Recht vor, diese AGB jederzeit zu ändern. Die Nutzer werden rechtzeitig über Änderungen informiert. Die weitere Nutzung der App nach Änderung der AGB gilt als Zustimmung.
+
+9. Schlussbestimmungen
+Sollte eine Bestimmung dieser AGB unwirksam sein, bleiben die übrigen Bestimmungen davon unberührt. Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand ist Karben, sofern der Nutzer Kaufmann ist.
+
+---
+
+sktg-marketing
+Timo Geiling  
+Niederwöllstädter Str. 14  
+61184 Karben  
+Kontakt: timo.geiling@outlook.com
+            ''',
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class Datasecurity extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Datenschutzerklärung'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Text(
+            '''
+Datenschutzerklärung
+
+1. Verantwortlicher
+Verantwortlicher für die Datenverarbeitung im Zusammenhang mit der Nutzung der App "Backpain App" ist:
+
+sktg-marketing  
+Timo Geiling  
+Niederwöllstädter Str. 14  
+61184 Karben  
+E-Mail: timo.geiling@outlook.com
+
+2. Erhebung und Verarbeitung personenbezogener Daten
+Wir erheben und verarbeiten personenbezogene Daten, wenn Sie die App nutzen, insbesondere bei der Registrierung, bei der Nutzung von In-App-Käufen, und bei der Kommunikation mit uns. Zu den verarbeiteten Daten gehören:
+
+- Vorname und Nachname
+- E-Mail-Adresse
+- Zahlungsinformationen (über den App Store)
+- Nutzungsdaten (z. B. Login-Daten, App-Nutzung)
+
+3. Zweck der Verarbeitung
+Die Verarbeitung der Daten erfolgt zu folgenden Zwecken:
+
+- Bereitstellung und Personalisierung der App
+- Abwicklung von In-App-Käufen und Abonnements
+- Verbesserung der App und Analyse des Nutzerverhaltens
+- Kommunikation mit dem Nutzer
+
+4. Rechtsgrundlage
+Die Verarbeitung Ihrer Daten erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) und zur Erfüllung des Vertrags (Art. 6 Abs. 1 lit. b DSGVO).
+
+5. Weitergabe der Daten
+Ihre Daten werden nicht an Dritte weitergegeben, es sei denn, dies ist zur Erfüllung des Vertrags erforderlich (z. B. Zahlungsabwicklung über den App Store), gesetzlich vorgeschrieben, oder Sie haben ausdrücklich zugestimmt.
+
+6. Datenspeicherung
+Ihre Daten werden nur so lange gespeichert, wie es für die Erfüllung des Vertrags oder aufgrund gesetzlicher Verpflichtungen erforderlich ist.
+
+7. Rechte der betroffenen Personen
+Sie haben das Recht, Auskunft über die von uns gespeicherten personenbezogenen Daten zu erhalten, sowie das Recht auf Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit. Zudem können Sie Ihre Einwilligung zur Verarbeitung Ihrer Daten jederzeit widerrufen.
+
+8. Kontakt
+Für Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte können Sie uns unter den oben angegebenen Kontaktinformationen erreichen.
+
+9. Änderungen der Datenschutzerklärung
+Wir behalten uns das Recht vor, diese Datenschutzerklärung bei Bedarf zu ändern, um sie an geänderte rechtliche Rahmenbedingungen oder neue Funktionen der App anzupassen. Die jeweils aktuelle Version ist in der App verfügbar.
+
+            ''',
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class Impressum extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Impressum'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Text(
+            '''
+Impressum
+
+Anbieter:
+
+sktg-marketing  
+Timo Geiling  
+Niederwöllstädter Str. 14  
+61184 Karben  
+
+Kontakt:
+
+Telefon: 0176 32141106  
+E-Mail: timo.geiling@outlook.com
+
+Umsatzsteuer:
+
+Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz: DE368663332
+
+Steuernummer:
+
+1682063158
+            ''',
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+        ),
+      ),
     );
   }
 }

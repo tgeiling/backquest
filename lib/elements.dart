@@ -277,7 +277,7 @@ class AuthenticateWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Bitte über Login authentifizieren',
+                  'Bitte über Login anmelden',
                   style: Theme.of(context).textTheme.displayMedium,
                   textAlign: TextAlign.center,
                 ),
