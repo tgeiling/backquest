@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'elements.dart';
 import 'settings.dart';
 import 'services.dart';
+import 'auth.dart';
 
 class ProfilProvider extends ChangeNotifier {
   int _weeklyGoal = 0;
@@ -494,29 +495,42 @@ class ProfilPageState extends State<ProfilPage> {
                     child: Visibility(
                       visible: loggedIn,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 3,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          "LOGIN",
-                          style: TextStyle(
-                            color: Colors.grey.shade800,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginScreen(
+                                    setAuthenticated: widget.setAuthenticated,
+                                    setQuestionnairDone:
+                                        widget.setQuestionnairDone,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "LOGIN",
+                              style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          )),
                     ),
                   ),
                 ],

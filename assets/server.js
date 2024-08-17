@@ -403,6 +403,9 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
       if (pair[0] === videoId) {
         return pair[1];
       }
+	  else if(pair[1] === videoId){
+		return pair[0];  
+	  }
     }
     return null;
   };

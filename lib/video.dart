@@ -90,10 +90,12 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       videoPlayerController: _videoPlayerController!,
       autoPlay: true,
       looping: false,
+      autoInitialize: true,
       placeholder: Container(
         color: Colors.black,
       ),
-      autoInitialize: true,
+      allowFullScreen: true,
+      fullScreenByDefault: false,
     );
   }
 
@@ -136,14 +138,13 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           ),
           onPressed: () {
             if (hasBeenUpdated) {
-              if (hasBeenUpdated) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          AfterVideoView(videoIds: selectedVideos)),
-                );
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AfterVideoView(videoIds: selectedVideos),
+                ),
+              );
             } else {
               QuickAlert.show(
                 context: context,
@@ -185,11 +186,16 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
               )
             : _chewieController != null &&
                     _chewieController!.videoPlayerController.value.isInitialized
-                ? Chewie(
-                    controller: _chewieController!,
+                ? AspectRatio(
+                    aspectRatio: _chewieController!
+                        .videoPlayerController.value.aspectRatio,
+                    child: Chewie(
+                      controller: _chewieController!,
+                    ),
                   )
-                : Container(
-                    child: const Text('Waiting for video...'),
+                : const Text(
+                    'Waiting for video...',
+                    style: TextStyle(color: Colors.white),
                   ),
       ),
     );

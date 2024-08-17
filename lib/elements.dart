@@ -1,3 +1,4 @@
+import 'auth.dart';
 import 'package:flutter/material.dart';
 
 class PressableButton extends StatefulWidget {
@@ -217,9 +218,24 @@ class NoConnectionWidget extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: -15,
+          top: -10,
           right: -10,
-          child: DismissButton(onPressed: onDismiss),
+          child: GestureDetector(
+            onTap: onDismiss,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close,
+                color: Colors.grey[800],
+                size: 20.0,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -228,8 +244,15 @@ class NoConnectionWidget extends StatelessWidget {
 
 class AuthenticateWidget extends StatelessWidget {
   final VoidCallback onDismiss;
+  final Function(bool) setAuthenticated;
+  final VoidCallback setQuestionnairDone;
 
-  const AuthenticateWidget({super.key, required this.onDismiss});
+  const AuthenticateWidget({
+    super.key,
+    required this.onDismiss,
+    required this.setAuthenticated,
+    required this.setQuestionnairDone,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -238,27 +261,55 @@ class AuthenticateWidget extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Bitte über Login authentifizieren',
-                style: Theme.of(context).textTheme.displayMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4.0),
-              Text(
-                'Sie müssen sich anmelden, um fortzufahren.',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(
+                    setAuthenticated: setAuthenticated,
+                    setQuestionnairDone: setQuestionnairDone,
+                  ),
+                ),
+              );
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Bitte über Login authentifizieren',
+                  style: Theme.of(context).textTheme.displayMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4.0),
+                Text(
+                  'Sie müssen sich anmelden, um fortzufahren.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
         Positioned(
-          top: -15,
+          top: -10,
           right: -10,
-          child: DismissButton(onPressed: onDismiss),
+          child: GestureDetector(
+            onTap: onDismiss,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close,
+                color: Colors.grey[800],
+                size: 20.0,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -277,14 +328,29 @@ class DismissButton extends StatelessWidget {
       child: Container(
         width: 30,
         height: 30,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          Icons.close,
-          color: Colors.grey[800],
-          size: 20.0,
+        alignment: Alignment.center,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close,
+                color: Colors.grey[800],
+                size: 20.0,
+              ),
+            ),
+          ),
         ),
       ),
     );

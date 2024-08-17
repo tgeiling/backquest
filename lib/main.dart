@@ -375,12 +375,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               right: 16,
               child: GreenContainer(
                 padding: const EdgeInsets.all(8.0),
-                child: AuthenticateWidget(onDismiss: () {
-                  setState(() {
-                    print("turn off");
-                    _showAuthenticateMessage = false;
-                  });
-                }),
+                child: AuthenticateWidget(
+                  onDismiss: () {
+                    setState(() {
+                      print("turn off");
+                      _showAuthenticateMessage = false;
+                    });
+                  },
+                  setAuthenticated: _setAuthenticated,
+                  setQuestionnairDone: _checkQuestionnaireCompletion,
+                ),
               ),
             ),
         ],
