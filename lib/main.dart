@@ -1,13 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
 
 import 'stats.dart';
 import 'video.dart';
@@ -163,7 +168,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isConnected = true;
   bool _showConnectionMessage = true;
   bool _showAuthenticateMessage = true;
-  bool _isLoading = true; // New state variable for loading
+  bool _isLoading = true;
+
+  late StreamSubscription<List<PurchaseDetails>> _subscription;
 
   @override
   void initState() {
@@ -180,6 +187,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _updateConnectionStatus(result);
     });
     _checkInitialConnectivity();
+
+    final InAppPurchase inAppPurchase = InAppPurchase.instance;
+
+    // Listen to the purchase updates
+    _subscription = inAppPurchase.purchaseStream.listen((purchaseDetailsList) {
+      _listenToPurchaseUpdated(purchaseDetailsList);
+    });
+
+    // Restore purchases
+    inAppPurchase.restorePurchases();
   }
 
   @override
@@ -187,6 +204,71 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _connectivitySubscription.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+    for (var purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.purchased ||
+          purchaseDetails.status == PurchaseStatus.restored) {
+        _verifyPurchase(purchaseDetails);
+        if (purchaseDetails.pendingCompletePurchase) {
+          InAppPurchase.instance.completePurchase(purchaseDetails);
+        }
+      } else if (purchaseDetails.status == PurchaseStatus.error) {
+        print('Purchase Error: ${purchaseDetails.error}');
+      }
+    }
+  }
+
+  Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
+    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
+    try {
+      bool isValid = await validateReceipt(purchaseDetails.verificationData);
+
+      if (!isValid) {
+        // Handle invalid receipt or canceled subscription
+        _handleInvalidSubscription(profilProvider);
+      }
+      // If valid, do nothing.
+    } catch (e) {
+      // Handle error scenarios such as cancellation or non-payment
+      print('Error verifying purchase: $e');
+      _handleInvalidSubscription(profilProvider);
+    }
+  }
+
+  void _handleInvalidSubscription(ProfilProvider profilProvider) {
+    profilProvider.setPayedSubscription(false);
+    profilProvider.setSubType('');
+
+    QuickAlert.show(
+      backgroundColor: Colors.red.shade900,
+      textColor: Colors.white,
+      context: context,
+      type: QuickAlertType.error,
+      title: 'Abonnement ungültig',
+      text: 'Ihr Abonnement wurde storniert oder ist ungültig.',
+    );
+  }
+
+  Future<bool> validateReceipt(PurchaseVerificationData verificationData) async {
+    final String serverUrl = 'http://135.125.218.147:3000/validate-receipt';
+    final response = await http.post(
+      Uri.parse(serverUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'platform': 'apple', // or 'google'
+        'receiptData': verificationData.serverVerificationData,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      return responseData['valid'] == true;
+    } else {
+      print('Failed to validate receipt with server: ${response.statusCode}');
+      return false;
+    }
   }
 
   void _updateConnectionStatus(List<ConnectivityResult> results) {
@@ -724,12 +806,30 @@ class _MainScaffoldState extends State<MainScaffold>
 
   Widget _buildBottomNavigationBar() {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+
+    // Calculate the width and height in actual pixels
+    double widthInPixels = screenWidth * pixelRatio;
+    double heightInPixels = screenHeight * pixelRatio;
+
+    // Calculate the diagonal in pixels
+    double diagonalPixels = sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
+
+    // Convert the diagonal from pixels to inches
+    double diagonalInches = diagonalPixels / pixelRatio / 160; // 160 is typically used as the DPI baseline
+
+    // A more reliable condition for detecting tablets
+    bool isTablet = (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
+
     bool isSmallScreen = screenWidth < 360;
 
     double navHeight;
 
     if (isSmallScreen) {
       navHeight = 60;
+    } else if (isTablet) {
+      navHeight = 140;
     } else {
       navHeight = 90;
     }
@@ -845,8 +945,24 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isSmallScreen = screenWidth < 360;
+    var mediaQuery = MediaQuery.of(context);
+
+    double screenWidth = mediaQuery.size.width;
+    double screenHeight = mediaQuery.size.height;
+    double pixelRatio = mediaQuery.devicePixelRatio;
+
+    // Calculate the width and height in actual pixels
+    double widthInPixels = screenWidth * pixelRatio;
+    double heightInPixels = screenHeight * pixelRatio;
+
+    // Calculate the diagonal in pixels
+    double diagonalPixels = sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
+
+    // Convert the diagonal from pixels to inches
+    double diagonalInches = diagonalPixels / pixelRatio / 160;
+
+    // A more reliable condition for detecting tablets
+    bool isTablet = (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
 
     double modalPadding;
     double smallPressableVerticalPadding;
@@ -854,12 +970,18 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     double bigPressableVerticalPadding;
     double aspectRatioItems;
 
-    if (isSmallScreen) {
+    if (screenWidth < 360) {
       modalPadding = 8;
       smallPressableVerticalPadding = 0;
       smallPressableHorizontalPadding = 0;
       bigPressableVerticalPadding = 4;
       aspectRatioItems = 10;
+    } else if (isTablet) {
+      modalPadding = 24;
+      smallPressableVerticalPadding = 0;
+      smallPressableHorizontalPadding = 0;
+      bigPressableVerticalPadding = 12;
+      aspectRatioItems = 16;
     } else {
       modalPadding = 16;
       smallPressableVerticalPadding = 8;

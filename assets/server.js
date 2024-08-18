@@ -632,6 +632,76 @@ function authenticateToken(req, res, next) {
   });
 }
 
+const APPLE_RECEIPT_VALIDATION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
+const APPLE_RECEIPT_VALIDATION_URL_SANDBOX = 'https://sandbox.itunes.apple.com/verifyReceipt';
+const GOOGLE_RECEIPT_VALIDATION_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
+
+const GOOGLE_SERVICE_ACCOUNT_KEY = require('./path/to/your-service-account-key.json');
+
+const APPLE_SHARED_SECRET = process.env.APPLE_SHARED_SECRET;
+
+async function validateAppleReceipt(receiptData) {
+  try {
+    const response = await axios.post(APPLE_RECEIPT_VALIDATION_URL, {
+      'receipt-data': receiptData,
+      'password': APPLE_SHARED_SECRET,
+    });
+
+    // Retry with the sandbox URL if necessary
+    if (response.data.status === 21007) {
+      const sandboxResponse = await axios.post(APPLE_RECEIPT_VALIDATION_URL_SANDBOX, {
+        'receipt-data': receiptData,
+        'password': APPLE_SHARED_SECRET,
+      });
+      return sandboxResponse.data;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error validating Apple receipt:', error);
+    return null;
+  }
+}
+
+// Helper function to validate Google receipt
+async function validateGoogleReceipt(packageName, productId, purchaseToken) {
+  try {
+    const authClient = new google.auth.GoogleAuth({
+      credentials: GOOGLE_SERVICE_ACCOUNT_KEY,
+      scopes: ['https://www.googleapis.com/auth/androidpublisher'],
+    });
+
+    const accessToken = await authClient.getAccessToken();
+
+    const url = `${GOOGLE_RECEIPT_VALIDATION_URL}/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}?access_token=${accessToken}`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error('Error validating Google receipt:', error);
+    return null;
+  }
+}
+
+// Endpoint to validate a receipt
+app.post('/validate-receipt', async (req, res) => {
+  const { platform, receiptData, packageName, productId, purchaseToken } = req.body;
+
+  let validationResponse = null;
+
+  if (platform === 'apple') {
+    validationResponse = await validateAppleReceipt(receiptData);
+  } else if (platform === 'google') {
+    validationResponse = await validateGoogleReceipt(packageName, productId, purchaseToken);
+  }
+
+  if (validationResponse && validationResponse.status === 0) {
+    res.json({ valid: true });
+  } else {
+    res.json({ valid: false });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

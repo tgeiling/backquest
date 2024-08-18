@@ -320,8 +320,7 @@ class _LoginScreenState extends State<LoginScreen> {
           profilProvider.loadInitialData();
 
           widget.setAuthenticated(true);
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.popUntil(context, (route) => route.isFirst);
         } else {
           print("Failed to fetch profile data after login");
         }

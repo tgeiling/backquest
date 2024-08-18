@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'auth.dart';
 
@@ -76,6 +77,8 @@ class SettingsPage extends StatelessWidget {
                 SettingsTile(
                     title: payedUp ? "Mein Abonnement" : 'Backquest abonnieren',
                     icon: Icons.payments_sharp),
+                const SettingsTile(
+                    title: 'Kontakt', icon: Icons.contact_mail),    
               ],
             ).toList(),
           ),
@@ -166,6 +169,11 @@ class SettingsTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
+          );
+        } else if (title == 'Kontakt') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Kontakt()),
           );
         } else {
           Navigator.push(
@@ -665,19 +673,18 @@ class MySubscriptionPage extends StatelessWidget {
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 const SizedBox(height: 20),
-                _buildSubscriptionTile(
-                  context,
-                  "Jährlich",
-                  activeSubscription == "Jährlich",
-                  subscriptionStartDate,
-                ),
-                const SizedBox(height: 10),
-                _buildSubscriptionTile(
-                  context,
-                  "Monatlich",
-                  activeSubscription == "Monatlich",
-                  subscriptionStartDate,
-                ),
+                if (activeSubscription == "Jährlich" || activeSubscription == "Monatlich")
+                  _buildSubscriptionTile(
+                    context,
+                    activeSubscription!,
+                    true, // Since it's the active subscription
+                    subscriptionStartDate,
+                  ),
+                if (activeSubscription == null)
+                  const Text(
+                    "Kein aktives Abonnement",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
               ],
             ),
           ),
@@ -693,7 +700,7 @@ class MySubscriptionPage extends StatelessWidget {
         : 'Datum nicht verfügbar';
 
     return Container(
-      width: 130,
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isActive ? const Color(0xFF59c977) : Colors.grey[800],
@@ -1278,6 +1285,91 @@ Steuernummer:
             ''',
             style: TextStyle(fontSize: 16, color: Colors.black),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class Kontakt extends StatelessWidget {
+  final String email = 'info@backquest.online';
+  final String appleSubscriptionUrl = 'https://support.apple.com/en-us/HT202039';
+
+  void _launchEmail() async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: email,
+    );
+    if (await canLaunch(emailLaunchUri.toString())) {
+      await launch(emailLaunchUri.toString());
+    } else {
+      // Handle the case where the email client can't be launched
+      print('Could not launch email client');
+    }
+  }
+
+  void _launchAppleSubscription() async {
+    if (await canLaunch(appleSubscriptionUrl)) {
+      await launch(appleSubscriptionUrl);
+    } else {
+      // Handle the case where the URL can't be launched
+      print('Could not launch Apple subscription URL');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Kontakt'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Kontakt',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 8),
+            GestureDetector(
+              onTap: _launchEmail,
+              child: Text(
+                email,
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            Text(
+              'Abonnement ändern:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 8),
+            GestureDetector(
+              onTap: _launchAppleSubscription,
+              child: Text(
+                'Apple Subscription Management',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
