@@ -640,7 +640,7 @@ const APPLE_RECEIPT_VALIDATION_URL = 'https://buy.itunes.apple.com/verifyReceipt
 const APPLE_RECEIPT_VALIDATION_URL_SANDBOX = 'https://sandbox.itunes.apple.com/verifyReceipt';
 const GOOGLE_RECEIPT_VALIDATION_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
 
-const GOOGLE_SERVICE_ACCOUNT_KEY = require('./path/to/your-service-account-key.json');
+//const GOOGLE_SERVICE_ACCOUNT_KEY = require('./path/to/your-service-account-key.json');
 
 const APPLE_SHARED_SECRET = process.env.APPLE_SHARED_SECRET;
 
