@@ -1,18 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:http/http.dart' as http;
 
 import 'stats.dart';
 import 'video.dart';
@@ -168,9 +166,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isConnected = true;
   bool _showConnectionMessage = true;
   bool _showAuthenticateMessage = true;
-  bool _isLoading = true;
-
-  late StreamSubscription<List<PurchaseDetails>> _subscription;
+  bool _isLoading = true; // New state variable for loading
 
   @override
   void initState() {
@@ -187,16 +183,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _updateConnectionStatus(result);
     });
     _checkInitialConnectivity();
-
-    final InAppPurchase inAppPurchase = InAppPurchase.instance;
-
-    // Listen to the purchase updates
-    _subscription = inAppPurchase.purchaseStream.listen((purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    });
-
-    // Restore purchases
-    inAppPurchase.restorePurchases();
   }
 
   @override
@@ -204,71 +190,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _connectivitySubscription.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
-    for (var purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.purchased ||
-          purchaseDetails.status == PurchaseStatus.restored) {
-        _verifyPurchase(purchaseDetails);
-        if (purchaseDetails.pendingCompletePurchase) {
-          InAppPurchase.instance.completePurchase(purchaseDetails);
-        }
-      } else if (purchaseDetails.status == PurchaseStatus.error) {
-        print('Purchase Error: ${purchaseDetails.error}');
-      }
-    }
-  }
-
-  Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
-    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
-    try {
-      bool isValid = await validateReceipt(purchaseDetails.verificationData);
-
-      if (!isValid) {
-        // Handle invalid receipt or canceled subscription
-        _handleInvalidSubscription(profilProvider);
-      }
-      // If valid, do nothing.
-    } catch (e) {
-      // Handle error scenarios such as cancellation or non-payment
-      print('Error verifying purchase: $e');
-      _handleInvalidSubscription(profilProvider);
-    }
-  }
-
-  void _handleInvalidSubscription(ProfilProvider profilProvider) {
-    profilProvider.setPayedSubscription(false);
-    profilProvider.setSubType('');
-
-    QuickAlert.show(
-      backgroundColor: Colors.red.shade900,
-      textColor: Colors.white,
-      context: context,
-      type: QuickAlertType.error,
-      title: 'Abonnement ungültig',
-      text: 'Ihr Abonnement wurde storniert oder ist ungültig.',
-    );
-  }
-
-  Future<bool> validateReceipt(PurchaseVerificationData verificationData) async {
-    final String serverUrl = 'http://135.125.218.147:3000/validate-receipt';
-    final response = await http.post(
-      Uri.parse(serverUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'platform': 'apple', // or 'google'
-        'receiptData': verificationData.serverVerificationData,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      return responseData['valid'] == true;
-    } else {
-      print('Failed to validate receipt with server: ${response.statusCode}');
-      return false;
-    }
   }
 
   void _updateConnectionStatus(List<ConnectivityResult> results) {
@@ -951,17 +872,13 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     double screenHeight = mediaQuery.size.height;
     double pixelRatio = mediaQuery.devicePixelRatio;
 
-    // Calculate the width and height in actual pixels
     double widthInPixels = screenWidth * pixelRatio;
     double heightInPixels = screenHeight * pixelRatio;
 
-    // Calculate the diagonal in pixels
     double diagonalPixels = sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
 
-    // Convert the diagonal from pixels to inches
     double diagonalInches = diagonalPixels / pixelRatio / 160;
 
-    // A more reliable condition for detecting tablets
     bool isTablet = (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
 
     double modalPadding;
@@ -991,31 +908,14 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     }
 
     bool isDateSevenDaysAgo(String isoDateString) {
-      // Parse the ISO 8601 formatted date string to a DateTime object
       DateTime parsedDate = DateTime.parse(isoDateString).toLocal();
-
-      // Get the current date and time
       DateTime currentDate = DateTime.now().toLocal();
-
-      // Calculate the date 7 days ago from the current date
       DateTime sevenDaysAgo = currentDate.subtract(Duration(days: 7)).toLocal();
 
-      // Print statements for debugging
-      print("Parsed Date: ${parsedDate.toIso8601String()}");
-      print("Current Date: ${currentDate.toIso8601String()}");
-      print("Seven Days Ago: ${sevenDaysAgo.toIso8601String()}");
-
-      // Compare the dates (only the date part, not the time)
-      bool isSevenDaysAgo = parsedDate.isBefore(sevenDaysAgo) ||
+      return parsedDate.isBefore(sevenDaysAgo) ||
           parsedDate.isAtSameMomentAs(sevenDaysAgo);
-
-      // Print the comparison result
-      print("Is Parsed Date Seven Days Ago? $isSevenDaysAgo");
-
-      return isSevenDaysAgo;
     }
 
-    // Fetch the last update string from profilProvider
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
     final bool readyForNextVideo = profilProvider.lastUpdateString == ""
         ? true
@@ -1095,7 +995,6 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             onPressed: widget.authenticated && payedUp
                 ? widget.isVideoPlayer
                     ? () {
-                        // Action when authenticated and isVideoPlayer is true
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -1114,7 +1013,6 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         );
                       }
                     : () {
-                        // Action when authenticated and isVideoPlayer is false
                         downloadScreenKey.currentState!.combineAndDownloadVideo(
                             selectedFocus,
                             selectedGoal,
@@ -1123,7 +1021,6 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                       }
                 : readyForNextVideo
                     ? () {
-                        // Action when ready for next video
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -1141,10 +1038,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                           ),
                         );
                       }
-                    : () {
-                        // Show dialog when not ready for next video
-                        showVideoRestrictionDialog(
-                            profilProvider.lastUpdateString);
+                    : () async {
+                        await _validateSubscriptionAndShowRestrictionDialog(
+                            profilProvider);
                       },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
@@ -1159,12 +1055,38 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     );
   }
 
+  Future<void> _validateSubscriptionAndShowRestrictionDialog(
+      ProfilProvider profilProvider) async {
+    // Validate the receipt before showing the restriction dialog
+    bool isValid = false;
+
+    if (Platform.isIOS) {
+      isValid = await validateAppleReceipt(profilProvider.receiptData!);
+    } else if (Platform.isAndroid) {
+      isValid = await validateGoogleReceipt(profilProvider.receiptData!);
+    }
+
+    // Handle validation results
+    if (!isValid) {
+      profilProvider.setPayedSubscription(false);
+      profilProvider.setSubType('');
+      QuickAlert.show(
+        backgroundColor: Colors.red.shade900,
+        textColor: Colors.white,
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Abonnement ungültig',
+        text: 'Ihr Abonnement wurde storniert oder ist ungültig.',
+      );
+    } else {
+      showVideoRestrictionDialog(profilProvider.lastUpdateString);
+    }
+  }
+
   void showVideoRestrictionDialog(String lastUpdateString) {
-    // Calculate the next available video time
     DateTime lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();
     DateTime nextAvailableDate = lastUpdateDate.add(Duration(days: 7));
 
-    // Calculate days until the next available date
     int daysUntilNextVideo =
         nextAvailableDate.difference(DateTime.now()).inDays;
 
@@ -1175,18 +1097,18 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(10.0), // Rounded corners for the dialog
+                BorderRadius.circular(10.0),
           ),
           title: Text(
             "Videoeinschränkung",
-            style: Theme.of(context).textTheme.displayMedium, // Use text theme
+            style: Theme.of(context).textTheme.displayMedium,
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
                 "Sie können nur ein Video pro Woche ansehen. Nächstes Video verfügbar in:",
-                style: Theme.of(context).textTheme.bodyLarge, // Use text theme
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 20),
               Text.rich(
@@ -1195,8 +1117,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                     TextSpan(
                       text: '$daysUntilNextVideo ',
                       style: TextStyle(
-                        fontSize: 36, // Large font size for the number
-                        fontWeight: FontWeight.bold, // Bold font weight
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     TextSpan(
@@ -1217,7 +1139,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               child: Text(
                 "OK",
                 style:
-                    Theme.of(context).textTheme.displayMedium, // Use text theme
+                    Theme.of(context).textTheme.displayMedium,
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -1237,12 +1159,12 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(10.0), // Rounded corners for the dialog
+                BorderRadius.circular(10.0),
           ),
           title: const Text(
             "Wählen Sie die Dauer",
             style:
-                TextStyle(color: Colors.white), // Title text with white color
+                TextStyle(color: Colors.white),
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -1256,7 +1178,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   title: Text(
                     "$minute Minuten",
                     style: const TextStyle(
-                        color: Colors.white), // List item text with white color
+                        color: Colors.white),
                   ),
                   onTap: () => Navigator.of(context).pop(minute * 60),
                 );
@@ -1268,7 +1190,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               child: const Text(
                 "Abbrechen",
                 style: TextStyle(
-                    color: Colors.white), // Button text with white color
+                    color: Colors.white),
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),

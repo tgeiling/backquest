@@ -294,6 +294,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 .setSubStarted(profileData['subStarted']);
           }
 
+          if (profileData.containsKey('receiptData')) {
+            profilProvider
+                .setReceiptData(profileData['receiptData']);
+          }
+
           if (profileData.containsKey('feedback')) {
             List<ExerciseFeedback> feedbackList =
                 (profileData['feedback'] as List)

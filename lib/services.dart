@@ -56,6 +56,7 @@ Future<bool> updateProfile({
   bool? payedSubscription,
   String? subType,
   DateTime? subStarted,
+  String? receiptData,
   List<ExerciseFeedback>? feedback,
 }) async {
   final Uri apiUrl = Uri.parse('http://135.125.218.147:3000/updateProfile');
@@ -81,6 +82,7 @@ Future<bool> updateProfile({
   if (payedSubscription != null) body['payedSubscription'] = payedSubscription;
   if (subType != null) body['subType'] = subType;
   if (subStarted != null) body['subStarted'] = subStarted;
+  if (receiptData != null) body['receiptData'] = receiptData;
   if (feedback != null) body['feedback'] = feedback;
 
   try {
@@ -151,5 +153,39 @@ class ExerciseFeedback {
       'difficulty': difficulty,
       'painAreas': painAreas,
     };
+  }
+}
+
+const String serverUrl = 'http://135.125.218.147:3000/validate-receipt';
+
+Future<bool> validateAppleReceipt(String receiptData) async {
+  return await _validateReceipt(receiptData, platform: 'apple');
+}
+
+Future<bool> validateGoogleReceipt(String receiptData) async {
+  return await _validateReceipt(receiptData, platform: 'google');
+}
+
+Future<bool> _validateReceipt(String receiptData, {required String platform}) async {
+  try {
+    final response = await http.post(
+      Uri.parse(serverUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'platform': platform,
+        'receiptData': receiptData,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      return responseData['valid'] == true;
+    } else {
+      print('Failed to validate receipt: ${response.statusCode}');
+      return false;
+    }
+  } catch (e) {
+    print('Error validating receipt: $e');
+    return false;
   }
 }

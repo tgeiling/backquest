@@ -928,8 +928,11 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
         profilProvider.setPayedSubscription(true);
-        profilProvider.setSubType(purchaseDetails.productID == '01' ? 'Monatlich' : 'Jährlich');
+        profilProvider.setSubType(purchaseDetails.productID == '03' ? 'Monatlich' : 'Jährlich');
         profilProvider.setSubStarted(DateTime.now());
+
+        profilProvider.setReceiptData(purchaseDetails.verificationData.serverVerificationData);
+
 
         QuickAlert.show(
           backgroundColor: Colors.grey.shade900,
