@@ -452,12 +452,13 @@ class _MainScaffoldState extends State<MainScaffold>
 
     if (launchCount % 2 == 0 || launchCount == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showSubscriptionDialog();
+        //showSubscriptionDialog();
+        showInformationDialog();
       });
     }
   }
 
-  void showSubscriptionDialog() {
+  /* void showSubscriptionDialog() {
     showDialog<String>(
       context: context,
       builder: (context) {
@@ -602,6 +603,63 @@ class _MainScaffoldState extends State<MainScaffold>
         print("Selected Subscription: $selectedSubscription");
       }
     });
+  } */
+
+  void showInformationDialog() {
+    showDialog<String>(
+      context: context,
+      builder: (context) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        bool isSmallScreen = screenWidth < 360;
+
+        return Dialog(
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+                Image.asset(
+                  "assets/logo2.png",
+                  width: 40,
+                ),
+                const SizedBox(height: 10),
+                if (!isSmallScreen)
+                  const Center(
+                    child: Text(
+                      "Möchtest du mehr über unsere App erfahren? Unsere App hilft dir dabei, Rückenschmerzen zu lindern und deine Gesundheit zu verbessern. Wir arbeiten kontinuierlich daran, neue Funktionen und Inhalte hinzuzufügen.",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                const SizedBox(height: 18),
+                const Center(
+                  child: Text(
+                    "Unsere App bietet personalisierte Übungen, Tipps und Ratschläge, um deine Rückengesundheit zu verbessern.",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                PressableButton(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Navigate to another page if needed
+                  },
+                  child: const Text('Mehr erfahren'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -929,7 +987,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
         ? true
         : isDateSevenDaysAgo(profilProvider.lastUpdateString);
 
-    bool payedUp = profilProvider.payedSubscription == true ? true : false;
+    //bool payedUp = profilProvider.payedSubscription == true ? true : false;
 
     return Padding(
       padding: EdgeInsets.all(modalPadding),
@@ -999,7 +1057,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             ),
           ),
           const SizedBox(height: 30),
-          PressableButton(
+          /* PressableButton(
             onPressed: widget.authenticated && payedUp
                 ? widget.isVideoPlayer
                     ? () {
@@ -1049,9 +1107,43 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         widget.toggleModal;
                       }
                     : () async {
-                        await _validateSubscriptionAndShowRestrictionDialog(
-                            profilProvider);
+                        await _validateSubscriptionAndShowRestrictionDialog(profilProvider);
                       },
+            padding: EdgeInsets.symmetric(
+                vertical: bigPressableVerticalPadding, horizontal: 12),
+            child: Center(
+                child: Text(
+              widget.isVideoPlayer ? "Jetzt starten" : "Video erstellen",
+              style: Theme.of(context).textTheme.labelLarge,
+            )),
+          ), */
+          PressableButton(
+            onPressed: widget.isVideoPlayer
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VideoCombinerScreen(
+                          levelId: widget.levelId,
+                          levelNotifier: Provider.of<LevelNotifier>(context,
+                              listen: false),
+                          profilProvider: Provider.of<ProfilProvider>(context,
+                              listen: false),
+                          focus: selectedFocus,
+                          goal: selectedGoal,
+                          duration: selectedDuration,
+                        ),
+                      ),
+                    );
+                    widget.toggleModal;
+                  }
+                : () {
+                    downloadScreenKey.currentState!.combineAndDownloadVideo(
+                        selectedFocus,
+                        selectedGoal,
+                        selectedDuration,
+                        ProfilProvider().fitnessLevel);
+                  },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
             child: Center(
@@ -1065,7 +1157,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     );
   }
 
-  Future<void> _validateSubscriptionAndShowRestrictionDialog(
+  /* Future<void> _validateSubscriptionAndShowRestrictionDialog(
       ProfilProvider profilProvider) async {
     bool isValid = false;
 
@@ -1089,7 +1181,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     }
 
     showVideoRestrictionDialog(profilProvider.lastUpdateString);
-  }
+  } */
 
   void showVideoRestrictionDialog(String lastUpdateString) {
     DateTime lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();

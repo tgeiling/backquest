@@ -74,9 +74,9 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.logout,
                   onTileTap: setAuthenticated,
                 ),
-                SettingsTile(
+                /* SettingsTile(
                     title: payedUp ? "Mein Abonnement" : 'Backquest abonnieren',
-                    icon: Icons.payments_sharp),
+                    icon: Icons.payments_sharp), */
                 const SettingsTile(title: 'Kontakt', icon: Icons.contact_mail),
               ],
             ).toList(),
@@ -158,13 +158,14 @@ class SettingsTile extends StatelessWidget {
           authService.logout();
           onTileTap?.call(false);
           Navigator.pop(context);
-        } else if (title == 'Backquest abonnieren') {
+        } /* else if (title == 'Backquest abonnieren') {
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => const SubscriptionSettingPage()),
           );
-        } else if (title == 'Mein Abonnement') {
+        } */
+        else if (title == 'Mein Abonnement') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
@@ -746,7 +747,7 @@ class MySubscriptionPage extends StatelessWidget {
   }
 }
 
-class SubscriptionSettingPage extends StatefulWidget {
+/* class SubscriptionSettingPage extends StatefulWidget {
   const SubscriptionSettingPage({Key? key}) : super(key: key);
 
   @override
@@ -1133,7 +1134,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 }
-
+ */
 class AGB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
