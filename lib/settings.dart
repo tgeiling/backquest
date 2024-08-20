@@ -77,8 +77,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsTile(
                     title: payedUp ? "Mein Abonnement" : 'Backquest abonnieren',
                     icon: Icons.payments_sharp),
-                const SettingsTile(
-                    title: 'Kontakt', icon: Icons.contact_mail),    
+                const SettingsTile(title: 'Kontakt', icon: Icons.contact_mail),
               ],
             ).toList(),
           ),
@@ -673,7 +672,8 @@ class MySubscriptionPage extends StatelessWidget {
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 const SizedBox(height: 20),
-                if (activeSubscription == "Jährlich" || activeSubscription == "Monatlich")
+                if (activeSubscription == "Jährlich" ||
+                    activeSubscription == "Monatlich")
                   _buildSubscriptionTile(
                     context,
                     activeSubscription!,
@@ -745,7 +745,6 @@ class MySubscriptionPage extends StatelessWidget {
     );
   }
 }
-
 
 class SubscriptionSettingPage extends StatefulWidget {
   const SubscriptionSettingPage({Key? key}) : super(key: key);
@@ -847,7 +846,6 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
   }
 }
 
-
 class PaymentSettingPage extends StatefulWidget {
   final String subscriptionType;
 
@@ -881,16 +879,21 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       });
 
       if (available) {
-        const Set<String> productIds = {'01', '02'};
+        const Set<String> productIds = {'03', '04'};
         final ProductDetailsResponse response =
             await inAppPurchase.queryProductDetails(productIds);
+
+        print("##################################");
+        print(response);
+        print("##################################");
 
         if (response.error != null) {
           print('Error querying product details: ${response.error}');
         }
 
         if (response.productDetails.isEmpty) {
-          print('No products found. This could be due to the following reasons:');
+          print(
+              'No products found. This could be due to the following reasons:');
         } else {
           products = response.productDetails;
         }
@@ -924,15 +927,17 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   // Verify purchase
   Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
-      if (purchaseDetails.productID == '01' || purchaseDetails.productID == '02') {
+      if (purchaseDetails.productID == '03' ||
+          purchaseDetails.productID == '04') {
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
         profilProvider.setPayedSubscription(true);
-        profilProvider.setSubType(purchaseDetails.productID == '03' ? 'Monatlich' : 'Jährlich');
+        profilProvider.setSubType(
+            purchaseDetails.productID == '03' ? 'Monatlich' : 'Jährlich');
         profilProvider.setSubStarted(DateTime.now());
 
-        profilProvider.setReceiptData(purchaseDetails.verificationData.serverVerificationData);
-
+        profilProvider.setReceiptData(
+            purchaseDetails.verificationData.serverVerificationData);
 
         QuickAlert.show(
           backgroundColor: Colors.grey.shade900,
@@ -955,8 +960,10 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   // Purchase a product
   void _purchaseProduct(ProductDetails productDetails) {
     try {
+      print(productDetails);
       final PurchaseParam purchaseParam =
           PurchaseParam(productDetails: productDetails);
+      print(purchaseParam);
       inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
     } catch (e) {
       print('Error purchasing product: $e');
@@ -988,9 +995,9 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     ProductDetails? product;
     try {
       if (widget.subscriptionType == 'Jährlich') {
-        product = products.firstWhere((product) => product.id == '02');
+        product = products.firstWhere((product) => product.id == '04');
       } else {
-        product = products.firstWhere((product) => product.id == '01');
+        product = products.firstWhere((product) => product.id == '03');
       }
     } catch (e) {
       product = null;
@@ -1184,7 +1191,6 @@ Kontakt: timo.geiling@outlook.com
   }
 }
 
-
 class Datasecurity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -1251,7 +1257,6 @@ Wir behalten uns das Recht vor, diese Datenschutzerklärung bei Bedarf zu änder
   }
 }
 
-
 class Impressum extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -1296,7 +1301,8 @@ Steuernummer:
 
 class Kontakt extends StatelessWidget {
   final String email = 'info@backquest.online';
-  final String appleSubscriptionUrl = 'https://support.apple.com/en-us/HT202039';
+  final String appleSubscriptionUrl =
+      'https://support.apple.com/en-us/HT202039';
 
   void _launchEmail() async {
     final Uri emailLaunchUri = Uri(
@@ -1378,4 +1384,3 @@ class Kontakt extends StatelessWidget {
     );
   }
 }
-

@@ -275,8 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
 
           if (profileData.containsKey('questionnaireDone')) {
-            profilProvider
-                .setQuestionnaireDone(profileData['questionnaireDone']);
+            profilProvider.setQuestionnaireDone(true);
           }
 
           if (profileData.containsKey('payedSubscription')) {
@@ -285,18 +284,15 @@ class _LoginScreenState extends State<LoginScreen> {
           }
 
           if (profileData.containsKey('subType')) {
-            profilProvider
-                .setSubType(profileData['subType']);
+            profilProvider.setSubType(profileData['subType']);
           }
 
           if (profileData.containsKey('subStarted')) {
-            profilProvider
-                .setSubStarted(profileData['subStarted']);
+            profilProvider.setSubStarted(profileData['subStarted']);
           }
 
           if (profileData.containsKey('receiptData')) {
-            profilProvider
-                .setReceiptData(profileData['receiptData']);
+            profilProvider.setReceiptData(profileData['receiptData']);
           }
 
           if (profileData.containsKey('feedback')) {

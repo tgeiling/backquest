@@ -620,7 +620,6 @@ class _MainScaffoldState extends State<MainScaffold>
     return Scaffold(
       body: Stack(
         children: [
-          //if condition to show authenticated status and connection status as banner
           GestureDetector(
             onTap: () {
               if (_isModalVisible) {
@@ -712,6 +711,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     levelId: level,
                     authenticated: widget.authenticated,
                     isVideoPlayer: isVideoPlayer,
+                    toggleModal: _toggleModal,
                   ),
                 ),
               ),
@@ -735,13 +735,17 @@ class _MainScaffoldState extends State<MainScaffold>
     double heightInPixels = screenHeight * pixelRatio;
 
     // Calculate the diagonal in pixels
-    double diagonalPixels = sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
+    double diagonalPixels =
+        sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
 
     // Convert the diagonal from pixels to inches
-    double diagonalInches = diagonalPixels / pixelRatio / 160; // 160 is typically used as the DPI baseline
+    double diagonalInches = diagonalPixels /
+        pixelRatio /
+        160; // 160 is typically used as the DPI baseline
 
     // A more reliable condition for detecting tablets
-    bool isTablet = (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
+    bool isTablet =
+        (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
 
     bool isSmallScreen = screenWidth < 360;
 
@@ -830,6 +834,7 @@ class CustomBottomModal extends StatefulWidget {
   final int levelId;
   final bool authenticated;
   final bool isVideoPlayer;
+  final Function(String, int, bool) toggleModal;
 
   const CustomBottomModal({
     Key? key,
@@ -837,6 +842,7 @@ class CustomBottomModal extends StatefulWidget {
     required this.levelId,
     required this.authenticated,
     required this.isVideoPlayer,
+    required this.toggleModal,
   }) : super(key: key);
 
   @override
@@ -875,11 +881,13 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     double widthInPixels = screenWidth * pixelRatio;
     double heightInPixels = screenHeight * pixelRatio;
 
-    double diagonalPixels = sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
+    double diagonalPixels =
+        sqrt(pow(widthInPixels, 2) + pow(heightInPixels, 2));
 
     double diagonalInches = diagonalPixels / pixelRatio / 160;
 
-    bool isTablet = (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
+    bool isTablet =
+        (diagonalInches >= 7.0 && (screenWidth / screenHeight) < 1.6);
 
     double modalPadding;
     double smallPressableVerticalPadding;
@@ -1011,6 +1019,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                             ),
                           ),
                         );
+                        widget.toggleModal;
                       }
                     : () {
                         downloadScreenKey.currentState!.combineAndDownloadVideo(
@@ -1037,6 +1046,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                             ),
                           ),
                         );
+                        widget.toggleModal;
                       }
                     : () async {
                         await _validateSubscriptionAndShowRestrictionDialog(
@@ -1057,17 +1067,15 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
 
   Future<void> _validateSubscriptionAndShowRestrictionDialog(
       ProfilProvider profilProvider) async {
-    // Validate the receipt before showing the restriction dialog
     bool isValid = false;
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS && profilProvider.receiptData != null) {
       isValid = await validateAppleReceipt(profilProvider.receiptData!);
-    } else if (Platform.isAndroid) {
+    } else if (Platform.isAndroid && profilProvider.receiptData != null) {
       isValid = await validateGoogleReceipt(profilProvider.receiptData!);
     }
 
-    // Handle validation results
-    if (!isValid) {
+    if (!isValid && profilProvider.receiptData != null) {
       profilProvider.setPayedSubscription(false);
       profilProvider.setSubType('');
       QuickAlert.show(
@@ -1078,9 +1086,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
         title: 'Abonnement ungültig',
         text: 'Ihr Abonnement wurde storniert oder ist ungültig.',
       );
-    } else {
-      showVideoRestrictionDialog(profilProvider.lastUpdateString);
     }
+
+    showVideoRestrictionDialog(profilProvider.lastUpdateString);
   }
 
   void showVideoRestrictionDialog(String lastUpdateString) {
@@ -1096,8 +1104,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
         return AlertDialog(
           backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(10.0),
           ),
           title: Text(
             "Videoeinschränkung",
@@ -1138,8 +1145,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             TextButton(
               child: Text(
                 "OK",
-                style:
-                    Theme.of(context).textTheme.displayMedium,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -1158,13 +1164,11 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
         return AlertDialog(
           backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(10.0),
           ),
           title: const Text(
             "Wählen Sie die Dauer",
-            style:
-                TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white),
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -1177,8 +1181,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   selectedColor: Colors.green,
                   title: Text(
                     "$minute Minuten",
-                    style: const TextStyle(
-                        color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                   onTap: () => Navigator.of(context).pop(minute * 60),
                 );
@@ -1189,8 +1192,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             TextButton(
               child: const Text(
                 "Abbrechen",
-                style: TextStyle(
-                    color: Colors.white),
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),
