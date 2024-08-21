@@ -11,6 +11,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'stats.dart';
 import 'video.dart';
@@ -648,9 +649,13 @@ class _MainScaffoldState extends State<MainScaffold>
                 PressableButton(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // Navigate to another page if needed
+                  onPressed: () async {
+                    const url = 'https://backquest.online';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
                   },
                   child: const Text('Mehr erfahren'),
                 ),
