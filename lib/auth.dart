@@ -207,21 +207,18 @@ class _LoginScreenState extends State<LoginScreen> {
       _usernameController.text,
       _passwordController.text,
     );
+    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
+    final levelProvider = Provider.of<LevelNotifier>(context, listen: false);
 
     if (success) {
       final token = await getAuthToken();
 
       if (token != null) {
         final profileData = await fetchProfile(token);
-        await prefs.clear();
 
-        widget.setQuestionnairDone();
-
-        if (profileData != null) {
-          final profilProvider =
-              Provider.of<ProfilProvider>(context, listen: false);
-          final levelProvider =
-              Provider.of<LevelNotifier>(context, listen: false);
+        if (profileData != null && profileData.containsKey('completedLevels')) {
+          await prefs.clear();
+          widget.setQuestionnairDone();
 
           if (profileData.containsKey('birthdate')) {
             profilProvider
@@ -321,7 +318,11 @@ class _LoginScreenState extends State<LoginScreen> {
           widget.setAuthenticated(true);
           Navigator.popUntil(context, (route) => route.isFirst);
         } else {
-          print("Failed to fetch profile data after login");
+          levelProvider.loadLevelsAfterStart();
+          profilProvider.loadInitialData();
+
+          widget.setAuthenticated(true);
+          Navigator.popUntil(context, (route) => route.isFirst);
         }
       } else {
         print("No token found after successful login");
