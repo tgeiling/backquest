@@ -274,9 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
             profilProvider.setGoals(goals);
           }
 
-          if (profileData.containsKey('questionnaireDone')) {
-            profilProvider.setQuestionnaireDone(true);
-          }
+          profilProvider.setQuestionnaireDone(true);
 
           if (profileData.containsKey('payedSubscription')) {
             profilProvider
