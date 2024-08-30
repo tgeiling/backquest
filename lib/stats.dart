@@ -9,6 +9,7 @@ import 'elements.dart';
 import 'settings.dart';
 import 'services.dart';
 import 'auth.dart';
+import 'info.dart';
 
 class ProfilProvider extends ChangeNotifier {
   int _weeklyGoal = 0;
@@ -480,28 +481,48 @@ class ProfilPageState extends State<ProfilPage> {
             children: [
               Stack(
                 children: [
-                  Container(
-                      width: 150,
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: const Icon(Icons.settings),
-                        iconSize: settingsIconSize,
-                        color: Colors.white,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SettingsPage(
-                                      setAuthenticated: widget.setAuthenticated,
-                                      setQuestionnairDone:
-                                          widget.setQuestionnairDone,
-                                    )),
-                          );
-                        },
-                      )),
+                  Row(
+                    children: [
+                      Container(
+                          width: 150,
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.settings),
+                            iconSize: settingsIconSize,
+                            color: Colors.white,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SettingsPage(
+                                          setAuthenticated:
+                                              widget.setAuthenticated,
+                                          setQuestionnairDone:
+                                              widget.setQuestionnairDone,
+                                        )),
+                              );
+                            },
+                          )),
+                      Container(
+                          width: 30,
+                          margin: EdgeInsets.only(right: 15),
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.info),
+                            iconSize: settingsIconSize,
+                            color: Colors.white,
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => InfoPage()));
+                            },
+                          )),
+                    ],
+                  ),
                   Positioned(
                     top: 12,
-                    left: 30,
+                    left: 25,
                     child: Visibility(
                       visible: loggedIn,
                       child: Container(
