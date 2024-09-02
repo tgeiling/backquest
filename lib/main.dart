@@ -1473,62 +1473,147 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     final levelNotifier = Provider.of<LevelNotifier>(context);
     final levels = levelNotifier.levels;
 
-    return ListView.builder(
-      reverse: true,
-      controller: _scrollController,
-      itemCount: levels.length,
-      itemBuilder: (context, index) {
-        int levelId = levels.keys.toList()[index];
-        Level level = levels[levelId]!;
+    return Stack(
+      children: [
+        ListView.builder(
+          reverse: true,
+          controller: _scrollController,
+          itemCount: levels.length,
+          itemBuilder: (context, index) {
+            int levelId = levels.keys.toList()[index];
+            Level level = levels[levelId]!;
 
-        int row = index % 4;
-        int group = index ~/ 4;
+            int row = index % 4;
+            int group = index ~/ 4;
 
-        bool isEvenGroup = group % 2 == 0;
-        double startPadding, endPadding;
-        if (isEvenGroup) {
-          startPadding = MediaQuery.of(context).size.width / 8 * row;
-          endPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
-        } else {
-          startPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
-          endPadding = MediaQuery.of(context).size.width / 8 * row;
-        }
-
-        bool isNext = false;
-        if (!level.isDone) {
-          int? maxDoneLevelId = levels.entries
-              .where((entry) => entry.value.isDone)
-              .map((entry) => entry.key)
-              .fold<int?>(
-                  null,
-                  (prev, element) => prev != null
-                      ? (element > prev ? element : prev)
-                      : element);
-
-          if (maxDoneLevelId == null) {
-            isNext = levelId == levels.keys.first;
-          } else {
-            if (levelId == maxDoneLevelId + 1) {
-              isNext = true;
+            bool isEvenGroup = group % 2 == 0;
+            double startPadding, endPadding;
+            if (isEvenGroup) {
+              startPadding = MediaQuery.of(context).size.width / 8 * row;
+              endPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
+            } else {
+              startPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
+              endPadding = MediaQuery.of(context).size.width / 8 * row;
             }
-          }
-        }
 
-        return Padding(
-          padding: EdgeInsets.only(left: startPadding, right: endPadding),
-          child: LevelCircle(
-            level: level.id,
-            onTap: () {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                widget.toggleModal(level.description, level.id, true);
-              });
-            },
-            isTreasureLevel: level.id % 4 == 0,
-            isDone: level.isDone,
-            isNext: isNext,
+            bool isNext = false;
+            if (!level.isDone) {
+              int? maxDoneLevelId = levels.entries
+                  .where((entry) => entry.value.isDone)
+                  .map((entry) => entry.key)
+                  .fold<int?>(
+                      null,
+                      (prev, element) => prev != null
+                          ? (element > prev ? element : prev)
+                          : element);
+
+              if (maxDoneLevelId == null) {
+                isNext = levelId == levels.keys.first;
+              } else {
+                if (levelId == maxDoneLevelId + 1) {
+                  isNext = true;
+                }
+              }
+            }
+            final profilProvider =
+                Provider.of<ProfilProvider>(context, listen: false);
+            return Padding(
+              padding: EdgeInsets.only(left: startPadding, right: endPadding),
+              child: LevelCircle(
+                level: level.id,
+                onTap: () {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    widget.toggleModal(level.description, level.id, true);
+                  });
+                },
+                isTreasureLevel: level.id % 4 == 0,
+                isDone: level.isDone,
+                isNext: isNext,
+              ),
+            );
+          },
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.08,
+          left: 15,
+          child: GreenContainer(
+            padding: const EdgeInsets.all(12.0), // Adjust padding if needed
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Level Reset: \n 00:00:00',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8), // Space between text and icon
+                GestureDetector(
+                  onTap: () {
+                    OverlayEntry? overlayEntry;
+
+                    overlayEntry = OverlayEntry(
+                      builder: (context) => GestureDetector(
+                        onTap: () {
+                          overlayEntry?.remove(); // Remove the overlay on tap
+                        },
+                        child: Stack(
+                          children: <Widget>[
+                            // Background overlay to detect taps
+                            Container(
+                              color: Colors.transparent, // Transparent overlay
+                            ),
+                            // Speech bubble positioned on the screen
+                            Positioned(
+                              top: MediaQuery.of(context).size.height * 0.08,
+                              left: MediaQuery.of(context).size.width *
+                                  0.45, // Adjust position as needed
+                              child: SpeechBubble(
+                                message:
+                                    ' Alle Level werden\n jeden Monat\n zurückgesetzt.\n Schau, wie weit\n du kommst!\n Du verlierst\n nicht deinen\n Gesamtfortschritt.',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+
+                    Overlay.of(context)?.insert(overlayEntry);
+                  },
+                  child: Icon(
+                    Icons.info_outline,
+                    color: Colors.white,
+                    size: 24, // Adjust size as needed
+                  ),
+                ),
+              ],
+            ),
           ),
-        );
-      },
+        ),
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.18,
+          left: 15,
+          child: Consumer<ProfilProvider>(
+            builder: (context, profilProvider, child) {
+              int totalLevelsCompleted = profilProvider.completedLevels;
+
+              return GreenContainer(
+                padding: const EdgeInsets.all(12.0), // Adjust padding if needed
+                child: Text(
+                  'Level: $totalLevelsCompleted',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
