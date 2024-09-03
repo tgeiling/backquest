@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -184,6 +185,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _updateConnectionStatus(result);
     });
     _checkInitialConnectivity();
+    checkAndResetLevels();
   }
 
   @override
@@ -313,6 +315,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       setState(() {
         questionaireDone = false;
       });
+    }
+  }
+
+  Future<void> checkAndResetLevels() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? lastResetDateString = prefs.getString('lastResetDate');
+    final levelProvider = Provider.of<LevelNotifier>(context, listen: false);
+
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+    if (lastResetDateString != null) {
+      DateTime lastResetDate = DateTime.parse(lastResetDateString);
+
+      // Check if a new month has started
+      if (now.month != lastResetDate.month || now.year != lastResetDate.year) {
+        // A new month has started, reset the completed levels
+        setState(() {
+          levelProvider.updateLevelStatusSync(0);
+        });
+
+        // Store the new reset date
+        await prefs.setString('lastResetDate', formatter.format(now));
+      }
+    } else {
+      await prefs.setString('lastResetDate', formatter.format(now));
     }
   }
 
@@ -1467,6 +1495,45 @@ class LevelSelectionScreen extends StatefulWidget {
 
 class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
   final ScrollController _scrollController = ScrollController();
+  late Timer _timer;
+  String _timeRemaining = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  DateTime _calculateEndOfMonth() {
+    DateTime now = DateTime.now();
+    int lastDay = DateTime(now.year, now.month + 1, 0).day;
+    return DateTime(now.year, now.month, lastDay, 23, 59, 59);
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _timeRemaining = _formatTimeRemaining();
+      });
+    });
+  }
+
+  String _formatTimeRemaining() {
+    DateTime endOfMonth = _calculateEndOfMonth();
+    Duration difference = endOfMonth.difference(DateTime.now());
+    int days = difference.inDays;
+    int hours = difference.inHours % 24;
+    int minutes = difference.inMinutes % 60;
+    int seconds = difference.inSeconds % 60;
+    return '${days.toString().padLeft(2, '0')}:${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1542,7 +1609,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Level Reset: \n 00:00:00',
+                  'Level Reset: \n $_timeRemaining',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -1615,12 +1682,6 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 }
 
