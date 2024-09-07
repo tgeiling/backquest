@@ -312,6 +312,12 @@ class _LoginScreenState extends State<LoginScreen> {
               print('Invalid completedLevels value: $completedLevels');
             }
           }
+
+          if (profileData.containsKey('completedLevelsTotal')) {
+            profilProvider
+                .setCompletedLevelsTotal(profileData['completedLevelsTotal']);
+          }
+
           levelProvider.loadLevelsAfterStart();
           profilProvider.loadInitialData();
 

@@ -30,6 +30,7 @@ const UserSchema = new mongoose.Schema({
   weeklyStreak: Number,
   lastUpdateString: String,
   completedLevels: Number,
+  completedLevelsTotal: Number,
   painAreas: [String],
   workplaceEnvironment: String,
   fitnessLevel: String,
@@ -130,15 +131,16 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
 	if (req.body.weeklyStreak) user.weeklyStreak = req.body.weeklyStreak;
 	if (req.body.lastUpdateString) user.lastUpdateString = req.body.lastUpdateString;
 	if (req.body.completedLevels) user.completedLevels = req.body.completedLevels;
+	if (req.body.completedLevelsTotal) user.completedLevelsTotal = req.body.completedLevelsTotal;
     if (req.body.painAreas) user.painAreas = req.body.painAreas;
     if (req.body.workplaceEnvironment) user.workplaceEnvironment = req.body.workplaceEnvironment;
     if (req.body.fitnessLevel) user.fitnessLevel = req.body.fitnessLevel;
     if (req.body.personalGoal) user.personalGoal = req.body.personalGoal;
 	if (req.body.questionnaireDone) user.questionnaireDone = req.body.questionnaireDone;
 	if (req.body.payedSubscription) user.payedSubscription = req.body.payedSubscription;
-  if (req.body.subType) user.subType = req.body.subType;
-  if (req.body.subStarted) user.subStarted = req.body.subStarted;
-  if (req.body.receiptData) user.receiptData = req.body.receiptData;
+	if (req.body.subType) user.subType = req.body.subType;
+	if (req.body.subStarted) user.subStarted = req.body.subStarted;
+	if (req.body.receiptData) user.receiptData = req.body.receiptData;
 	if (req.body.feedback) user.feedback = req.body.feedback;
 
     await user.save();
@@ -158,22 +160,23 @@ app.get('/profile', authenticateToken, async (req, res) => {
 
     // Respond with the user's profile information
     const userProfile = {
-      birthdate: user.birthdate,
-      gender: user.gender,
-      weight: user.weight,
-      height: user.height,
+	  birthdate: user.birthdate,
+	  gender: user.gender,
+	  weight: user.weight,
+	  height: user.height,
 	  weeklyGoal: user.weeklyGoal,
 	  weeklyDone: user.weeklyDone,
 	  weeklyStreak: user.weeklyStreak,
 	  lastUpdateString: user.lastUpdateString,
 	  completedLevels: user.completedLevels,
-      painAreas: user.painAreas,
-      workplaceEnvironment: user.workplaceEnvironment,
-      fitnessLevel: user.fitnessLevel,
-      personalGoal: user.personalGoal,
+	  completedLevelsTotal: user.completedLevelsTotal,
+	  painAreas: user.painAreas,
+	  workplaceEnvironment: user.workplaceEnvironment,
+	  fitnessLevel: user.fitnessLevel,
+	  personalGoal: user.personalGoal,
 	  questionnaireDone: user.questionnaireDone,
 	  payedSubscription: user.payedSubscription,
-    subType: user.subType,
+	subType: user.subType,
     subStarted: user.subStarted,
     receiptData: user.receiptData,
 	  feedback: user.feedback,
@@ -202,6 +205,7 @@ app.get('/userFeedback', async (req, res) => {
 		weeklyStreak: user.weeklyStreak,
 		lastUpdateString: user.lastUpdateString,
         completedLevels: user.completedLevels,
+		completedLevelsTotal: user.completedLevelsTotal,
         painAreas: user.painAreas,
         workplaceEnvironment: user.workplaceEnvironment,
         fitnessLevel: user.fitnessLevel,

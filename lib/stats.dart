@@ -19,6 +19,7 @@ class ProfilProvider extends ChangeNotifier {
   String _fitnessLevel = 'Nicht so oft';
 
   int _completedLevels = 0;
+  int _completedLevelsTotal = 0;
   int _level = 0;
   int _exp = 0;
 
@@ -45,6 +46,7 @@ class ProfilProvider extends ChangeNotifier {
   String get fitnessLevel => _fitnessLevel;
 
   int get completedLevels => _completedLevels;
+  int get completedLevelsTotal => _completedLevelsTotal;
   int get level => _level;
   int get exp => _exp;
 
@@ -66,6 +68,7 @@ class ProfilProvider extends ChangeNotifier {
   Future<void> loadInitialData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _completedLevels = prefs.getInt('completedLevels') ?? 0;
+    _completedLevelsTotal = prefs.getInt('completedLevelsTotal') ?? 0;
     _level = prefs.getInt('level') ?? 0;
     _exp = prefs.getInt('exp') ?? 0;
 
@@ -155,6 +158,13 @@ class ProfilProvider extends ChangeNotifier {
 
   void setCompletedLevels(int levels) {
     _completedLevels = levels;
+    notifyListeners();
+  }
+
+  Future<void> setCompletedLevelsTotal(int completedLevelsTotal) async {
+    _completedLevelsTotal = completedLevelsTotal;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('completedLevelsTotal', _completedLevelsTotal);
     notifyListeners();
   }
 
@@ -439,7 +449,7 @@ class ProfilPageState extends State<ProfilPage> {
               Consumer<ProfilProvider>(
                 builder: (context, provider, child) {
                   return _buildRowWithColumns(
-                      context, provider.completedLevels);
+                      context, provider.completedLevelsTotal);
                 },
               ),
             ],
@@ -602,7 +612,7 @@ class ProfilPageState extends State<ProfilPage> {
     );
   }
 
-  Widget _buildRowWithColumns(BuildContext context, int completedLevels) {
+  Widget _buildRowWithColumns(BuildContext context, int completedLevelsTotal) {
     final List<String> options2 = [
       'Nicht so oft',
       'Mehrmals im Monat',
@@ -619,7 +629,7 @@ class ProfilPageState extends State<ProfilPage> {
           children: [
             Expanded(
               child: _buildColumnWithText(
-                dynamicText: "$completedLevels",
+                dynamicText: "$completedLevelsTotal",
                 dynamicText1: "Einheiten",
               ),
             ),

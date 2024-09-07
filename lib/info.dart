@@ -558,7 +558,7 @@ class ProfileAnalyticsPage extends StatelessWidget {
                     _buildColumnWithText(
                       context: context,
                       dynamicText: "Einheiten",
-                      dynamicText1: "${profilProvider.completedLevels}",
+                      dynamicText1: "${profilProvider.completedLevelsTotal}",
                     ),
                     _buildColumnWithText(
                       context: context,
@@ -604,16 +604,6 @@ class ProfileAnalyticsPage extends StatelessWidget {
                       context: context,
                       dynamicText: 'Serie',
                       dynamicText1: '${profilProvider.weeklyStreak} W.',
-                    ),
-                    _buildColumnWithText(
-                      context: context,
-                      dynamicText: 'XP',
-                      dynamicText1: '${profilProvider.exp}',
-                    ),
-                    _buildColumnWithText(
-                      context: context,
-                      dynamicText: 'Levels',
-                      dynamicText1: '${profilProvider.completedLevels}',
                     ),
                     _buildColumnWithText(
                       context: context,

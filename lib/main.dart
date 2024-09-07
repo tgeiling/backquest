@@ -135,6 +135,29 @@ class LevelNotifier with ChangeNotifier {
     _loadLevels();
     notifyListeners();
   }
+
+  void earaseLevelStatusSync(int levelId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('level_${levelId}_isDone', false);
+
+    _levels[levelId]?.isDone = true;
+    _loadLevels();
+    notifyListeners();
+  }
+
+  Future<void> resetAllLevels() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (completedLevels >= 1) {
+      await prefs.setInt('completedLevels', completedLevels);
+
+      for (int levelId = 1; levelId <= 20; levelId++) {
+        earaseLevelStatusSync(levelId);
+      }
+    } else {
+      print('Invalid completedLevels value: $completedLevels');
+    }
+  }
 }
 
 void main() {
@@ -321,6 +344,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> checkAndResetLevels() async {
     final prefs = await SharedPreferences.getInstance();
     String? lastResetDateString = prefs.getString('lastResetDate');
+    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
     final levelProvider = Provider.of<LevelNotifier>(context, listen: false);
 
     DateTime now = DateTime.now();
@@ -331,10 +355,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       // Check if a new month has started
       if (now.month != lastResetDate.month || now.year != lastResetDate.year) {
-        // A new month has started, reset the completed levels
         setState(() {
-          levelProvider.updateLevelStatusSync(0);
+          levelProvider.resetAllLevels();
         });
+
+        levelProvider.loadLevelsAfterStart();
+        profilProvider.loadInitialData();
+
+        showResetDialog(context);
 
         // Store the new reset date
         await prefs.setString('lastResetDate', formatter.format(now));
@@ -342,6 +370,75 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else {
       await prefs.setString('lastResetDate', formatter.format(now));
     }
+  }
+
+  void showResetDialog(BuildContext context) {
+    showDialog<String>(
+      context: context,
+      builder: (context) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        bool isSmallScreen = screenWidth < 360;
+
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: GreenContainer(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+                Image.asset(
+                  "assets/logo2.png",
+                  width: 40,
+                ),
+                const SizedBox(height: 10),
+                if (!isSmallScreen)
+                  const Center(
+                    child: Text(
+                      "Alle Level wurden zurückgesetzt!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white, // Ensure text is white on green
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 18),
+                const Center(
+                  child: Text(
+                    "Es ist ein neuer Monat. Alle Level werden zurückgesetzt. Du verlierst nicht deinen Gesamtfortschritt.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white, // Ensure text is white on green
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                PressableButton(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text(
+                    'Schließen',
+                    style: TextStyle(
+                        color: Colors.white), // White text for the button
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -368,12 +465,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('en'), // English
-        Locale('de'), // German
+        Locale('en'),
+        Locale('de'),
       ],
       home: Stack(
         children: [
-          if (_isLoading) // Show CircularProgressIndicator while loading
+          if (_isLoading)
             const Center(
               child: CircularProgressIndicator(),
             )
@@ -1420,55 +1517,6 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
   }
 }
 
-class CompletedLevelsAppBar extends StatelessWidget
-    implements PreferredSizeWidget {
-  const CompletedLevelsAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey, width: 2.0),
-        ),
-      ),
-      child: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset('assets/logo.png', height: 20),
-            Consumer<LevelNotifier>(
-              builder: (context, levelNotifier, child) {
-                int completedLevels = levelNotifier.completedLevels;
-
-                return Row(
-                  children: [
-                    Image.asset('assets/crownIcon.png', height: 24),
-                    const SizedBox(width: 8),
-                    Text("$completedLevels",
-                        style: const TextStyle(fontSize: 20)),
-                    const SizedBox(width: 20),
-                    Image.asset('assets/fireIcon.png', height: 24),
-                    const SizedBox(width: 8),
-                    Text("$completedLevels",
-                        style: const TextStyle(fontSize: 20)),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-        centerTitle: false,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0);
-}
-
 class Level {
   final int id;
   final String description;
@@ -1514,6 +1562,16 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _timeRemaining = _formatTimeRemaining();
+
+        if (_timeRemaining == "00:00:00:00") {
+          final levelNotifier =
+              Provider.of<LevelNotifier>(context, listen: false);
+          levelNotifier.resetAllLevels();
+
+          showResetDialog(context);
+
+          _timer.cancel();
+        }
       });
     });
   }
@@ -1521,11 +1579,88 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
   String _formatTimeRemaining() {
     DateTime endOfMonth = _calculateEndOfMonth();
     Duration difference = endOfMonth.difference(DateTime.now());
+    if (difference.isNegative) {
+      // If time is up, return zeroed out time
+      return "00:00:00:00";
+    }
+
     int days = difference.inDays;
     int hours = difference.inHours % 24;
     int minutes = difference.inMinutes % 60;
     int seconds = difference.inSeconds % 60;
+
     return '${days.toString().padLeft(2, '0')}:${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  void showResetDialog(BuildContext context) {
+    showDialog<String>(
+      context: context,
+      builder: (context) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        bool isSmallScreen = screenWidth < 360;
+
+        return Dialog(
+          backgroundColor:
+              Colors.transparent, // Set transparent to use GreenContainer
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: GreenContainer(
+            padding:
+                const EdgeInsets.all(16.0), // Use GreenContainer for background
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+                Image.asset(
+                  "assets/logo2.png",
+                  width: 40,
+                ),
+                const SizedBox(height: 10),
+                if (!isSmallScreen)
+                  const Center(
+                    child: Text(
+                      "Alle Level wurden zurückgesetzt!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white, // Ensure text is white on green
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 18),
+                const Center(
+                  child: Text(
+                    "Es ist ein neuer Monat. Alle Level werden zurückgesetzt. Du verlierst nicht deinen Gesamtfortschritt.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white, // Ensure text is white on green
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                PressableButton(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text(
+                    'Schließen',
+                    style: TextStyle(
+                        color: Colors.white), // White text for the button
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -1616,7 +1751,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width: 8), // Space between text and icon
+                const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
                     OverlayEntry? overlayEntry;
@@ -1624,19 +1759,16 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                     overlayEntry = OverlayEntry(
                       builder: (context) => GestureDetector(
                         onTap: () {
-                          overlayEntry?.remove(); // Remove the overlay on tap
+                          overlayEntry?.remove();
                         },
                         child: Stack(
                           children: <Widget>[
-                            // Background overlay to detect taps
                             Container(
-                              color: Colors.transparent, // Transparent overlay
+                              color: Colors.transparent,
                             ),
-                            // Speech bubble positioned on the screen
                             Positioned(
                               top: MediaQuery.of(context).size.height * 0.08,
-                              left: MediaQuery.of(context).size.width *
-                                  0.45, // Adjust position as needed
+                              left: MediaQuery.of(context).size.width * 0.45,
                               child: SpeechBubble(
                                 message:
                                     ' Alle Level werden\n jeden Monat\n zurückgesetzt.\n Schau, wie weit\n du kommst!\n Du verlierst\n nicht deinen\n Gesamtfortschritt.',
@@ -1664,7 +1796,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           left: 15,
           child: Consumer<ProfilProvider>(
             builder: (context, profilProvider, child) {
-              int totalLevelsCompleted = profilProvider.completedLevels;
+              int totalLevelsCompleted = profilProvider.completedLevelsTotal;
 
               return GreenContainer(
                 padding: const EdgeInsets.all(12.0), // Adjust padding if needed
