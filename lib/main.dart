@@ -149,7 +149,7 @@ class LevelNotifier with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
 
     if (completedLevels >= 1) {
-      await prefs.setInt('completedLevels', completedLevels);
+      await prefs.setInt('completedLevels', 0);
 
       for (int levelId = 1; levelId <= 20; levelId++) {
         earaseLevelStatusSync(levelId);
@@ -1685,19 +1685,25 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             int levelId = levels.keys.toList()[index];
             Level level = levels[levelId]!;
 
-            int row = index % 4;
-            int group = index ~/ 4;
+            // Alternate groups of 7 between right and left curves
+            int group = index ~/ 5;
+            int withinGroupIndex = index % 5;
+            double screenWidth = MediaQuery.of(context).size.width;
 
-            bool isEvenGroup = group % 2 == 0;
-            double startPadding, endPadding;
-            if (isEvenGroup) {
-              startPadding = MediaQuery.of(context).size.width / 8 * row;
-              endPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
+            // Use a sine function for smooth curving
+            double curvePadding;
+            double startPadding = 0;
+            double endPadding = 0;
+
+            if (group % 2 == 0) {
+              // Right curve (use startPadding)
+              startPadding = screenWidth / 4 * sin(withinGroupIndex * pi / 6);
             } else {
-              startPadding = MediaQuery.of(context).size.width / 8 * (3 - row);
-              endPadding = MediaQuery.of(context).size.width / 8 * row;
+              // Left curve (use endPadding)
+              endPadding = screenWidth / 4 * sin(withinGroupIndex * pi / 6);
             }
 
+            // Determine if this is the next level
             bool isNext = false;
             if (!level.isDone) {
               int? maxDoneLevelId = levels.entries
@@ -1717,8 +1723,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
                 }
               }
             }
-            final profilProvider =
-                Provider.of<ProfilProvider>(context, listen: false);
+
             return Padding(
               padding: EdgeInsets.only(left: startPadding, right: endPadding),
               child: LevelCircle(
