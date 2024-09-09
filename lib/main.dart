@@ -1541,7 +1541,8 @@ class LevelSelectionScreen extends StatefulWidget {
   _LevelSelectionScreenState createState() => _LevelSelectionScreenState();
 }
 
-class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
+class _LevelSelectionScreenState extends State<LevelSelectionScreen>
+    with AutomaticKeepAliveClientMixin<LevelSelectionScreen> {
   final ScrollController _scrollController = ScrollController();
   late Timer _timer;
   String _timeRemaining = '';
@@ -1569,8 +1570,6 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
           levelNotifier.resetAllLevels();
 
           showResetDialog(context);
-
-          _timer.cancel();
         }
       });
     });
@@ -1580,7 +1579,6 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
     DateTime endOfMonth = _calculateEndOfMonth();
     Duration difference = endOfMonth.difference(DateTime.now());
     if (difference.isNegative) {
-      // If time is up, return zeroed out time
       return "00:00:00:00";
     }
 
@@ -1685,22 +1683,20 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
             int levelId = levels.keys.toList()[index];
             Level level = levels[levelId]!;
 
-            // Alternate groups of 7 between right and left curves
             int group = index ~/ 5;
             int withinGroupIndex = index % 5;
             double screenWidth = MediaQuery.of(context).size.width;
+            double curveIntensity = screenWidth / 2;
 
-            // Use a sine function for smooth curving
             double curvePadding;
             double startPadding = 0;
             double endPadding = 0;
 
             if (group % 2 == 0) {
-              // Right curve (use startPadding)
-              startPadding = screenWidth / 4 * sin(withinGroupIndex * pi / 6);
+              startPadding = curveIntensity * sin(withinGroupIndex * pi / 5);
             } else {
               // Left curve (use endPadding)
-              endPadding = screenWidth / 4 * sin(withinGroupIndex * pi / 6);
+              endPadding = curveIntensity * sin(withinGroupIndex * pi / 5);
             }
 
             // Determine if this is the next level
@@ -1804,7 +1800,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
               int totalLevelsCompleted = profilProvider.completedLevelsTotal;
 
               return GreenContainer(
-                padding: const EdgeInsets.all(12.0), // Adjust padding if needed
+                padding: const EdgeInsets.all(12.0),
                 child: Text(
                   'Level: $totalLevelsCompleted',
                   style: TextStyle(
@@ -1820,6 +1816,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class LevelCircle extends StatelessWidget {
@@ -1865,10 +1864,10 @@ class LevelCircle extends StatelessWidget {
       startFontSize = 12;
       startAbsoluteTopValue = 50;
     } else {
-      levelNumberFontSize = 34;
-      buttonDimension = 95;
+      levelNumberFontSize = 36;
+      buttonDimension = 100;
       levelNumberFontPadding = 15;
-      startFontSize = 15;
+      startFontSize = 17;
       startAbsoluteTopValue = 65;
     }
 
@@ -1917,8 +1916,8 @@ class LevelCircle extends StatelessWidget {
               Positioned(
                 top: 0,
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 105,
+                  height: 105,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(

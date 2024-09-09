@@ -47,6 +47,7 @@ Future<bool> updateProfile({
   int? weeklyStreak,
   String? lastUpdateString,
   int? completedLevels,
+  int? completedLevelsTotal,
   List<String>? painAreas,
   String? workplaceEnvironment,
   String? fitnessLevel,
@@ -71,6 +72,8 @@ Future<bool> updateProfile({
   if (weeklyStreak != null) body['weeklyStreak'] = weeklyStreak;
   if (lastUpdateString != null) body['lastUpdateString'] = lastUpdateString;
   if (completedLevels != null) body['completedLevels'] = completedLevels;
+  if (completedLevelsTotal != null)
+    body['completedLevelsTotal'] = completedLevelsTotal;
   if (painAreas != null) body['painAreas'] = painAreas;
   if (workplaceEnvironment != null) {
     body['workplaceEnvironment'] = workplaceEnvironment;
