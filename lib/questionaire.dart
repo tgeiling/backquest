@@ -636,7 +636,7 @@ class _QuestionPage5State extends State<QuestionPage5> {
           Padding(
               padding: const EdgeInsets.all(32.0),
               child: Text(
-                'Jetzt werden wir noch spezifischer für das Programm.',
+                'Wo hättest du in der Vergangenheit Probleme oder Verspannungen?',
                 style: Theme.of(context).textTheme.displayMedium,
               )),
           const SizedBox(height: 16),
@@ -991,7 +991,7 @@ class _QuestionPage7State extends State<QuestionPage7> {
         children: [
           const Spacer(),
           Text(
-            'Als letztes, setzte dein Ziel Fest!',
+            'Setze dir ein Ziel, wie viele Einheiten Du pro Woche absolvieren willst',
             style: Theme.of(context).textTheme.displayMedium,
           ),
           const SizedBox(height: 80),
@@ -1069,14 +1069,14 @@ class QuestionPage8 extends StatelessWidget {
         children: [
           const Spacer(),
           Text(
-            'Fast Fertig!',
+            'Willkommen bei BackQuest!',
             style: Theme.of(context).textTheme.displayLarge!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
             textAlign: TextAlign.left,
           ),
           Text(
-            'In der App bekommst du dein eigenes Trainings Video passend auf deine Bedürfnisse geschnitten. Du kannst die Level hochklettern um schwierigere Übungen Freizuschalten oder erstmal Entspannt Übungen starten über den Pfeil in der Ecke.',
+            'Unser Coach stellt dir persönliche Trainingsvideos zusammen, die genau zu Deinen individuellen Bedürfnissen und Zielen passen.  Nach jeder Einheit kannst du Deinem Coach ein Feedback geben, damit die Übungen mit jedem Mal noch besser auf Dich zugeschnitten werden.',
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),

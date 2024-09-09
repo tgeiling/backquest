@@ -175,6 +175,8 @@ void main() {
 GlobalKey<DownloadScreenState> downloadScreenKey =
     GlobalKey<DownloadScreenState>();
 
+bool isModalOpen = false;
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -561,6 +563,8 @@ class _MainScaffoldState extends State<MainScaffold>
         isVideoPlayer = setIsVideoPlayer;
       }
     });
+
+    isModalOpen = !isModalOpen;
   }
 
   @override
@@ -579,7 +583,7 @@ class _MainScaffoldState extends State<MainScaffold>
     if (launchCount % 2 == 0 || launchCount == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         //showSubscriptionDialog();
-        showInformationDialog();
+        //showInformationDialog();
       });
     }
   }
@@ -1038,21 +1042,21 @@ class CustomBottomModal extends StatefulWidget {
 }
 
 class _CustomBottomModalState extends State<CustomBottomModal> {
-  int selectedDuration = 900;
-  String selectedFocus = "Allgemein";
-  String selectedGoal = "Allgemein";
+  int selectedDuration = 600;
+  String selectedFocus = "Ganzkörper";
+  String selectedGoal = "Ganzkörper";
 
   final List<String> focusOptions = [
+    "Ganzkörper",
     "unterer Ruecken",
     "oberer Ruecken",
     "Nacken",
     "Schulter",
-    "Knie",
-    "Allgemein"
+    "Knie"
   ];
 
   final List<String> goalOptions = [
-    "Allgemein",
+    "Ganzkörper",
     "Kraft",
     "Beweglichkeit",
     "Haltung"
@@ -1259,8 +1263,12 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                               listen: false),
                           profilProvider: Provider.of<ProfilProvider>(context,
                               listen: false),
-                          focus: selectedFocus,
-                          goal: selectedGoal,
+                          focus: selectedFocus == "Ganzkörper"
+                              ? "Allgemein"
+                              : selectedFocus,
+                          goal: selectedGoal == "Ganzkörper"
+                              ? "Allgemein"
+                              : selectedGoal,
                           duration: selectedDuration,
                         ),
                       ),
@@ -1875,7 +1883,7 @@ class LevelCircle extends StatelessWidget {
       type: MaterialType.transparency,
       child: InkWell(
         onTap: () {
-          if (isNext || isDone) {
+          if (isNext || isDone || isModalOpen) {
             onTap();
           }
         },

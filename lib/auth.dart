@@ -338,12 +338,32 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Login Failed'),
-            content:
-                const Text('Invalid username or password. Please try again.'),
+            backgroundColor:
+                const Color.fromRGBO(97, 184, 115, 1), // Green background
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: const Text(
+              'Login Failed',
+              style: TextStyle(
+                color: Colors.white, // White text
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: const Text(
+              'Invalid username or password. Please try again.',
+              style: TextStyle(
+                color: Colors.white, // White text
+              ),
+            ),
             actions: <Widget>[
               TextButton(
-                child: const Text('Close'),
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    color: Colors.white, // White text
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
