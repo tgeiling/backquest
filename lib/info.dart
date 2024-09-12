@@ -103,55 +103,43 @@ class DetailView extends StatelessWidget {
   }
 }
 
-class ExpandableTextBox extends StatefulWidget {
+class ExpandableTextBox extends StatelessWidget {
   final String text;
   final String exerciseName;
+  final bool isExpanded;
 
   const ExpandableTextBox({
     Key? key,
     required this.text,
     required this.exerciseName,
+    required this.isExpanded, // Add the isExpanded parameter
   }) : super(key: key);
-
-  @override
-  _ExpandableTextBoxState createState() => _ExpandableTextBoxState();
-}
-
-class _ExpandableTextBoxState extends State<ExpandableTextBox> {
-  bool isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isExpanded = !isExpanded;
-            });
-          },
-          child: Row(
-            children: [
-              Icon(
-                isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                widget.exerciseName,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
-          ),
+        Row(
+          children: [
+            Icon(
+              isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              exerciseName,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
         ),
         if (isExpanded) ...[
           const SizedBox(height: 8),
           Text(
-            widget.text,
+            text,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Colors.white,
                 ),
@@ -162,7 +150,360 @@ class _ExpandableTextBoxState extends State<ExpandableTextBox> {
   }
 }
 
-class ExercisesPage extends StatelessWidget {
+class ExercisesPage extends StatefulWidget {
+  @override
+  _ExercisesPageState createState() => _ExercisesPageState();
+}
+
+class _ExercisesPageState extends State<ExercisesPage> {
+  final List<Map<String, String>> exercises = [
+    {
+      "image": "assets/gifs/0001_scene.gif",
+      "text":
+          "Exercise 1: Start with a basic warm-up to get your blood flowing.",
+      "name": "Warm-up Routine"
+    },
+    {
+      "image": "assets/gifs/0002_scene.gif",
+      "text":
+          "Exercise 2: Engage in core-strengthening exercises to build stability.",
+      "name": "Core Stability"
+    },
+    {
+      "image": "assets/gifs/0004_scene.gif",
+      "text":
+          "Exercise 3: Focus on lower body strength with this leg exercise.",
+      "name": "Leg Strengthener"
+    },
+    {
+      "image": "assets/gifs/0005_scene.gif",
+      "text": "Exercise 4: Work on your flexibility with these stretches.",
+      "name": "Flexibility Stretches"
+    },
+    {
+      "image": "assets/gifs/0010_scene.gif",
+      "text": "Exercise 5: Enhance your balance with this simple routine.",
+      "name": "Balance Enhancer"
+    },
+    {
+      "image": "assets/gifs/0013_scene.gif",
+      "text": "Exercise 6: Boost your endurance with these moves.",
+      "name": "Endurance Builder"
+    },
+    {
+      "image": "assets/gifs/0015_scene.gif",
+      "text": "Exercise 7: Focus on upper body strength in this workout.",
+      "name": "Upper Body Strength"
+    },
+    {
+      "image": "assets/gifs/0016_scene.gif",
+      "text": "Exercise 8: Improve your posture with this back exercise.",
+      "name": "Posture Improver"
+    },
+    {
+      "image": "assets/gifs/0019_scene.gif",
+      "text": "Exercise 9: Strengthen your arms with these targeted exercises.",
+      "name": "Arm Strength"
+    },
+    {
+      "image": "assets/gifs/0020_scene.gif",
+      "text":
+          "Exercise 10: Increase your cardiovascular health with this session.",
+      "name": "Cardio Boost"
+    },
+    {
+      "image": "assets/gifs/0021_scene.gif",
+      "text": "Exercise 11: Enhance your core with this focused exercise.",
+      "name": "Core Enhancer"
+    },
+    {
+      "image": "assets/gifs/0022_scene.gif",
+      "text": "Exercise 12: Boost your flexibility with this stretch routine.",
+      "name": "Flexibility Boost"
+    },
+    {
+      "image": "assets/gifs/0025_scene.gif",
+      "text":
+          "Exercise 13: Build your leg muscles with this effective exercise.",
+      "name": "Leg Builder"
+    },
+    {
+      "image": "assets/gifs/0028_scene.gif",
+      "text": "Exercise 14: Strengthen your shoulders with these moves.",
+      "name": "Shoulder Strength"
+    },
+    {
+      "image": "assets/gifs/0029_scene.gif",
+      "text":
+          "Exercise 15: Improve your endurance with this full-body routine.",
+      "name": "Full-body Endurance"
+    },
+    {
+      "image": "assets/gifs/0031_scene.gif",
+      "text": "Exercise 16: Focus on your core stability with this exercise.",
+      "name": "Core Stability Focus"
+    },
+    {
+      "image": "assets/gifs/0032_scene.gif",
+      "text": "Exercise 17: Increase your flexibility with these stretches.",
+      "name": "Flexibility Increase"
+    },
+    {
+      "image": "assets/gifs/0033_scene.gif",
+      "text": "Exercise 18: Boost your lower body strength with this routine.",
+      "name": "Lower Body Boost"
+    },
+    {
+      "image": "assets/gifs/0035_scene.gif",
+      "text": "Exercise 19: Strengthen your back with this focused workout.",
+      "name": "Back Strength"
+    },
+    {
+      "image": "assets/gifs/0037_scene.gif",
+      "text": "Exercise 20: Enhance your arm muscles with these exercises.",
+      "name": "Arm Muscle Enhancer"
+    },
+    {
+      "image": "assets/gifs/0038_scene.gif",
+      "text": "Exercise 21: Improve your balance with this sequence.",
+      "name": "Balance Sequence"
+    },
+    {
+      "image": "assets/gifs/0039_scene.gif",
+      "text":
+          "Exercise 22: Focus on your cardiovascular health with this routine.",
+      "name": "Cardio Focus"
+    },
+    {
+      "image": "assets/gifs/0041_scene.gif",
+      "text": "Exercise 23: Engage your core with this powerful exercise.",
+      "name": "Core Engagement"
+    },
+    {
+      "image": "assets/gifs/0043_scene.gif",
+      "text": "Exercise 24: Strengthen your legs with this workout.",
+      "name": "Leg Strengthener"
+    },
+    {
+      "image": "assets/gifs/0044_scene.gif",
+      "text": "Exercise 25: Improve flexibility with this series of stretches.",
+      "name": "Flexibility Series"
+    },
+    {
+      "image": "assets/gifs/0045_scene.gif",
+      "text": "Exercise 26: Boost upper body strength with these exercises.",
+      "name": "Upper Body Boost"
+    },
+    {
+      "image": "assets/gifs/0047_scene.gif",
+      "text": "Exercise 27: Work on your posture with this back exercise.",
+      "name": "Posture Exercise"
+    },
+    {
+      "image": "assets/gifs/0050_scene.gif",
+      "text":
+          "Exercise 28: Increase your cardiovascular endurance with this session.",
+      "name": "Cardio Endurance"
+    },
+    {
+      "image": "assets/gifs/0058_scene.gif",
+      "text": "Exercise 29: Focus on shoulder strength with this routine.",
+      "name": "Shoulder Strength Focus"
+    },
+    {
+      "image": "assets/gifs/0063_scene.gif",
+      "text": "Exercise 30: Strengthen your legs and improve stability.",
+      "name": "Leg Stability"
+    },
+    {
+      "image": "assets/gifs/0064_scene.gif",
+      "text": "Exercise 31: Enhance your core with these exercises.",
+      "name": "Core Enhancement"
+    },
+    {
+      "image": "assets/gifs/0067_scene.gif",
+      "text": "Exercise 32: Improve flexibility with these stretches.",
+      "name": "Flexibility Stretch"
+    },
+    {
+      "image": "assets/gifs/0068_scene.gif",
+      "text":
+          "Exercise 33: Build your endurance with this challenging routine.",
+      "name": "Endurance Builder"
+    },
+    {
+      "image": "assets/gifs/0084_scene.gif",
+      "text":
+          "Exercise 34: Work on your upper body strength with these exercises.",
+      "name": "Upper Body Workout"
+    },
+    {
+      "image": "assets/gifs/0085_scene.gif",
+      "text": "Exercise 35: Improve your balance with these movements.",
+      "name": "Balance Movements"
+    },
+    {
+      "image": "assets/gifs/0086_scene.gif",
+      "text": "Exercise 36: Strengthen your back with this focused workout.",
+      "name": "Back Focus"
+    },
+    {
+      "image": "assets/gifs/0087_scene.gif",
+      "text": "Exercise 37: Boost your core stability with this sequence.",
+      "name": "Core Stability Sequence"
+    },
+    {
+      "image": "assets/gifs/0088_scene.gif",
+      "text":
+          "Exercise 38: Increase your cardiovascular fitness with this session.",
+      "name": "Cardio Fitness"
+    },
+    {
+      "image": "assets/gifs/0089_scene.gif",
+      "text": "Exercise 39: Enhance your flexibility with this routine.",
+      "name": "Flexibility Routine"
+    },
+    {
+      "image": "assets/gifs/0090_scene.gif",
+      "text": "Exercise 40: Focus on arm strength with these exercises.",
+      "name": "Arm Strength Focus"
+    },
+    {
+      "image": "assets/gifs/0091_scene.gif",
+      "text": "Exercise 41: Improve your endurance with this workout.",
+      "name": "Endurance Workout"
+    },
+    {
+      "image": "assets/gifs/0092_scene.gif",
+      "text": "Exercise 42: Work on your core stability with this exercise.",
+      "name": "Core Stability"
+    },
+    {
+      "image": "assets/gifs/0100_scene.gif",
+      "text":
+          "Exercise 43: Strengthen your legs with this series of exercises.",
+      "name": "Leg Strength Series"
+    },
+    {
+      "image": "assets/gifs/0101_scene.gif",
+      "text": "Exercise 44: Improve your posture with this back routine.",
+      "name": "Posture Routine"
+    },
+    {
+      "image": "assets/gifs/0107_scene.gif",
+      "text":
+          "Exercise 45: Boost your cardiovascular health with this session.",
+      "name": "Cardio Health Boost"
+    },
+    {
+      "image": "assets/gifs/0109_scene.gif",
+      "text": "Exercise 46: Focus on shoulder strength with these exercises.",
+      "name": "Shoulder Focus"
+    },
+    {
+      "image": "assets/gifs/0110_scene.gif",
+      "text": "Exercise 47: Enhance your core with this focused workout.",
+      "name": "Core Workout"
+    },
+    {
+      "image": "assets/gifs/0114_scene.gif",
+      "text": "Exercise 48: Build endurance with this routine.",
+      "name": "Endurance Routine"
+    },
+    {
+      "image": "assets/gifs/0115_scene.gif",
+      "text": "Exercise 49: Strengthen your legs with these moves.",
+      "name": "Leg Strength Moves"
+    },
+    {
+      "image": "assets/gifs/0120_scene.gif",
+      "text": "Exercise 50: Improve your flexibility with these stretches.",
+      "name": "Flexibility Moves"
+    },
+    {
+      "image": "assets/gifs/0121_scene.gif",
+      "text":
+          "Exercise 51: Boost your upper body strength with these exercises.",
+      "name": "Upper Body Boost"
+    },
+    {
+      "image": "assets/gifs/0129_scene.gif",
+      "text": "Exercise 52: Enhance your balance with this exercise.",
+      "name": "Balance Enhancer"
+    },
+  ];
+  late List<bool> _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the expansion state for each exercise
+    _isExpanded = List<bool>.filled(exercises.length, false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        // Background image
+        Image.asset(
+          "assets/settingsbg.PNG",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            iconTheme: const IconThemeData(
+              color: Colors.white,
+            ),
+            title: const Text(
+              'Übungen aufrufen',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          body: ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: exercises.length,
+            itemBuilder: (context, index) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isExpanded[index] =
+                            !_isExpanded[index]; // Toggle expanded state
+                      });
+                    },
+                    child: Image.asset(exercises[index]["image"]!),
+                  ),
+                  const SizedBox(height: 8),
+                  ExpandableTextBox(
+                    text: exercises[index]["text"]!,
+                    exerciseName: exercises[index]["name"]!,
+                    isExpanded: _isExpanded[index], // Pass the expanded state
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ExercisesPageMainScreen extends StatefulWidget {
+  @override
+  _ExercisesPageMainScreenState createState() =>
+      _ExercisesPageMainScreenState();
+}
+
+class _ExercisesPageMainScreenState extends State<ExercisesPageMainScreen> {
   final List<Map<String, String>> exercises = [
     {
       "image": "assets/gifs/0001_scene.gif",
@@ -440,38 +781,68 @@ class ExercisesPage extends StatelessWidget {
     },
   ];
 
+  late List<bool> _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the expansion state for each exercise
+    _isExpanded = List<bool>.filled(exercises.length, false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Image.asset(
-          "assets/settingsbg.PNG",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            iconTheme: const IconThemeData(
-              color: Colors.white,
-            ),
-            title: const Text('Übungen aufrufen',
-                style: TextStyle(color: Colors.white)),
-          ),
-          body: ListView.builder(
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ListView.builder(
             padding: const EdgeInsets.all(16.0),
-            itemCount: exercises.length,
+            itemCount: exercises.length + 1, // Add 1 for the header
             itemBuilder: (context, index) {
+              if (index == 0) {
+                // This is the header item
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: screenHeight * 0.15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: Text(
+                        "Alle unsere Übungen",
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * 0.04,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }
+
+              // Subtract 1 from index for exercises because index 0 is now the header
+              final exerciseIndex = index - 1;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Image.asset(exercises[index]["image"]!),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isExpanded[exerciseIndex] = !_isExpanded[
+                            exerciseIndex]; // Toggle expanded state
+                      });
+                    },
+                    child: Image.asset(exercises[exerciseIndex]["image"]!),
+                  ),
                   const SizedBox(height: 8),
                   ExpandableTextBox(
-                    text: exercises[index]["text"]!,
-                    exerciseName: exercises[index]["name"]!,
+                    text: exercises[exerciseIndex]["text"]!,
+                    exerciseName: exercises[exerciseIndex]["name"]!,
+                    isExpanded:
+                        _isExpanded[exerciseIndex], // Pass the expanded state
                   ),
                   const SizedBox(height: 16),
                 ],

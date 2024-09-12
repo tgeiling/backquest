@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:backquest/info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -867,6 +868,20 @@ class _MainScaffoldState extends State<MainScaffold>
                       ),
                     ),
                     child: Center(
+                      child: ExercisesPageMainScreen(),
+                    )),
+                Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(97, 184, 115, 0.9),
+                          Color.fromRGBO(0, 59, 46, 0.9),
+                        ],
+                      ),
+                    ),
+                    child: Center(
                       child: DownloadScreen(
                         toggleModal: _toggleModal,
                         key: downloadScreenKey,
@@ -971,7 +986,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 SalomonBottomBarItem(
                   icon: Icon(
                     CupertinoIcons.home,
-                    size: MediaQuery.of(context).size.width * 0.09,
+                    size: MediaQuery.of(context).size.width * 0.08,
                     color: Colors.white,
                   ),
                   title: const Text("Main"),
@@ -980,7 +995,7 @@ class _MainScaffoldState extends State<MainScaffold>
                 SalomonBottomBarItem(
                   icon: Icon(
                     CupertinoIcons.chart_bar_square,
-                    size: MediaQuery.of(context).size.width * 0.09,
+                    size: MediaQuery.of(context).size.width * 0.08,
                     color: Colors.white,
                   ),
                   title: const Text("Stats"),
@@ -988,11 +1003,20 @@ class _MainScaffoldState extends State<MainScaffold>
                 ),
                 SalomonBottomBarItem(
                   icon: Icon(
-                    CupertinoIcons.cloud_download,
-                    size: MediaQuery.of(context).size.width * 0.09,
+                    CupertinoIcons.info_circle,
+                    size: MediaQuery.of(context).size.width * 0.08,
                     color: Colors.white,
                   ),
-                  title: const Text("Download"),
+                  title: const Text("Info"),
+                  selectedColor: Colors.white,
+                ),
+                SalomonBottomBarItem(
+                  icon: Icon(
+                    CupertinoIcons.cloud_download,
+                    size: MediaQuery.of(context).size.width * 0.08,
+                    color: Colors.white,
+                  ),
+                  title: const Text("Lokal"),
                   selectedColor: Colors.white,
                 ),
               ],

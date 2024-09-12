@@ -324,6 +324,41 @@ class _LoginScreenState extends State<LoginScreen> {
           widget.setAuthenticated(true);
           Navigator.popUntil(context, (route) => route.isFirst);
         } else {
+          getAuthToken().then((token) {
+            if (token != null) {
+              updateProfile(
+                token: token,
+                birthdate: profilProvider.birthdate,
+                gender: profilProvider.gender,
+                weight: profilProvider.weight,
+                height: profilProvider.height,
+                weeklyGoal: profilProvider.weeklyGoal,
+                weeklyDone: profilProvider.weeklyDone,
+                weeklyStreak: profilProvider.weeklyStreak,
+                lastUpdateString: profilProvider.lastUpdateString,
+                painAreas: profilProvider.hasPain,
+                workplaceEnvironment: profilProvider.workplaceEnvironment,
+                fitnessLevel: profilProvider.fitnessLevel,
+                personalGoal: profilProvider.goals,
+                payedSubscription: profilProvider.payedSubscription,
+                subType: profilProvider.subType,
+                subStarted: profilProvider.subStarted,
+                receiptData: profilProvider.receiptData,
+                feedback: profilProvider.feedback,
+                completedLevels: profilProvider.completedLevels,
+                completedLevelsTotal: profilProvider.completedLevelsTotal,
+              ).then((success) {
+                if (success) {
+                  print("Profile updated successfully.");
+                } else {
+                  print("Failed to update profile.");
+                }
+              });
+            } else {
+              print("No auth token available.");
+            }
+          });
+
           levelProvider.loadLevelsAfterStart();
           profilProvider.loadInitialData();
 

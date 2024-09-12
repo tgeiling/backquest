@@ -494,7 +494,7 @@ class ProfilPageState extends State<ProfilPage> {
                   Row(
                     children: [
                       Container(
-                          width: 150,
+                          width: 160,
                           alignment: Alignment.centerRight,
                           child: IconButton(
                             icon: const Icon(Icons.settings),
@@ -513,9 +513,9 @@ class ProfilPageState extends State<ProfilPage> {
                               );
                             },
                           )),
-                      Container(
-                          width: 30,
-                          margin: EdgeInsets.only(right: 15),
+                      /* Container(
+                          width: 60,
+                          margin: EdgeInsets.only(right: 0),
                           alignment: Alignment.centerRight,
                           child: IconButton(
                             icon: const Icon(Icons.info),
@@ -527,7 +527,7 @@ class ProfilPageState extends State<ProfilPage> {
                                   MaterialPageRoute(
                                       builder: (context) => InfoPage()));
                             },
-                          )),
+                          )), */
                     ],
                   ),
                   Positioned(
