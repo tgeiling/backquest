@@ -58,6 +58,7 @@ Future<bool> updateProfile({
   String? subType,
   DateTime? subStarted,
   String? receiptData,
+  String? lastResetDate,
   List<ExerciseFeedback>? feedback,
 }) async {
   final Uri apiUrl = Uri.parse('http://135.125.218.147:3000/updateProfile');
@@ -86,6 +87,7 @@ Future<bool> updateProfile({
   if (subType != null) body['subType'] = subType;
   if (subStarted != null) body['subStarted'] = subStarted;
   if (receiptData != null) body['receiptData'] = receiptData;
+  if (lastResetDate != null) body['lastResetDate'] = lastResetDate;
   if (feedback != null) body['feedback'] = feedback;
 
   try {

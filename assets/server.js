@@ -40,6 +40,7 @@ const UserSchema = new mongoose.Schema({
   subType: String,
   subStarted: Date,
   receiptData: String,
+  lastResetDate: String,
   feedback: [{
     videoId: String,
     difficulty: String,
@@ -141,6 +142,7 @@ app.post('/updateProfile', authenticateToken, async (req, res) => {
 	if (req.body.subType) user.subType = req.body.subType;
 	if (req.body.subStarted) user.subStarted = req.body.subStarted;
 	if (req.body.receiptData) user.receiptData = req.body.receiptData;
+	if (req.body.lastResetDate) user.lastResetDate = req.body.lastResetDate;
 	if (req.body.feedback) user.feedback = req.body.feedback;
 
     await user.save();
@@ -179,6 +181,7 @@ app.get('/profile', authenticateToken, async (req, res) => {
 	subType: user.subType,
     subStarted: user.subStarted,
     receiptData: user.receiptData,
+	lastResetDate: user.lastResetDate,
 	  feedback: user.feedback,
     };
 
@@ -215,6 +218,7 @@ app.get('/userFeedback', async (req, res) => {
     subType: user.subType,
     subStarted: user.subStarted,
     receiptData: user.receiptData,
+	lastResetDate: user.lastResetDate,
         feedback: user.feedback
       }
     }));

@@ -102,11 +102,14 @@ class LevelNotifier with ChangeNotifier {
     await prefs.setBool('level_${levelId}_isDone', true);
     await prefs.setInt('completedLevels', completedLevels + 1);
 
+    int? completedLevelsTotal = await prefs.getInt('completedLevelsTotal');
+
     getAuthToken().then((token) {
       if (token != null) {
         updateProfile(
           token: token,
           completedLevels: levelId,
+          completedLevelsTotal: completedLevelsTotal! + 1,
         ).then((success) {
           if (success) {
             print("Profile updated successfully.");
@@ -155,6 +158,23 @@ class LevelNotifier with ChangeNotifier {
       for (int levelId = 1; levelId <= 20; levelId++) {
         earaseLevelStatusSync(levelId);
       }
+
+      getAuthToken().then((token) {
+        if (token != null) {
+          updateProfile(
+            token: token,
+            completedLevels: 0,
+          ).then((success) {
+            if (success) {
+              print("Profile updated successfully.");
+            } else {
+              print("Failed to update profile.");
+            }
+          });
+        } else {
+          print("No auth token available.");
+        }
+      });
     } else {
       print('Invalid completedLevels value: $completedLevels');
     }
@@ -346,9 +366,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> checkAndResetLevels() async {
     final prefs = await SharedPreferences.getInstance();
-    String? lastResetDateString = prefs.getString('lastResetDate');
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
     final levelProvider = Provider.of<LevelNotifier>(context, listen: false);
+
+    String? lastResetDateString = profilProvider.lastResetDate;
 
     DateTime now = DateTime.now();
     DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -356,22 +377,58 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (lastResetDateString != null) {
       DateTime lastResetDate = DateTime.parse(lastResetDateString);
 
-      // Check if a new month has started
       if (now.month != lastResetDate.month || now.year != lastResetDate.year) {
         setState(() {
           levelProvider.resetAllLevels();
+          profilProvider.loadInitialData();
         });
 
+        // Continue loading levels and profile after the reset
         levelProvider.loadLevelsAfterStart();
         profilProvider.loadInitialData();
 
-        showResetDialog(context);
-
         // Store the new reset date
-        await prefs.setString('lastResetDate', formatter.format(now));
+        await profilProvider.setLastResetDate(formatter.format(now));
+
+        getAuthToken().then((token) {
+          if (token != null) {
+            updateProfile(
+              token: token,
+              lastResetDate: formatter.format(now),
+            ).then((success) {
+              if (success) {
+                print("Profile updated successfully.");
+              } else {
+                print("Failed to update profile.");
+              }
+            });
+          } else {
+            print("No auth token available.");
+          }
+        });
+        // Ensure the dialog is only shown after the app is fully loaded
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showResetDialog(context); // Show the dialog once everything is ready
+        });
       }
     } else {
-      await prefs.setString('lastResetDate', formatter.format(now));
+      await profilProvider.setLastResetDate(formatter.format(now));
+      getAuthToken().then((token) {
+        if (token != null) {
+          updateProfile(
+            token: token,
+            lastResetDate: formatter.format(now),
+          ).then((success) {
+            if (success) {
+              print("Profile updated successfully.");
+            } else {
+              print("Failed to update profile.");
+            }
+          });
+        } else {
+          print("No auth token available.");
+        }
+      });
     }
   }
 
@@ -1599,8 +1656,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
         if (_timeRemaining == "00:00:00:00") {
           final levelNotifier =
               Provider.of<LevelNotifier>(context, listen: false);
+          final profilProvider =
+              Provider.of<ProfilProvider>(context, listen: false);
           levelNotifier.resetAllLevels();
-
+          profilProvider.loadInitialData();
           showResetDialog(context);
         }
       });
@@ -1622,7 +1681,17 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
     return '${days.toString().padLeft(2, '0')}:${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
+  bool _isDialogOpen = false;
+
   void showResetDialog(BuildContext context) {
+    // Check if the dialog is already open
+    if (_isDialogOpen) {
+      return; // If the dialog is already open, do nothing
+    }
+
+    // Set the flag to true, indicating that the dialog is open
+    _isDialogOpen = true;
+
     showDialog<String>(
       context: context,
       builder: (context) {
@@ -1677,7 +1746,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    // Close the dialog and reset the flag
+                    Navigator.of(context).pop();
+                    _isDialogOpen = false;
                   },
                   child: const Text(
                     'Schließen',
@@ -1690,7 +1761,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
           ),
         );
       },
-    );
+    ).then((_) {
+      // Reset the flag when the dialog is closed (even if dismissed by back button)
+      _isDialogOpen = false;
+    });
   }
 
   @override

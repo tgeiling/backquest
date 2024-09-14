@@ -507,21 +507,38 @@ class _ExercisesPageMainScreenState extends State<ExercisesPageMainScreen> {
   final List<Map<String, String>> exercises = [
     {
       "image": "assets/gifs/0001_scene.gif",
-      "text":
-          "Exercise 1: Start with a basic warm-up to get your blood flowing.",
-      "name": "Warm-up Routine"
+      "text": """Bedeutung: 
+Du mobilisierst deine Hüftbeuger und kräftigst gleichzeitig deine Bauchmuskulatur. Gleichzeitig löst du Verspannungen im unteren Rücken und wirst wieder fit für deinen Alltag. Prävention: Indem du regelmäßig Hüfte und unteren Rücken mobilisierst, kannst du steife Hüftbeuger und verspannten Muskeln im unteren Rücken vorbeugen – zwei der Möglichen Ursachen für Rückenschmerzen.
+
+Ausführung:
+1. Lege dich entspannt auf den Rücken und ziehe ein Knie zur Brust, als ob du deinem Bein einen kurzen, freundlichen Gruß schickst.
+2. Halte das andere Bein gestreckt und wechsle dann die Seite. Du kannst die Bewegung etwas schneller ausführen um gleichzeitig deine Bauchmuskulatur zu kräftigen.
+        """,
+      "name": "Alternating Knee Hugs"
     },
     {
       "image": "assets/gifs/0002_scene.gif",
-      "text":
-          "Exercise 2: Engage in core-strengthening exercises to build stability.",
-      "name": "Core Stability"
+      "text": """Bedeutung: 
+Deine Brustwirbelsäule (BWS) ist oft ein vergessener Held, wenn es um Mobilität geht. Wenn wir viel sitzen, wird die BWS steif und unbeweglich, was zu Verspannungen im oberen Rücken und Nacken führen kann. Diese Rotation hilft dir, die Beweglichkeit in diesem Bereich zu verbessern 
+
+Übungsausführung:
+1.	Gehe in den Vierfüßlerstand, die Knie unter den Hüften und die Hände direkt unter den Schultern.
+2.	Lege eine Hand hinter den Kopf und führe eine sanfte Rotationsbewegung durch, wobei du den Ellenbogen zur gegenüberliegenden Hand führst und dann nach oben öffnest.
+3.	Stell dir vor, du öffnest einen alten, festgefahrenen Schrank – langsam und gezielt. Dein Blick folgt dabei der Hand.
+        """,
+      "name": "4 Füßler BWS Rotation"
     },
     {
       "image": "assets/gifs/0004_scene.gif",
-      "text":
-          "Exercise 3: Focus on lower body strength with this leg exercise.",
-      "name": "Leg Strengthener"
+      "text": """Bedeutung: 
+Diese Übung ist eine leichtere Variante des Herabschauenden Hundes. Die Bewegung verlängert die Wirbelsäule, öffnet den Brustkorb und aktiviert die Rückenmuskeln – eine wahre Wohltat nach langem Sitzen.
+
+Ausführung:
+1.	Starte im Vierfüßlerstand, die Knie unter den Hüften und die Hände direkt unter den Schultern.
+2.	Drücke dich durch die Hände nach oben, schiebe deine Hüfte zum Himmel und deinen Brustkorb zu den Knien.
+3.	Komme wieder zurück in den Vierfüßlerstand und beginne von neuem.
+""",
+      "name": "Aufwachender Hund"
     },
     {
       "image": "assets/gifs/0005_scene.gif",

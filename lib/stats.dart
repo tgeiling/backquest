@@ -37,6 +37,7 @@ class ProfilProvider extends ChangeNotifier {
   String? _subType;
   DateTime? _subStarted;
   String? _receiptData;
+  String? _lastResetDate;
   List<ExerciseFeedback> _feedback = [];
 
   int get weeklyGoal => _weeklyGoal;
@@ -63,6 +64,7 @@ class ProfilProvider extends ChangeNotifier {
   String? get subType => _subType;
   DateTime? get subStarted => _subStarted;
   String? get receiptData => _receiptData;
+  String? get lastResetDate => _lastResetDate;
   List<ExerciseFeedback> get feedback => _feedback;
 
   Future<void> loadInitialData() async {
@@ -90,6 +92,7 @@ class ProfilProvider extends ChangeNotifier {
     _subType = prefs.getString('subType');
     _subStarted = DateTime.tryParse(prefs.getString('subStarted') ?? '');
     _receiptData = prefs.getString('receiptData');
+    _lastResetDate = prefs.getString('lastResetDate');
     String? feedbackJson = prefs.getString('feedback');
     if (feedbackJson != null) {
       List<dynamic> feedbackList = json.decode(feedbackJson);
@@ -330,6 +333,13 @@ class ProfilProvider extends ChangeNotifier {
     _receiptData = receiptData;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('receiptData', receiptData);
+    notifyListeners();
+  }
+
+  Future<void> setLastResetDate(String lastResetDate) async {
+    _lastResetDate = lastResetDate;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastResetDate', lastResetDate);
     notifyListeners();
   }
 

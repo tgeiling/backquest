@@ -217,8 +217,12 @@ class _LoginScreenState extends State<LoginScreen> {
         final profileData = await fetchProfile(token);
 
         if (profileData != null && profileData.containsKey('completedLevels')) {
+          String? lastResetDate = prefs.getString("lastResetDate");
+
           await prefs.clear();
           widget.setQuestionnairDone();
+
+          prefs.setString("lastResetDate", lastResetDate!);
 
           if (profileData.containsKey('birthdate')) {
             profilProvider
@@ -290,6 +294,10 @@ class _LoginScreenState extends State<LoginScreen> {
             profilProvider.setReceiptData(profileData['receiptData']);
           }
 
+          if (profileData.containsKey('lastResetDate')) {
+            profilProvider.setLastResetDate(profileData['lastResetDate']);
+          }
+
           if (profileData.containsKey('feedback')) {
             List<ExerciseFeedback> feedbackList =
                 (profileData['feedback'] as List)
@@ -344,6 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 subType: profilProvider.subType,
                 subStarted: profilProvider.subStarted,
                 receiptData: profilProvider.receiptData,
+                lastResetDate: profilProvider.lastResetDate,
                 feedback: profilProvider.feedback,
                 completedLevels: profilProvider.completedLevels,
                 completedLevelsTotal: profilProvider.completedLevelsTotal,
