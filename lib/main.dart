@@ -109,7 +109,7 @@ class LevelNotifier with ChangeNotifier {
         updateProfile(
           token: token,
           completedLevels: levelId,
-          completedLevelsTotal: completedLevelsTotal! + 1,
+          completedLevelsTotal: completedLevelsTotal!,
         ).then((success) {
           if (success) {
             print("Profile updated successfully.");
@@ -231,7 +231,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _updateConnectionStatus(result);
     });
     _checkInitialConnectivity();
-    checkAndResetLevels();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndResetLevels(); // Call the reset check after the app has loaded
+    });
   }
 
   @override
@@ -364,10 +366,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  bool showResetDialogBool = false;
+
   Future<void> checkAndResetLevels() async {
-    final prefs = await SharedPreferences.getInstance();
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
     final levelProvider = Provider.of<LevelNotifier>(context, listen: false);
+    await profilProvider.loadInitialData();
 
     String? lastResetDateString = profilProvider.lastResetDate;
 
@@ -380,15 +384,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (now.month != lastResetDate.month || now.year != lastResetDate.year) {
         setState(() {
           levelProvider.resetAllLevels();
-          profilProvider.loadInitialData();
         });
 
-        // Continue loading levels and profile after the reset
         levelProvider.loadLevelsAfterStart();
         profilProvider.loadInitialData();
 
         // Store the new reset date
         await profilProvider.setLastResetDate(formatter.format(now));
+
+        showResetDialogBool = true;
 
         getAuthToken().then((token) {
           if (token != null) {
@@ -405,10 +409,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           } else {
             print("No auth token available.");
           }
-        });
-        // Ensure the dialog is only shown after the app is fully loaded
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          showResetDialog(context); // Show the dialog once everything is ready
         });
       }
     } else {
@@ -430,75 +430,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         }
       });
     }
-  }
-
-  void showResetDialog(BuildContext context) {
-    showDialog<String>(
-      context: context,
-      builder: (context) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        bool isSmallScreen = screenWidth < 360;
-
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: GreenContainer(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10),
-                Image.asset(
-                  "assets/logo2.png",
-                  width: 40,
-                ),
-                const SizedBox(height: 10),
-                if (!isSmallScreen)
-                  const Center(
-                    child: Text(
-                      "Alle Level wurden zurückgesetzt!",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white, // Ensure text is white on green
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 18),
-                const Center(
-                  child: Text(
-                    "Es ist ein neuer Monat. Alle Level werden zurückgesetzt. Du verlierst nicht deinen Gesamtfortschritt.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white, // Ensure text is white on green
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                PressableButton(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: const Text(
-                    'Schließen',
-                    style: TextStyle(
-                        color: Colors.white), // White text for the button
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -541,6 +472,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     setAuthenticated: _setAuthenticated,
                     setQuestionnairDone: _checkQuestionnaireCompletion,
                     isLoggedIn: isLoggedIn,
+                    showResetDialogBool: showResetDialogBool,
                   )
                 : QuestionnaireScreen(
                     checkQuestionaire: _checkQuestionnaireCompletion),
@@ -587,6 +519,7 @@ class MainScaffold extends StatefulWidget {
   final VoidCallback setQuestionnairDone;
   final bool Function() isLoggedIn;
   final bool authenticated;
+  final bool showResetDialogBool;
 
   const MainScaffold({
     Key? key,
@@ -594,6 +527,7 @@ class MainScaffold extends StatefulWidget {
     required this.setQuestionnairDone,
     required this.isLoggedIn,
     required this.authenticated,
+    required this.showResetDialogBool,
   }) : super(key: key);
 
   @override
@@ -896,7 +830,9 @@ class _MainScaffoldState extends State<MainScaffold>
                         ],
                       ),
                     ),
-                    child: LevelSelectionScreen(toggleModal: _toggleModal)),
+                    child: LevelSelectionScreen(
+                        toggleModal: _toggleModal,
+                        showResetDialogBool: widget.showResetDialogBool)),
                 Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -1623,8 +1559,12 @@ class Level {
 
 class LevelSelectionScreen extends StatefulWidget {
   final Function(String, int, bool) toggleModal;
+  final bool showResetDialogBool;
 
-  const LevelSelectionScreen({super.key, required this.toggleModal});
+  const LevelSelectionScreen(
+      {super.key,
+      required this.toggleModal,
+      required this.showResetDialogBool});
 
   @override
   _LevelSelectionScreenState createState() => _LevelSelectionScreenState();
@@ -1640,6 +1580,11 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
   void initState() {
     super.initState();
     _startTimer();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.showResetDialogBool) {
+        showResetDialog(context);
+      }
+    });
   }
 
   DateTime _calculateEndOfMonth() {
@@ -1684,12 +1629,10 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
   bool _isDialogOpen = false;
 
   void showResetDialog(BuildContext context) {
-    // Check if the dialog is already open
     if (_isDialogOpen) {
-      return; // If the dialog is already open, do nothing
+      return;
     }
 
-    // Set the flag to true, indicating that the dialog is open
     _isDialogOpen = true;
 
     showDialog<String>(
