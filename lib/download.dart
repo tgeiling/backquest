@@ -331,6 +331,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             videoPlayerController: _controller,
             autoPlay: true,
             looping: true,
+            autoInitialize: true,
+            placeholder: Container(
+              color: Colors.black,
+            ),
+            allowFullScreen: true,
+            fullScreenByDefault: false,
           );
         });
       });
@@ -384,7 +390,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       ),
       body: Center(
         child: _controller.value.isInitialized
-            ? Chewie(controller: _chewieController!)
+            ? AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: Chewie(
+                  controller: _chewieController!,
+                ),
+              )
             : const CircularProgressIndicator(),
       ),
       backgroundColor: Colors.black,

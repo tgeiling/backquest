@@ -13,7 +13,7 @@ for f in *.mp4; do
   echo "Processing file: $f" | tee -a "$logfile"
   
   # Check if the file name is greater than or equal to "0106.mp4"
-  if [[ "$f" > "0105.mp4" ]]; then
+  if [[ "$f" > "0101.mp4" ]]; then
     echo "Processing $f file..." | tee -a "$logfile"
     
     temp="temp_$f"

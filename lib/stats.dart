@@ -403,13 +403,16 @@ class ProfilPageState extends State<ProfilPage> {
 
     double startingPadding;
     double spacerBox;
+    double spacerBox2;
 
     if (isSmallScreen) {
       startingPadding = 0;
       spacerBox = 10;
+      spacerBox2 = 10.0;
     } else {
       startingPadding = MediaQuery.of(context).size.height * 0.06;
       spacerBox = MediaQuery.of(context).size.height * 0.02;
+      spacerBox2 = 39.0;
     }
 
     return SafeArea(
@@ -450,7 +453,7 @@ class ProfilPageState extends State<ProfilPage> {
                   initialProgress: min(
                       profilProvider.weeklyDone / profilProvider.weeklyGoal,
                       1.0)),
-              const SizedBox(height: 39.0),
+              SizedBox(height: spacerBox2),
               Text(
                 "Statistiken",
                 style: Theme.of(context).textTheme.headlineLarge,

@@ -969,7 +969,7 @@ class _MainScaffoldState extends State<MainScaffold>
           ),
           Expanded(
             child: SalomonBottomBar(
-              margin: const EdgeInsets.symmetric(horizontal: 50),
+              margin: const EdgeInsets.symmetric(horizontal: 30),
               backgroundColor: const Color.fromRGBO(0, 59, 46, 0.9),
               currentIndex: _currentIndex,
               onTap: (i) {
@@ -1786,7 +1786,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
           },
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.08,
+          top: 75,
           left: 15,
           child: GreenContainer(
             padding: const EdgeInsets.all(12.0), // Adjust padding if needed
@@ -1842,7 +1842,7 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.18,
+          top: 160,
           left: 15,
           child: Consumer<ProfilProvider>(
             builder: (context, profilProvider, child) {
