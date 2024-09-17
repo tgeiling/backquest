@@ -1147,35 +1147,48 @@ class AGB extends StatelessWidget {
         child: SingleChildScrollView(
           child: Text(
             '''
-Allgemeine Geschäftsbedingungen (AGB)
+AGB BackQuest 1
 
-1. Geltungsbereich
-Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für die Nutzung der mobilen Anwendung "Backpain App" (im Folgenden "App") von ktg-marketing, Timo Geiling, Niederwöllstädter Str. 14, 61184 Karben (im Folgenden "Anbieter"). Mit der Registrierung und Nutzung der App akzeptieren Sie diese AGB.
+Allgemeine Geschäftsbedingungen
 
-2. Vertragsgegenstand
-Die App bietet Inhalte und Funktionen zur Unterstützung bei Rückenschmerzen. Der Zugriff auf bestimmte Inhalte und Funktionen ist kostenpflichtig und erfolgt im Rahmen eines Abonnementmodells.
+1. Allgemeines und Geltungsbereich 1.1 Die BackQuest GbR, entwickelt und betreibt die Webseite www.backquest.online (im Folgenden "Website") sowie die mobile Anwendung "BackQuest App" (im Folgenden "App"). BackQuest bietet registrierten Nutzern angeleitete Fitnessübungen zur Prävention von Rückenschmerzen, zur Verbesserung der Beweglichkeit sowie zur Entspannung (im folgenden Kurse genannt) über die App an. Als "Nutzer" gelten alle natürlichen Personen, die die Website, die App und/oder die darin angebotenen Kurse nutzen. 1.2 Diese vorliegenden Allgemeinen Geschäftsbedingungen (im Folgenden "AGB") in ihrer zum Zeitpunkt des Vertragsschlusses gültigen Fassung gelten für das gesamte Leistungsangebot des Anbieters. 1.3 Abweichende oder ergänzende Geschäftsbedingungen des Nutzers werden nicht Vertragsbestandteil, es sei denn, der Anbieter stimmt ihrer Geltung ausdrücklich in Textform zu. Diese AGB gelten auch dann, wenn der Anbieter Leistungen vorbehaltlos ausführt, obwohl entgegenstehende oder von diesen AGB abweichende Bedingungen des Nutzers bekannt sind, es sei denn, der Anbieter hat zuvor seine Zustimmung in Textform erteilt.
+2. Gesundheitszustand des Nutzers 2.1 Die Nutzung der Coachings setzt einen stabilen gesundheitlichen Allgemeinzustand voraus. Der Nutzer sichert zu, diese Voraussetzung zu erfüllen. 2.2 Die Angebote von BackQuest sowie die Kurse dienen nicht als ärztliche Beratung oder medizinische Untersuchung und ersetzen keinesfalls den Besuch eines Arztes. Das Ziel der App besteht darin, das Bewusstsein für Gesundheitsthemen zu schärfen und die Nutzer zu mehr Bewegung und Entspannung zu motivieren. 2.3 Nutzer, die medizinische oder therapeutische Diagnosen oder Behandlungen benötigen oder erhalten haben, sowie Schwangere müssen vor der Nutzung der Kurse Rücksprache mit ihrem Arzt oder Therapeuten halten. 2.4 Die Nutzung der Kurse erfolgt auf eigenes Risiko. Sollte der Nutzer während oder nach der Anwendung der Kurse Schmerzen oder Unwohlsein verspüren, sollte er den Kurs umgehend abbrechen und es wird dringend empfohlen einen Arzt aufzusuchen.
 
-3. Registrierung und Benutzerkonto
-Die Nutzung der App erfordert die Erstellung eines Benutzerkontos. Bei der Registrierung sind die erforderlichen Daten vollständig und wahrheitsgemäß anzugeben. Der Nutzer ist verpflichtet, die Zugangsdaten geheim zu halten und den Anbieter unverzüglich über einen Missbrauch des Kontos zu informieren.
+AGB BackQuest 2
 
-4. Abonnement und In-App-Käufe
-Bestimmte Inhalte und Funktionen der App sind kostenpflichtig und können im Rahmen eines Abonnements oder durch In-App-Käufe freigeschaltet werden. Die Abrechnung erfolgt über den jeweiligen App Store (Apple App Store oder Google Play Store). Die Preise und Abonnementbedingungen sind in der App angegeben. Das Abonnement verlängert sich automatisch, es sei denn, es wird mindestens 24 Stunden vor Ablauf der aktuellen Periode gekündigt.
+3. BackQuest Angebote 3.1 Die Kurse des Anbieters werden mithilfe einer interaktiven, softwarebasierten Anwendung zur online-gestützten Prävention von Rückenschmerzen angeboten. Die App bietet dazu individuell zusammengestellte Videos an, die die Nutzer in einer vorgegebenen Reihenfolge absolvieren können. Zusätzlich können die Nutzer die beigefügten textbasierten Informationen lesen, um mehr zu den wissenschaftlichen Hintergründen des Trainings zu erfahren. 3.2 Der Anbieter entwickelt die Software und deren Inhalte kontinuierlich weiter. Dabei können neue Funktionen eingeführt, bestehende Funktionen durch neue ersetzt oder ohne Ersatz entfernt werden.
+4. Registrierung und Nutzung 4.1 Die Nutzungsmöglichkeit der App erfolgt mit der Installation. Die derzeit vorliegende Betaversion kann von allen Nutzer kostenlos genutzt werden. 4.2 Die Nutzung erfordert die Erstellung eines Nutzerkontos. Ein solches Nutzerkonto darf nicht an Dritte übertragen werden. Der Anbieter behält sich das Recht vor, die bei der Registrierung angegebenen Daten durch geeignete Maßnahmen zu überprüfen. 4.3 Durch die Bestätigung der Registrierung seitens des Anbieters kommt zwischen dem Anbieter und dem Nutzer ein Vertrag über die Nutzung des Leistungsangebots zustande. 4.4 Die Registrierung erfordert, dass der Nutzer entweder 18 Jahre alt ist oder die ausdrückliche Einwilligung des/der Erziehungsberechtigten vorliegt.
+5. Widerrufsbelehrung 5.1 Nutzer, die Verbraucher im Sinne von § 13 BGB sind, haben ein gesetzlich vorgeschriebenes Widerrufsrecht. 5.2 Ein Verbraucher ist jede natürliche Person, die ein Rechtsgeschäft zu Zwecken abschließt, die weder ihrer gewerblichen noch ihrer selbstständigen beruflichen Tätigkeit zugerechnet werden können (§ 13 BGB).
 
-5. Widerrufsrecht
-Nutzer haben das Recht, den Vertrag innerhalb von 14 Tagen ohne Angabe von Gründen zu widerrufen. Um das Widerrufsrecht auszuüben, muss der Nutzer den Anbieter über die Kontaktinformationen in der Impressum-Seite der App informieren. Bei digitalen Inhalten erlischt das Widerrufsrecht, wenn der Nutzer dem Beginn der Ausführung zugestimmt hat.
+AGB BackQuest 3
 
-6. Haftung
-Der Anbieter haftet nur für Schäden, die durch Vorsatz oder grobe Fahrlässigkeit verursacht wurden. Für leichte Fahrlässigkeit haftet der Anbieter nur bei der Verletzung wesentlicher Vertragspflichten (Kardinalpflichten). Die Haftung ist auf den vorhersehbaren, typischerweise eintretenden Schaden begrenzt.
+6. Widerrufsrecht 6.1 Soweit ein BackQuest Produkt gegen Entgelt erworben wurde, steht dem Nutzer ein Widerrufsrecht zu. Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses. Um Ihr Widerrufsrecht auszuüben, müssen Sie uns mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief, Telefax oder E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist. 6.2 Zur Wahrung der Widerrufsfrist genügt es, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden. 6.3 Ihr Widerrufsrecht erlischt vorzeitig, wenn wir die Dienstleistung vollständig erbracht und mit der Ausführung der Dienstleistung erst begonnen haben, nachdem Sie als Verbraucher dazu Ihre ausdrückliche Zustimmung gegeben und gleichzeitig Ihre Kenntnis davon bestätigt haben, dass Sie Ihr Widerrufsrecht bei vollständiger Vertragserfüllung durch uns verlieren. 6.4 Folgen des Widerrufs: Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrages bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet. Haben Sie verlangt, dass die Dienstleistungen während der Widerrufsfrist beginnen sollen, so haben Sie uns einen angemessenen Betrag zu zahlen, der dem Anteil der bis zum Zeitpunkt, zu dem Sie uns von der Ausübung des Widerrufsrechts hinsichtlich dieses Vertrages unterrichten, bereits erbrachten Dienstleistungen im Vergleich zum Gesamtumfang der im Vertrag vorgesehenen Dienstleistungen entspricht. Falls unsere Leistungen bisher unentgeltlich waren, haben Sie keinen Anspruch auf Rückerstattung.
 
-7. Datenschutz
-Die Erhebung und Verarbeitung personenbezogener Daten erfolgt gemäß der Datenschutzerklärung, die in der App verfügbar ist.
+AGB BackQuest 4
 
-8. Änderungen der AGB
-Der Anbieter behält sich das Recht vor, diese AGB jederzeit zu ändern. Die Nutzer werden rechtzeitig über Änderungen informiert. Die weitere Nutzung der App nach Änderung der AGB gilt als Zustimmung.
+6.5 Muster-Widerrufsformular (Wenn Sie den Vertrag widerrufen möchten, füllen Sie bitte dieses Formular aus und senden Sie es zurück.) BackQuest GbR, Gärtnerweg 62, 60322 Frankfurt, hallo@backquest.online Hiermit widerrufe(n) ich/wir () den von mir/uns () abgeschlossenen Vertrag über den Kauf der folgenden Waren: () / die Erbringung der folgenden Dienstleistung: () Bestellt am ______________() / erhalten am ______________() Name des/der Verbraucher(s) ______________ Anschrift des/der Verbraucher(s) _______________ (nur bei Mitteilung auf Papier) Datum _______________ (*) Unzutreffendes streichen. Als Online-Unternehmen ist der Anbieter dazu verpflichtet, den Kunden als Verbraucher auf die Plattform zur Online-Streitbeilegung (OS-Plattform) der Europäischen Kommission hinzuweisen. Diese OS-Plattform ist über den folgenden Link erreichbar: Online Dispute Resolution | European Commission . Der Anbieter nimmt jedoch nicht an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teil. Der Anbieter speichert den Vertragstext nicht.
+7. Vertragslaufzeit und Kündigung 7.1 Die Laufzeit einer Mitgliedschaft beginnt mit dem Vertragsabschluss. 7.2 Die Bestimmungen und der Vertrag zwischen dem Nutzer und der BackQuest GbR gelten auf unbestimmte Zeit, soweit sie nicht vom Nutzer oder der BackQuest GbR gekündigt werden. 7.3 Nach Beendigung der Mitgliedschaft können keine Inhalte in der App mehr abgerufen werden. Die vom Nutzer eingegebenen Daten bleiben jedoch in seinem Nutzerprofil gespeichert. 7.4 Das Recht zur außerordentlichen Kündigung aus wichtigem Grund bleibt unberührt.
 
-9. Schlussbestimmungen
-Sollte eine Bestimmung dieser AGB unwirksam sein, bleiben die übrigen Bestimmungen davon unberührt. Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand ist Karben, sofern der Nutzer Kaufmann ist.
+AGB BackQuest 5
 
+8. Sperrung des Zugangs 8.1 Der Anbieter behält sich das Recht vor, den Zugang des Nutzers zu sperren, wenn ein begründeter Verdacht auf eine missbräuchliche Nutzung oder eine wesentliche Vertragsverletzung besteht. Der Nutzer ist unverzüglich anzuhören. Sollte sich der Verdacht als unbegründet erweisen, wird die Sperrung aufgehoben und die Laufzeit der Mitgliedschaft um den Zeitraum der Sperrung verlängert. Andernfalls ist der Anbieter berechtigt, das Vertragsverhältnis außerordentlich zu kündigen. 8.2 Wenn der Vertrag durch eine außerordentliche Kündigung vor Ablauf der Mindestvertragslaufzeit endet, bleibt der Nutzer verpflichtet, die vollständige Gegenleistung bis zum Zeitpunkt der möglichen ordentlichen Kündigung zu erbringen.
+9. Pflichten des Nutzers 9.1 Der Nutzer ist selbst dafür verantwortlich, die erforderlichen Hard- und Softwareeinrichtungen sowie das erforderliche Netzwerk und Datenvolumen für die Nutzung der Webseite, der App und der Kurse bereitzustellen. 9.2 Der Nutzer hat die Kurse und Hinweise anleitungsgemäß auszuführen. 9.3 Falls der Nutzer Coachings oder Hinweise nicht eindeutig versteht, kann er vor der Ausführung der Kurse oder des Hinweises den Anbieter kontaktieren, um etwaige Fragen und Unklarheiten zu klären. 9.4 Der Nutzer wird erneut ausdrücklich darauf hingewiesen, die Gesundheitshinweise in Abschnitt 2 dieser Bestimmungen zu beachten. Die Nichtbeachtung der Gesundheitshinweise kann zu Verletzungs- und Gesundheitsrisiken führen. Dies betrifft insbesondere Nutzer mit Vorerkrankungen, Schwangere sowie Nutzer, die unter Nahrungsmittelunverträglichkeiten oder Allergien leiden. 9.5 Der Nutzer ist verpflichtet, seine Zugangsdaten, insbesondere das gewählte Passwort, geheim zu halten und Maßnahmen zu ergreifen, um den Zugang durch Dritte zu verhindern. Der Nutzer muss den Anbieter unverzüglich informieren, wenn Anhaltspunkte dafür bestehen, dass die Zugangsdaten unberechtigt verwendet werden können. Der Nutzer haftet für jeglichen Missbrauch.
+
+AGB BackQuest 6
+
+10. Urheberrechtsschutz 10.1 Die Inhalte der Kurse und Wissenstexte, wie Videos, Audiodateien, Bilder, Texte und Software, sind urheberrechtlich geschützt. Ihre Nutzung unterliegt den geltenden Urheberrechten. Die Nutzungs- und Verwertungsrechte an den Kursinhalte und Wissenstexte liegen ausschließlich beim Anbieter im Verhältnis zum Nutzer. 10.2 Eine Speicherung oder Archivierung der bereitgestellten Inhalte außerhalb der Website oder der App ist nicht gestattet. 10.3 Eine Weitergabe oder das Anbieten der Kursinhalte an Dritte ist ebenfalls nicht gestattet. 10.4 Eine gewerbliche Vervielfältigung der urheberrechtlich geschützten Inhalte oder eine gewerbliche Weitergabe an Dritte ist unzulässig und wird rechtlich verfolgt. 10.5 Es ist dem Nutzer untersagt, Urheberrechtsvermerke, Markenzeichen und andere Rechtsvorbehalte aus heruntergeladenen Inhalten zu entfernen.
+11. Verfügbarkeit 11.1 Das digitale Leistungsangebot des Anbieters steht in der Regel 24 Stunden am Tag an sieben Tagen in der Woche zur Verfügung. Ausgenommen davon sind Zeiten, in denen Datensicherungsarbeiten oder Systemwartungs- und Programmpflegearbeiten am System oder der Datenbank durchgeführt werden. Der Anbieter wird bestrebt sein, daraus resultierende Störungen so gering wie möglich zu halten. 11.2 Der Anbieter hat keinen Einfluss auf Störungen, die sich aus Umständen ergeben, die nicht von ihm zu vertreten sind, insbesondere aufgrund von höherer Gewalt. Über geplante Einschränkungen der Verfügbarkeit des Leistungsangebots wird der Nutzer rechtzeitig per E-Mail informiert.
+12. Haftung 12.1 Der körperliche Zustand jedes Nutzers ist unterschiedlich, und die Gesundheit hängt von vielen individuellen Faktoren ab. Der Erfolg der Kurse hängt ebenfalls von zahlreichen Einflussfaktoren ab, auf die der Anbieter keinen Einfluss hat. Daher kann keine Gewähr für den Erfolg eines Coachings übernommen werden. 12.2 Der Anbieter übernimmt keine Haftung oder Garantie für die Funktionsweise und Verfügbarkeit der Kursinhalte. Eine Haftung ist insbesondere dann ausgeschlossen, wenn der Nutzer falsche oder unvollständige Angaben gemacht hat.
+
+AGB BackQuest 7
+
+12.3 Der Anbieter haftet nicht für gesundheitliche Schäden, die dem Nutzer aufgrund unsachgemäßer Ausführung der Kursinhalte und/oder aufgrund erkannter oder unerkannter Vorerkrankungen entstehen. 12.4 Der Anbieter haftet nicht für Schäden, die dem Nutzer durch Nichtverfügbarkeit oder technische Störungen des Dienstes entstehen. Eine mögliche Minderung der gezahlten Mitgliedsgebühr bleibt davon unberührt. 12.5 Der Anbieter schließt jegliche Haftung für fahrlässige Pflichtverletzungen aus, sofern es sich nicht um Schäden handelt, die aus der Verletzung des Lebens, des Körpers oder der Gesundheit resultieren oder um Garantien handelt. 12.6 Der Anbieter übernimmt keine Haftung für externe Links und digitale Inhalte von Dritten, sofern sie sich diese Inhalte nicht zu eigen macht. Bei Setzen eines externen Links wird der Inhalt geprüft. Es erfolgt jedoch keine fortlaufende Überwachung der fremden Informationen. Sobald die BackQuest GbR Kenntnis von rechtswidrigen Inhalten oder rechtswidrigen Tätigkeiten in externen Links erhält, wird der jeweilige Link, der auf diese Inhalte verweist, unverzüglich entfernt. 12.7 Eine Haftung gemäß dem Produkthaftungsgesetz bleibt unberührt.
+13. Nutzerdaten und Geheimhaltung 13.1 Der Nutzer wird darauf hingewiesen, dass der Anbieter personenbezogene Bestands- und Nutzungsdaten im Rahmen des Vertragsverhältnisses in maschinenlesbarer Form erhebt, verarbeitet und nutzt. Alle personenbezogenen Daten werden vertraulich behandelt. Weitere Informationen finden sich in unser Datenschutzerklärung. 13.2 Die Vertragsparteien verpflichten sich, vertrauliche Informationen, die ihnen im Rahmen der Vertragsdurchführung bekannt werden, vertraulich zu behandeln.
+14. Änderungen dieser AGB 14.1 Der Anbieter behält sich das Recht vor, diese Allgemeinen Geschäftsbedingungen jederzeit mit sofortiger Wirkung für die Zukunft zu ändern. 14.2 Eine beabsichtigte Änderung wird dem Nutzer per E-Mail an die zuletzt vom Nutzer angegebene E-Mail-Adresse mitgeteilt. Die Änderung wird wirksam, wenn der Nutzer ihr nicht innerhalb von zwei Wochen nach Absenden der E-Mail widerspricht. Für die Einhaltung der Zwei-Wochen-Frist ist das rechtzeitige Absenden des Widerspruchs maßgebend. 14.3 Wenn der Nutzer innerhalb der Zwei-Wochen-Frist der Änderung widerspricht, ist der Anbieter berechtigt, das Vertragsverhältnis fristlos zu beenden.
+
+AGB BackQuest 8
+
+15. Schlussbestimmungen 15.1 Leistungsort ist Frankfurt (Deutschland). Der Vertrag unterliegt deutschem Recht. 15.2 Sollten einzelne Bestimmungen dieser AGB einschließlich dieser Bestimmung ganz oder teilweise unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Regelungen hiervon unberührt. Anstelle der unwirksamen oder fehlenden Bestimmungen treten die jeweiligen gesetzlichen Regelungen. (Stand: 06.02.2024)
 ---
 
 sktg-marketing
@@ -1204,51 +1217,41 @@ class Datasecurity extends StatelessWidget {
         child: SingleChildScrollView(
           child: Text(
             '''
-Datenschutzerklärung
+Datenschutzerklärung 
 
-1. Verantwortlicher
-Verantwortlicher für die Datenverarbeitung im Zusammenhang mit der Nutzung der App "Backpain App" ist:
+BackQuest 1
 
-sktg-marketing  
-Timo Geiling  
-Niederwöllstädter Str. 14  
-61184 Karben  
-E-Mail: timo.geiling@outlook.com
+Datenschutzerklärung für die Nutzung der BackQuest App Mit der vorliegenden Datenschutzerklärung der BackQuest GbR möchten wir Sie als Anwender unserer BackQuest App umfassend über informieren, wie wir personenbezogene Daten verarbeiten. Der Schutz Ihrer Privatsphäre ist für uns von höchster Bedeutung, weshalb das Einhalten der gesetzlichen Vorschriften zum Datenschutz für uns selbstverständlich ist. Diese Datenschutzerklärung gilt nicht für die Datenverarbeitung auf unser Website. Die dafür vorgesehene Datenschutzerklärung finden Sie jederzeit einsehbar unter: https://backquest.online/privacy-policy/
+Kontaktdaten des Verantwortlichen Wenn Sie Fragen oder Anregungen zu diesen Informationen hast oder sich wegen der Geltendmachung deiner Rechte an uns wenden möchtest, richte Dich gerne an BackQuest GbR Gärtnerweg 62 60322 Frankfurt, Deutschland
+Datenschutzbeauftragter Bei Fragen zu unseren Datenschutzmaßnahmen oder der Verarbeitung Ihrer Daten erreichen Sie unseren Datenschutzbeauftragten unter: datenschutz@backquest.online
+Verarbeitung personenbezogene Daten Personenbezogene Daten sind alle Informationen über eine bestimmte oder bestimmbare Person. Mit Nutzung der BackQuest App werden folgende personenbezogene Daten verarbeitet:
+• E-Mail-Adresse/ Benutzername
+• Geschlecht und Alter
+• Größe und Gewicht
+• Aktivitätslevel
+• Sportliche Vorerfahrung und sportliche Ziele
+• Trainingsdaten (Absolvierte Übungen, Feedback zu Übungen) Nach Zustimmung werden während der Appnutzung werden zudem von verschiedene Aspekte anonymisierte Nutzungsdaten erhoben. Die nachfolgende Analyse der Nutzungsdaten erfolgt ausschließlich in anonymisierter Form.
 
-2. Erhebung und Verarbeitung personenbezogener Daten
-Wir erheben und verarbeiten personenbezogene Daten, wenn Sie die App nutzen, insbesondere bei der Registrierung, bei der Nutzung von In-App-Käufen, und bei der Kommunikation mit uns. Zu den verarbeiteten Daten gehören:
+Datenschutzerklärung BackQuest 2
 
-- Vorname und Nachname
-- E-Mail-Adresse
-- Zahlungsinformationen (über den App Store)
-- Nutzungsdaten (z. B. Login-Daten, App-Nutzung)
+Zweck der Verarbeitung Wir verarbeiten Ihre personenbezogenen Daten grundsätzlich nur, soweit dies für die Durchführung des Präventionstrainings notwendig ist. Alle erhobenen Daten dienen dazu (1) unseren Nutzern ein möglichst gutes Trainingserlebnis zu ermöglichen, (2) auf Ihre Bedürfnisse eingehen zu können und (3) die dauerhafte technische Funktionsfähigkeit zu gewährleisten.
+Rechtsgrundlagen der Datenverarbeitung Wir verarbeiten personenbezogene Daten nur unter Beachtung der Datenschutzverordnungen (DSGVO und BDSG). Die Datenverarbeitung findet nur nach ausdrücklicher Erlaubnis (§ 25 Abs. 1 TTDSG oder Art. 6 Abs. 1 Buchst. a DSGVO) statt. Die Verarbeitung der Daten dient der Erfüllung vertraglicher Maßnahmen (Art. 6 Abs. 1 Buchst. b DSGVO), einer rechtlichen Verpflichtung (Art. 6 Abs. 1 Buchst. c DSGVO) oder in Verbindung der jeweiligen spezialgesetzlichen Vorschrift (Art. 6 Abs. 1 Buchst. d, e oder f DSGVO).
+Speicherdauer und Löschung von Daten Sofern es sich nicht den anderen Inhalten dieser Datenschutzerklärung ergibt, speichern wir ihre Daten nur so lange wie nötig. Wir löschen Ihre personenbezogenen Daten, sobald sie nicht mehr für den jeweiligen Zweck benötigt werden, es sei denn, es bestehen gesetzliche Aufbewahrungspflichten. Die endgültige Löschung erfolgt nach Ablauf der entsprechenden Aufbewahrungsfristen. Wenn Sie möchten, dass wir Ihre Daten löschen, können Sie uns jederzeit eine E-Mail an datenschutz@backquest.online senden.
 
-3. Zweck der Verarbeitung
-Die Verarbeitung der Daten erfolgt zu folgenden Zwecken:
+Datenschutzerklärung BackQuest 3
 
-- Bereitstellung und Personalisierung der App
-- Abwicklung von In-App-Käufen und Abonnements
-- Verbesserung der App und Analyse des Nutzerverhaltens
-- Kommunikation mit dem Nutzer
+Datenempfänger Personenbezogene Daten, die im Zusammenhang mit der Nutzung der BackQuest App verarbeitet werden, werden grundsätzlich nicht an Dritte weitergegeben, es sei denn, dies ist für den bestimmten Zweck erforderlich. Wir gewährleisten angemessene Sicherheitsmaßnahmen, um unbefugten Zugriff, Weitergabe, Veränderung oder Vernichtung der Daten zu verhindern. Bei der Verarbeitung deiner Daten arbeiten wir mit den folgenden Dienstleistern zusammen, die Zugriff auf deine Daten haben. OVH Cloud Wir speichern und verarbeiten Ihre personenbezogenen Daten mit Gesundheitsbezug ausschließlich mithilfe des Cloud-Dienstes bzw. der Cloud Infrastruktur von OVH (OVH SAS-Gruppe, 2, Rue Kellermann, 59100 Roubaix, Frankreich; nachfolgend: „OVH”), zur Bereitstellung von IT-Leistungen und zur sicheren Speicherung bzw. zum sicheren Austausch digitaler Inhalte und Informationen. Dabei werden alle Daten ausschließlich in Deutschland verarbeitet. Weitergehende Informationen von OVH zum Thema Datenschutz finden Sie unter: https://www.ovhcloud.com/de/personal-data-protection/ Google Firebase Wir nutzen Google Firebase (ein Dienst der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland), um beispielsweise Push Notifications zu senden. Ein Tracking über Firebase erfolgt dabei nicht. Ebenfalls werden Weitere Informationen finden Sie unter: https://firebase.google.com/support/privacy?hl=de
+Datenverarbeitung zur Verbesserung der Nutzerfreundlichkeit BackQuest veranstaltet regelmäßig Erhebungen zur Nutzungszufriedenheit. Falls Sie dazu eingewilligt haben, erhalten Sie im Rahmen dessen Einladungen zu Fragebögen, Einzel- sowie Gruppeninterviews. Hier können Sie uns freiwillig von ihren Erfahrungen mit Nutzung der App berichten und an der Weiterentwicklung der App mitwirken. Im Rahmen der Erhebungen zur Nutzungszufriedenheit arbeiten wir mit folgenden Dienstleistern zusammen: Strato Webmail Wir nutzen Strato Webmail, (ein Dienst der STRATO AG (Otto-Ostrowski-Straße 7, 10249 Berlin) als E-Mail-Hosting Provider zur Kommunikation. Im Zuge der Nutzung werden Kontaktdaten (wie z.B. E-Mail-Adresse), Online Identifier (wie z.B. die IP Adresse) und die Inhalte der Nachricht vom Dienstleister verarbeitet. Weitere Informationen finden Sie unter: https://www.strato.de/datenschutz/
 
-4. Rechtsgrundlage
-Die Verarbeitung Ihrer Daten erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) und zur Erfüllung des Vertrags (Art. 6 Abs. 1 lit. b DSGVO).
+Datenschutzerklärung BackQuest 4
 
-5. Weitergabe der Daten
-Ihre Daten werden nicht an Dritte weitergegeben, es sei denn, dies ist zur Erfüllung des Vertrags erforderlich (z. B. Zahlungsabwicklung über den App Store), gesetzlich vorgeschrieben, oder Sie haben ausdrücklich zugestimmt.
+Condens Wir nutzen Condens des Anbieters Condens Insights GmbH (Brienner Str. 41, 80333 München) zur Analyse von Daten rund um die Nutzerfreundlichkeit. Mit Ihrer Zustimmung werden Ihre Erfahrungen mit der Appnutzung und ihre Hinweise zur Weiterentwicklung unserer App in anonymisierter Form verarbeitet, strukturiert und visualisiert. Diese werden jedoch lediglich mit allgemeinen Informationen zu demografischen Profilen in Verbindung gebracht. Weitere Informationen zum Anbieter findest du unter: https://condens.io/gdpr/ Brevo (ehemals SendinBlue) Wir verwenden den Dienst Brevo (ehemals Sendinblue) des Anbieters Sendinblue GmbH (Köpenicker Straße 127, 10179 Berlin, Deutschland) um unseren Newsletter zu versenden sowie beispielsweise die Öffnungs- und Klickraten zu messen. Sofern Sie Zustimmen an unseren Nutzerbefragungen teilzunehmen, leiten wir insbesondere Ihre E-Mailadresse an Brevo weiter. Außerdem werden die Termine sowie die Online-Meetings der Nutzerbefragungen über die Meeting Funktion des Anbieters abgewickelt. Weitere Informationen zum Anbieter findest du unter: https://www.brevo.com/de/datenschutz-uebersicht/
+Ihre Rechte Als betroffene Person haben Sie verschiedene Rechte in Bezug auf Ihre personenbezogenen Daten. Sie haben das Recht, Auskunft über die Sie betreffenden Daten zu erhalten (Art. 15 DSGVO und § 34 BDSG) und können sich jederzeit an uns wenden, um dieses Recht nach (Art. 16 DSGVO) auszuüben. Wenn Sie eine Auskunftsanfrage stellen, die nicht schriftlich erfolgt, können wir Nachweise verlangen, um sicherzustellen, dass es sich bei Ihnen um die betreffende Person handelt. Des Weiteren haben Sie das Recht auf Berichtigung oder Löschung Ihrer Daten (Art. 17 DSGVO und § 35 BDSG) sowie auf Einschränkung der Verarbeitung (Art. 18 DSGVO), soweit dies gesetzlich zulässig ist. Sie haben das Recht, der Verarbeitung Ihrer personenbezogenen Daten unter den gesetzlichen Voraussetzungen zu widersprechen. Sie können Ihre einmal erteilte Einwilligung in die Verarbeitung Ihrer Daten jederzeit widerrufen (Art. 7 Abs. 3 DSGVO). Darüber hinaus haben Sie nach Art. 20 DSGVO das Recht auf Datenübertragbarkeit gemäß den datenschutzrechtlichen Bestimmungen.
 
-6. Datenspeicherung
-Ihre Daten werden nur so lange gespeichert, wie es für die Erfüllung des Vertrags oder aufgrund gesetzlicher Verpflichtungen erforderlich ist.
+Datenschutzerklärung BackQuest 5
 
-7. Rechte der betroffenen Personen
-Sie haben das Recht, Auskunft über die von uns gespeicherten personenbezogenen Daten zu erhalten, sowie das Recht auf Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit. Zudem können Sie Ihre Einwilligung zur Verarbeitung Ihrer Daten jederzeit widerrufen.
-
-8. Kontakt
-Für Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte können Sie uns unter den oben angegebenen Kontaktinformationen erreichen.
-
-9. Änderungen der Datenschutzerklärung
-Wir behalten uns das Recht vor, diese Datenschutzerklärung bei Bedarf zu ändern, um sie an geänderte rechtliche Rahmenbedingungen oder neue Funktionen der App anzupassen. Die jeweils aktuelle Version ist in der App verfügbar.
-
+Beschwerderecht bei einer Aufsichtsbehörde Falls Sie Bedenken oder Beschwerden bezüglich der Verarbeitung Ihrer personenbezogenen Daten haben, können Sie sich nach Maßgabe des Art. 77 DSGVO an eine Aufsichtsbehörde für den Datenschutz wenden.
+Änderung dieser Datenschutzhinweise Diese Datenschutzhinweise können bei Änderungen der Datenverarbeitung oder anderen Anlässen aktualisiert werden. Die aktuelle Fassung finden Sie jederzeit auf unserer Website. Wir hoffen, dass diese Informationen Ihnen ein besseres Verständnis darüber vermitteln, wie wir Ihre Daten schützen und nutzen. Bei Fragen stehen wir Ihnen jederzeit zur Verfügung. Stand: 20.02.2024
             ''',
             style: TextStyle(fontSize: 16, color: Colors.black),
           ),
