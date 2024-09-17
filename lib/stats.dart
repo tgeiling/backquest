@@ -453,7 +453,7 @@ class ProfilPageState extends State<ProfilPage> {
                   initialProgress: min(
                       profilProvider.weeklyDone / profilProvider.weeklyGoal,
                       1.0)),
-              SizedBox(height: spacerBox2),
+              SizedBox(height: 15),
               Text(
                 "Statistiken",
                 style: Theme.of(context).textTheme.headlineLarge,
