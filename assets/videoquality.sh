@@ -1,35 +1,42 @@
 #!/bin/bash
 
-cd /var/www/backquest/videos
+# Directory containing the video files
+video_dir="/var/www/backquest/videos"
 
-# Log file to capture the entire process
-logfile="processing_log.txt"
+# Log file to capture the process
+logfile="audio_normalization_log.txt"
 
 # Clear the log file at the start of the script
 > "$logfile"
 
 # Iterate over all .mp4 files in the directory
-for f in *.mp4; do
-  echo "Processing file: $f" | tee -a "$logfile"
+for video_file in "$video_dir"/*.mp4; do
+  # Extract filename without the directory
+  base_name=$(basename "$video_file")
   
-  # Check if the file name is greater than or equal to "0106.mp4"
-  if [[ "$f" > "0000.mp4" ]]; then
-    echo "Processing $f file..." | tee -a "$logfile"
-    
-    temp="temp_$f"
-    
-    # Run ffmpeg to scale the video to 720p, set framerate to 30fps, and adjust bitrate to 1.5M
-    ffmpeg -i "$f" -vf "scale=-2:720" -r 30 -b:v 1.5M -c:a copy "$temp" > "$f.log" 2>&1
+  # Temporary output file for normalization
+  temp_file="$video_dir/temp_$base_name"
+  
+  echo "Processing file: $video_file" | tee -a "$logfile"
 
-    # Check if ffmpeg succeeded
-    if [ $? -eq 0 ]; then
-      mv -f "$temp" "$f"
-      echo "$f has been successfully converted to 720p, 30fps, and adjusted bitrate." | tee -a "$logfile"
-    else
-      echo "An error occurred with $f. Check the log file for details: $f.log" | tee -a "$logfile"
-      rm -f "$temp"  
-    fi
+  # Re-encode only the audio stream to ensure consistency, copy video stream
+  ffmpeg -i "$video_file" \
+    -c:v copy \
+    -c:a aac \
+    -b:a 192k \
+    -ac 2 \
+    -ar 44100 \
+    "$temp_file" > "$base_name.log" 2>&1
+
+  # Check if ffmpeg succeeded
+  if [ $? -eq 0 ]; then
+    # Replace the original file with the normalized one
+    mv -f "$temp_file" "$video_file"
+    echo "Successfully normalized and replaced: $video_file" | tee -a "$logfile"
   else
-    echo "Skipping $f file..." | tee -a "$logfile"
+    echo "Error normalizing audio for: $video_file. Check $base_name.log for details." | tee -a "$logfile"
+    rm -f "$temp_file"  # Remove temp file if there was an error
   fi
 done
+
+echo "Audio normalization process completed." | tee -a "$logfile"
