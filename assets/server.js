@@ -268,13 +268,15 @@ async function concatenateVideos(listPath, outputFile) {
         '-f concat',                // Use concat demuxer
         '-safe 0',                  // Allow unsafe filenames in list
       ])
-			  .outputOptions([
-		  '-c:v copy', // Copy video stream
-		  '-c:a aac',  // Re-encode audio to AAC
-		  '-b:a 192k', // Set audio bitrate
-		  '-ac 2',     // Set number of audio channels
-		  '-ar 44100'  // Set audio sample rate
-		])
+      .outputOptions([
+        '-c:v copy',                // Copy video stream
+        '-c:a aac',                 // Re-encode audio to AAC
+        '-b:a 192k',                // Set audio bitrate
+        '-ac 2',                    // Set number of audio channels
+        '-ar 44100',                // Set audio sample rate
+        '-avoid_negative_ts make_zero', // Avoid negative timestamps
+        '-map_metadata -1',         // Remove all metadata
+      ])
       .output(outputFile)
       .on('start', (commandLine) => {
         console.log(`Spawned ffmpeg with command: ${commandLine}`);
@@ -290,6 +292,9 @@ async function concatenateVideos(listPath, outputFile) {
       .run();
   });
 }
+
+
+
 
 
 
@@ -331,15 +336,15 @@ app.post('/feedback', authenticateToken, async (req, res) => {
 
 
 async function selectVideos(userFitnessLevel, duration, focus, goal) {
-  const transitionVideos = ['0134', '0135', '0095', '0059', '0098'];
+  const transitionVideos = ['0134', '0135', '0136', '0137', '0139'];
   
   console.log(transitionVideos)
   
   const warmUpParts = ['WU1', 'WU2'];
   const endParts = ['AB1', 'AB2'];
   const pairsToPlayConsecutively = [
-    ['0002', '0003'], ['0018', '0019'], ['0029', '0030'], ['0061', '0062'], ['0011', '0012'], ['0045', '0046'],
-    ['0039', '0040'], ['0077', '0078'], ['0042', '0041']
+    ['0002', '0003'], ['0018', '0019'], ['0061', '0062'], ['0011', '0012'], ['0045', '0046'],
+    ['0039', '0040'], ['0042', '0041']
   ];
   const fitnessLevelMap = {
     'Nicht so oft': 1,
@@ -591,7 +596,7 @@ app.post('/concatenate', authenticateToken, async (req, res) => {
     const listPath = '/var/www/backquest/videos/mylist.txt';
     const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
 
-    await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/${video.id}.mp4`), listPath);
+    await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/test/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
 
     res.json({
