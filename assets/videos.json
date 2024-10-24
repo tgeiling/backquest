@@ -270,31 +270,6 @@
         "combine": null
     },
     {
-        "id": "0012",
-        "name": "Open Book rechts",
-        "background": "blau_beige",
-        "duration": 35,
-        "startPose": "Paeckchen",
-        "endPose": "SL",
-        "direction": "links",
-        "focus": [
-            "unterer Ruecken",
-            "oberer Ruecken",
-            "Schulter"
-        ],
-        "goal": [
-            "Beweglichkeit",
-            "Entspannung"
-        ],
-        "difficulty": 1,
-        "caution": [],
-        "workplaceRelevance": null,
-        "logic": [
-            "AB1"
-        ],
-        "combine": null
-    },
-    {
         "id": "0013",
         "name": "Kind zu Cobra",
         "background": "blau_beige",
@@ -1113,31 +1088,6 @@
         "duration": 47,
         "startPose": "SL",
         "endPose": "Paeckchen",
-        "direction": "links",
-        "focus": [
-            "Knie",
-            "unterer Ruecken",
-            "Huefte"
-        ],
-        "goal": [
-            "Beweglichkeit",
-            "Entspannung"
-        ],
-        "difficulty": 2,
-        "caution": [],
-        "workplaceRelevance": null,
-        "logic": [
-            "AB1"
-        ],
-        "combine": null
-    },
-    {
-        "id": "0046",
-        "name": "SL Oberschenkeldehnung rechts",
-        "background": "blau_beige",
-        "duration": 44,
-        "startPose": "SL",
-        "endPose": "RLstreck",
         "direction": "links",
         "focus": [
             "Knie",

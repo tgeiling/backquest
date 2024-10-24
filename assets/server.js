@@ -7,6 +7,8 @@ const helmet = require('helmet');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
+const cron = require('node-cron');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -581,26 +583,25 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
 }
 
 
+let lastCreatedVideo = null;  // Global variable to store the most recent video path
 
-
-
-
-
-app.post('/concatenate', authenticateToken, async (req, res) => {
+app.post('/concatenate', async (req, res) => {
   try {
-    console.log(req.body);
-    console.log('#######################################');
     const { duration, focus = 'Allgemein', goal = 'Allgemein', userFitnessLevel } = req.body;
+	const listPath = '/var/www/backquest/videos/mylist.txt';
 
     const { selectedVideos, totalDuration } = await selectVideos(userFitnessLevel, duration, focus, goal);
-    const listPath = '/var/www/backquest/videos/mylist.txt';
-    const outputVideo = '/var/www/backquest/output/concatenated_video.mp4';
+    const uniqueId = Date.now();  // Use timestamp as unique identifier
+    const outputVideo = `/var/www/backquest/output/concatenated_video_${uniqueId}.mp4`;
 
     await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/test/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
 
+    lastCreatedVideo = outputVideo;  // Store the last created video path
+
     res.json({
       message: 'Videos concatenated successfully',
+      uniqueId,  // Still return uniqueId if needed
       totalDuration,
       selectedVideos: selectedVideos.map(video => video.id),
     });
@@ -611,9 +612,14 @@ app.post('/concatenate', authenticateToken, async (req, res) => {
 });
 
 
-const videoPath = '/var/www/backquest/output/concatenated_video.mp4';
-
 app.get('/video', (req, res) => {
+  const videoPath = lastCreatedVideo;  // Use the most recently created video
+
+  if (!videoPath || !fs.existsSync(videoPath)) {
+    console.log('No video has been created yet or video file not found');
+    return res.status(404).send('No video available');
+  }
+
   const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
   const range = req.headers.range;
@@ -624,8 +630,7 @@ app.get('/video', (req, res) => {
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
     if (start >= fileSize) {
-      res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
-      return;
+      return res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
     }
 
     const chunksize = (end - start) + 1;
@@ -637,10 +642,9 @@ app.get('/video', (req, res) => {
       'Content-Type': 'video/mp4',
     };
 
-    res.writeHead(206, head); // HTTP status 206 for partial content
+    res.writeHead(206, head);
     file.pipe(res);
   } else {
-    // No range header, send entire video
     const head = {
       'Content-Length': fileSize,
       'Content-Type': 'video/mp4',
@@ -649,6 +653,11 @@ app.get('/video', (req, res) => {
     fs.createReadStream(videoPath).pipe(res);
   }
 });
+
+
+
+
+
 
 // Middleware to authenticate token
 function authenticateToken(req, res, next) {
@@ -732,6 +741,50 @@ app.post('/validate-receipt', async (req, res) => {
     res.json({ valid: false });
   }
 });
+
+cron.schedule('0 0 * * *', () => {  // Runs every day at midnight (00:00)
+  console.log("Running daily cleanup...");
+  fs.readdir(outputPath, (err, files) => {  // Use outputPath instead of path
+    if (err) {
+      console.error('Unable to scan directory:', err);
+      return;
+    }
+
+    const currentTime = new Date().getTime();
+
+    files.forEach((file) => {
+      const filePath = path.join(outputPath, file);  // Use path.join for better handling
+      fs.stat(filePath, (err, stats) => {
+        if (err) {
+          console.error('Unable to get file stats:', err);
+          return;
+        }
+
+        const fileAge = (currentTime - new Date(stats.mtime).getTime()) / (1000 * 60 * 60); // Age in hours
+        if (fileAge > 24) {
+          // Delete the file
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error('Failed to delete file:', err);
+            } else {
+              console.log('Deleted:', filePath);
+
+              // Find and remove the corresponding user entry
+              for (const userId in userVideos) {
+                if (userVideos[userId] === filePath) {
+                  delete userVideos[userId]; // Remove the user's video mapping
+                  console.log(`Cleared video mapping for user: ${userId}`);
+                  break;
+                }
+              }
+            }
+          });
+        }
+      });
+    });
+  });
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
