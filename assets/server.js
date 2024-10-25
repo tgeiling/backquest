@@ -583,25 +583,25 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
 }
 
 
-let lastCreatedVideo = null;  // Global variable to store the most recent video path
+const videoSessions = {};  // Store session-based paths for active videos
 
 app.post('/concatenate', async (req, res) => {
   try {
     const { duration, focus = 'Allgemein', goal = 'Allgemein', userFitnessLevel } = req.body;
-	const listPath = '/var/www/backquest/videos/mylist.txt';
+    const listPath = '/var/www/backquest/videos/mylist.txt';
 
     const { selectedVideos, totalDuration } = await selectVideos(userFitnessLevel, duration, focus, goal);
-    const uniqueId = Date.now();  // Use timestamp as unique identifier
-    const outputVideo = `/var/www/backquest/output/concatenated_video_${uniqueId}.mp4`;
+    const sessionId = Date.now() + "_" + Math.random().toString(36).substr(2, 9);  // Unique session identifier
+    const outputVideo = `/var/www/backquest/output/concatenated_video_${sessionId}.mp4`;
 
     await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/test/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
 
-    lastCreatedVideo = outputVideo;  // Store the last created video path
+    videoSessions[sessionId] = outputVideo;  // Store video path with session ID
 
     res.json({
       message: 'Videos concatenated successfully',
-      uniqueId,  // Still return uniqueId if needed
+      sessionId,  // Return sessionId to the client
       totalDuration,
       selectedVideos: selectedVideos.map(video => video.id),
     });
@@ -612,12 +612,18 @@ app.post('/concatenate', async (req, res) => {
 });
 
 
-app.get('/video', (req, res) => {
-  const videoPath = lastCreatedVideo;  // Use the most recently created video
 
+app.get('/video', (req, res) => {
+  const sessionId = req.query.sessionId;  // Get sessionId from query parameters
+
+  if (!sessionId) {
+    return res.status(400).send('No session ID provided');
+  }
+
+  const videoPath = videoSessions[sessionId];  // Retrieve the correct video path for this sessionId
   if (!videoPath || !fs.existsSync(videoPath)) {
-    console.log('No video has been created yet or video file not found');
-    return res.status(404).send('No video available');
+    console.log('Video not found for sessionId:', sessionId);
+    return res.status(404).send('Video not found');
   }
 
   const stat = fs.statSync(videoPath);
@@ -653,6 +659,7 @@ app.get('/video', (req, res) => {
     fs.createReadStream(videoPath).pipe(res);
   }
 });
+
 
 
 

@@ -64,25 +64,51 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       _isLoading = true;
     });
 
-    await combineVideos(
-      widget.focus,
-      widget.goal,
-      duration: widget.duration,
-      userFitnessLevel: widget.profilProvider.fitnessLevel ?? 'Nicht so oft',
-    );
+    try {
+      // Step 1: Request a unique session ID from the server
+      final response = await http.post(
+        Uri.parse('http://135.125.218.147:3000/concatenate'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'focus': widget.focus,
+          'goal': widget.goal,
+          'duration': widget.duration,
+          'userFitnessLevel':
+              widget.profilProvider.fitnessLevel ?? 'Nicht so oft',
+        }),
+      );
 
-    await Future.delayed(const Duration(seconds: 2));
+      if (response.statusCode == 200) {
+        // Parse the response to get the session ID
+        final jsonResponse = json.decode(response.body);
+        final String sessionId = jsonResponse['sessionId'];
 
-    const String outputVideoUrl = 'http://135.125.218.147:3000/video';
+        // Step 2: Use sessionId in the video URL for the /video endpoint
+        final String outputVideoUrl =
+            'http://135.125.218.147:3000/video?sessionId=$sessionId';
 
-    _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
-    await _videoPlayerController!.initialize();
-    _createChewieController();
-    setState(() {
-      _isLoading = false;
-    });
+        _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
+        await _videoPlayerController!.initialize();
 
-    _videoPlayerController!.addListener(videoProgressListener);
+        _createChewieController();
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        _videoPlayerController!.addListener(videoProgressListener);
+      } else {
+        print('Failed to fetch session ID: ${response.body}');
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error combining videos: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _createChewieController() {
