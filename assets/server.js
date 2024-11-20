@@ -749,9 +749,11 @@ app.post('/validate-receipt', async (req, res) => {
   }
 });
 
-cron.schedule('0 0 * * *', () => {  // Runs every day at midnight (00:00)
-  console.log("Running daily cleanup...");
-  fs.readdir(outputPath, (err, files) => {  // Use outputPath instead of path
+const outputPath = '/var/www/backquest/output'; // Define outputPath
+
+cron.schedule('0 */2 * * *', () => {  // Runs every 2 hours at the top of the hour
+  console.log("Running periodic cleanup...");
+  fs.readdir(outputPath, (err, files) => {
     if (err) {
       console.error('Unable to scan directory:', err);
       return;
@@ -775,15 +777,6 @@ cron.schedule('0 0 * * *', () => {  // Runs every day at midnight (00:00)
               console.error('Failed to delete file:', err);
             } else {
               console.log('Deleted:', filePath);
-
-              // Find and remove the corresponding user entry
-              for (const userId in userVideos) {
-                if (userVideos[userId] === filePath) {
-                  delete userVideos[userId]; // Remove the user's video mapping
-                  console.log(`Cleared video mapping for user: ${userId}`);
-                  break;
-                }
-              }
             }
           });
         }
