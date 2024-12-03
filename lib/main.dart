@@ -6,6 +6,7 @@ import 'package:backquest/info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -450,15 +451,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         fontFamily: 'Roboto',
         textTheme: buildTextTheme(context),
       ),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('de'),
-      ],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Stack(
         children: [
           if (_isLoading)
@@ -1060,8 +1054,8 @@ class CustomBottomModal extends StatefulWidget {
 
 class _CustomBottomModalState extends State<CustomBottomModal> {
   int selectedDuration = 600;
-  String selectedFocus = "Ganzkörper";
-  String selectedGoal = "Ganzkörper";
+  int selectedFocus = 0;
+  int selectedGoal = 0;
 
   final List<String> focusOptions = [
     "Ganzkörper",
@@ -1186,7 +1180,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                       horizontal: smallPressableHorizontalPadding),
                   child: Center(
                     child: Text(
-                      "Fokus: $selectedFocus",
+                      "Fokus: ${focusOptions[selectedFocus]}",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
@@ -1199,7 +1193,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                       horizontal: smallPressableHorizontalPadding),
                   child: Center(
                     child: Text(
-                      "Ziel: $selectedGoal",
+                      "Ziel: ${goalOptions[selectedGoal]}",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
@@ -1280,12 +1274,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                               listen: false),
                           profilProvider: Provider.of<ProfilProvider>(context,
                               listen: false),
-                          focus: selectedFocus == "Ganzkörper"
-                              ? "Allgemein"
-                              : selectedFocus,
-                          goal: selectedGoal == "Ganzkörper"
-                              ? "Allgemein"
-                              : selectedGoal,
+                          focus: focusOptions[selectedFocus],
+                          goal: goalOptions[selectedGoal],
                           duration: selectedDuration,
                         ),
                       ),
@@ -1294,8 +1284,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   }
                 : () {
                     downloadScreenKey.currentState!.combineAndDownloadVideo(
-                        selectedFocus,
-                        selectedGoal,
+                        focusOptions[selectedFocus],
+                        goalOptions[selectedGoal],
                         selectedDuration,
                         ProfilProvider().fitnessLevel);
                   },
@@ -1455,9 +1445,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     }
   }
 
-  void showOptionDialogFocus(List<String> options, String title,
-      void Function(String) onSelected) async {
-    String? selection = await showDialog<String>(
+  void showOptionDialogFocus(
+      List<String> options, String title, void Function(int) onSelected) async {
+    int? selection = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -1469,22 +1459,24 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: options
-                  .map((String option) => RadioListTile<String>(
-                        activeColor: Colors.white,
-                        title: Text(
-                          option,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        value: option,
-                        groupValue: selectedFocus,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            Navigator.of(context).pop(value);
-                          }
-                        },
-                      ))
-                  .toList(),
+              children: options.asMap().entries.map((entry) {
+                int index = entry.key;
+                String option = entry.value;
+                return RadioListTile<int>(
+                  activeColor: Colors.white,
+                  title: Text(
+                    option,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  value: index, // Return index as value
+                  groupValue: selectedFocus, // Compare with integer
+                  onChanged: (int? value) {
+                    if (value != null) {
+                      Navigator.of(context).pop(value); // Return index
+                    }
+                  },
+                );
+              }).toList(),
             ),
           ),
         );
@@ -1498,9 +1490,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     }
   }
 
-  void showOptionDialogGoal(List<String> options, String title,
-      void Function(String) onSelected) async {
-    String? selection = await showDialog<String>(
+  void showOptionDialogGoal(
+      List<String> options, String title, void Function(int) onSelected) async {
+    int? selection = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -1512,22 +1504,24 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: options
-                  .map((String option) => RadioListTile<String>(
-                        activeColor: Colors.white,
-                        title: Text(
-                          option,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        value: option,
-                        groupValue: selectedGoal,
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            Navigator.of(context).pop(value);
-                          }
-                        },
-                      ))
-                  .toList(),
+              children: options.asMap().entries.map((entry) {
+                int index = entry.key;
+                String option = entry.value;
+                return RadioListTile<int>(
+                  activeColor: Colors.white,
+                  title: Text(
+                    option,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  value: index, // Return index as value
+                  groupValue: selectedGoal, // Compare with integer
+                  onChanged: (int? value) {
+                    if (value != null) {
+                      Navigator.of(context).pop(value); // Return index
+                    }
+                  },
+                );
+              }).toList(),
             ),
           ),
         );

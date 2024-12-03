@@ -589,6 +589,10 @@ app.post('/concatenate', async (req, res) => {
   try {
     const { duration, focus = 'Allgemein', goal = 'Allgemein', userFitnessLevel } = req.body;
     const listPath = '/var/www/backquest/videos/mylist.txt';
+    console.log("Duration: " + duration);
+    console.log("Goal: " + goal);
+    console.log("Focus: " + focus);
+    console.log("FitnessLevel: " + userFitnessLevel);
 
     const { selectedVideos, totalDuration } = await selectVideos(userFitnessLevel, duration, focus, goal);
     const sessionId = Date.now() + "_" + Math.random().toString(36).substr(2, 9);  // Unique session identifier

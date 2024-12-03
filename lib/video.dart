@@ -82,6 +82,11 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         // Parse the response to get the session ID
         final jsonResponse = json.decode(response.body);
         final String sessionId = jsonResponse['sessionId'];
+        selectedVideos = jsonResponse['selectedVideos']
+            .map<String>((dynamicItem) => dynamicItem.toString())
+            .toList();
+
+        print('Selected videos: $selectedVideos');
 
         // Step 2: Use sessionId in the video URL for the /video endpoint
         final String outputVideoUrl =

@@ -1,0 +1,20 @@
+{
+  "learnAboutApp": "Möchtest du mehr über unsere App erfahren? Unsere App hilft dir dabei, Rückenschmerzen zu lindern und deine Gesundheit zu verbessern. Wir arbeiten kontinuierlich daran, neue Funktionen und Inhalte hinzuzufügen.",
+  "learnAboutAppDetail": "Unsere App bietet personalisierte Übungen, Tipps und Ratschläge, um deine Rückengesundheit zu verbessern.",
+  "salomonBottombarOne": "Main",
+  "salomonBottombarTwo": "Stats",
+  "salomonBottombarThree": "Info",
+  "salomonBottombarFour": "Lokal",
+  "focusFullBody": "Ganzkörper",
+  "focusLowerBack": "unterer Rücken",
+  "focusUpperBack": "oberer Rücken",
+  "focusNeck": "Nacken",
+  "focusShoulder": "Schulter",
+  "focusKnee": "Knie",
+  "goalFullBody": "Ganzkörper",
+  "goalStrength": "Kraft",
+  "goalFlexibility": "Beweglichkeit",
+  "goalPosture": "Haltung",
+  "infoOne": "Passe dein Training an",
+  "durationText": "Duration: {minutes} minutes"
+}

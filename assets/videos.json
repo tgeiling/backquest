@@ -1871,28 +1871,6 @@
         "combine": null
     },
     {
-        "id": "0082",
-        "name": "Leaning Meditation",
-        "background": "blau_weiss",
-        "duration": 74,
-        "startPose": "SchSi",
-        "endPose": "SchSi",
-        "direction": "rechts",
-        "focus": [
-            "Allgemein"
-        ],
-        "goal": [
-            "Entspannung"
-        ],
-        "difficulty": 0,
-        "caution": [],
-        "workplaceRelevance": null,
-        "logic": [
-            "WU1"
-        ],
-        "combine": null
-    },
-    {
         "id": "0084",
         "name": "StandSchulter kreisen",
         "background": "blau_beige",
