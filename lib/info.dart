@@ -1271,8 +1271,7 @@ class ProfileAnalyticsPage extends StatelessWidget {
                     _buildColumnWithText(
                       context: context,
                       dynamicText: "Fitness",
-                      dynamicText1:
-                          "${options2.indexOf(profilProvider.fitnessLevel)}",
+                      dynamicText1: "${options2[profilProvider.fitnessLevel]}",
                     ),
                     _buildColumnWithText(
                       context: context,

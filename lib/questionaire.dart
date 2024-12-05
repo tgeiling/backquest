@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'services.dart';
 import 'elements.dart';
@@ -119,14 +120,14 @@ class QuestionPage1 extends StatelessWidget {
         children: [
           const Spacer(),
           Text(
-            'Erzähle uns ein wenig mehr über Dich,',
+            AppLocalizations.of(context)!.tellUsMoreAboutYou,
             style: Theme.of(context).textTheme.displayMedium!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
             textAlign: TextAlign.left,
           ),
           Text(
-            'damit wir das Rückenprogramm individuell auf Dich zuschneiden können.',
+            AppLocalizations.of(context)!.personalizedBackProgram,
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
@@ -139,9 +140,9 @@ class QuestionPage1 extends StatelessWidget {
               );
             },
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: const Center(
-                child: Text("Weiter",
-                    style: TextStyle(
+            child: Center(
+                child: Text(AppLocalizations.of(context)!.continueButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                     ))),
@@ -194,12 +195,12 @@ class _QuestionPage2State extends State<QuestionPage2> {
             children: [
               const Spacer(),
               Text(
-                'Erst einmal zwei persönliche Fragen.',
+                AppLocalizations.of(context)!.personalQuestionsTitle,
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 32),
               Text(
-                'Wann bist du geboren?',
+                AppLocalizations.of(context)!.birthdateQuestion,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               SizedBox(
@@ -222,7 +223,7 @@ class _QuestionPage2State extends State<QuestionPage2> {
                   )),
               const SizedBox(height: 24),
               Text(
-                'Was ist Dein Geschlecht?',
+                AppLocalizations.of(context)!.genderQuestion,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               SliderTheme(
@@ -255,10 +256,10 @@ class _QuestionPage2State extends State<QuestionPage2> {
               Center(
                 child: Text(
                   _genderSliderValue == 0
-                      ? 'Männlich'
+                      ? AppLocalizations.of(context)!.genderMale
                       : _genderSliderValue == 1
-                          ? 'Weiblich'
-                          : 'Divers',
+                          ? AppLocalizations.of(context)!.genderFemale
+                          : AppLocalizations.of(context)!.genderDiverse,
                   style: Theme.of(context).textTheme.displayMedium,
                 ),
               ),
@@ -295,9 +296,9 @@ class _QuestionPage2State extends State<QuestionPage2> {
                 },
                 padding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: const Center(
-                    child: Text("Weiter",
-                        style: TextStyle(
+                child: Center(
+                    child: Text(AppLocalizations.of(context)!.continueButton,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                         ))),
@@ -347,7 +348,7 @@ class _QuestionPage3State extends State<QuestionPage3> {
         children: [
           const Spacer(),
           Text(
-            'Nun gehen wir mehr ins Detail.',
+            AppLocalizations.of(context)!.detailedQuestionsTitle,
             style: Theme.of(context).textTheme.displayMedium,
           ),
           SizedBox(height: sizedBoxTopHeight),
@@ -355,7 +356,7 @@ class _QuestionPage3State extends State<QuestionPage3> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Wie groß bist Du? (cm)',
+                AppLocalizations.of(context)!.heightQuestion,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
@@ -374,7 +375,7 @@ class _QuestionPage3State extends State<QuestionPage3> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Wieviel wiegst Du? (kg)',
+                AppLocalizations.of(context)!.weightQuestion,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
@@ -418,9 +419,9 @@ class _QuestionPage3State extends State<QuestionPage3> {
               });
             },
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: const Center(
-                child: Text("Weiter",
-                    style: TextStyle(
+            child: Center(
+                child: Text(AppLocalizations.of(context)!.continueButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                     ))),
@@ -441,38 +442,29 @@ class QuestionPage4 extends StatefulWidget {
 }
 
 class _QuestionPage4State extends State<QuestionPage4> {
-  String _selectedOption1 = "Größtenteils Sitzend (z.B. Schreibtischjob)";
-  String _selectedOption2 = "Nicht so oft";
-
-  final List<String> options1 = [
-    'Größtenteils Sitzend (z.B. Schreibtischjob)',
-    'Sitzend und Stehend (z.B. Büro mit Stehschreibtisch)',
-    'Überwiegend stehend (z.B. Lehrer/in)',
-    'Größtenteils in Bewegung (z.B. Erzieher/in)',
-    'Schwer Hebend (z.B. Umzugshelfer/in)'
-  ];
-
-  final List<String> options2 = [
-    'Nicht so oft',
-    'Mehrmals im Monat',
-    'Einmal pro Woche',
-    'Mehrmals pro Woche',
-    'Täglich',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  _saveSelectedOption(String key, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
-  }
+  int _selectedOption1 = 0;
+  int _selectedOption2 = 0;
 
   @override
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context);
+
+    // Localized options
+    final List<String> options1 = [
+      AppLocalizations.of(context)!.mostlySitting,
+      AppLocalizations.of(context)!.sittingAndStanding,
+      AppLocalizations.of(context)!.mostlyStanding,
+      AppLocalizations.of(context)!.mostlyMoving,
+      AppLocalizations.of(context)!.heavyLifting,
+    ];
+
+    final List<String> options2 = [
+      AppLocalizations.of(context)!.frequencyRarely,
+      AppLocalizations.of(context)!.frequencyMultipleMonthly,
+      AppLocalizations.of(context)!.frequencyWeekly,
+      AppLocalizations.of(context)!.frequencyMultipleWeekly,
+      AppLocalizations.of(context)!.frequencyDaily,
+    ];
 
     return Container(
       padding: const EdgeInsets.all(32.0),
@@ -482,15 +474,23 @@ class _QuestionPage4State extends State<QuestionPage4> {
         children: [
           const Spacer(),
           Text(
-            'Weiter zu Deinem Alltag.',
+            AppLocalizations.of(context)!.everydayTitle,
             style: Theme.of(context).textTheme.displayMedium,
           ),
           const SizedBox(height: 50),
-          _buildRoundedSelectBox('Was trifft auf Deinen Arbeitsalltag zu?',
-              _selectedOption1, options1, 'everyDaySituation'),
+          _buildRoundedSelectBox(
+            AppLocalizations.of(context)!.everydaySituationLabel,
+            _selectedOption1,
+            options1,
+            'everyDaySituation',
+          ),
           const SizedBox(height: 50),
-          _buildRoundedSelectBox('Wie oft treibst du Sport?', _selectedOption2,
-              options2, 'fitnessLevel'),
+          _buildRoundedSelectBox(
+            AppLocalizations.of(context)!.fitnessLevelLabel,
+            _selectedOption2,
+            options2,
+            'fitnessLevel',
+          ),
           const Spacer(),
           PressableButton(
             onPressed: () {
@@ -521,23 +521,23 @@ class _QuestionPage4State extends State<QuestionPage4> {
               });
             },
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: const Center(
-                child: Text("Weiter",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
+            child: Center(
+              child: Text(
+                AppLocalizations.of(context)!.continueButton,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRoundedSelectBox(String labelText, String? selectedValue,
-      List<String> items, String prefKey) {
-    // Ensure that a value is selected, defaulting to the first item if none is selected
-    selectedValue ??= items.first;
-
+  Widget _buildRoundedSelectBox(
+      String labelText, int selectedValue, List<String> items, String prefKey) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -551,53 +551,59 @@ class _QuestionPage4State extends State<QuestionPage4> {
         Container(
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.7), // Darker background color
-            borderRadius: BorderRadius.circular(10.0), // Less-rounded corners
+            color: Colors.grey.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(10.0),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 4,
-                offset: Offset(0, 2), // Slight shadow to create depth
-              )
+                offset: Offset(0, 2),
+              ),
             ],
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton<int>(
               value: selectedValue,
               icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
               isDense: true,
               isExpanded: true,
-              dropdownColor:
-                  Colors.grey[800], // Background color of the dropdown menu
-              onChanged: (String? newValue) {
-                setState(() {
-                  switch (prefKey) {
-                    case 'everyDaySituation':
-                      _selectedOption1 = newValue!;
-                      break;
-                    case 'fitnessLevel':
-                      _selectedOption2 = newValue!;
-                      break;
-                  }
-                  _saveSelectedOption(prefKey, newValue!);
-                });
+              dropdownColor: Colors.grey[800],
+              onChanged: (int? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    switch (prefKey) {
+                      case 'everyDaySituation':
+                        _selectedOption1 = newValue;
+                        break;
+                      case 'fitnessLevel':
+                        _selectedOption2 = newValue;
+                        break;
+                    }
+                    _saveSelectedOption(prefKey, newValue);
+                  });
+                }
               },
-              items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
+              items: List.generate(
+                items.length,
+                (index) => DropdownMenuItem<int>(
+                  value: index,
                   child: Text(
-                    value,
-                    style: const TextStyle(
-                        color: Colors.white), // White text for visibility
+                    items[index],
+                    style: const TextStyle(color: Colors.white),
                   ),
-                );
-              }).toList(),
+                ),
+              ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  _saveSelectedOption(String key, int value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(key, value);
   }
 }
 

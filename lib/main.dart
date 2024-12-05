@@ -1057,24 +1057,24 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
   int selectedFocus = 0;
   int selectedGoal = 0;
 
-  final List<String> focusOptions = [
-    "Ganzkörper",
-    "unterer Ruecken",
-    "oberer Ruecken",
-    "Nacken",
-    "Schulter",
-    "Knie"
-  ];
-
-  final List<String> goalOptions = [
-    "Ganzkörper",
-    "Kraft",
-    "Beweglichkeit",
-    "Haltung"
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<String> focusOptions = [
+      AppLocalizations.of(context)!.focusFullBody,
+      AppLocalizations.of(context)!.focusLowerBack,
+      AppLocalizations.of(context)!.focusUpperBack,
+      AppLocalizations.of(context)!.focusNeck,
+      AppLocalizations.of(context)!.focusShoulder,
+      AppLocalizations.of(context)!.focusKnee,
+    ];
+
+    final List<String> goalOptions = [
+      AppLocalizations.of(context)!.goalFullBody,
+      AppLocalizations.of(context)!.goalStrength,
+      AppLocalizations.of(context)!.goalFlexibility,
+      AppLocalizations.of(context)!.goalPosture,
+    ];
+
     var mediaQuery = MediaQuery.of(context);
 
     double screenWidth = mediaQuery.size.width;
@@ -1141,7 +1141,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Passe dein Training an!",
+              AppLocalizations.of(context)!.infoOne,
               style: Theme.of(context).textTheme.displayLarge,
             ),
           ),
@@ -1167,33 +1167,40 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                       horizontal: smallPressableHorizontalPadding),
                   child: Center(
                     child: Text(
-                      "Dauer: ${selectedDuration ~/ 60} Minuten",
+                      AppLocalizations.of(context)!
+                          .durationText(selectedDuration ~/ 60),
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
                 ),
                 PressableButton(
-                  onPressed: () => showOptionDialogFocus(focusOptions,
-                      "Wählen Sie den Fokus", (value) => selectedFocus = value),
+                  onPressed: () => showOptionDialogFocus(
+                      focusOptions,
+                      AppLocalizations.of(context)!.chooseFocus,
+                      (value) => selectedFocus = value),
                   padding: EdgeInsets.symmetric(
                       vertical: smallPressableVerticalPadding,
                       horizontal: smallPressableHorizontalPadding),
                   child: Center(
                     child: Text(
-                      "Fokus: ${focusOptions[selectedFocus]}",
+                      AppLocalizations.of(context)!.focus +
+                          ": ${focusOptions[selectedFocus]}",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
                 ),
                 PressableButton(
-                  onPressed: () => showOptionDialogGoal(goalOptions,
-                      "Wählen Sie das Ziel", (value) => selectedGoal = value),
+                  onPressed: () => showOptionDialogGoal(
+                      goalOptions,
+                      AppLocalizations.of(context)!.chooseGoal,
+                      (value) => selectedGoal = value),
                   padding: EdgeInsets.symmetric(
                       vertical: smallPressableVerticalPadding,
                       horizontal: smallPressableHorizontalPadding),
                   child: Center(
                     child: Text(
-                      "Ziel: ${goalOptions[selectedGoal]}",
+                      AppLocalizations.of(context)!.goal +
+                          ": ${goalOptions[selectedGoal]}",
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
@@ -1274,8 +1281,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                               listen: false),
                           profilProvider: Provider.of<ProfilProvider>(context,
                               listen: false),
-                          focus: focusOptions[selectedFocus],
-                          goal: goalOptions[selectedGoal],
+                          focus: selectedFocus,
+                          goal: selectedGoal,
                           duration: selectedDuration,
                         ),
                       ),
@@ -1284,8 +1291,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   }
                 : () {
                     downloadScreenKey.currentState!.combineAndDownloadVideo(
-                        focusOptions[selectedFocus],
-                        goalOptions[selectedGoal],
+                        selectedFocus,
+                        selectedGoal,
                         selectedDuration,
                         ProfilProvider().fitnessLevel);
                   },
@@ -1293,7 +1300,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                 vertical: bigPressableVerticalPadding, horizontal: 12),
             child: Center(
                 child: Text(
-              widget.isVideoPlayer ? "Jetzt starten" : "Video erstellen",
+              widget.isVideoPlayer
+                  ? AppLocalizations.of(context)!.startVideo
+                  : AppLocalizations.of(context)!.createVideo,
               style: Theme.of(context).textTheme.labelLarge,
             )),
           ),
@@ -1344,14 +1353,14 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           title: Text(
-            "Videoeinschränkung",
+            AppLocalizations.of(context)!.videoRestriction,
             style: Theme.of(context).textTheme.displayMedium,
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "Sie können nur ein Video pro Woche ansehen. Nächstes Video verfügbar in:",
+                AppLocalizations.of(context)!.videoRestrictionInfo,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 20),
@@ -1366,7 +1375,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                       ),
                     ),
                     TextSpan(
-                      text: 'Tage',
+                      text: AppLocalizations.of(context)!.days,
                       style: TextStyle(
                         fontSize:
                             Theme.of(context).textTheme.displayLarge?.fontSize,
@@ -1381,7 +1390,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           actions: <Widget>[
             TextButton(
               child: Text(
-                "OK",
+                AppLocalizations.of(context)!.ok,
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               onPressed: () {
@@ -1403,9 +1412,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          title: const Text(
-            "Wählen Sie die Dauer",
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            AppLocalizations.of(context)!.chooseDuration,
+            style: const TextStyle(color: Colors.white),
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -1417,7 +1426,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                 return ListTile(
                   selectedColor: Colors.green,
                   title: Text(
-                    "$minute Minuten",
+                    AppLocalizations.of(context)!.durationTextTwo(minute),
                     style: const TextStyle(color: Colors.white),
                   ),
                   onTap: () => Navigator.of(context).pop(minute * 60),
@@ -1427,8 +1436,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text(
-                "Abbrechen",
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () => Navigator.of(context).pop(),
@@ -1656,9 +1665,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
                 ),
                 const SizedBox(height: 10),
                 if (!isSmallScreen)
-                  const Center(
+                  Center(
                     child: Text(
-                      "Alle Level wurden zurückgesetzt!",
+                      AppLocalizations.of(context)!.resetAllLevels,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white, // Ensure text is white on green
@@ -1668,9 +1677,9 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
                     ),
                   ),
                 const SizedBox(height: 18),
-                const Center(
+                Center(
                   child: Text(
-                    "Es ist ein neuer Monat. Alle Level werden zurückgesetzt. Du verlierst nicht deinen Gesamtfortschritt.",
+                    AppLocalizations.of(context)!.resetInfo,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white, // Ensure text is white on green
@@ -1687,8 +1696,8 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
                     Navigator.of(context).pop();
                     _isDialogOpen = false;
                   },
-                  child: const Text(
-                    'Schließen',
+                  child: Text(
+                    AppLocalizations.of(context)!.close,
                     style: TextStyle(
                         color: Colors.white), // White text for the button
                   ),
@@ -1988,7 +1997,7 @@ class LevelCircle extends StatelessWidget {
                     ],
                   ),
                   child: Text(
-                    "START",
+                    AppLocalizations.of(context)!.cabsStart,
                     style: TextStyle(
                       color: Colors.grey.shade800,
                       fontWeight: FontWeight.bold,

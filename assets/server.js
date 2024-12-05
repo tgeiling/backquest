@@ -587,8 +587,29 @@ const videoSessions = {};  // Store session-based paths for active videos
 
 app.post('/concatenate', async (req, res) => {
   try {
-    const { duration, focus = 'Allgemein', goal = 'Allgemein', userFitnessLevel } = req.body;
+    const focusMapping = {
+      0: 'Allgemein',
+      1: 'unterer Ruecken',
+      2: 'oberer Ruecken',
+      3: 'Nacken',
+      4: 'Schulter',
+      5: 'Knie',
+    };
+
+    const goalMapping = {
+      0: 'Allgemein',
+      1: 'Kraft',
+      2: 'Beweglichkeit',
+      3: 'Haltung',
+    };
+
+    const { duration, focus: focusIndex = 0, goal: goalIndex = 0, userFitnessLevel } = req.body;
+
+    // Map integers to their respective string values
+    const focus = focusMapping[focusIndex] || 'Allgemein'; // Default to 'Allgemein' if the index is invalid
+    const goal = goalMapping[goalIndex] || 'Allgemein';   // Default to 'Allgemein' if the index is invalid
     const listPath = '/var/www/backquest/videos/mylist.txt';
+
     console.log("Duration: " + duration);
     console.log("Goal: " + goal);
     console.log("Focus: " + focus);
@@ -614,6 +635,7 @@ app.post('/concatenate', async (req, res) => {
     res.status(500).send('Failed to concatenate videos');
   }
 });
+
 
 
 

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'elements.dart';
 import 'settings.dart';
@@ -16,7 +17,7 @@ class ProfilProvider extends ChangeNotifier {
   int _weeklyDone = 0;
   int _weeklyStreak = 0;
   String _lastUpdateString = "";
-  String _fitnessLevel = 'Nicht so oft';
+  int _fitnessLevel = 0;
 
   int _completedLevels = 0;
   int _completedLevelsTotal = 0;
@@ -27,7 +28,7 @@ class ProfilProvider extends ChangeNotifier {
   String? _gender;
   int? _weight;
   int? _height;
-  String? _workplaceEnvironment;
+  int? _workplaceEnvironment;
 
   String? _expectation;
   List<String> _hasPain = [];
@@ -44,7 +45,7 @@ class ProfilProvider extends ChangeNotifier {
   int get weeklyDone => _weeklyDone;
   int get weeklyStreak => _weeklyStreak;
   String get lastUpdateString => _lastUpdateString;
-  String get fitnessLevel => _fitnessLevel;
+  int get fitnessLevel => _fitnessLevel;
 
   int get completedLevels => _completedLevels;
   int get completedLevelsTotal => _completedLevelsTotal;
@@ -55,7 +56,7 @@ class ProfilProvider extends ChangeNotifier {
   String? get gender => _gender;
   int? get weight => _weight;
   int? get height => _height;
-  String? get workplaceEnvironment => _workplaceEnvironment;
+  int? get workplaceEnvironment => _workplaceEnvironment;
   String? get expectation => _expectation;
   List<String> get hasPain => _hasPain;
   List<String> get goals => _goals;
@@ -83,8 +84,8 @@ class ProfilProvider extends ChangeNotifier {
     _gender = prefs.getString('gender');
     _weight = prefs.getInt('weight');
     _height = prefs.getInt('height');
-    _workplaceEnvironment = prefs.getString('workplaceEnvironment');
-    _fitnessLevel = prefs.getString('fitnessLevel') ?? 'Nicht so oft';
+    _workplaceEnvironment = prefs.getInt('workplaceEnvironment');
+    _fitnessLevel = prefs.getInt('fitnessLevel') ?? 0;
     _goals = prefs.getStringList('goals') ?? [];
     _hasPain = prefs.getStringList('hasPain') ?? [];
     _questionnaireDone = prefs.getBool('questionnaireDone');
@@ -273,17 +274,17 @@ class ProfilProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setWorkplaceEnvironment(String environment) async {
+  Future<void> setWorkplaceEnvironment(int environment) async {
     _workplaceEnvironment = environment;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('workplaceEnvironment', environment);
+    await prefs.setInt('workplaceEnvironment', environment);
     notifyListeners();
   }
 
-  Future<void> setFitnessLevel(String level) async {
+  Future<void> setFitnessLevel(int level) async {
     _fitnessLevel = level;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('fitnessLevel', level);
+    await prefs.setInt('fitnessLevel', level);
     notifyListeners();
   }
 
@@ -626,15 +627,15 @@ class ProfilPageState extends State<ProfilPage> {
   }
 
   Widget _buildRowWithColumns(BuildContext context, int completedLevelsTotal) {
-    final List<String> options2 = [
-      'Nicht so oft',
-      'Mehrmals im Monat',
-      'Einmal pro Woche',
-      'Mehrmals pro Woche',
-      'Täglich',
-    ];
-
     return Consumer<ProfilProvider>(builder: (context, profilProvider, child) {
+      final List<String> options2 = [
+        AppLocalizations.of(context)!.frequencyRarely,
+        AppLocalizations.of(context)!.frequencyMultipleMonthly,
+        AppLocalizations.of(context)!.frequencyWeekly,
+        AppLocalizations.of(context)!.frequencyMultipleWeekly,
+        AppLocalizations.of(context)!.frequencyDaily,
+      ];
+
       return SizedBox(
         width: double.infinity,
         child: Row(
@@ -656,8 +657,7 @@ class ProfilPageState extends State<ProfilPage> {
             const SizedBox(width: 12.0),
             Expanded(
               child: _buildColumnWithText(
-                dynamicText:
-                    "${options2.indexOf(profilProvider.fitnessLevel ?? 'Nicht so oft')}",
+                dynamicText: "${options2[profilProvider.fitnessLevel]}",
                 dynamicText1: "Fitness",
               ),
             ),

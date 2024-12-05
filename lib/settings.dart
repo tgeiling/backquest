@@ -10,6 +10,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'auth.dart';
 
@@ -369,12 +370,11 @@ class _GoalSettingPageState extends State<GoalSettingPage> {
 }
 
 class FitnessSettingPage extends StatefulWidget {
-  final String initialFitnessLevel;
+  final int initialFitnessLevel;
 
   const FitnessSettingPage({
     Key? key,
-    this.initialFitnessLevel =
-        'Einmal pro Woche', // Default value adjusted to string
+    this.initialFitnessLevel = 0,
   }) : super(key: key);
 
   @override
@@ -382,7 +382,7 @@ class FitnessSettingPage extends StatefulWidget {
 }
 
 class _FitnessSettingPageState extends State<FitnessSettingPage> {
-  late String fitnessLevel;
+  late int fitnessLevel;
 
   @override
   void initState() {
@@ -390,45 +390,55 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
     fitnessLevel = widget.initialFitnessLevel;
   }
 
-  bool isGoalSelected(String goal) {
+  bool isGoalSelected(int goal) {
     return fitnessLevel == goal;
-  }
-
-  Widget goalTile(String goal) {
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: isGoalSelected(goal)
-            ? const Color(0xFF59c977)
-            : Colors.grey
-                .withOpacity(0.3), // Background color based on selection
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: isGoalSelected(goal)
-                ? const Color(0xFF48a160)
-                : Colors.transparent,
-            offset: const Offset(0, 5),
-            blurRadius: 0,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Text(goal,
-            style: TextStyle(
-                color: isGoalSelected(goal) ? Colors.white : Colors.grey[400])),
-        onTap: () {
-          setState(() {
-            fitnessLevel = goal;
-          });
-        },
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<String> options2 = [
+      AppLocalizations.of(context)!.frequencyRarely,
+      AppLocalizations.of(context)!.frequencyMultipleMonthly,
+      AppLocalizations.of(context)!.frequencyWeekly,
+      AppLocalizations.of(context)!.frequencyMultipleWeekly,
+      AppLocalizations.of(context)!.frequencyDaily,
+    ];
+
+    Widget goalTile(int index) {
+      return Container(
+        margin: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: isGoalSelected(index)
+              ? const Color(0xFF59c977)
+              : Colors.grey.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: isGoalSelected(index)
+                  ? const Color(0xFF48a160)
+                  : Colors.transparent,
+              offset: const Offset(0, 5),
+              blurRadius: 0,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ListTile(
+          title: Text(
+            options2[index],
+            style: TextStyle(
+              color: isGoalSelected(index) ? Colors.white : Colors.grey[400],
+            ),
+          ),
+          onTap: () {
+            setState(() {
+              fitnessLevel = index;
+            });
+          },
+        ),
+      );
+    }
+
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
 
     return Stack(children: <Widget>[
@@ -443,20 +453,27 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           iconTheme: const IconThemeData(
-            color: Colors.white, // Sets the color of the back arrow to white
+            color: Colors.white,
           ),
-          title: const Text('Setze deine Fitnesslevel',
-              style: TextStyle(color: Colors.white)),
+          title: Text(
+            AppLocalizations.of(context)!.setFitnessLevel,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
         body: ListView(
           padding: const EdgeInsets.all(16.0),
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text('Welches Fitnesslevel hast du jetzt ?',
-                  style: Theme.of(context).textTheme.titleLarge),
+              child: Text(
+                AppLocalizations.of(context)!.currentFitnessLevelQuestion,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
-            ...options2.map((option) => goalTile(option)).toList(),
+            ...List.generate(
+              options2.length,
+              (index) => goalTile(index),
+            ),
           ],
         ),
         floatingActionButton: PressableButton(
@@ -487,19 +504,10 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
             Navigator.of(context).pop();
           },
         ),
-      )
+      ),
     ]);
   }
 }
-
-// The list of fitness level options
-final List<String> options2 = [
-  'Nicht so oft',
-  'Mehrmals im Monat',
-  'Einmal pro Woche',
-  'Mehrmals pro Woche',
-  'Täglich',
-];
 
 class PainSettingPage extends StatefulWidget {
   final List<String> initialSelectedPainAreas;

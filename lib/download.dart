@@ -65,7 +65,7 @@ class DownloadScreenState extends State<DownloadScreen>
   }
 
   Future<void> combineAndDownloadVideo(
-      String focus, String goal, int duration, String userFitnessLevel) async {
+      int focus, int goal, int duration, int userFitnessLevel) async {
     setState(() {
       _isLoading = true;
     });
@@ -91,7 +91,7 @@ class DownloadScreenState extends State<DownloadScreen>
     }
   }
 
-  Future<void> _downloadVideo(String videoUrl, String focus, String goal,
+  Future<void> _downloadVideo(String videoUrl, int focus, int goal,
       int duration, List<String> selectedVideos) async {
     setState(() {
       _isLoading = true;

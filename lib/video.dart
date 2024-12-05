@@ -21,8 +21,8 @@ class VideoCombinerScreen extends StatefulWidget {
   final LevelNotifier levelNotifier;
   final ProfilProvider profilProvider;
   final int levelId;
-  final String focus;
-  final String goal;
+  final int focus;
+  final int goal;
   final int duration;
 
   const VideoCombinerScreen({
@@ -73,8 +73,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           'focus': widget.focus,
           'goal': widget.goal,
           'duration': widget.duration,
-          'userFitnessLevel':
-              widget.profilProvider.fitnessLevel ?? 'Nicht so oft',
+          'userFitnessLevel': widget.profilProvider.fitnessLevel ?? 0,
         }),
       );
 
@@ -241,10 +240,10 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 }
 
 Future<void> combineVideos(
-  String focus,
-  String goal, {
+  int focus,
+  int goal, {
   int duration = 600,
-  required String userFitnessLevel,
+  required int userFitnessLevel,
 }) async {
   const String baseUrl = 'http://135.125.218.147:3000/concatenate';
 
