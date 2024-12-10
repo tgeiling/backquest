@@ -31,8 +31,8 @@ class ProfilProvider extends ChangeNotifier {
   int? _workplaceEnvironment;
 
   String? _expectation;
-  List<String> _hasPain = [];
-  List<String> _goals = [];
+  List<int> _hasPain = [];
+  List<int> _goals = [];
   bool? _questionnaireDone;
   bool? _payedSubscription;
   String? _subType;
@@ -58,8 +58,8 @@ class ProfilProvider extends ChangeNotifier {
   int? get height => _height;
   int? get workplaceEnvironment => _workplaceEnvironment;
   String? get expectation => _expectation;
-  List<String> get hasPain => _hasPain;
-  List<String> get goals => _goals;
+  List<int> get hasPain => _hasPain;
+  List<int> get goals => _goals;
   bool? get questionnaireDone => _questionnaireDone;
   bool? get payedSubscription => _payedSubscription;
   String? get subType => _subType;
@@ -86,8 +86,9 @@ class ProfilProvider extends ChangeNotifier {
     _height = prefs.getInt('height');
     _workplaceEnvironment = prefs.getInt('workplaceEnvironment');
     _fitnessLevel = prefs.getInt('fitnessLevel') ?? 0;
-    _goals = prefs.getStringList('goals') ?? [];
-    _hasPain = prefs.getStringList('hasPain') ?? [];
+    _goals =
+        (prefs.getStringList('goals') ?? []).map((e) => int.parse(e)).toList();
+    _hasPain = (prefs.getStringList('hasPain') ?? []).map(int.parse).toList();
     _questionnaireDone = prefs.getBool('questionnaireDone');
     _payedSubscription = prefs.getBool('payedSubscription');
     _subType = prefs.getString('subType');
@@ -288,17 +289,20 @@ class ProfilProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setHasPain(List<String> pains) async {
-    _hasPain = pains;
+  Future<void> setHasPain(List<int> painIndices) async {
+    _hasPain = painIndices;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('hasPain', pains);
+    // Convert List<int> to List<String> for storage
+    await prefs.setStringList(
+        'hasPain', painIndices.map((e) => e.toString()).toList());
     notifyListeners();
   }
 
-  Future<void> setGoals(List<String> goals) async {
+  Future<void> setGoals(List<int> goals) async {
     _goals = goals;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('goals', goals);
+    // Convert List<int> to List<String> for storage
+    await prefs.setStringList('goals', goals.map((e) => e.toString()).toList());
     notifyListeners();
   }
 

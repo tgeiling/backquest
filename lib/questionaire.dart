@@ -617,124 +617,135 @@ class QuestionPage5 extends StatefulWidget {
 }
 
 class _QuestionPage5State extends State<QuestionPage5> {
-  Map<String, bool> painAreas = {
-    'Unterer Rücken': false,
-    'Oberer Rücken': false,
-    'Nacken': false,
-    'Knie': false,
-    'Hand gelenke': false,
-    'Füße': false,
-    'Sprung gelenk': false,
-    'Hüfte': false,
-    'Kiefer': false,
-    'Schulter': false,
-  };
-
   @override
   Widget build(BuildContext context) {
-    List<String> keys = painAreas.keys.toList();
     final profilProvider = Provider.of<ProfilProvider>(context);
+
+    final List<String> painAreaOptions = [
+      AppLocalizations.of(context)!.lowerBack,
+      AppLocalizations.of(context)!.upperBack,
+      AppLocalizations.of(context)!.neck,
+      AppLocalizations.of(context)!.knee,
+      AppLocalizations.of(context)!.wrists,
+      AppLocalizations.of(context)!.feet,
+      AppLocalizations.of(context)!.ankle,
+      AppLocalizations.of(context)!.hip,
+      AppLocalizations.of(context)!.jaw,
+      AppLocalizations.of(context)!.shoulder,
+    ];
+
+    // Map integer indices to selection status
+    final List<bool> selectedPainAreas = List.generate(10, (index) => false);
 
     return Container(
       child: Column(
         children: [
           const Spacer(),
           Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Text(
-                'Wo hättest du in der Vergangenheit Probleme oder Verspannungen?',
-                style: Theme.of(context).textTheme.displayMedium,
-              )),
+            padding: const EdgeInsets.all(32.0),
+            child: Text(
+              AppLocalizations.of(context)!.painQuestion,
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+          ),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: Column(
-                  children: keys.take(5).map((String key) {
-                    return CheckboxListTile(
-                      title: Text(
-                        key,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      value: painAreas[key],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          painAreas[key] = value!;
-                        });
-                      },
-                      checkColor: Colors.white,
-                      activeColor: Colors.green,
-                    );
-                  }).toList(),
+                  children: List.generate(
+                    painAreaOptions.length ~/ 2,
+                    (index) {
+                      return CheckboxListTile(
+                        title: Text(
+                          painAreaOptions[index],
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        value: selectedPainAreas[index],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            selectedPainAreas[index] = value!;
+                          });
+                        },
+                        checkColor: Colors.white,
+                        activeColor: Colors.green,
+                      );
+                    },
+                  ),
                 ),
               ),
               Expanded(
                 child: Column(
-                  children: keys.skip(5).map((String key) {
-                    return CheckboxListTile(
-                      title: Text(
-                        key,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      value: painAreas[key],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          painAreas[key] = value!;
-                        });
-                      },
-                      checkColor: Colors.white,
-                      activeColor: Colors.green,
-                    );
-                  }).toList(),
+                  children: List.generate(
+                    painAreaOptions.length ~/ 2,
+                    (index) {
+                      final adjustedIndex = index + painAreaOptions.length ~/ 2;
+                      return CheckboxListTile(
+                        title: Text(
+                          painAreaOptions[adjustedIndex],
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        value: selectedPainAreas[adjustedIndex],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            selectedPainAreas[adjustedIndex] = value!;
+                          });
+                        },
+                        checkColor: Colors.white,
+                        activeColor: Colors.green,
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
           ),
           const Spacer(),
           Padding(
-              padding:
-                  const EdgeInsets.only(bottom: 32.0, right: 32.0, left: 32.0),
-              child: PressableButton(
-                onPressed: () {
-                  widget.pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
+            padding:
+                const EdgeInsets.only(bottom: 32.0, right: 32.0, left: 32.0),
+            child: PressableButton(
+              onPressed: () {
+                widget.pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
 
-                  profilProvider.setHasPain(painAreas.entries
-                      .where((entry) => entry.value)
-                      .map((entry) => entry.key)
-                      .toList());
+                final selectedPainAreaIndices = selectedPainAreas
+                    .asMap()
+                    .entries
+                    .where((entry) => entry.value)
+                    .map((entry) => entry.key)
+                    .toList();
 
-                  getAuthToken().then((token) {
-                    if (token != null) {
-                      updateProfile(
-                        token: token,
-                        painAreas: painAreas.entries
-                            .where((entry) => entry.value)
-                            .map((entry) => entry.key)
-                            .toList(),
-                      ).then((success) {
-                        if (success) {
-                          print("Profile updated successfully.");
-                        } else {
-                          print("Failed to update profile.");
-                        }
-                      });
-                    } else {
-                      print("No auth token available.");
-                    }
-                  });
-                },
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: const Center(
-                    child: Text("Weiter",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ))),
-              )),
+                profilProvider.setHasPain(selectedPainAreaIndices);
+
+                getAuthToken().then((token) {
+                  if (token != null) {
+                    updateProfile(
+                      token: token,
+                      painAreas: selectedPainAreaIndices,
+                    ).then((success) {
+                      if (success) {
+                        print("Profile updated successfully.");
+                      } else {
+                        print("Failed to update profile.");
+                      }
+                    });
+                  } else {
+                    print("No auth token available.");
+                  }
+                });
+              },
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              child: Center(
+                  child: Text(AppLocalizations.of(context)!.next,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ))),
+            ),
+          ),
         ],
       ),
     );
@@ -751,23 +762,33 @@ class QuestionPage6 extends StatefulWidget {
 }
 
 class _QuestionPage6State extends State<QuestionPage6> {
-  String _selectedGoal1 = 'Rückenschmerzen vorbeugen';
-  String _selectedGoal2 = 'Beweglicher werden';
-  String _selectedGoal3 = 'Gewohnheit bilden';
+  int _selectedGoal1 = 0;
+  int _selectedGoal2 = 1;
+  int _selectedGoal3 = 2;
   String _additionalPersonalGoal = "";
 
-  final List<String> personalGoalsOptions = [
-    'Rückenschmerzen vorbeugen',
-    'Beweglicher werden',
-    'Gewohnheit bilden',
-    'Stärker werden',
-    'Mehr Energie',
-    'Stressabbau',
-    'Haltung verbessern'
-  ];
-  _saveSelectedOption(String key, String value) async {
+  final List<String> personalGoalsOptions = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (personalGoalsOptions.isEmpty) {
+      personalGoalsOptions.addAll([
+        AppLocalizations.of(context)!.personalGoalPreventBackPain,
+        AppLocalizations.of(context)!.personalGoalImproveFlexibility,
+        AppLocalizations.of(context)!.personalGoalBuildHabit,
+        AppLocalizations.of(context)!.personalGoalGetStronger,
+        AppLocalizations.of(context)!.personalGoalMoreEnergy,
+        AppLocalizations.of(context)!.personalGoalReduceStress,
+        AppLocalizations.of(context)!.personalGoalImprovePosture,
+      ]);
+    }
+  }
+
+  _saveSelectedOption(String key, int value) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
+    await prefs.setInt(key, value);
   }
 
   @override
@@ -804,39 +825,41 @@ class _QuestionPage6State extends State<QuestionPage6> {
                 children: [
                   SizedBox(height: sizedBoxHeight1),
                   Text(
-                    'Zum Schluss noch etwas Persönliches von Dir.',
+                    AppLocalizations.of(context)!.personalGoalsTitle,
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   SizedBox(height: sizedBoxHeight2),
                   _buildRoundedSelectBox(
-                      'Was sind deine 3 Ziele die du durch die App erwartest?',
-                      _selectedGoal1,
-                      personalGoalsOptions,
-                      'selectedGoal1'),
-                  _buildRoundedSelectBox('', _selectedGoal2,
-                      personalGoalsOptions, 'selectedGoal2'),
-                  _buildRoundedSelectBox('', _selectedGoal3,
-                      personalGoalsOptions, 'selectedGoal3'),
+                    AppLocalizations.of(context)!.personalGoalsPrompt,
+                    _selectedGoal1,
+                    personalGoalsOptions,
+                    'selectedGoal1',
+                  ),
+                  _buildRoundedSelectBox(
+                    '',
+                    _selectedGoal2,
+                    personalGoalsOptions,
+                    'selectedGoal2',
+                  ),
+                  _buildRoundedSelectBox(
+                    '',
+                    _selectedGoal3,
+                    personalGoalsOptions,
+                    'selectedGoal3',
+                  ),
                   SizedBox(height: sizedBoxHeight2),
                   TextField(
-                    style: const TextStyle(
-                        color: Colors.white), // Sets the text color to white
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: "Schreibe Dein Ziel",
-                      hintStyle: const TextStyle(
-                          color: Colors
-                              .white70), // Hint text in a semi-transparent white color
-                      fillColor: Colors.grey.withOpacity(
-                          0.7), // Background color similar to the select boxes
+                      hintText: AppLocalizations.of(context)!.personalGoalsHint,
+                      hintStyle: const TextStyle(color: Colors.white70),
+                      fillColor: Colors.grey.withOpacity(0.7),
                       filled: true,
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 16.0,
-                          horizontal: 12.0), // Padding for additional height
+                          vertical: 16.0, horizontal: 12.0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                            10.0), // Matches the corner radius of the select boxes
-                        borderSide: BorderSide
-                            .none, // Removes the border to make it seamless
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     onChanged: (value) {
@@ -854,12 +877,11 @@ class _QuestionPage6State extends State<QuestionPage6> {
                 curve: Curves.easeInOut,
               );
 
-              List<String> selectedGoals = [
+              List<int> selectedGoals = [
                 _selectedGoal1,
                 _selectedGoal2,
                 _selectedGoal3
               ];
-
               profilProvider.setGoals(selectedGoals);
 
               getAuthToken().then((token) {
@@ -880,20 +902,23 @@ class _QuestionPage6State extends State<QuestionPage6> {
               });
             },
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: const Center(
-                child: Text("Weiter",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
+            child: Center(
+              child: Text(
+                AppLocalizations.of(context)!.next,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRoundedSelectBox(String labelText, String selectedValue,
-      List<String> items, String prefKey) {
+  Widget _buildRoundedSelectBox(
+      String labelText, int selectedIndex, List<String> items, String prefKey) {
     double screenHeight = MediaQuery.of(context).size.height;
     bool isSmallScreen = screenHeight < 600;
     bool isMidScreen = screenHeight >= 600 && screenHeight < 800;
@@ -907,6 +932,7 @@ class _QuestionPage6State extends State<QuestionPage6> {
     } else {
       itemPadding = 12;
     }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -921,26 +947,25 @@ class _QuestionPage6State extends State<QuestionPage6> {
         Container(
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.7), // Darker background color
-            borderRadius: BorderRadius.circular(10.0), // Less-rounded corners
+            color: Colors.grey.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(10.0),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 4,
-                offset: Offset(0, 2), // Slight shadow to create depth
+                offset: Offset(0, 2),
               )
             ],
           ),
           padding: EdgeInsets.symmetric(horizontal: itemPadding),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedValue,
+            child: DropdownButton<int>(
+              value: selectedIndex,
               icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
               isDense: true,
               isExpanded: true,
-              dropdownColor:
-                  Colors.grey[800], // Background color of the dropdown menu
-              onChanged: (String? newValue) {
+              dropdownColor: Colors.grey[800],
+              onChanged: (int? newValue) {
                 setState(() {
                   switch (prefKey) {
                     case 'selectedGoal1':
@@ -956,11 +981,11 @@ class _QuestionPage6State extends State<QuestionPage6> {
                   _saveSelectedOption(prefKey, newValue!);
                 });
               },
-              items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
+              items: items.asMap().entries.map<DropdownMenuItem<int>>((entry) {
+                return DropdownMenuItem<int>(
+                  value: entry.key,
                   child: Text(
-                    value,
+                    entry.value,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 );
@@ -997,7 +1022,7 @@ class _QuestionPage7State extends State<QuestionPage7> {
         children: [
           const Spacer(),
           Text(
-            'Setze dir ein Ziel, wie viele Einheiten Du pro Woche absolvieren willst',
+            AppLocalizations.of(context)!.weeklyGoalPrompt,
             style: Theme.of(context).textTheme.displayMedium,
           ),
           const SizedBox(height: 80),
@@ -1005,7 +1030,7 @@ class _QuestionPage7State extends State<QuestionPage7> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Wöchentliches Ziel: ',
+                AppLocalizations.of(context)!.weeklyGoalLabel,
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
@@ -1047,9 +1072,9 @@ class _QuestionPage7State extends State<QuestionPage7> {
               });
             },
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: const Center(
-                child: Text("Weiter",
-                    style: TextStyle(
+            child: Center(
+                child: Text(AppLocalizations.of(context)!.continueButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                     ))),
@@ -1075,14 +1100,14 @@ class QuestionPage8 extends StatelessWidget {
         children: [
           const Spacer(),
           Text(
-            'Willkommen bei BackQuest!',
+            AppLocalizations.of(context)!.welcomeToBackQuest,
             style: Theme.of(context).textTheme.displayLarge!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
             textAlign: TextAlign.left,
           ),
           Text(
-            'Unser Coach stellt dir persönliche Trainingsvideos zusammen, die genau zu Deinen individuellen Bedürfnissen und Zielen passen.  Nach jeder Einheit kannst du Deinem Coach ein Feedback geben, damit die Übungen mit jedem Mal noch besser auf Dich zugeschnitten werden.',
+            AppLocalizations.of(context)!.personalizedTrainingIntro,
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.left,
           ),
@@ -1092,9 +1117,9 @@ class QuestionPage8 extends StatelessWidget {
               onFinish();
             },
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: const Center(
-                child: Text("Fertigstellen",
-                    style: TextStyle(
+            child: Center(
+                child: Text(AppLocalizations.of(context)!.finishButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                     ))),
@@ -1183,7 +1208,7 @@ class FirstPage extends StatelessWidget {
                 child: SizedBox(
                     width: MediaQuery.of(context).size.width - 70,
                     child: Text(
-                      'Gib deinem Coach jetzt ein kurzes Feedback zu deinen Übungen.',
+                      AppLocalizations.of(context)!.feedbackIntroduction,
                       style: TextStyle(
                         fontSize: bigHeaderFontSize,
                         fontWeight: FontWeight.bold,
@@ -1195,7 +1220,7 @@ class FirstPage extends StatelessWidget {
                 child: SizedBox(
                     width: MediaQuery.of(context).size.width - 70,
                     child: Text(
-                      'Damit kann das Trainingsprogramm noch besser auf dich zugeschnitten werden.',
+                      AppLocalizations.of(context)!.feedbackDetails,
                       style: Theme.of(context).textTheme.labelLarge,
                     ))),
             const Spacer(),
@@ -1205,7 +1230,7 @@ class FirstPage extends StatelessWidget {
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 17),
                 onPressed: onPressedWeiter,
                 child: Text(
-                  "Los geht's",
+                  AppLocalizations.of(context)!.letsGo,
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
@@ -1222,7 +1247,7 @@ class FirstPage extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  'Überspringen',
+                  AppLocalizations.of(context)!.skip,
                   style: Theme.of(context).textTheme.labelLarge!.copyWith(
                         color: Colors.grey,
                       ),
@@ -1279,17 +1304,17 @@ class _SecondPageState extends State<SecondPage> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Feedback sent successfully!'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.feedbackSuccess),
         ));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Failed to send feedback.'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.feedbackFailure),
         ));
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error sending feedback: $e'),
+        content: Text('${AppLocalizations.of(context)!.feedbackError}: $e'),
       ));
     }
 
@@ -1334,7 +1359,7 @@ class _SecondPageState extends State<SecondPage> {
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 28),
                   onPressed: _sendFeedback,
                   child: Text(
-                    'Abschließen',
+                    AppLocalizations.of(context)!.finish,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),

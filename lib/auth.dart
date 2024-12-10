@@ -255,8 +255,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (profileData.containsKey('painAreas')) {
             List<dynamic> painAreasDynamic = profileData['painAreas'];
-            List<String> painAreas = painAreasDynamic
-                .map((dynamic item) => item.toString())
+            List<int> painAreas = painAreasDynamic
+                .map((dynamic item) => int.tryParse(item.toString()) ?? 0)
                 .toList();
             profilProvider.setHasPain(painAreas);
           }
@@ -270,8 +270,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (profileData.containsKey('personalGoal')) {
             List<dynamic> goalsDynamic = profileData['personalGoal'];
-            List<String> goals =
-                goalsDynamic.map((dynamic item) => item.toString()).toList();
+            List<int> goals = goalsDynamic
+                .map((dynamic item) => int.tryParse(item.toString()) ?? 0)
+                .toList();
             profilProvider.setGoals(goals);
           }
 

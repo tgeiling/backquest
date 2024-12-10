@@ -510,7 +510,7 @@ class _FitnessSettingPageState extends State<FitnessSettingPage> {
 }
 
 class PainSettingPage extends StatefulWidget {
-  final List<String> initialSelectedPainAreas;
+  final List<int> initialSelectedPainAreas;
 
   const PainSettingPage({Key? key, required this.initialSelectedPainAreas})
       : super(key: key);
@@ -520,25 +520,16 @@ class PainSettingPage extends StatefulWidget {
 }
 
 class _PainSettingPageState extends State<PainSettingPage> {
-  late Map<String, bool> painAreas;
-
-  static final Map<String, bool> allPainAreas = {
-    'Unterer Rücken': false,
-    'Oberer Rücken': false,
-    'Nacken': false,
-    'Knie': false,
-    'Hand gelenke': false,
-    'Füße': false,
-    'Sprung gelenk': false,
-    'Hüfte': false,
-    'Kiefer': false,
-    'Schulter': false,
-  };
+  late Map<int, bool> painAreas;
 
   @override
   void initState() {
     super.initState();
-    painAreas = Map<String, bool>.from(allPainAreas);
+    painAreas = {};
+    // Initialize all pain areas as false
+    for (var areaKey in List<int>.generate(10, (index) => index)) {
+      painAreas[areaKey] = false;
+    }
     // Set the initial state for the pain areas that are selected
     for (var area in widget.initialSelectedPainAreas) {
       if (painAreas.containsKey(area)) {
@@ -547,30 +538,43 @@ class _PainSettingPageState extends State<PainSettingPage> {
     }
   }
 
-  Widget painAreaTile(String area) {
-    return CheckboxListTile(
-      title: Text(
-        area,
-        style: const TextStyle(color: Colors.white),
-      ),
-      side: BorderSide(
-        width: 1.0,
-        color: Colors.white,
-      ),
-      value: painAreas[area],
-      onChanged: (bool? value) {
-        setState(() {
-          painAreas[area] = value!;
-        });
-      },
-      hoverColor: Colors.white,
-      checkColor: Colors.white,
-      activeColor: Colors.green,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Map<int, String> allPainAreas = {
+      0: AppLocalizations.of(context)!.lowerBack,
+      1: AppLocalizations.of(context)!.upperBack,
+      2: AppLocalizations.of(context)!.neck,
+      3: AppLocalizations.of(context)!.knee,
+      4: AppLocalizations.of(context)!.wrists,
+      5: AppLocalizations.of(context)!.feet,
+      6: AppLocalizations.of(context)!.ankle,
+      7: AppLocalizations.of(context)!.hip,
+      8: AppLocalizations.of(context)!.jaw,
+      9: AppLocalizations.of(context)!.shoulder,
+    };
+
+    Widget painAreaTile(int areaKey) {
+      return CheckboxListTile(
+        title: Text(
+          allPainAreas[areaKey]!,
+          style: const TextStyle(color: Colors.white),
+        ),
+        side: const BorderSide(
+          width: 1.0,
+          color: Colors.white,
+        ),
+        value: painAreas[areaKey],
+        onChanged: (bool? value) {
+          setState(() {
+            painAreas[areaKey] = value!;
+          });
+        },
+        hoverColor: Colors.white,
+        checkColor: Colors.white,
+        activeColor: Colors.green,
+      );
+    }
+
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
 
     return Stack(children: <Widget>[
@@ -587,15 +591,17 @@ class _PainSettingPageState extends State<PainSettingPage> {
           iconTheme: const IconThemeData(
             color: Colors.white, // Sets the color of the back arrow to white
           ),
-          title: const Text('Setze deine Ziele',
-              style: TextStyle(color: Colors.white)),
+          title: Text(
+            AppLocalizations.of(context)!.editPainAreasTitle,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
         body: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            Container(
-              child: Text('Wähle die Bereiche, in denen du Schmerzen hast.',
-                  style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              AppLocalizations.of(context)!.selectPainAreasPrompt,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             ...allPainAreas.keys.map((key) => painAreaTile(key)).toList(),
           ],
@@ -608,31 +614,33 @@ class _PainSettingPageState extends State<PainSettingPage> {
             size: 24,
           ),
           onPressed: () {
-            profilProvider.setHasPain(painAreas.entries
+            List<int> selectedPainAreas = painAreas.entries
                 .where((entry) => entry.value)
                 .map((entry) => entry.key)
-                .toList());
+                .toList();
+
+            profilProvider.setHasPain(selectedPainAreas);
+
             getAuthToken().then((token) {
               if (token != null) {
                 updateProfile(
                   token: token,
-                  painAreas: painAreas.entries
-                      .where((entry) => entry.value)
-                      .map((entry) => entry.key)
-                      .toList(),
+                  painAreas: selectedPainAreas,
                 ).then((success) {
                   if (success) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Profil erfolgreich aktualisiert.")));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(AppLocalizations.of(context)!
+                            .profileUpdateSuccess)));
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content:
-                            Text("Fehler beim Aktualisieren des Profils.")));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            AppLocalizations.of(context)!.profileUpdateError)));
                   }
                 });
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Kein Authentifizierungstoken verfügbar.")));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        AppLocalizations.of(context)!.authTokenUnavailable)));
               }
             });
             Navigator.of(context).pop();
