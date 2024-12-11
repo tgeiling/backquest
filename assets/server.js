@@ -626,7 +626,7 @@ app.post('/concatenate', async (req, res) => {
 
     res.json({
       message: 'Videos concatenated successfully',
-      sessionId,  // Return sessionId to the client
+      sessionId,
       totalDuration,
       selectedVideos: selectedVideos.map(video => video.id),
     });
