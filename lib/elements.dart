@@ -1,5 +1,6 @@
 import 'auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PressableButton extends StatefulWidget {
   final Widget child;
@@ -204,13 +205,13 @@ class NoConnectionWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Keine Internetverbindung',
+                AppLocalizations.of(context)!.noConnectionTitle,
                 style: Theme.of(context).textTheme.displayMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4.0),
               Text(
-                'Bitte stellen sie eine Verbindung her',
+                AppLocalizations.of(context)!.noConnectionMessage,
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -277,13 +278,13 @@ class AuthenticateWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Bitte über Login anmelden',
+                  AppLocalizations.of(context)!.pleaseLoginTitle,
                   style: Theme.of(context).textTheme.displayMedium,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  'Sie müssen sich anmelden, um fortzufahren.',
+                  AppLocalizations.of(context)!.pleaseLoginMessage,
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),

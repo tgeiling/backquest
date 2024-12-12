@@ -436,7 +436,7 @@ class ProfilPageState extends State<ProfilPage> {
               _buildRowWithImageAndText(context),
               SizedBox(height: spacerBox),
               Text(
-                "Ziele",
+                AppLocalizations.of(context)!.goals,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 23.0),
@@ -444,7 +444,7 @@ class ProfilPageState extends State<ProfilPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Einheiten pro Woche",
+                    AppLocalizations.of(context)!.weeklyUnits,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   Text(
@@ -460,7 +460,7 @@ class ProfilPageState extends State<ProfilPage> {
                       1.0)),
               SizedBox(height: spacerBox2),
               Text(
-                "Statistiken",
+                AppLocalizations.of(context)!.statistics,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 14.0),
@@ -496,7 +496,7 @@ class ProfilPageState extends State<ProfilPage> {
     }
 
     bool loggedIn = !widget.isLoggedIn();
-    print("visibilty $loggedIn");
+    print("visibility $loggedIn");
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -504,8 +504,7 @@ class ProfilPageState extends State<ProfilPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.end, // This aligns children to the right
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Stack(
                 children: [
@@ -531,21 +530,6 @@ class ProfilPageState extends State<ProfilPage> {
                               );
                             },
                           )),
-                      /* Container(
-                          width: 60,
-                          margin: EdgeInsets.only(right: 0),
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.info),
-                            iconSize: settingsIconSize,
-                            color: Colors.white,
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => InfoPage()));
-                            },
-                          )), */
                     ],
                   ),
                   Positioned(
@@ -582,7 +566,7 @@ class ProfilPageState extends State<ProfilPage> {
                               );
                             },
                             child: Text(
-                              "LOGIN",
+                              AppLocalizations.of(context)!.login,
                               style: TextStyle(
                                 color: Colors.grey.shade800,
                                 fontWeight: FontWeight.bold,
@@ -616,10 +600,10 @@ class ProfilPageState extends State<ProfilPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Wochen in Folge!",
+                    AppLocalizations.of(context)!
+                        .streakWeeks(profilProvider.weeklyStreak),
                     style: Theme.of(context).textTheme.displayMedium,
-                    textAlign: TextAlign
-                        .center, // Center the text within the Text widget
+                    textAlign: TextAlign.center,
                   ),
                 ],
               );
@@ -648,21 +632,21 @@ class ProfilPageState extends State<ProfilPage> {
             Expanded(
               child: _buildColumnWithText(
                 dynamicText: "$completedLevelsTotal",
-                dynamicText1: "Einheiten",
+                dynamicText1: AppLocalizations.of(context)!.weeklyUnits,
               ),
             ),
             const SizedBox(width: 12.0),
             Expanded(
               child: _buildColumnWithText(
                 dynamicText: "${profilProvider.hasPain.length}",
-                dynamicText1: "Schmerzen",
+                dynamicText1: AppLocalizations.of(context)!.painAreas,
               ),
             ),
             const SizedBox(width: 12.0),
             Expanded(
               child: _buildColumnWithText(
                 dynamicText: "${options2[profilProvider.fitnessLevel]}",
-                dynamicText1: "Fitness",
+                dynamicText1: AppLocalizations.of(context)!.fitnessLevel,
               ),
             ),
           ],

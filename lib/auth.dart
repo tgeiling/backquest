@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'services.dart';
 import 'stats.dart';
@@ -388,24 +389,24 @@ class _LoginScreenState extends State<LoginScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            title: const Text(
-              'Login Failed',
-              style: TextStyle(
+            title: Text(
+              AppLocalizations.of(context)!.loginFailedTitle,
+              style: const TextStyle(
                 color: Colors.white, // White text
                 fontWeight: FontWeight.bold,
               ),
             ),
-            content: const Text(
-              'Invalid username or password. Please try again.',
-              style: TextStyle(
+            content: Text(
+              AppLocalizations.of(context)!.loginFailedMessage,
+              style: const TextStyle(
                 color: Colors.white, // White text
               ),
             ),
             actions: <Widget>[
               TextButton(
-                child: const Text(
-                  'Close',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.closeButton,
+                  style: const TextStyle(
                     color: Colors.white, // White text
                   ),
                 ),
@@ -424,60 +425,70 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.loginTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Center(
-                child: GreyContainer(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-              child: Image.asset('assets/logo.png',
-                  width: MediaQuery.of(context).size.width * 0.15),
-            )),
+              child: GreyContainer(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                child: Image.asset('assets/logo.png',
+                    width: MediaQuery.of(context).size.width * 0.15),
+              ),
+            ),
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Benutzername',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.usernameLabel,
               ),
               style: const TextStyle(color: Colors.black),
             ),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Passwort'),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.passwordLabel,
+              ),
               obscureText: true,
               style: const TextStyle(color: Colors.black),
             ),
             const Spacer(),
             PressableButton(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                onPressed: _attemptLogin,
-                child: const SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                      child: Text('Login', style: TextStyle(fontSize: 18))),
-                )),
-            const SizedBox(
-              height: 10,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              onPressed: _attemptLogin,
+              child: SizedBox(
+                width: double.infinity,
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.loginButton,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
             ),
+            const SizedBox(height: 10),
             PressableButton(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RegisterScreen()),
-                  );
-                },
-                child: const SizedBox(
-                    width: double
-                        .infinity, // Ensures the button stretches to fill the width
-                    child: Center(
-                      child:
-                          Text('Registrieren', style: TextStyle(fontSize: 18)),
-                    ))),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RegisterScreen(),
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: double
+                    .infinity, // Ensures the button stretches to fill the width
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.registerButton,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -510,11 +521,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Registrierung Fehlgeschlagen'),
-            content: const Text('Falscher Benutzername und Passwort'),
+            title: Text(AppLocalizations.of(context)!.registerFailedTitle),
+            content: Text(AppLocalizations.of(context)!.registerFailedContent),
             actions: <Widget>[
               TextButton(
-                child: const Text('Schließen'),
+                child: Text(AppLocalizations.of(context)!.closeButton),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -530,27 +541,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Registrierung')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.registerTitle),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Center(
-                child: GreyContainer(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 18),
-                    child: Image.asset(
-                      'assets/logo.png',
-                      scale: 2,
-                    ))),
+              child: GreyContainer(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                child: Image.asset(
+                  'assets/logo.png',
+                  scale: 2,
+                ),
+              ),
+            ),
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Benutzername'),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.usernameLabel,
+              ),
               style: const TextStyle(color: Colors.black),
             ),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Passwort'),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.passwordLabel,
+              ),
               style: const TextStyle(color: Colors.black),
               obscureText: true,
             ),
@@ -558,12 +577,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             PressableButton(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               onPressed: _attemptRegister,
-              child: const SizedBox(
-                  width: double
-                      .infinity, // Ensures the button stretches to fill the width
-                  child: Center(
-                      child: Text('Registrieren',
-                          style: TextStyle(fontSize: 18)))),
+              child: SizedBox(
+                width: double
+                    .infinity, // Ensures the button stretches to fill the width
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.registerButton,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

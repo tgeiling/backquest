@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'elements.dart';
 import 'questionaire.dart';
@@ -193,7 +194,7 @@ class DownloadScreenState extends State<DownloadScreen>
                     ),
                   ),
                   Text(
-                    "Wir erstellen und Laden ihr \n nächstes Video herunter",
+                    AppLocalizations.of(context)!.creatingAndDownloadingVideo,
                     style: Theme.of(context).textTheme.bodyLarge,
                   )
                 ],
@@ -270,7 +271,7 @@ class DownloadScreenState extends State<DownloadScreen>
                           vertical: 8, horizontal: 12),
                       child: Center(
                           child: Text(
-                        "Video erstellen",
+                        AppLocalizations.of(context)!.createVideo,
                         style: Theme.of(context).textTheme.labelLarge,
                       )),
                     ),
@@ -374,15 +375,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 textColor: Colors.white,
                 context: context,
                 type: QuickAlertType.error,
-                title: 'Noch nicht geschafft',
-                text: 'Möchtest du deine Trainingssitzung wirklich beenden?',
-                confirmBtnText: 'zurück',
+                title: AppLocalizations.of(context)!.notDoneTitle,
+                text: AppLocalizations.of(context)!.notDoneMessage,
+                confirmBtnText: AppLocalizations.of(context)!.confirmButton,
                 onConfirmBtnTap: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 showCancelBtn: true,
-                cancelBtnText: 'bleiben',
+                cancelBtnText: AppLocalizations.of(context)!.cancel,
               );
             }
           },

@@ -1030,7 +1030,8 @@ class _QuestionPage7State extends State<QuestionPage7> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                AppLocalizations.of(context)!.weeklyGoalLabel,
+                AppLocalizations.of(context)!
+                    .weeklyGoalLabel(_weeklyGoal.toString()),
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               NumberPicker(
@@ -1388,7 +1389,7 @@ class ExerciseFeedbackTile extends StatefulWidget {
 
 class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
   String? selectedDifficulty;
-  List<String> selectedPainAreas = [];
+  List<int> selectedPainAreas = [];
 
   @override
   Widget build(BuildContext context) {
@@ -1449,7 +1450,7 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Übung ${widget.index + 1}',
+                          '${AppLocalizations.of(context)!.exercise} ${widget.index + 1}',
                           style: const TextStyle(color: Colors.white),
                         ),
                         IconButton(
@@ -1461,7 +1462,11 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                     ),
                     Wrap(
                       spacing: wrapSpacing,
-                      children: ['Einfach', 'Ok', 'Schwer']
+                      children: [
+                        AppLocalizations.of(context)!.difficultyEasy,
+                        AppLocalizations.of(context)!.difficultyMedium,
+                        AppLocalizations.of(context)!.difficultyHard,
+                      ]
                           .map((difficulty) => ChoiceChip(
                                 backgroundColor: Colors.grey.shade700,
                                 checkmarkColor: Colors.white,
@@ -1505,7 +1510,20 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
   }
 
   void _showPainLocationDialog() {
-    List<String> tempSelectedPainAreas = List.from(selectedPainAreas);
+    List<int> tempSelectedPainAreas = List.from(selectedPainAreas);
+
+    final Map<int, String> painAreaTranslations = {
+      0: AppLocalizations.of(context)!.lowerBack,
+      1: AppLocalizations.of(context)!.upperBack,
+      2: AppLocalizations.of(context)!.neck,
+      3: AppLocalizations.of(context)!.knee,
+      4: AppLocalizations.of(context)!.wrists,
+      5: AppLocalizations.of(context)!.feet,
+      6: AppLocalizations.of(context)!.ankle,
+      7: AppLocalizations.of(context)!.hip,
+      8: AppLocalizations.of(context)!.jaw,
+      9: AppLocalizations.of(context)!.shoulder,
+    };
 
     showDialog(
       context: context,
@@ -1513,71 +1531,61 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return Theme(
-                data: Theme.of(context).copyWith(
-                  colorScheme: Theme.of(context).colorScheme.copyWith(
-                        primary: Colors.green
-                            .shade800, // This sets the primary color used in button text, focus colors in the dialog
-                      ),
-                ),
-                child: AlertDialog(
-                  backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
-                  title: const Text('Schmerzbereiche wählen'),
-                  content: SingleChildScrollView(
-                    child: Wrap(
-                      spacing: 5.0,
-                      children: [
-                        'Unterer Rücken',
-                        'Oberer Rücken',
-                        'Nacken',
-                        'Knie',
-                        'Hand gelenke',
-                        'Füße',
-                        'Sprung gelenk',
-                        'Hüfte',
-                        'Kiefer',
-                        'Schulter',
-                      ]
-                          .map((area) => FilterChip(
-                                selectedColor: Colors.green.shade300,
-                                backgroundColor: Colors.grey.shade600,
-                                label: Text(area),
-                                selected: tempSelectedPainAreas.contains(area),
-                                onSelected: (bool selected) {
-                                  setDialogState(() {
-                                    if (selected) {
-                                      tempSelectedPainAreas.add(area);
-                                    } else {
-                                      tempSelectedPainAreas.remove(area);
-                                    }
-                                  });
-                                },
-                              ))
-                          .toList(),
+              data: Theme.of(context).copyWith(
+                colorScheme: Theme.of(context).colorScheme.copyWith(
+                      primary: Colors.green.shade800,
                     ),
+              ),
+              child: AlertDialog(
+                backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+                title: Text(AppLocalizations.of(context)!.selectPainAreasTitle),
+                content: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 5.0,
+                    children: painAreaTranslations.entries
+                        .map((entry) => FilterChip(
+                              selectedColor: Colors.green.shade300,
+                              backgroundColor: Colors.grey.shade600,
+                              label: Text(entry.value),
+                              selected:
+                                  tempSelectedPainAreas.contains(entry.key),
+                              onSelected: (bool selected) {
+                                setDialogState(() {
+                                  if (selected) {
+                                    tempSelectedPainAreas.add(entry.key);
+                                  } else {
+                                    tempSelectedPainAreas.remove(entry.key);
+                                  }
+                                });
+                              },
+                            ))
+                        .toList(),
                   ),
-                  actions: [
-                    TextButton(
-                      child: Text(
-                        'Abbrechen',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
+                ),
+                actions: [
+                  TextButton(
+                    child: Text(
+                      AppLocalizations.of(context)!.cancel,
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
-                    TextButton(
-                      child: Text(
-                        'Speichern',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          selectedPainAreas = tempSelectedPainAreas;
-                          _updateFeedback();
-                        });
-                        Navigator.of(context).pop();
-                      },
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  TextButton(
+                    child: Text(
+                      AppLocalizations.of(context)!.save,
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
-                  ],
-                ));
+                    onPressed: () {
+                      setState(() {
+                        selectedPainAreas = tempSelectedPainAreas;
+                        _updateFeedback();
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
           },
         );
       },

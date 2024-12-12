@@ -127,7 +127,7 @@ int weekNumber(DateTime date) {
 class ExerciseFeedback {
   final String videoId;
   String? difficulty;
-  List<String> painAreas;
+  List<int> painAreas;
 
   ExerciseFeedback({
     required this.videoId,
@@ -139,11 +139,11 @@ class ExerciseFeedback {
     return ExerciseFeedback(
       videoId: json['videoId'],
       difficulty: json['difficulty'],
-      painAreas: List<String>.from(json['painAreas'] ?? []),
+      painAreas: List<int>.from(json['painAreas'] ?? []),
     );
   }
 
-  void update({String? newDifficulty, List<String>? newPainAreas}) {
+  void update({String? newDifficulty, List<int>? newPainAreas}) {
     if (newDifficulty != null) {
       difficulty = newDifficulty;
     }
@@ -160,6 +160,7 @@ class ExerciseFeedback {
     };
   }
 }
+
 
 /* const String serverUrl = 'http://135.125.218.147:3000/validate-receipt';
 
