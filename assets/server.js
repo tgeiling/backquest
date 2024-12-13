@@ -348,14 +348,6 @@ async function selectVideos(userFitnessLevel, duration, focus, goal) {
     ['0002', '0003'], ['0018', '0019'], ['0061', '0062'], ['0011', '0012'], ['0045', '0046'],
     ['0039', '0040'], ['0042', '0041']
   ];
-  const fitnessLevelMap = {
-    'Nicht so oft': 1,
-    'Mehrmals im Monat': 2,
-    'Einmal pro Woche': 3,
-    'Mehrmals pro Woche': 4,
-    'Täglich': 5,
-  };
-  const fitnessLevel = fitnessLevelMap[userFitnessLevel];
   const videoCriteria = {
     WU1: [],
     WU2: [],
@@ -594,6 +586,12 @@ app.post('/concatenate', async (req, res) => {
       3: 'Nacken',
       4: 'Schulter',
       5: 'Knie',
+      'Allgemein': 0,
+      'unterer Ruecken': 1,
+      'oberer Ruecken': 2,
+      'Nacken': 3,
+      'Schulter': 4,
+      'Knie': 5,
     };
 
     const goalMapping = {
@@ -601,28 +599,66 @@ app.post('/concatenate', async (req, res) => {
       1: 'Kraft',
       2: 'Beweglichkeit',
       3: 'Haltung',
+      'Allgemein': 0,
+      'Kraft': 1,
+      'Beweglichkeit': 2,
+      'Haltung': 3,
     };
 
-    const { duration, focus: focusIndex = 0, goal: goalIndex = 0, userFitnessLevel } = req.body;
+    const fitnessLevelMapping = {
+      0: 'Nicht so oft',
+      1: 'Mehrmals im Monat',
+      2: 'Einmal pro Woche',
+      3: 'Mehrmals pro Woche',
+      4: 'Täglich',
+      'Nicht so oft': 0,
+      'Mehrmals im Monat': 1,
+      'Einmal pro Woche': 2,
+      'Mehrmals pro Woche': 3,
+      'Täglich': 4,
+    };
 
-    // Map integers to their respective string values
-    const focus = focusMapping[focusIndex] || 'Allgemein'; // Default to 'Allgemein' if the index is invalid
-    const goal = goalMapping[goalIndex] || 'Allgemein';   // Default to 'Allgemein' if the index is invalid
+    const {
+      duration,
+      focus: rawFocus = 0,
+      goal: rawGoal = 0,
+      userFitnessLevel: rawFitnessLevel,
+    } = req.body;
+
+    // Convert string inputs to integers if necessary
+    const focusIndex = typeof rawFocus === 'string' ? focusMapping[rawFocus] : rawFocus;
+    const goalIndex = typeof rawGoal === 'string' ? goalMapping[rawGoal] : rawGoal;
+    const fitnessLevel = typeof rawFitnessLevel === 'string' ? fitnessLevelMapping[rawFitnessLevel] : rawFitnessLevel;
+
+    // Validate the converted values
+    if (
+      focusIndex === undefined ||
+      goalIndex === undefined ||
+      fitnessLevel === undefined
+    ) {
+      return res.status(400).json({
+        message: 'Invalid focus, goal, or userFitnessLevel value. Please update your app.',
+      });
+    }
+
+    // Map integers to their respective string values for further processing
+    const focus = focusMapping[focusIndex] || 'Allgemein';
+    const goal = goalMapping[goalIndex] || 'Allgemein';
     const listPath = '/var/www/backquest/videos/mylist.txt';
 
     console.log("Duration: " + duration);
     console.log("Goal: " + goal);
     console.log("Focus: " + focus);
-    console.log("FitnessLevel: " + userFitnessLevel);
+    console.log("FitnessLevel: " + fitnessLevel);
 
-    const { selectedVideos, totalDuration } = await selectVideos(userFitnessLevel, duration, focus, goal);
-    const sessionId = Date.now() + "_" + Math.random().toString(36).substr(2, 9);  // Unique session identifier
+    const { selectedVideos, totalDuration } = await selectVideos(fitnessLevel, duration, focus, goal);
+    const sessionId = Date.now() + "_" + Math.random().toString(36).substr(2, 9); // Unique session identifier
     const outputVideo = `/var/www/backquest/output/concatenated_video_${sessionId}.mp4`;
 
     await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/test/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
 
-    videoSessions[sessionId] = outputVideo;  // Store video path with session ID
+    videoSessions[sessionId] = outputVideo; // Store video path with session ID
 
     res.json({
       message: 'Videos concatenated successfully',
@@ -635,6 +671,7 @@ app.post('/concatenate', async (req, res) => {
     res.status(500).send('Failed to concatenate videos');
   }
 });
+
 
 
 

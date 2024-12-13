@@ -804,7 +804,7 @@ class _ExercisesPageMainScreenState extends State<ExercisesPageMainScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: Text(
-                        "Alle unsere Übungen",
+                        AppLocalizations.of(context)!.allOurExercises,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.height * 0.04,
                           fontWeight: FontWeight.bold,

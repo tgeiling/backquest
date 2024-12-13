@@ -624,33 +624,41 @@ class ProfilPageState extends State<ProfilPage> {
         AppLocalizations.of(context)!.frequencyDaily,
       ];
 
-      return SizedBox(
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: _buildColumnWithText(
-                dynamicText: "$completedLevelsTotal",
-                dynamicText1: AppLocalizations.of(context)!.weeklyUnits,
-              ),
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final double boxWidth =
+              constraints.maxWidth / 3 - 16; // Ensure uniform width
+          final double boxHeight = 80.0; // Fixed height for all boxes
+
+          return SizedBox(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildColumnWithText(
+                  dynamicText: "$completedLevelsTotal",
+                  dynamicText1: AppLocalizations.of(context)!.weeklyUnits,
+                  boxWidth: boxWidth,
+                  boxHeight: boxHeight,
+                ),
+                const SizedBox(width: 12.0),
+                _buildColumnWithText(
+                  dynamicText: "${profilProvider.hasPain.length}",
+                  dynamicText1: AppLocalizations.of(context)!.painAreas,
+                  boxWidth: boxWidth,
+                  boxHeight: boxHeight,
+                ),
+                const SizedBox(width: 12.0),
+                _buildColumnWithText(
+                  dynamicText: "${options2[profilProvider.fitnessLevel]}",
+                  dynamicText1: AppLocalizations.of(context)!.fitnessLevel,
+                  boxWidth: boxWidth,
+                  boxHeight: boxHeight,
+                ),
+              ],
             ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: _buildColumnWithText(
-                dynamicText: "${profilProvider.hasPain.length}",
-                dynamicText1: AppLocalizations.of(context)!.painAreas,
-              ),
-            ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: _buildColumnWithText(
-                dynamicText: "${options2[profilProvider.fitnessLevel]}",
-                dynamicText1: AppLocalizations.of(context)!.fitnessLevel,
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       );
     });
   }
@@ -658,13 +666,17 @@ class ProfilPageState extends State<ProfilPage> {
   Widget _buildColumnWithText({
     required String dynamicText,
     required String dynamicText1,
+    required double boxWidth,
+    required double boxHeight,
   }) {
     return SizedBox(
+      width: boxWidth,
+      height: boxHeight, // Ensure consistent height
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
         decoration: BoxDecoration(
           color: const Color(0xFFf5f2f2),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(12.0),
           boxShadow: const [
             BoxShadow(
               color: Color(0xFFb3b3b3),
@@ -675,20 +687,29 @@ class ProfilPageState extends State<ProfilPage> {
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 5.0),
-            Text(
-              dynamicText,
-              style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                    color: Colors.blueGrey[900],
-                  ),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                dynamicText,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                      color: Colors.blueGrey[900],
+                    ),
+              ),
             ),
-            Text(
-              dynamicText1,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Colors.lime[900],
-                  ),
+            const SizedBox(height: 4.0),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                dynamicText1,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Colors.lime[900],
+                    ),
+              ),
             ),
           ],
         ),

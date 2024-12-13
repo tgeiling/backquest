@@ -66,21 +66,45 @@ class DownloadScreenState extends State<DownloadScreen>
   }
 
   Future<void> combineAndDownloadVideo(
-      int focus, int goal, int duration, int userFitnessLevel) async {
+    int focus,
+    int goal,
+    int duration,
+    int userFitnessLevel,
+  ) async {
     setState(() {
       _isLoading = true;
     });
 
-    await combineVideos(focus, goal,
-        duration: duration, userFitnessLevel: userFitnessLevel);
+    // Combine videos and get the session ID
+    final sessionId = await combineVideos(
+      focus,
+      goal,
+      duration: duration,
+      userFitnessLevel: userFitnessLevel,
+    );
+
+    if (sessionId == null) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('Failed to retrieve session ID. Cannot download video.');
+      return;
+    }
+
+    // Construct the URL with the session ID
+    final String outputVideoUrl =
+        'http://135.125.218.147:3000/video?sessionId=$sessionId';
 
     await Future.delayed(const Duration(seconds: 2));
 
-    const String outputVideoUrl = 'http://135.125.218.147:3000/video';
-
     try {
       await _downloadVideo(
-          outputVideoUrl, focus, goal, duration, selectedVideos);
+        outputVideoUrl,
+        focus,
+        goal,
+        duration,
+        selectedVideos,
+      );
       setState(() {
         _isLoading = false;
       });
@@ -106,7 +130,8 @@ class DownloadScreenState extends State<DownloadScreen>
         String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
         String nameTimestamp = DateFormat('MMdd HH:mm').format(DateTime.now());
         final filePath = '${directory.path}/video_$timestamp.mp4';
-        final displayName = 'Einheit $nameTimestamp';
+        final displayName = AppLocalizations.of(context)!
+            .downloadedVideoName(nameTimestamp); // Translated name
         final file = File(filePath);
         await file.writeAsBytes(response.bodyBytes);
 
@@ -126,8 +151,10 @@ class DownloadScreenState extends State<DownloadScreen>
           textColor: Colors.white,
           context: context,
           type: QuickAlertType.success,
-          title: 'Download Complete',
-          text: 'Video has been downloaded successfully!',
+          title: AppLocalizations.of(context)!
+              .downloadComplete, // Translated title
+          text: AppLocalizations.of(context)!
+              .videoDownloadedSuccessfully, // Translated text
         );
       } else {
         setState(() {
@@ -138,10 +165,26 @@ class DownloadScreenState extends State<DownloadScreen>
           textColor: Colors.white,
           context: context,
           type: QuickAlertType.error,
-          title: 'Download Failed',
-          text: 'Failed to download video. Please try again.',
+          title:
+              AppLocalizations.of(context)!.downloadFailed, // Translated title
+          text: AppLocalizations.of(context)!
+              .failedToDownloadVideo, // Translated text
         );
       }
+    } on OutOfMemoryError catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      QuickAlert.show(
+        backgroundColor: Colors.red.shade700,
+        textColor: Colors.white,
+        context: context,
+        type: QuickAlertType.error,
+        title:
+            AppLocalizations.of(context)!.outOfMemoryError, // Translated title
+        text:
+            AppLocalizations.of(context)!.outOfMemoryMessage, // Translated text
+      );
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -151,9 +194,9 @@ class DownloadScreenState extends State<DownloadScreen>
         textColor: Colors.white,
         context: context,
         type: QuickAlertType.error,
-        title: 'Download Error',
-        text:
-            'An error occurred while downloading the video. Please try again.',
+        title: AppLocalizations.of(context)!.downloadError, // Translated title
+        text: AppLocalizations.of(context)!
+            .errorWhileDownloadingVideo, // Translated text
       );
     }
   }

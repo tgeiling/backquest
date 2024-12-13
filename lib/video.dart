@@ -239,14 +239,13 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   }
 }
 
-Future<void> combineVideos(
+Future<String?> combineVideos(
   int focus,
   int goal, {
   int duration = 600,
   required int userFitnessLevel,
 }) async {
   const String baseUrl = 'http://135.125.218.147:3000/concatenate';
-
   final token = await getAuthToken();
 
   try {
@@ -257,7 +256,7 @@ Future<void> combineVideos(
         "Content-Type": "application/json",
       },
       body: json.encode({
-        "userFittnesLevel": userFitnessLevel,
+        "userFitnessLevel": userFitnessLevel, // Correct spelling here
         "duration": duration,
         "focus": focus,
         "goal": goal,
@@ -265,23 +264,27 @@ Future<void> combineVideos(
     );
 
     if (response.statusCode == 200) {
-      print('Video concatenation triggered successfully.');
-
       final jsonResponse = json.decode(response.body);
-      final totalDuration = jsonResponse['totalDuration'];
+      final sessionId = jsonResponse['sessionId']; // Extract sessionId
       selectedVideos = jsonResponse['selectedVideos']
           .map<String>((dynamicItem) => dynamicItem.toString())
           .toList();
 
-      print(totalDuration);
+      print('Video concatenation triggered successfully.');
+      print('Session ID: $sessionId');
       print('Selected videos: $selectedVideos');
+
+      return sessionId; // Return the sessionId
     } else {
+      // Log the response body for debugging
       print('Failed to trigger video concatenation: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
   } catch (e) {
     print('Error making request to /concatenate endpoint: $e');
   }
+
+  return null;
 }
 
 Future<String> _assetToFile(String assetPath) async {

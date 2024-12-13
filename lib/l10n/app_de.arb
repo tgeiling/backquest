@@ -289,7 +289,15 @@
   "seitlicheSchwungeName": "Seitliche Schwünge",
   "seitlicheSchwungeText": "Wie beugt diese Übung Schmerzen vor: \r\nDiese dynamische Bewegung bringt deinen ganzen Oberkörper in Schwung. Besonders durch die Drehung der Brustwirbelsäule wirkst unser oft steifen Haltung entgegen und beugst Rückenschmerzen vor.\r\n\r\nAusführung:\r\n1.\tStelle dich aufrecht hin, die Beine etwa hüftbreit auseinander.\r\n2.\tSchwing nun beide Arme gemeinsam von Seite zu Seite. Dein Blick folgt den Händen.\r\n3.\tDeine Hüfte können locker mitschwingen.",
   "schwungeZurDeckeName": "Schwünge zur Decke",
-  "schwungeZurDeckeText": "Wie beugt diese Übung Schmerzen vor: \r\nDiese Übung kombiniert eine Aufwärtsbewegung mit einem dynamischen Schwung der Arme. Sie fördert die Beweglichkeit der Schultern und Brustwirbelsäule. Besonders das Öffnen deiner Körperseite hilft dir Rückenschmerzen vorzubeugen.\r\n\r\nAusführung:\r\n1.\tStelle dich aufrecht hin, die Füße schulterbreit auseinander.\r\n2.\tSchwinge nun deine Arme seitlich hoch zur Decke und schieb deine Hüfte raus, um deine ganze Körperseite zu öffnen.\r\n3.\tSchwing deine Arme so von Seite zu Seite. Dein ganzer Körper streckt sich bei jedem Schwung in die Länge – fühl dich dabei, als würdest du nach den Sternen greifen!"
-
-
+  "schwungeZurDeckeText": "Wie beugt diese Übung Schmerzen vor: \r\nDiese Übung kombiniert eine Aufwärtsbewegung mit einem dynamischen Schwung der Arme. Sie fördert die Beweglichkeit der Schultern und Brustwirbelsäule. Besonders das Öffnen deiner Körperseite hilft dir Rückenschmerzen vorzubeugen.\r\n\r\nAusführung:\r\n1.\tStelle dich aufrecht hin, die Füße schulterbreit auseinander.\r\n2.\tSchwinge nun deine Arme seitlich hoch zur Decke und schieb deine Hüfte raus, um deine ganze Körperseite zu öffnen.\r\n3.\tSchwing deine Arme so von Seite zu Seite. Dein ganzer Körper streckt sich bei jedem Schwung in die Länge – fühl dich dabei, als würdest du nach den Sternen greifen!",
+  "allOurExercises": "Alle unsere Übungen",
+  "downloadComplete": "Download abgeschlossen",
+  "videoDownloadedSuccessfully": "Das Video wurde erfolgreich heruntergeladen!",
+  "downloadFailed": "Download fehlgeschlagen",
+  "failedToDownloadVideo": "Das Video konnte nicht heruntergeladen werden. Bitte versuchen Sie es erneut.",
+  "outOfMemoryError": "Speicher voll",
+  "outOfMemoryMessage": "Ihr Gerät hat nicht genügend Speicherplatz. Bitte schaffen Sie Platz und versuchen Sie es erneut.",
+  "downloadError": "Download-Fehler",
+  "errorWhileDownloadingVideo": "Beim Herunterladen des Videos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+  "downloadedVideoName": "Einheit {nameTimestamp}"
 }

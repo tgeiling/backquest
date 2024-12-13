@@ -289,5 +289,15 @@
   "seitlicheSchwungeName": "Side Swings",
   "seitlicheSchwungeText": "How does this exercise prevent pain: \r\nThis dynamic movement brings your entire upper body into motion. By rotating the thoracic spine, you counteract stiffness and help prevent back pain.\r\n\r\nExecution:\r\n1.\tStand upright with your legs about hip-width apart.\r\n2.\tSwing both arms side to side, letting your gaze follow your hands.\r\n3.\tLet your hips sway naturally as you move.",
   "schwungeZurDeckeName": "Swings to the Ceiling",
-  "schwungeZurDeckeText": "How does this exercise prevent pain: \r\nThis exercise combines an upward motion with a dynamic arm swing. It improves shoulder and thoracic spine mobility. Opening up your sides helps prevent back pain.\r\n\r\nExecution:\r\n1.\tStand upright with your feet shoulder-width apart.\r\n2.\tSwing your arms upward to the ceiling and push your hip out to stretch your entire side body.\r\n3.\tSwing your arms from side to side. With each swing, your entire body stretches upward – imagine reaching for the stars!"
+  "schwungeZurDeckeText": "How does this exercise prevent pain: \r\nThis exercise combines an upward motion with a dynamic arm swing. It improves shoulder and thoracic spine mobility. Opening up your sides helps prevent back pain.\r\n\r\nExecution:\r\n1.\tStand upright with your feet shoulder-width apart.\r\n2.\tSwing your arms upward to the ceiling and push your hip out to stretch your entire side body.\r\n3.\tSwing your arms from side to side. With each swing, your entire body stretches upward – imagine reaching for the stars!",
+  "allOurExercises": "All our exercises",
+  "downloadComplete": "Download Complete",
+  "videoDownloadedSuccessfully": "Video has been downloaded successfully!",
+  "downloadFailed": "Download Failed",
+  "failedToDownloadVideo": "Failed to download video. Please try again.",
+  "outOfMemoryError": "Out of Memory",
+  "outOfMemoryMessage": "Your device ran out of memory. Please free up some space and try again.",
+  "downloadError": "Download Error",
+  "errorWhileDownloadingVideo": "An error occurred while downloading the video. Please try again.",
+  "downloadedVideoName": "Session {nameTimestamp}"
 }
