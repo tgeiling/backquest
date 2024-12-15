@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stroke_text/stroke_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get_it/get_it.dart';
 
 import 'stats.dart';
 import 'video.dart';
@@ -41,47 +42,109 @@ class LevelNotifier with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<int, Level> tempLevels = {
       1: Level(
-          id: 1,
-          description: "Erste Schritte zur Rückengesundheit",
-          minutes: 13),
-      2: Level(id: 2, description: "Schritt 2 für deinen Rücken", minutes: 12),
-      3: Level(id: 3, description: "Alle guten Dinge sind 3", minutes: 14),
-      4: Level(id: 4, description: "Fokus auf Unteren Rücken", minutes: 11),
+        id: 1,
+        description: AppLocalizations.of(context)!.level1Description,
+        minutes: 13,
+      ),
+      2: Level(
+        id: 2,
+        description: AppLocalizations.of(context)!.level2Description,
+        minutes: 12,
+      ),
+      3: Level(
+        id: 3,
+        description: AppLocalizations.of(context)!.level3Description,
+        minutes: 14,
+      ),
+      4: Level(
+        id: 4,
+        description: AppLocalizations.of(context)!.level4Description,
+        minutes: 11,
+      ),
       5: Level(
-          id: 5,
-          description: "Zu einfach? Passe dein Fitnesslevel an",
-          reward: "Gold Coin",
-          minutes: 6),
-      6: Level(id: 6, description: "Die meisten geben hier auf!", minutes: 6),
-      7: Level(id: 7, description: "Rückenschmerzen hartnäckig?", minutes: 6),
-      8: Level(id: 8, description: "Du bist auf einem gutem Weg", minutes: 6),
-      9: Level(id: 9, description: "Fokus auf Hüfte", minutes: 6),
+        id: 5,
+        description: AppLocalizations.of(context)!.level5Description,
+        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        minutes: 6,
+      ),
+      6: Level(
+        id: 6,
+        description: AppLocalizations.of(context)!.level6Description,
+        minutes: 6,
+      ),
+      7: Level(
+        id: 7,
+        description: AppLocalizations.of(context)!.level7Description,
+        minutes: 6,
+      ),
+      8: Level(
+        id: 8,
+        description: AppLocalizations.of(context)!.level8Description,
+        minutes: 6,
+      ),
+      9: Level(
+        id: 9,
+        description: AppLocalizations.of(context)!.level9Description,
+        minutes: 6,
+      ),
       10: Level(
-          id: 10,
-          description: "Schon fast 10 Level geschafft",
-          reward: "Gold Coin",
-          minutes: 6),
-      11: Level(id: 11, description: "Fokus auf Schultern", minutes: 6),
+        id: 10,
+        description: AppLocalizations.of(context)!.level10Description,
+        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        minutes: 6,
+      ),
+      11: Level(
+        id: 11,
+        description: AppLocalizations.of(context)!.level11Description,
+        minutes: 6,
+      ),
       12: Level(
-          id: 12,
-          description: "Jetzt hast du bald alles ausprobiert",
-          minutes: 6),
-      13: Level(id: 13, description: "Lange Meditation", minutes: 6),
-      14: Level(id: 14, description: "Fokus auf Unterer Rücken", minutes: 6),
+        id: 12,
+        description: AppLocalizations.of(context)!.level12Description,
+        minutes: 6,
+      ),
+      13: Level(
+        id: 13,
+        description: AppLocalizations.of(context)!.level13Description,
+        minutes: 6,
+      ),
+      14: Level(
+        id: 14,
+        description: AppLocalizations.of(context)!.level14Description,
+        minutes: 6,
+      ),
       15: Level(
-          id: 15,
-          description: "Schau wie weit du schon bist!",
-          reward: "Gold Coin",
-          minutes: 6),
-      16: Level(id: 16, description: "Noch 4 Level!", minutes: 6),
-      17: Level(id: 17, description: "Noch 3 Level!", minutes: 6),
-      18: Level(id: 18, description: "Noch 2 Level!", minutes: 6),
-      19: Level(id: 19, description: "Noch 1 Level!", minutes: 6),
+        id: 15,
+        description: AppLocalizations.of(context)!.level15Description,
+        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        minutes: 6,
+      ),
+      16: Level(
+        id: 16,
+        description: AppLocalizations.of(context)!.level16Description,
+        minutes: 6,
+      ),
+      17: Level(
+        id: 17,
+        description: AppLocalizations.of(context)!.level17Description,
+        minutes: 6,
+      ),
+      18: Level(
+        id: 18,
+        description: AppLocalizations.of(context)!.level18Description,
+        minutes: 6,
+      ),
+      19: Level(
+        id: 19,
+        description: AppLocalizations.of(context)!.level19Description,
+        minutes: 6,
+      ),
       20: Level(
-          id: 20,
-          description: "20 Übungen machen eine Gewohnheit",
-          reward: "Gold Coin",
-          minutes: 6),
+        id: 20,
+        description: AppLocalizations.of(context)!.level20Description,
+        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        minutes: 6,
+      ),
     };
 
     _levels = {

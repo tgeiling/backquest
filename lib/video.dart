@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 
 import 'main.dart';
@@ -181,15 +182,15 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
               QuickAlert.show(
                 context: context,
                 type: QuickAlertType.error,
-                title: 'Noch nicht geschafft',
-                text: 'Möchtest du deine Trainingssitzung wirklich beenden?',
-                confirmBtnText: 'zurück',
+                title: AppLocalizations.of(context)!.notCompletedTitle,
+                text: AppLocalizations.of(context)!.notCompletedMessage,
+                confirmBtnText: AppLocalizations.of(context)!.confirmButton,
                 onConfirmBtnTap: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 showCancelBtn: true,
-                cancelBtnText: 'bleiben',
+                cancelBtnText: AppLocalizations.of(context)!.cancelButton,
               );
             }
           },
@@ -197,18 +198,18 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       ),
       body: Center(
         child: _isLoading
-            ? const Center(
+            ? Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    SpinKitCubeGrid(
+                    const SpinKitCubeGrid(
                       color: Colors.white,
                       size: 90.0,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
-                      'Wir bereiten Ihr Video vor',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.preparingVideo,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                       ),
@@ -225,9 +226,9 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
                       controller: _chewieController!,
                     ),
                   )
-                : const Text(
-                    'Waiting for video...',
-                    style: TextStyle(color: Colors.white),
+                : Text(
+                    AppLocalizations.of(context)!.waitingForVideo,
+                    style: const TextStyle(color: Colors.white),
                   ),
       ),
     );
