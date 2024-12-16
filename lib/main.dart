@@ -25,6 +25,7 @@ import 'auth.dart';
 import 'services.dart';
 import 'settings.dart';
 import 'download.dart';
+import 'localization_service.dart';
 
 class LevelNotifier with ChangeNotifier {
   Map<int, Level> _levels = {};
@@ -40,109 +41,131 @@ class LevelNotifier with ChangeNotifier {
 
   Future<void> _loadLevels() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final localizationService = GetIt.I<LocalizationService>();
+
     Map<int, Level> tempLevels = {
       1: Level(
         id: 1,
-        description: AppLocalizations.of(context)!.level1Description,
+        description:
+            localizationService.getTranslatedString('level1Description'),
         minutes: 13,
       ),
       2: Level(
         id: 2,
-        description: AppLocalizations.of(context)!.level2Description,
+        description:
+            localizationService.getTranslatedString('level2Description'),
         minutes: 12,
       ),
       3: Level(
         id: 3,
-        description: AppLocalizations.of(context)!.level3Description,
+        description:
+            localizationService.getTranslatedString('level3Description'),
         minutes: 14,
       ),
       4: Level(
         id: 4,
-        description: AppLocalizations.of(context)!.level4Description,
+        description:
+            localizationService.getTranslatedString('level4Description'),
         minutes: 11,
       ),
       5: Level(
         id: 5,
-        description: AppLocalizations.of(context)!.level5Description,
-        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        description:
+            localizationService.getTranslatedString('level5Description'),
+        reward: localizationService.getTranslatedString('rewardGoldCoin'),
         minutes: 6,
       ),
       6: Level(
         id: 6,
-        description: AppLocalizations.of(context)!.level6Description,
+        description:
+            localizationService.getTranslatedString('level6Description'),
         minutes: 6,
       ),
       7: Level(
         id: 7,
-        description: AppLocalizations.of(context)!.level7Description,
+        description:
+            localizationService.getTranslatedString('level7Description'),
         minutes: 6,
       ),
       8: Level(
         id: 8,
-        description: AppLocalizations.of(context)!.level8Description,
+        description:
+            localizationService.getTranslatedString('level8Description'),
         minutes: 6,
       ),
       9: Level(
         id: 9,
-        description: AppLocalizations.of(context)!.level9Description,
+        description:
+            localizationService.getTranslatedString('level9Description'),
         minutes: 6,
       ),
       10: Level(
         id: 10,
-        description: AppLocalizations.of(context)!.level10Description,
-        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        description:
+            localizationService.getTranslatedString('level10Description'),
+        reward: localizationService.getTranslatedString('rewardGoldCoin'),
         minutes: 6,
       ),
       11: Level(
         id: 11,
-        description: AppLocalizations.of(context)!.level11Description,
+        description:
+            localizationService.getTranslatedString('level11Description'),
         minutes: 6,
       ),
       12: Level(
         id: 12,
-        description: AppLocalizations.of(context)!.level12Description,
+        description:
+            localizationService.getTranslatedString('level12Description'),
         minutes: 6,
       ),
       13: Level(
         id: 13,
-        description: AppLocalizations.of(context)!.level13Description,
+        description:
+            localizationService.getTranslatedString('level13Description'),
         minutes: 6,
       ),
       14: Level(
         id: 14,
-        description: AppLocalizations.of(context)!.level14Description,
+        description:
+            localizationService.getTranslatedString('level14Description'),
         minutes: 6,
       ),
       15: Level(
         id: 15,
-        description: AppLocalizations.of(context)!.level15Description,
-        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        description:
+            localizationService.getTranslatedString('level15Description'),
+        reward: localizationService.getTranslatedString('rewardGoldCoin'),
         minutes: 6,
       ),
       16: Level(
         id: 16,
-        description: AppLocalizations.of(context)!.level16Description,
+        description:
+            localizationService.getTranslatedString('level16Description'),
         minutes: 6,
       ),
       17: Level(
         id: 17,
-        description: AppLocalizations.of(context)!.level17Description,
+        description:
+            localizationService.getTranslatedString('level17Description'),
         minutes: 6,
       ),
       18: Level(
         id: 18,
-        description: AppLocalizations.of(context)!.level18Description,
+        description:
+            localizationService.getTranslatedString('level18Description'),
         minutes: 6,
       ),
       19: Level(
         id: 19,
-        description: AppLocalizations.of(context)!.level19Description,
+        description:
+            localizationService.getTranslatedString('level19Description'),
         minutes: 6,
       ),
       20: Level(
         id: 20,
-        description: AppLocalizations.of(context)!.level20Description,
-        reward: AppLocalizations.of(context)!.rewardGoldCoin,
+        description:
+            localizationService.getTranslatedString('level20Description'),
+        reward: localizationService.getTranslatedString('rewardGoldCoin'),
         minutes: 6,
       ),
     };
@@ -245,7 +268,11 @@ class LevelNotifier with ChangeNotifier {
   }
 }
 
+final GetIt getIt = GetIt.instance;
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  getIt.registerSingleton<LocalizationService>(LocalizationService());
   runApp(
     MultiProvider(
       providers: [
@@ -514,8 +541,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         fontFamily: 'Roboto',
         textTheme: buildTextTheme(context),
       ),
+      locale: GetIt.I<LocalizationService>().locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      builder: (context, child) {
+        // Initialize LocalizationService after MaterialApp is built
+        final appLocalizations = AppLocalizations.of(context);
+        if (appLocalizations != null) {
+          GetIt.I<LocalizationService>().initialize(appLocalizations);
+        } else {
+          print("AppLocalizations is null, unable to initialize.");
+        }
+        return child!;
+      },
       home: Stack(
         children: [
           if (_isLoading)
@@ -532,7 +570,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     showResetDialogBool: showResetDialogBool,
                   )
                 : QuestionnaireScreen(
-                    checkQuestionaire: _checkQuestionnaireCompletion),
+                    checkQuestionaire: _checkQuestionnaireCompletion,
+                  ),
           if (_showConnectionMessage)
             Positioned(
               top: 70,
