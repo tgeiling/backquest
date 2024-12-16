@@ -92,7 +92,7 @@
   "personalizedTrainingIntro": "Our coach creates personalized training videos tailored to your individual needs and goals. After each session, you can provide feedback to your coach, ensuring each exercise is even more suited to you.",
   "finishButton": "Finish",
   "feedbackSuccess": "Feedback sent successfully!",
-  "feedbackFailure": "Failed to send feedback.",
+  "feedbackFailure": "Need to Register to send feedback",
   "feedbackError": "Error sending feedback",
   "finish": "Finish",
   "feedbackIntroduction": "Give your coach quick feedback on your exercises.",
