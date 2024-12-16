@@ -2,18 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LocalizationService {
-  Locale _locale = const Locale('en'); // Default locale
-  late AppLocalizations _localizations; // Late initialization
+  late AppLocalizations _localizations;
 
-  // Getter for the current locale
-  Locale get locale => _locale;
-
-  // Setter for the current locale
-  void setLocale(Locale locale) {
-    _locale = locale;
-  }
-
-  // Setter for the AppLocalizations instance
+  // Initialize with the correct localizations
   void initialize(AppLocalizations localizations) {
     _localizations = localizations;
   }

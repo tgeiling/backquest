@@ -541,7 +541,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         fontFamily: 'Roboto',
         textTheme: buildTextTheme(context),
       ),
-      locale: GetIt.I<LocalizationService>().locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
