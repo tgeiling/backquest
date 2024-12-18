@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
   lastResetDate: String,
   feedback: [{
     videoId: String,
-    difficulty: String,
+    difficulty: int,
     painAreas: [String]
   }]
 });

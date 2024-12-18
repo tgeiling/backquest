@@ -143,7 +143,7 @@ class ExerciseFeedback {
     );
   }
 
-  void update({String? newDifficulty, List<int>? newPainAreas}) {
+  void update({int? newDifficulty, List<int>? newPainAreas}) {
     if (newDifficulty != null) {
       difficulty = newDifficulty;
     }
