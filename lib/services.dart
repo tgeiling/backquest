@@ -126,7 +126,7 @@ int weekNumber(DateTime date) {
 
 class ExerciseFeedback {
   final String videoId;
-  String? difficulty;
+  int? difficulty;
   List<int> painAreas;
 
   ExerciseFeedback({

@@ -1388,7 +1388,7 @@ class ExerciseFeedbackTile extends StatefulWidget {
 }
 
 class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
-  String? selectedDifficulty;
+  int? selectedDifficulty;
   List<int> selectedPainAreas = [];
 
   @override
@@ -1467,12 +1467,14 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                         AppLocalizations.of(context)!.difficultyMedium,
                         AppLocalizations.of(context)!.difficultyHard,
                       ]
-                          .map((difficulty) => ChoiceChip(
+                          .asMap()
+                          .entries
+                          .map((entry) => ChoiceChip(
                                 backgroundColor: Colors.grey.shade700,
                                 checkmarkColor: Colors.white,
                                 selectedColor: Colors.green,
                                 label: Text(
-                                  difficulty,
+                                  entry.value,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: baseSize * 0.3,
@@ -1481,10 +1483,10 @@ class _ExerciseFeedbackTileState extends State<ExerciseFeedbackTile> {
                                 labelPadding: EdgeInsets.symmetric(
                                     vertical: wrapItemVerticalPadding,
                                     horizontal: wrapItemHorizontalPadding),
-                                selected: selectedDifficulty == difficulty,
+                                selected: selectedDifficulty == entry.key,
                                 onSelected: (bool selected) {
                                   setState(() => selectedDifficulty =
-                                      selected ? difficulty : null);
+                                      selected ? entry.key : null);
                                   _updateFeedback();
                                 },
                               ))
