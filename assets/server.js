@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
   lastResetDate: String,
   feedback: [{
     videoId: String,
-    difficulty: int,
+    difficulty: Number,
     painAreas: [String]
   }]
 });
@@ -623,6 +623,7 @@ app.post('/concatenate', async (req, res) => {
       focus: rawFocus = 0,
       goal: rawGoal = 0,
       userFitnessLevel: rawFitnessLevel,
+      locale = 'en_EN', // Default to English if no locale is provided
     } = req.body;
 
     // Convert string inputs to integers if necessary
@@ -641,6 +642,10 @@ app.post('/concatenate', async (req, res) => {
       });
     }
 
+    // after update
+    //const videoDirectory = locale === 'de_DE' ? '/var/www/backquest/videos/test' : '/var/www/backquest/videos/test_en';
+    const videoDirectory = '/var/www/backquest/videos/test';
+
     // Map integers to their respective string values for further processing
     const focus = focusMapping[focusIndex] || 'Allgemein';
     const goal = goalMapping[goalIndex] || 'Allgemein';
@@ -650,12 +655,13 @@ app.post('/concatenate', async (req, res) => {
     console.log("Goal: " + goal);
     console.log("Focus: " + focus);
     console.log("FitnessLevel: " + fitnessLevel);
+    console.log("Locale: " + locale);
 
     const { selectedVideos, totalDuration } = await selectVideos(fitnessLevel, duration, focus, goal);
     const sessionId = Date.now() + "_" + Math.random().toString(36).substr(2, 9); // Unique session identifier
     const outputVideo = `/var/www/backquest/output/concatenated_video_${sessionId}.mp4`;
 
-    await generateConcatListFile(selectedVideos.map(video => `/var/www/backquest/videos/test/${video.id}.mp4`), listPath);
+    await generateConcatListFile(selectedVideos.map(video => `${videoDirectory}/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
 
     videoSessions[sessionId] = outputVideo; // Store video path with session ID
@@ -671,8 +677,6 @@ app.post('/concatenate', async (req, res) => {
     res.status(500).send('Failed to concatenate videos');
   }
 });
-
-
 
 
 

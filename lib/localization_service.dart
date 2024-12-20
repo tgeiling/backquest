@@ -36,4 +36,10 @@ class LocalizationService {
 
     return translations[key] ?? 'Translation not found';
   }
+
+  String getTranslatedMessage(String key) {
+    String translation = getTranslatedString(key);
+
+    return translation;
+  }
 }

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:backquest/localization_service.dart';
 import 'package:backquest/stats.dart';
 import 'package:chewie/chewie.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,7 +68,10 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
     });
 
     try {
-      // Step 1: Request a unique session ID from the server
+      final localizationService = GetIt.I<LocalizationService>();
+      final String languageCode =
+          localizationService.getTranslatedMessage('locale');
+
       final response = await http.post(
         Uri.parse('http://135.125.218.147:3000/concatenate'),
         headers: {'Content-Type': 'application/json'},
@@ -75,6 +80,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           'goal': widget.goal,
           'duration': widget.duration,
           'userFitnessLevel': widget.profilProvider.fitnessLevel ?? 0,
+          'language': languageCode,
         }),
       );
 
@@ -250,6 +256,11 @@ Future<String?> combineVideos(
   final token = await getAuthToken();
 
   try {
+    final localizationService = GetIt.I<LocalizationService>();
+
+    final String languageCode =
+        localizationService.getTranslatedMessage('locale');
+
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -257,10 +268,11 @@ Future<String?> combineVideos(
         "Content-Type": "application/json",
       },
       body: json.encode({
-        "userFitnessLevel": userFitnessLevel, // Correct spelling here
+        "userFitnessLevel": userFitnessLevel,
         "duration": duration,
         "focus": focus,
         "goal": goal,
+        "language": languageCode, // Use the translated language code
       }),
     );
 
