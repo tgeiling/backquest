@@ -523,17 +523,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  bool isTablet(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context);
-    var diagonalInches = sqrt(mediaQuery.size.width * mediaQuery.size.width +
-            mediaQuery.size.height * mediaQuery.size.height) /
-        mediaQuery.devicePixelRatio;
-    return diagonalInches >= 7.0; // A common threshold for tablets
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bool isTabletDevice = isTablet(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Backquest',
@@ -562,60 +553,58 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         }
         return child!;
       },
-      home: Transform.scale(
-          scale: isTabletDevice ? 0.8 : 1.0, // Scale down on tablets
-          child: Stack(
-            children: [
-              if (_isLoading)
-                const Center(
-                  child: CircularProgressIndicator(),
-                )
-              else
-                questionaireDone
-                    ? MainScaffold(
-                        authenticated: _authenticated ?? false,
-                        setAuthenticated: _setAuthenticated,
-                        setQuestionnairDone: _checkQuestionnaireCompletion,
-                        isLoggedIn: isLoggedIn,
-                        showResetDialogBool: showResetDialogBool,
-                      )
-                    : QuestionnaireScreen(
-                        checkQuestionaire: _checkQuestionnaireCompletion,
-                      ),
-              if (_showConnectionMessage)
-                Positioned(
-                  top: 70,
-                  left: 16,
-                  right: 16,
-                  child: GreenContainer(
-                      padding: const EdgeInsets.all(8.0),
-                      child: NoConnectionWidget(onDismiss: () {
-                        setState(() {
-                          _showConnectionMessage = false;
-                        });
-                      })),
-                ),
-              if (_showAuthenticateMessage && questionaireDone)
-                Positioned(
-                  top: 70,
-                  left: 16,
-                  right: 16,
-                  child: GreenContainer(
-                    padding: const EdgeInsets.all(8.0),
-                    child: AuthenticateWidget(
-                      onDismiss: () {
-                        setState(() {
-                          print("turn off");
-                          _showAuthenticateMessage = false;
-                        });
-                      },
-                      setAuthenticated: _setAuthenticated,
-                      setQuestionnairDone: _checkQuestionnaireCompletion,
-                    ),
+      home: Stack(
+        children: [
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            questionaireDone
+                ? MainScaffold(
+                    authenticated: _authenticated ?? false,
+                    setAuthenticated: _setAuthenticated,
+                    setQuestionnairDone: _checkQuestionnaireCompletion,
+                    isLoggedIn: isLoggedIn,
+                    showResetDialogBool: showResetDialogBool,
+                  )
+                : QuestionnaireScreen(
+                    checkQuestionaire: _checkQuestionnaireCompletion,
                   ),
+          if (_showConnectionMessage)
+            Positioned(
+              top: 70,
+              left: 16,
+              right: 16,
+              child: GreenContainer(
+                  padding: const EdgeInsets.all(8.0),
+                  child: NoConnectionWidget(onDismiss: () {
+                    setState(() {
+                      _showConnectionMessage = false;
+                    });
+                  })),
+            ),
+          if (_showAuthenticateMessage && questionaireDone)
+            Positioned(
+              top: 70,
+              left: 16,
+              right: 16,
+              child: GreenContainer(
+                padding: const EdgeInsets.all(8.0),
+                child: AuthenticateWidget(
+                  onDismiss: () {
+                    setState(() {
+                      print("turn off");
+                      _showAuthenticateMessage = false;
+                    });
+                  },
+                  setAuthenticated: _setAuthenticated,
+                  setQuestionnairDone: _checkQuestionnaireCompletion,
                 ),
-            ],
-          )),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
