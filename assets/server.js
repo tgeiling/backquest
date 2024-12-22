@@ -267,17 +267,13 @@ async function concatenateVideos(listPath, outputFile) {
     ffmpeg()
       .input(listPath)
       .inputOptions([
-        '-f concat',                // Use concat demuxer
-        '-safe 0',                  // Allow unsafe filenames in list
+        '-f concat', 
+        '-safe 0'
       ])
       .outputOptions([
-        '-c:v copy',                // Copy video stream
-        '-c:a aac',                 // Re-encode audio to AAC
-        '-b:a 192k',                // Set audio bitrate
-        '-ac 2',                    // Set number of audio channels
-        '-ar 44100',                // Set audio sample rate
-        '-avoid_negative_ts make_zero', // Avoid negative timestamps
-        '-map_metadata -1',         // Remove all metadata
+        '-c copy',                 // Copy video and audio streams
+        '-avoid_negative_ts make_zero', 
+        '-map_metadata -1'
       ])
       .output(outputFile)
       .on('start', (commandLine) => {
@@ -294,7 +290,6 @@ async function concatenateVideos(listPath, outputFile) {
       .run();
   });
 }
-
 
 
 
