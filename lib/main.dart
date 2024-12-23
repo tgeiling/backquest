@@ -526,95 +526,85 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Backquest',
-      theme: ThemeData(
-        primaryColor: Colors.green,
-        inputDecorationTheme: const InputDecorationTheme(
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.green),
+        debugShowCheckedModeBanner: false,
+        title: 'Backquest',
+        theme: ThemeData(
+          primaryColor: Colors.green,
+          inputDecorationTheme: const InputDecorationTheme(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.green),
+            ),
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
           ),
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
+          fontFamily: 'Roboto',
+          textTheme: buildTextTheme(context),
         ),
-        fontFamily: 'Roboto',
-        textTheme: buildTextTheme(context),
-      ),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      builder: (context, child) {
-        // Initialize LocalizationService after MaterialApp is built
-        final appLocalizations = AppLocalizations.of(context);
-        if (appLocalizations != null) {
-          GetIt.I<LocalizationService>().initialize(appLocalizations);
-        } else {
-          print("AppLocalizations is null, unable to initialize.");
-        }
-        return child!;
-      },
-      home: Container(
-          constraints: BoxConstraints.expand(),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            // Determine if the device is a tablet
-            bool isTablet = constraints.maxWidth >= 600;
-
-            return Stack(
-              children: [
-                if (_isLoading)
-                  const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                else
-                  questionaireDone
-                      ? MainScaffold(
-                          authenticated: _authenticated ?? false,
-                          setAuthenticated: _setAuthenticated,
-                          setQuestionnairDone: _checkQuestionnaireCompletion,
-                          isLoggedIn: isLoggedIn,
-                          showResetDialogBool: showResetDialogBool,
-                        )
-                      : QuestionnaireScreen(
-                          checkQuestionaire: _checkQuestionnaireCompletion,
-                        ),
-                if (_showConnectionMessage)
-                  Positioned(
-                    top: 70,
-                    left: 16,
-                    right: 16,
-                    child: GreenContainer(
-                        padding: const EdgeInsets.all(8.0),
-                        child: NoConnectionWidget(onDismiss: () {
-                          setState(() {
-                            _showConnectionMessage = false;
-                          });
-                        })),
-                  ),
-                if (_showAuthenticateMessage && questionaireDone)
-                  Positioned(
-                    top: 70,
-                    left: 16,
-                    right: 16,
-                    child: GreenContainer(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AuthenticateWidget(
-                        onDismiss: () {
-                          setState(() {
-                            print("turn off");
-                            _showAuthenticateMessage = false;
-                          });
-                        },
-                        setAuthenticated: _setAuthenticated,
-                        setQuestionnairDone: _checkQuestionnaireCompletion,
-                      ),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) {
+          // Initialize LocalizationService after MaterialApp is built
+          final appLocalizations = AppLocalizations.of(context);
+          if (appLocalizations != null) {
+            GetIt.I<LocalizationService>().initialize(appLocalizations);
+          } else {
+            print("AppLocalizations is null, unable to initialize.");
+          }
+          return child!;
+        },
+        home: Stack(
+          children: [
+            if (_isLoading)
+              const Center(
+                child: CircularProgressIndicator(),
+              )
+            else
+              questionaireDone
+                  ? MainScaffold(
+                      authenticated: _authenticated ?? false,
+                      setAuthenticated: _setAuthenticated,
+                      setQuestionnairDone: _checkQuestionnaireCompletion,
+                      isLoggedIn: isLoggedIn,
+                      showResetDialogBool: showResetDialogBool,
+                    )
+                  : QuestionnaireScreen(
+                      checkQuestionaire: _checkQuestionnaireCompletion,
                     ),
+            if (_showConnectionMessage)
+              Positioned(
+                top: 70,
+                left: 16,
+                right: 16,
+                child: GreenContainer(
+                    padding: const EdgeInsets.all(8.0),
+                    child: NoConnectionWidget(onDismiss: () {
+                      setState(() {
+                        _showConnectionMessage = false;
+                      });
+                    })),
+              ),
+            if (_showAuthenticateMessage && questionaireDone)
+              Positioned(
+                top: 70,
+                left: 16,
+                right: 16,
+                child: GreenContainer(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AuthenticateWidget(
+                    onDismiss: () {
+                      setState(() {
+                        print("turn off");
+                        _showAuthenticateMessage = false;
+                      });
+                    },
+                    setAuthenticated: _setAuthenticated,
+                    setQuestionnairDone: _checkQuestionnaireCompletion,
                   ),
-              ],
-            );
-          })),
-    );
+                ),
+              ),
+          ],
+        ));
   }
 }
 
