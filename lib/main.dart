@@ -935,7 +935,7 @@ class _MainScaffoldState extends State<MainScaffold>
                                         padding: EdgeInsets.symmetric(
                                           horizontal:
                                               constraints.maxWidth >= 600
-                                                  ? 48.0
+                                                  ? screenWidth * 0.2
                                                   : 0,
                                         ),
                                         child: LevelSelectionScreen(
@@ -953,11 +953,27 @@ class _MainScaffoldState extends State<MainScaffold>
                         ],
                       ),
                     ),
-                    child: ProfilPage(
-                      setAuthenticated: widget.setAuthenticated,
-                      setQuestionnairDone: widget.setQuestionnairDone,
-                      isLoggedIn: widget.isLoggedIn,
-                    )),
+                    child: Container(
+                        constraints: BoxConstraints.expand(),
+                        color: Colors.transparent,
+                        child: LayoutBuilder(
+                            builder: (BuildContext context,
+                                    BoxConstraints constraints) =>
+                                Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal:
+                                              constraints.maxWidth >= 600
+                                                  ? screenWidth * 0.2
+                                                  : 0,
+                                        ),
+                                        child: ProfilPage(
+                                          setAuthenticated:
+                                              widget.setAuthenticated,
+                                          setQuestionnairDone:
+                                              widget.setQuestionnairDone,
+                                          isLoggedIn: widget.isLoggedIn,
+                                        )))))),
                 Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -970,8 +986,21 @@ class _MainScaffoldState extends State<MainScaffold>
                       ),
                     ),
                     child: Center(
-                      child: ExercisesPageMainScreen(),
-                    )),
+                        child: Container(
+                            constraints: BoxConstraints.expand(),
+                            color: Colors.transparent,
+                            child: LayoutBuilder(
+                                builder: (BuildContext context,
+                                        BoxConstraints constraints) =>
+                                    Center(
+                                        child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: constraints.maxWidth >= 600
+                                            ? screenWidth * 0.2
+                                            : 0,
+                                      ),
+                                      child: ExercisesPageMainScreen(),
+                                    )))))),
                 Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -984,10 +1013,24 @@ class _MainScaffoldState extends State<MainScaffold>
                       ),
                     ),
                     child: Center(
-                      child: DownloadScreen(
-                        toggleModal: _toggleModal,
-                        key: downloadScreenKey,
-                      ),
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          color: Colors.transparent,
+                          child: LayoutBuilder(
+                              builder: (BuildContext context,
+                                      BoxConstraints constraints) =>
+                                  Center(
+                                      child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                constraints.maxWidth >= 600
+                                                    ? screenWidth * 0.2
+                                                    : 0,
+                                          ),
+                                          child: DownloadScreen(
+                                            toggleModal: _toggleModal,
+                                            key: downloadScreenKey,
+                                          ))))),
                     )),
               ],
             ),
