@@ -561,65 +561,58 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             // Determine if the device is a tablet
             bool isTablet = constraints.maxWidth >= 600;
 
-            return Center(
-                child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: isTablet ? 48.0 : 16.0),
-                    child: Stack(
-                      children: [
-                        if (_isLoading)
-                          const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        else
-                          questionaireDone
-                              ? MainScaffold(
-                                  authenticated: _authenticated ?? false,
-                                  setAuthenticated: _setAuthenticated,
-                                  setQuestionnairDone:
-                                      _checkQuestionnaireCompletion,
-                                  isLoggedIn: isLoggedIn,
-                                  showResetDialogBool: showResetDialogBool,
-                                )
-                              : QuestionnaireScreen(
-                                  checkQuestionaire:
-                                      _checkQuestionnaireCompletion,
-                                ),
-                        if (_showConnectionMessage)
-                          Positioned(
-                            top: 70,
-                            left: 16,
-                            right: 16,
-                            child: GreenContainer(
-                                padding: const EdgeInsets.all(8.0),
-                                child: NoConnectionWidget(onDismiss: () {
-                                  setState(() {
-                                    _showConnectionMessage = false;
-                                  });
-                                })),
-                          ),
-                        if (_showAuthenticateMessage && questionaireDone)
-                          Positioned(
-                            top: 70,
-                            left: 16,
-                            right: 16,
-                            child: GreenContainer(
-                              padding: const EdgeInsets.all(8.0),
-                              child: AuthenticateWidget(
-                                onDismiss: () {
-                                  setState(() {
-                                    print("turn off");
-                                    _showAuthenticateMessage = false;
-                                  });
-                                },
-                                setAuthenticated: _setAuthenticated,
-                                setQuestionnairDone:
-                                    _checkQuestionnaireCompletion,
-                              ),
-                            ),
-                          ),
-                      ],
-                    )));
+            return Stack(
+              children: [
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                else
+                  questionaireDone
+                      ? MainScaffold(
+                          authenticated: _authenticated ?? false,
+                          setAuthenticated: _setAuthenticated,
+                          setQuestionnairDone: _checkQuestionnaireCompletion,
+                          isLoggedIn: isLoggedIn,
+                          showResetDialogBool: showResetDialogBool,
+                        )
+                      : QuestionnaireScreen(
+                          checkQuestionaire: _checkQuestionnaireCompletion,
+                        ),
+                if (_showConnectionMessage)
+                  Positioned(
+                    top: 70,
+                    left: 16,
+                    right: 16,
+                    child: GreenContainer(
+                        padding: const EdgeInsets.all(8.0),
+                        child: NoConnectionWidget(onDismiss: () {
+                          setState(() {
+                            _showConnectionMessage = false;
+                          });
+                        })),
+                  ),
+                if (_showAuthenticateMessage && questionaireDone)
+                  Positioned(
+                    top: 70,
+                    left: 16,
+                    right: 16,
+                    child: GreenContainer(
+                      padding: const EdgeInsets.all(8.0),
+                      child: AuthenticateWidget(
+                        onDismiss: () {
+                          setState(() {
+                            print("turn off");
+                            _showAuthenticateMessage = false;
+                          });
+                        },
+                        setAuthenticated: _setAuthenticated,
+                        setQuestionnairDone: _checkQuestionnaireCompletion,
+                      ),
+                    ),
+                  ),
+              ],
+            );
           })),
     );
   }
