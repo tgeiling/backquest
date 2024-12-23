@@ -934,9 +934,24 @@ class _MainScaffoldState extends State<MainScaffold>
                         ],
                       ),
                     ),
-                    child: LevelSelectionScreen(
-                        toggleModal: _toggleModal,
-                        showResetDialogBool: widget.showResetDialogBool)),
+                    child: Container(
+                        constraints: BoxConstraints.expand(),
+                        color: Colors.transparent,
+                        child: LayoutBuilder(
+                            builder: (BuildContext context,
+                                    BoxConstraints constraints) =>
+                                Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal:
+                                              constraints.maxWidth >= 600
+                                                  ? 48.0
+                                                  : 0,
+                                        ),
+                                        child: LevelSelectionScreen(
+                                            toggleModal: _toggleModal,
+                                            showResetDialogBool: widget
+                                                .showResetDialogBool)))))),
                 Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
