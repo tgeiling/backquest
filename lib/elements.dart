@@ -135,10 +135,10 @@ class ProgressBarWithPill extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ProgressBarWithPillState createState() => _ProgressBarWithPillState();
+  ProgressBarWithPillState createState() => ProgressBarWithPillState();
 }
 
-class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
+class ProgressBarWithPillState extends State<ProgressBarWithPill> {
   late double progress;
 
   @override
@@ -162,14 +162,14 @@ class _ProgressBarWithPillState extends State<ProgressBarWithPill> {
     return Stack(
       children: [
         ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: Colors.grey[300],
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(Color(0xFF59c977)),
-              minHeight: 20,
-            )),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          child: LinearProgressIndicator(
+            value: progress,
+            backgroundColor: Colors.grey[300],
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF59c977)),
+            minHeight: 20,
+          ),
+        ),
         Positioned(
           left: pillLeftOffset,
           top: (20 - 10) / 2,

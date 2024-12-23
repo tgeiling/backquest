@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:dio/dio.dart';
 
 import 'elements.dart';
 import 'questionaire.dart';
@@ -29,11 +30,13 @@ class DownloadScreen extends StatefulWidget {
 
 class DownloadScreenState extends State<DownloadScreen>
     with AutomaticKeepAliveClientMixin<DownloadScreen> {
+  final GlobalKey<ProgressBarWithPillState> _progressBarKey = GlobalKey();
   bool _isLoading = false;
   List<String> _downloadedVideos = [];
   List<String> _downloadedVideoNames = [];
   List<String> _downloadedVideoDetails = [];
   List<List<String>> _downloadedSelectedVideos = [];
+  double _downloadProgress = 0.0;
 
   @override
   void initState() {
@@ -123,81 +126,65 @@ class DownloadScreenState extends State<DownloadScreen>
     });
 
     try {
-      final response = await http.get(Uri.parse(videoUrl));
+      final directory = await getApplicationDocumentsDirectory();
+      String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final filePath = '${directory.path}/video_$timestamp.mp4';
+      String nameTimestamp = DateFormat('MMdd HH:mm').format(DateTime.now());
+      final displayName = AppLocalizations.of(context)!
+          .downloadedVideoName(nameTimestamp); // Translated name
 
-      if (response.statusCode == 200) {
-        final directory = await getApplicationDocumentsDirectory();
-        String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-        String nameTimestamp = DateFormat('MMdd HH:mm').format(DateTime.now());
-        final filePath = '${directory.path}/video_$timestamp.mp4';
-        final displayName = AppLocalizations.of(context)!
-            .downloadedVideoName(nameTimestamp); // Translated name
-        final file = File(filePath);
-        await file.writeAsBytes(response.bodyBytes);
+      // Use Dio for downloading with progress
+      Dio dio = Dio();
+      await dio.download(
+        videoUrl,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            final progress = received / total;
+            setState(() {
+              _progressBarKey.currentState?.updateProgress(progress);
+            });
+          }
+        },
+      );
 
-        setState(() {
-          _downloadedVideos.add(filePath);
-          _downloadedVideoNames.add(displayName);
-          _downloadedVideoDetails
-              .add('$focus, $goal, ${_formatDuration(duration)}');
-          _downloadedSelectedVideos.add(selectedVideos);
-          _isLoading = false;
-        });
-
-        _saveDownloadedVideos();
-
-        QuickAlert.show(
-          backgroundColor: Colors.grey.shade900,
-          textColor: Colors.white,
-          context: context,
-          type: QuickAlertType.success,
-          title: AppLocalizations.of(context)!
-              .downloadComplete, // Translated title
-          text: AppLocalizations.of(context)!
-              .videoDownloadedSuccessfully, // Translated text
-        );
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
-        QuickAlert.show(
-          backgroundColor: Colors.grey.shade700,
-          textColor: Colors.white,
-          context: context,
-          type: QuickAlertType.error,
-          title:
-              AppLocalizations.of(context)!.downloadFailed, // Translated title
-          text: AppLocalizations.of(context)!
-              .failedToDownloadVideo, // Translated text
-        );
-      }
-    } on OutOfMemoryError catch (e) {
+      // After download completes
       setState(() {
+        _downloadedVideos.add(filePath);
+        _downloadedVideoNames.add(displayName);
+        _downloadedVideoDetails
+            .add('$focus, $goal, ${_formatDuration(duration)}');
+        _downloadedSelectedVideos.add(selectedVideos);
         _isLoading = false;
       });
+
+      _saveDownloadedVideos();
+
       QuickAlert.show(
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Colors.grey.shade900,
         textColor: Colors.white,
         context: context,
-        type: QuickAlertType.error,
-        title:
-            AppLocalizations.of(context)!.outOfMemoryError, // Translated title
-        text:
-            AppLocalizations.of(context)!.outOfMemoryMessage, // Translated text
+        type: QuickAlertType.success,
+        title: AppLocalizations.of(context)!.downloadComplete,
+        text: AppLocalizations.of(context)!.videoDownloadedSuccessfully,
       );
-    } catch (e) {
+    } on DioError catch (e) {
       setState(() {
         _isLoading = false;
       });
+      print('Error downloading video: ${e.message}');
       QuickAlert.show(
         backgroundColor: Colors.grey.shade700,
         textColor: Colors.white,
         context: context,
         type: QuickAlertType.error,
-        title: AppLocalizations.of(context)!.downloadError, // Translated title
-        text: AppLocalizations.of(context)!
-            .errorWhileDownloadingVideo, // Translated text
+        title: AppLocalizations.of(context)!.downloadError,
+        text: AppLocalizations.of(context)!.errorWhileDownloadingVideo,
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -235,6 +222,18 @@ class DownloadScreenState extends State<DownloadScreen>
                       color: Colors.white,
                       size: 90.0,
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 60),
+                      child: ProgressBarWithPill(
+                        key: _progressBarKey,
+                        initialProgress: 0.0,
+                      )),
+                  const SizedBox(height: 10),
+                  Text(
+                    '${((_progressBarKey.currentState?.progress ?? 0.0) * 100).toStringAsFixed(1)}%',
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   Text(
                     AppLocalizations.of(context)!.creatingAndDownloadingVideo,
