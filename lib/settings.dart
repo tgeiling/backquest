@@ -87,9 +87,9 @@ class SettingsPage extends StatelessWidget {
                 /* SettingsTile(
                     title: payedUp ? AppLocalizations.of(context)!.mySubscription : AppLocalizations.of(context)!.subscribeBackQuest,
                     icon: Icons.payments_sharp), */
-                SettingsTile(
+                /* SettingsTile(
                     title: AppLocalizations.of(context)!.contact,
-                    icon: Icons.contact_mail),
+                    icon: Icons.contact_mail), */
               ],
             ).toList(),
           ),
