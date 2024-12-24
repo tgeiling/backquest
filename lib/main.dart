@@ -1931,7 +1931,11 @@ class _LevelSelectionScreenState extends State<LevelSelectionScreen>
             }
 
             return Padding(
-              padding: EdgeInsets.only(left: startPadding, right: endPadding),
+              padding: EdgeInsets.only(
+                left: startPadding,
+                right: endPadding,
+                bottom: index == 0 ? 50 : 0,
+              ),
               child: LevelCircle(
                 level: level.id,
                 onTap: () {

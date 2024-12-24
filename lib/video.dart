@@ -177,12 +177,12 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           ),
           onPressed: () {
             if (hasBeenUpdated) {
+              _videoPlayerController?.setVolume(0.0);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      AfterVideoView(videoIds: selectedVideos),
-                ),
+                    builder: (context) =>
+                        AfterVideoView(videoIds: selectedVideos)),
               );
             } else {
               QuickAlert.show(

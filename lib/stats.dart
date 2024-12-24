@@ -637,7 +637,7 @@ class ProfilPageState extends State<ProfilPage> {
               children: [
                 _buildColumnWithText(
                   dynamicText: "$completedLevelsTotal",
-                  dynamicText1: AppLocalizations.of(context)!.weeklyUnits,
+                  dynamicText1: AppLocalizations.of(context)!.ended,
                   boxWidth: boxWidth,
                   boxHeight: boxHeight,
                 ),
