@@ -637,7 +637,6 @@ app.post('/concatenate', async (req, res) => {
       });
     }
 
-    // after update
     const videoDirectory = locale === 'de_DE' ? '/var/www/backquest/videos/test' : '/var/www/backquest/videos/test_en';
     //const videoDirectory = '/var/www/backquest/videos/test';
 

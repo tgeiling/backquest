@@ -112,44 +112,67 @@ class QuestionPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(),
-          Text(
-            AppLocalizations.of(context)!.tellUsMoreAboutYou,
-            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-            textAlign: TextAlign.left,
-          ),
-          Text(
-            AppLocalizations.of(context)!.personalizedBackProgram,
-            style: Theme.of(context).textTheme.displayMedium,
-            textAlign: TextAlign.left,
-          ),
-          const Spacer(),
-          PressableButton(
-            onPressed: () {
-              pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
-                child: Text(AppLocalizations.of(context)!.continueButton,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
-          ),
-        ],
-      ),
-    );
+        constraints: BoxConstraints.expand(),
+        color: Colors.transparent,
+        child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) =>
+                Center(
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth >= 600
+                              ? screenWidth * 0.2
+                              : 0,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Spacer(),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .tellUsMoreAboutYou,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .personalizedBackProgram,
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
+                                textAlign: TextAlign.left,
+                              ),
+                              const Spacer(),
+                              PressableButton(
+                                onPressed: () {
+                                  pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                                child: Center(
+                                    child: Text(
+                                        AppLocalizations.of(context)!
+                                            .continueButton,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        ))),
+                              ),
+                            ],
+                          ),
+                        )))));
   }
 }
 
