@@ -618,7 +618,7 @@ app.post('/concatenate', async (req, res) => {
       focus: rawFocus = 0,
       goal: rawGoal = 0,
       userFitnessLevel: rawFitnessLevel,
-      locale = 'en_EN', // Default to English if no locale is provided
+      locale = 'en_EN',
     } = req.body;
 
     // Convert string inputs to integers if necessary
@@ -637,6 +637,7 @@ app.post('/concatenate', async (req, res) => {
       });
     }
 
+    console.log(locale);
     const videoDirectory = locale === 'de_DE' ? '/var/www/backquest/videos/test' : '/var/www/backquest/videos/test_en';
     //const videoDirectory = '/var/www/backquest/videos/test';
 

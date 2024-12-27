@@ -80,7 +80,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           'goal': widget.goal,
           'duration': widget.duration,
           'userFitnessLevel': widget.profilProvider.fitnessLevel ?? 0,
-          'language': languageCode,
+          'locale': languageCode,
         }),
       );
 
@@ -272,7 +272,7 @@ Future<String?> combineVideos(
         "duration": duration,
         "focus": focus,
         "goal": goal,
-        "language": languageCode, // Use the translated language code
+        "locale": languageCode, // Use the translated language code
       }),
     );
 

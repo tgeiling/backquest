@@ -32,6 +32,7 @@ class LocalizationService {
       'level18Description': _localizations.level18Description,
       'level19Description': _localizations.level19Description,
       'level20Description': _localizations.level20Description,
+      'locale': _localizations.locale,
     };
 
     return translations[key] ?? 'Translation not found';

@@ -479,16 +479,16 @@ class ProfilPageState extends State<ProfilPage> {
 
   Widget _buildRowWithImageAndText(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    bool isSmallScreen = screenWidth < 360;
+    bool isSmallScreen = screenWidth < 380;
 
     double bigNumberFontSize;
     double leafDimensions;
     double settingsIconSize;
 
     if (isSmallScreen) {
-      bigNumberFontSize = 60;
-      leafDimensions = 60;
-      settingsIconSize = 25;
+      bigNumberFontSize = 45;
+      leafDimensions = 45;
+      settingsIconSize = 35;
     } else {
       bigNumberFontSize = 85;
       leafDimensions = 80;
