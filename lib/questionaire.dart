@@ -75,33 +75,45 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color.fromRGBO(97, 184, 115, 0.9),
-                Color.fromRGBO(0, 59, 46, 0.9),
-              ],
-            ),
-          ),
-          child: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              QuestionPage1(pageController: _pageController),
-              QuestionPage2(pageController: _pageController),
-              QuestionPage3(pageController: _pageController),
-              QuestionPage4(pageController: _pageController),
-              QuestionPage5(pageController: _pageController),
-              QuestionPage6(pageController: _pageController),
-              QuestionPage7(pageController: _pageController),
-              QuestionPage8(onFinish: _finishQuestionnaire),
-            ],
-          )),
-    );
+        body: Container(
+            constraints: BoxConstraints.expand(),
+            color: Colors.transparent,
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) =>
+                    Center(
+                        child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal:
+                            constraints.maxWidth >= 600 ? screenWidth * 0.2 : 0,
+                      ),
+                      child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color.fromRGBO(97, 184, 115, 0.9),
+                                Color.fromRGBO(0, 59, 46, 0.9),
+                              ],
+                            ),
+                          ),
+                          child: PageView(
+                            controller: _pageController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              QuestionPage1(pageController: _pageController),
+                              QuestionPage2(pageController: _pageController),
+                              QuestionPage3(pageController: _pageController),
+                              QuestionPage4(pageController: _pageController),
+                              QuestionPage5(pageController: _pageController),
+                              QuestionPage6(pageController: _pageController),
+                              QuestionPage7(pageController: _pageController),
+                              QuestionPage8(onFinish: _finishQuestionnaire),
+                            ],
+                          )),
+                    )))));
   }
 }
 
@@ -112,67 +124,44 @@ class QuestionPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
-        constraints: BoxConstraints.expand(),
-        color: Colors.transparent,
-        child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) =>
-                Center(
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: constraints.maxWidth >= 600
-                              ? screenWidth * 0.2
-                              : 0,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Spacer(),
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .tellUsMoreAboutYou,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displayMedium!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .personalizedBackProgram,
-                                style:
-                                    Theme.of(context).textTheme.displayMedium,
-                                textAlign: TextAlign.left,
-                              ),
-                              const Spacer(),
-                              PressableButton(
-                                onPressed: () {
-                                  pageController.nextPage(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeInOut,
-                                  );
-                                },
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 12),
-                                child: Center(
-                                    child: Text(
-                                        AppLocalizations.of(context)!
-                                            .continueButton,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                        ))),
-                              ),
-                            ],
-                          ),
-                        )))));
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Spacer(),
+          Text(
+            AppLocalizations.of(context)!.tellUsMoreAboutYou,
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+            textAlign: TextAlign.left,
+          ),
+          Text(
+            AppLocalizations.of(context)!.personalizedBackProgram,
+            style: Theme.of(context).textTheme.displayMedium,
+            textAlign: TextAlign.left,
+          ),
+          const Spacer(),
+          PressableButton(
+            onPressed: () {
+              pageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+                child: Text(AppLocalizations.of(context)!.continueButton,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ))),
+          ),
+        ],
+      ),
+    );
   }
 }
 
