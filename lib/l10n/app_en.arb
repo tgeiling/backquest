@@ -327,5 +327,7 @@
   "level19Description": "1 level to go!",
   "level20Description": "20 exercises make a habit",
   "rewardGoldCoin": "Gold Coin",
-  "ended": "Sessions"
+  "ended": "Sessions",
+  "downloadInProgress": "Download In Progress",
+  "pleaseWaitForCurrentDownload": "Please wait for the current download to finish."
 }

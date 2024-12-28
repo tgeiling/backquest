@@ -68,12 +68,28 @@ class DownloadScreenState extends State<DownloadScreen>
     );
   }
 
+  bool _isDownloading = false;
+
   Future<void> combineAndDownloadVideo(
     int focus,
     int goal,
     int duration,
     int userFitnessLevel,
   ) async {
+    if (_isDownloading) {
+      QuickAlert.show(
+        backgroundColor: Colors.grey.shade700,
+        textColor: Colors.white,
+        context: context,
+        type: QuickAlertType.warning,
+        title: AppLocalizations.of(context)!.downloadInProgress,
+        text: AppLocalizations.of(context)!.pleaseWaitForCurrentDownload,
+      );
+      return;
+    }
+
+    _isDownloading = true;
+
     setState(() {
       _isLoading = true;
     });
@@ -183,6 +199,7 @@ class DownloadScreenState extends State<DownloadScreen>
       );
     } finally {
       setState(() {
+        _isDownloading = false; // Reset the flag when the download completes
         _isLoading = false;
       });
     }

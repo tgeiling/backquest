@@ -75,45 +75,33 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Container(
-            constraints: BoxConstraints.expand(),
-            color: Colors.transparent,
-            child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) =>
-                    Center(
-                        child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            constraints.maxWidth >= 600 ? screenWidth * 0.2 : 0,
-                      ),
-                      child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Color.fromRGBO(97, 184, 115, 0.9),
-                                Color.fromRGBO(0, 59, 46, 0.9),
-                              ],
-                            ),
-                          ),
-                          child: PageView(
-                            controller: _pageController,
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: [
-                              QuestionPage1(pageController: _pageController),
-                              QuestionPage2(pageController: _pageController),
-                              QuestionPage3(pageController: _pageController),
-                              QuestionPage4(pageController: _pageController),
-                              QuestionPage5(pageController: _pageController),
-                              QuestionPage6(pageController: _pageController),
-                              QuestionPage7(pageController: _pageController),
-                              QuestionPage8(onFinish: _finishQuestionnaire),
-                            ],
-                          )),
-                    )))));
+      body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromRGBO(97, 184, 115, 0.9),
+                Color.fromRGBO(0, 59, 46, 0.9),
+              ],
+            ),
+          ),
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              QuestionPage1(pageController: _pageController),
+              QuestionPage2(pageController: _pageController),
+              QuestionPage3(pageController: _pageController),
+              QuestionPage4(pageController: _pageController),
+              QuestionPage5(pageController: _pageController),
+              QuestionPage6(pageController: _pageController),
+              QuestionPage7(pageController: _pageController),
+              QuestionPage8(onFinish: _finishQuestionnaire),
+            ],
+          )),
+    );
   }
 }
 
@@ -124,44 +112,67 @@ class QuestionPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(),
-          Text(
-            AppLocalizations.of(context)!.tellUsMoreAboutYou,
-            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-            textAlign: TextAlign.left,
-          ),
-          Text(
-            AppLocalizations.of(context)!.personalizedBackProgram,
-            style: Theme.of(context).textTheme.displayMedium,
-            textAlign: TextAlign.left,
-          ),
-          const Spacer(),
-          PressableButton(
-            onPressed: () {
-              pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
-                child: Text(AppLocalizations.of(context)!.continueButton,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
-          ),
-        ],
-      ),
-    );
+        constraints: BoxConstraints.expand(),
+        color: Colors.transparent,
+        child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) =>
+                Center(
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth >= 600
+                              ? screenWidth * 0.2
+                              : 0,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Spacer(),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .tellUsMoreAboutYou,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .personalizedBackProgram,
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
+                                textAlign: TextAlign.left,
+                              ),
+                              const Spacer(),
+                              PressableButton(
+                                onPressed: () {
+                                  pageController.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                                child: Center(
+                                    child: Text(
+                                        AppLocalizations.of(context)!
+                                            .continueButton,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        ))),
+                              ),
+                            ],
+                          ),
+                        )))));
   }
 }
 
@@ -196,128 +207,126 @@ class _QuestionPage2State extends State<QuestionPage2> {
       datePickerHeight = 400;
     }
 
-    return Localizations.override(
-        context: context,
-        locale: const Locale('de'),
-        child: Container(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              Text(
-                AppLocalizations.of(context)!.personalQuestionsTitle,
-                style: Theme.of(context).textTheme.displayMedium,
+    return Container(
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Spacer(),
+          Text(
+            AppLocalizations.of(context)!.personalQuestionsTitle,
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          const SizedBox(height: 32),
+          Text(
+            AppLocalizations.of(context)!.birthdateQuestion,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+          SizedBox(
+            width: double.maxFinite,
+            height: datePickerHeight,
+            child: CupertinoTheme(
+              data: const CupertinoThemeData(
+                brightness: Brightness.dark,
               ),
-              const SizedBox(height: 32),
-              Text(
-                AppLocalizations.of(context)!.birthdateQuestion,
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              SizedBox(
-                  width: double.maxFinite,
-                  height: datePickerHeight,
-                  child: CupertinoTheme(
-                    data: const CupertinoThemeData(
-                      brightness: Brightness.dark,
-                    ),
-                    child: CupertinoDatePicker(
-                      dateOrder: DatePickerDateOrder.dmy,
-                      initialDateTime: selectedDate,
-                      mode: CupertinoDatePickerMode.date,
-                      onDateTimeChanged: (DateTime newDate) {
-                        setState(() {
-                          selectedDate = newDate;
-                        });
-                      },
-                    ),
-                  )),
-              const SizedBox(height: 24),
-              Text(
-                AppLocalizations.of(context)!.genderQuestion,
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: Colors.white,
-                  inactiveTrackColor: Colors.white.withOpacity(0.5),
-                  trackHeight: 4.0,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                  thumbColor: Colors.white,
-                  overlayColor: Colors.white.withAlpha(32),
-                  overlayShape:
-                      const RoundSliderOverlayShape(overlayRadius: 28.0),
-                  tickMarkShape: const RoundSliderTickMarkShape(),
-                  activeTickMarkColor: Colors.white,
-                  inactiveTickMarkColor: Colors.white.withOpacity(0.5),
-                ),
-                child: Slider(
-                  value: _genderSliderValue,
-                  min: 0,
-                  max: 2,
-                  divisions: 2,
-                  onChanged: (value) {
-                    setState(() {
-                      _genderSliderValue = value;
-                    });
-                  },
-                ),
-              ),
-              Center(
-                child: Text(
-                  _genderSliderValue == 0
-                      ? AppLocalizations.of(context)!.genderMale
-                      : _genderSliderValue == 1
-                          ? AppLocalizations.of(context)!.genderFemale
-                          : AppLocalizations.of(context)!.genderDiverse,
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              ),
-              const Spacer(),
-              PressableButton(
-                onPressed: () {
-                  widget.pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                  profilProvider.setBirthdate(selectedDate);
-                  String gender = _genderSliderValue == 0
-                      ? "male"
-                      : (_genderSliderValue == 1 ? "female" : "other");
-                  profilProvider.setGender(gender);
-
-                  getAuthToken().then((token) {
-                    if (token != null) {
-                      updateProfile(
-                        token: token,
-                        birthdate: selectedDate,
-                        gender: gender,
-                      ).then((success) {
-                        if (success) {
-                          print("Profile updated successfully.");
-                        } else {
-                          print("Failed to update profile.");
-                        }
-                      });
-                    } else {
-                      print("No auth token available.");
-                    }
+              child: CupertinoDatePicker(
+                dateOrder: DatePickerDateOrder.dmy,
+                initialDateTime: selectedDate,
+                mode: CupertinoDatePickerMode.date,
+                onDateTimeChanged: (DateTime newDate) {
+                  setState(() {
+                    selectedDate = newDate;
                   });
                 },
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                child: Center(
-                    child: Text(AppLocalizations.of(context)!.continueButton,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ))),
               ),
-            ],
+            ),
           ),
-        ));
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context)!.genderQuestion,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: Colors.white,
+              inactiveTrackColor: Colors.white.withOpacity(0.5),
+              trackHeight: 4.0,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12.0),
+              thumbColor: Colors.white,
+              overlayColor: Colors.white.withAlpha(32),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 28.0),
+              tickMarkShape: const RoundSliderTickMarkShape(),
+              activeTickMarkColor: Colors.white,
+              inactiveTickMarkColor: Colors.white.withOpacity(0.5),
+            ),
+            child: Slider(
+              value: _genderSliderValue,
+              min: 0,
+              max: 2,
+              divisions: 2,
+              onChanged: (value) {
+                setState(() {
+                  _genderSliderValue = value;
+                });
+              },
+            ),
+          ),
+          Center(
+            child: Text(
+              _genderSliderValue == 0
+                  ? AppLocalizations.of(context)!.genderMale
+                  : _genderSliderValue == 1
+                      ? AppLocalizations.of(context)!.genderFemale
+                      : AppLocalizations.of(context)!.genderDiverse,
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+          ),
+          const Spacer(),
+          PressableButton(
+            onPressed: () {
+              widget.pageController.nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+              profilProvider.setBirthdate(selectedDate);
+              String gender = _genderSliderValue == 0
+                  ? "male"
+                  : (_genderSliderValue == 1 ? "female" : "other");
+              profilProvider.setGender(gender);
+
+              getAuthToken().then((token) {
+                if (token != null) {
+                  updateProfile(
+                    token: token,
+                    birthdate: selectedDate,
+                    gender: gender,
+                  ).then((success) {
+                    if (success) {
+                      print("Profile updated successfully.");
+                    } else {
+                      print("Failed to update profile.");
+                    }
+                  });
+                } else {
+                  print("No auth token available.");
+                }
+              });
+            },
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Center(
+              child: Text(
+                AppLocalizations.of(context)!.continueButton,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -1105,41 +1114,63 @@ class QuestionPage8 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(),
-          Text(
-            AppLocalizations.of(context)!.welcomeToBackQuest,
-            style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-            textAlign: TextAlign.left,
-          ),
-          Text(
-            AppLocalizations.of(context)!.personalizedTrainingIntro,
-            style: Theme.of(context).textTheme.displayMedium,
-            textAlign: TextAlign.left,
-          ),
-          const Spacer(),
-          PressableButton(
-            onPressed: () {
-              onFinish();
-            },
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: Center(
-                child: Text(AppLocalizations.of(context)!.finishButton,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ))),
-          ),
-        ],
-      ),
-    );
+        constraints: BoxConstraints.expand(),
+        color: Colors.transparent,
+        child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) =>
+                Center(
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth >= 600
+                              ? screenWidth * 0.2
+                              : 0,
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Spacer(),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .welcomeToBackQuest,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .personalizedTrainingIntro,
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
+                                textAlign: TextAlign.left,
+                              ),
+                              const Spacer(),
+                              PressableButton(
+                                onPressed: () {
+                                  onFinish();
+                                },
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                                child: Center(
+                                    child: Text(
+                                        AppLocalizations.of(context)!
+                                            .finishButton,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        ))),
+                              ),
+                            ],
+                          ),
+                        )))));
   }
 }
 

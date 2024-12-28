@@ -327,5 +327,7 @@
   "level19Description": "Noch 1 Level!",
   "level20Description": "20 Übungen machen eine Gewohnheit",
   "rewardGoldCoin": "Gold Coin",
-  "ended": "Abgeschlossen"
+  "ended": "Abgeschlossen",
+  "downloadInProgress": "Download läuft",
+  "pleaseWaitForCurrentDownload": "Bitte warten Sie, bis der aktuelle Download abgeschlossen ist."
 }
