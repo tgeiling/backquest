@@ -161,8 +161,7 @@ class ExerciseFeedback {
   }
 }
 
-
-/* const String serverUrl = 'http://135.125.218.147:3000/validate-receipt';
+const String serverUrl = 'http://135.125.218.147:3000/validate-receipt';
 
 Future<bool> validateAppleReceipt(String receiptData) async {
   return await _validateReceipt(receiptData, platform: 'apple');
@@ -172,7 +171,8 @@ Future<bool> validateGoogleReceipt(String receiptData) async {
   return await _validateReceipt(receiptData, platform: 'google');
 }
 
-Future<bool> _validateReceipt(String receiptData, {required String platform}) async {
+Future<bool> _validateReceipt(String receiptData,
+    {required String platform}) async {
   try {
     final response = await http.post(
       Uri.parse(serverUrl),
@@ -195,4 +195,3 @@ Future<bool> _validateReceipt(String receiptData, {required String platform}) as
     return false;
   }
 }
- */

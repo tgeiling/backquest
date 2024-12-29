@@ -84,12 +84,11 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.logout,
                   onTileTap: setAuthenticated,
                 ),
-                /* SettingsTile(
-                    title: payedUp ? AppLocalizations.of(context)!.mySubscription : AppLocalizations.of(context)!.subscribeBackQuest,
-                    icon: Icons.payments_sharp), */
-                /* SettingsTile(
-                    title: AppLocalizations.of(context)!.contact,
-                    icon: Icons.contact_mail), */
+                SettingsTile(
+                    title: payedUp
+                        ? AppLocalizations.of(context)!.mySubscription
+                        : AppLocalizations.of(context)!.subscribeBackQuest,
+                    icon: Icons.payments_sharp),
               ],
             ).toList(),
           ),
@@ -772,7 +771,7 @@ class MySubscriptionPage extends StatelessWidget {
   }
 }
 
-/* class SubscriptionSettingPage extends StatefulWidget {
+class SubscriptionSettingPage extends StatefulWidget {
   const SubscriptionSettingPage({Key? key}) : super(key: key);
 
   @override
@@ -1159,7 +1158,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 }
- */
+
 class AGB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

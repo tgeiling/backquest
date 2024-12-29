@@ -668,13 +668,13 @@ class _MainScaffoldState extends State<MainScaffold>
 
     if (launchCount % 2 == 0 || launchCount == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        //showSubscriptionDialog();
+        showSubscriptionDialog();
         //showInformationDialog();
       });
     }
   }
 
-  /* void showSubscriptionDialog() {
+  void showSubscriptionDialog() {
     showDialog<String>(
       context: context,
       builder: (context) {
@@ -819,7 +819,7 @@ class _MainScaffoldState extends State<MainScaffold>
         print("Selected Subscription: $selectedSubscription");
       }
     });
-  } */
+  }
 
   void showInformationDialog() {
     showDialog<String>(
@@ -1469,7 +1469,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     );
   }
 
-  /* Future<void> _validateSubscriptionAndShowRestrictionDialog(
+  Future<void> _validateSubscriptionAndShowRestrictionDialog(
       ProfilProvider profilProvider) async {
     bool isValid = false;
 
@@ -1493,7 +1493,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
     }
 
     showVideoRestrictionDialog(profilProvider.lastUpdateString);
-  } */
+  }
 
   void showVideoRestrictionDialog(String lastUpdateString) {
     DateTime lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();
