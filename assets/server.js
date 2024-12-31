@@ -741,7 +741,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-/* const APPLE_RECEIPT_VALIDATION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
+const APPLE_RECEIPT_VALIDATION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
 const APPLE_RECEIPT_VALIDATION_URL_SANDBOX = 'https://sandbox.itunes.apple.com/verifyReceipt';
 const GOOGLE_RECEIPT_VALIDATION_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
 
@@ -790,7 +790,7 @@ async function validateGoogleReceipt(packageName, productId, purchaseToken) {
     console.error('Error validating Google receipt:', error);
     return null;
   }
-} */
+} 
 
 // Endpoint to validate a receipt
 app.post('/validate-receipt', async (req, res) => {
