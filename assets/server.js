@@ -745,7 +745,8 @@ const APPLE_RECEIPT_VALIDATION_URL = 'https://buy.itunes.apple.com/verifyReceipt
 const APPLE_RECEIPT_VALIDATION_URL_SANDBOX = 'https://sandbox.itunes.apple.com/verifyReceipt';
 const GOOGLE_RECEIPT_VALIDATION_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
 
-const GOOGLE_SERVICE_ACCOUNT_KEY = require('./backquest-68ea5-976c54f2d8e8.json');
+//const GOOGLE_SERVICE_ACCOUNT_KEY = require('./backquest-68ea5-976c54f2d8e8.json');
+const GOOGLE_SERVICE_ACCOUNT_KEY = "qwe";
 
 const APPLE_SHARED_SECRET = process.env.APPLE_SHARED_SECRET;
 

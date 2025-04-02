@@ -73,7 +73,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
           localizationService.getTranslatedMessage('locale');
 
       final response = await http.post(
-        Uri.parse('http://135.125.218.147:3000/concatenate'),
+        Uri.parse('http://34.116.240.55/:3000/concatenate'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'focus': widget.focus,
@@ -96,7 +96,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 
         // Step 2: Use sessionId in the video URL for the /video endpoint
         final String outputVideoUrl =
-            'http://135.125.218.147:3000/video?sessionId=$sessionId';
+            'http://34.116.240.55/:3000/video?sessionId=$sessionId';
 
         _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
         await _videoPlayerController!.initialize();
@@ -252,7 +252,7 @@ Future<String?> combineVideos(
   int duration = 600,
   required int userFitnessLevel,
 }) async {
-  const String baseUrl = 'http://135.125.218.147:3000/concatenate';
+  const String baseUrl = 'http://34.116.240.55/:3000/concatenate';
   final token = await getAuthToken();
 
   try {

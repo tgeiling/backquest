@@ -52,6 +52,7 @@ ios/Flutter/.last_build_id
 **/android/**/build/
 **/android/**/.gradle
 **/android/**/.idea
+/android/key.properties
 .gradle
 /local.properties
 
