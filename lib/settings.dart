@@ -169,10 +169,12 @@ class SettingsTile extends StatelessWidget {
           authService.logout();
           onTileTap?.call(false);
           Navigator.pop(context);
-        } else if (title == AppLocalizations.of(context)!.mySubscription) {
+        } else if (title == AppLocalizations.of(context)!.mySubscription ||
+            title == AppLocalizations.of(context)!.subscribeBackQuest) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const MySubscriptionPage()),
+            MaterialPageRoute(
+                builder: (context) => const SubscriptionSettingPage()),
           );
         } else if (title == AppLocalizations.of(context)!.contact) {
           Navigator.push(
@@ -655,119 +657,6 @@ class _PainSettingPageState extends State<PainSettingPage> {
         ),
       )
     ]);
-  }
-}
-
-class MySubscriptionPage extends StatelessWidget {
-  const MySubscriptionPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final profilProvider = Provider.of<ProfilProvider>(context);
-
-    final String? activeSubscription = profilProvider.subType;
-    final DateTime? subscriptionStartDate = profilProvider.subStarted;
-
-    return Stack(
-      children: <Widget>[
-        Image.asset(
-          "assets/settingsbg.PNG",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            title: Text(
-              AppLocalizations.of(context)!.mySubscriptionTitle,
-              style: const TextStyle(color: Colors.white),
-            ),
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(context)!.activeSubscription,
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                const SizedBox(height: 20),
-                if (activeSubscription == "Jährlich" ||
-                    activeSubscription == "Monatlich")
-                  _buildSubscriptionTile(
-                    context,
-                    activeSubscription!,
-                    true, // Since it's the active subscription
-                    subscriptionStartDate,
-                  ),
-                if (activeSubscription == null)
-                  Text(
-                    AppLocalizations.of(context)!.noActiveSubscription,
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubscriptionTile(BuildContext context, String subType,
-      bool isActive, DateTime? startDate) {
-    final formattedDate = startDate != null
-        ? DateFormat('dd. MMMM yyyy', AppLocalizations.of(context)!.locale)
-            .format(startDate)
-        : AppLocalizations.of(context)!.dateUnavailable;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF59c977) : Colors.grey[800],
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: isActive ? const Color(0xFF48a160) : Colors.transparent,
-            offset: const Offset(0, 5),
-            blurRadius: 0,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            subType == 'Jährlich'
-                ? AppLocalizations.of(context)!.yearlySubscription
-                : AppLocalizations.of(context)!.monthlySubscription,
-            style: const TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          if (isActive && startDate != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                '${AppLocalizations.of(context)!.startedOn} $formattedDate',
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-            ),
-          if (isActive)
-            const Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Icon(
-                Icons.check,
-                color: Colors.green,
-                size: 20,
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
 

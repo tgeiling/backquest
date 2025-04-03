@@ -638,13 +638,13 @@ app.post('/concatenate', async (req, res) => {
     }
 
     console.log(locale);
-    const videoDirectory = locale === 'de_DE' ? '/var/www/backquest/videos/test' : '/var/www/backquest/videos/test_en';
-    //const videoDirectory = '/var/www/backquest/videos/test';
+    const videoDirectory = locale === 'de_DE' ? '/home/backquest/videos/de' : '/home/backquest/videos/en';
+    //const videoDirectory = '/home/backquest/videos/de';
 
     // Map integers to their respective string values for further processing
     const focus = focusMapping[focusIndex] || 'Allgemein';
     const goal = goalMapping[goalIndex] || 'Allgemein';
-    const listPath = '/var/www/backquest/videos/mylist.txt';
+    const listPath = '/home/backquest/videos/mylist.txt';
 
     console.log("Duration: " + duration);
     console.log("Goal: " + goal);
@@ -654,7 +654,7 @@ app.post('/concatenate', async (req, res) => {
 
     const { selectedVideos, totalDuration } = await selectVideos(fitnessLevel, duration, focus, goal);
     const sessionId = Date.now() + "_" + Math.random().toString(36).substr(2, 9); // Unique session identifier
-    const outputVideo = `/var/www/backquest/output/concatenated_video_${sessionId}.mp4`;
+    const outputVideo = `/home/backquest/output/concatenated_video_${sessionId}.mp4`;
 
     await generateConcatListFile(selectedVideos.map(video => `${videoDirectory}/${video.id}.mp4`), listPath);
     await concatenateVideos(listPath, outputVideo);
@@ -812,7 +812,7 @@ app.post('/validate-receipt', async (req, res) => {
   }
 });
 
-const outputPath = '/var/www/backquest/output'; // Define outputPath
+const outputPath = '/home/backquest/output'; // Define outputPath
 
 cron.schedule('0 */2 * * *', () => {  // Runs every 2 hours at the top of the hour
   console.log("Running periodic cleanup...");
