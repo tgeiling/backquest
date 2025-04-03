@@ -14,7 +14,7 @@ import 'stats.dart';
 import 'main.dart';
 
 class AuthService {
-  final String baseUrl = 'http://34.116.240.55/:3000';
+  final String baseUrl = 'http://34.116.240.55:3000';
   final storage = const FlutterSecureStorage();
 
   Future<bool> login(String username, String password) async {

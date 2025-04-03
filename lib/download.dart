@@ -112,7 +112,7 @@ class DownloadScreenState extends State<DownloadScreen>
 
     // Construct the URL with the session ID
     final String outputVideoUrl =
-        'http://34.116.240.55/:3000/video?sessionId=$sessionId';
+        'http://34.116.240.55:3000/video?sessionId=$sessionId';
 
     await Future.delayed(const Duration(seconds: 2));
 

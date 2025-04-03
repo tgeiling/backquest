@@ -1334,7 +1334,7 @@ class _SecondPageState extends State<SecondPage> {
   Future<void> _sendFeedback() async {
     final feedbackData = feedbackList.map((f) => f.toJson()).toList();
 
-    const String url = 'http://34.116.240.55/:3000/feedback';
+    const String url = 'http://34.116.240.55:3000/feedback';
     final token = await getAuthToken();
 
     try {
