@@ -1372,7 +1372,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
         ? true
         : isDateSevenDaysAgo(profilProvider.lastUpdateString);
 
-    //bool payedUp = profilProvider.payedSubscription == true ? true : false;
+    bool payedUp = profilProvider.payedSubscription == true ? true : false;
 
     return Padding(
       padding: EdgeInsets.all(modalPadding),
@@ -1449,7 +1449,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             ),
           ),
           const SizedBox(height: 30),
-          /* PressableButton(
+          PressableButton(
             onPressed: widget.authenticated && payedUp
                 ? widget.isVideoPlayer
                     ? () {
@@ -1499,7 +1499,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                         widget.toggleModal;
                       }
                     : () async {
-                        await _validateSubscriptionAndShowRestrictionDialog(profilProvider);
+                        await _validateSubscriptionAndShowRestrictionDialog(
+                            profilProvider);
                       },
             padding: EdgeInsets.symmetric(
                 vertical: bigPressableVerticalPadding, horizontal: 12),
@@ -1508,7 +1509,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               widget.isVideoPlayer ? "Jetzt starten" : "Video erstellen",
               style: Theme.of(context).textTheme.labelLarge,
             )),
-          ), */
+          ),
+          /*
           PressableButton(
             onPressed: widget.isVideoPlayer
                 ? () {
@@ -1545,7 +1547,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                   : AppLocalizations.of(context)!.createVideo,
               style: Theme.of(context).textTheme.labelLarge,
             )),
-          ),
+          ), */
         ],
       ),
     );
