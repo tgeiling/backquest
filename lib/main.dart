@@ -399,26 +399,91 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _isLoading = true;
     });
 
-    bool isGuest = await _authService.isGuestToken();
-    bool tokenExpired = await _authService.isTokenExpired();
-
-    if (!isGuest) {
-      setState(() {
-        _setAuthenticated(true);
+    try {
+      // Add a timeout to the server connection check
+      bool isGuest = await _authService
+          .isGuestToken()
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw TimeoutException('Server connection timed out');
       });
-      if (tokenExpired) {
+
+      bool tokenExpired = await _authService
+          .isTokenExpired()
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw TimeoutException('Server connection timed out');
+      });
+
+      if (!isGuest) {
+        setState(() {
+          _setAuthenticated(true);
+        });
+        if (tokenExpired) {
+          setState(() {
+            _setAuthenticated(false);
+          });
+        }
+      } else {
+        await _authService.setGuestToken();
         setState(() {
           _setAuthenticated(false);
         });
       }
-    } else {
-      await _authService.setGuestToken();
-      setState(() {
-        _setAuthenticated(false);
-      });
+
+      _checkQuestionnaireCompletion();
+    } catch (e) {
+      // Show connection error dialog
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            AppLocalizations.of(context)?.noConnectionTitle ??
+                'No Internet Connection',
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            AppLocalizations.of(context)?.noConnectionMessage ??
+                'Please check your internet connection and try again.',
+            style: const TextStyle(color: Colors.white),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _checkAuthentication(); // Retry connection
+              },
+              child: Text(
+                'Retry',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _isLoading = false;
+                  _setAuthenticated(false); // Continue as guest
+                });
+                _checkQuestionnaireCompletion();
+              },
+              child: Text(
+                'Continue Offline',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
     }
 
-    _checkQuestionnaireCompletion();
     setState(() {
       _isLoading = false;
     });

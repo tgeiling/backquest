@@ -116,11 +116,13 @@ class AuthService {
     final token = await storage.read(key: 'authToken');
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/validateToken'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'token': token}),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/validateToken'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'token': token}),
+          )
+          .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
@@ -131,7 +133,7 @@ class AuthService {
       }
     } catch (e) {
       print("Error sending token validation request: $e");
-      return true;
+      return true; // Assume guest token on error
     }
   }
 

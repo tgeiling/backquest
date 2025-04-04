@@ -618,8 +618,10 @@ app.post('/concatenate', async (req, res) => {
       focus: rawFocus = 0,
       goal: rawGoal = 0,
       userFitnessLevel: rawFitnessLevel,
-      locale = 'en_EN',
+      locale = req.body.locale,
     } = req.body;
+
+    console.log(req.body);
 
     // Convert string inputs to integers if necessary
     const focusIndex = typeof rawFocus === 'string' ? focusMapping[rawFocus] : rawFocus;
