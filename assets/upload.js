@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const fs = require('fs');
 
@@ -20,7 +21,7 @@ const VideoSchema = new mongoose.Schema({
 
 const Video = mongoose.model('Video', VideoSchema);
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://admin:GaMk4WxcCZfA9FujO312@mongodb-9efa3f0f-o421a53a3.database.cloud.ovh.net/admin?replicaSet=replicaset', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 45000,
@@ -29,7 +30,6 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://admin:GaMk4WxcCZfA9FujO
   console.log('MongoDB connected');
 
   try {
-
     await mongoose.connection.dropCollection('videos');
     console.log('Collection dropped successfully.');
   } catch (err) {
@@ -49,7 +49,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://admin:GaMk4WxcCZfA9FujO
 
 const importVideos = async () => {
   try {
-    const data = fs.readFileSync('/var/www/backquest/videos/videos.json', 'utf8');
+    const data = fs.readFileSync('/home/backquest/videos.json', 'utf8');
     const videos = JSON.parse(data);
 
     await Video.insertMany(videos);
