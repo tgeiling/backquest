@@ -345,5 +345,11 @@
   "agb": "Allgemeine Geschäftsbedingungen",
   "agbContent": "Dies ist der Inhalt der Allgemeinen Geschäftsbedingungen für die deutsche Version.",
   "chooseSubscription": "Wählen Sie Ihr Abonnement",
-  "selectSubscriptionWarning": "Bitte wählen Sie einen Abonnementplan"
+  "selectSubscriptionWarning": "Bitte wählen Sie einen Abonnementplan",
+    "subscriptionPromoTitle": "Willst du unseren service länger nutzen? Wir versprechen dir das wir backquest immer weiter entwickeln",
+  "subscriptionMethodPrompt": "Wähle eine Zahlungsmethode für unbegrenzeten Zugang zu unserer App",
+  "buyNow": "Jetzt kaufen",
+  "infoDialogTitle": "Möchtest du mehr über unsere App erfahren? Unsere App hilft dir dabei, Rückenschmerzen zu lindern und deine Gesundheit zu verbessern. Wir arbeiten kontinuierlich daran, neue Funktionen und Inhalte hinzuzufügen.",
+  "infoDialogContent": "Unsere App bietet personalisierte Übungen, Tipps und Ratschläge, um deine Rückengesundheit zu verbessern.",
+  "learnMore": "Mehr erfahren"
 }

@@ -743,7 +743,8 @@ class _MainScaffoldState extends State<MainScaffold>
     showDialog<String>(
       context: context,
       builder: (context) {
-        String selectedSubscription = 'Monatlich';
+        String selectedSubscription =
+            AppLocalizations.of(context)!.monthlySubscription;
         double screenWidth = MediaQuery.of(context).size.width;
         bool isSmallScreen = screenWidth < 360;
 
@@ -759,125 +760,141 @@ class _MainScaffoldState extends State<MainScaffold>
         }
 
         return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Dialog(
-            backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 10),
-                  Image.asset(
-                    "assets/logo2.png",
-                    width: 40,
-                  ),
-                  const SizedBox(height: 10),
-                  if (!isSmallScreen)
-                    const Center(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 10),
+                    Image.asset(
+                      "assets/logo2.png",
+                      width: 40,
+                    ),
+                    const SizedBox(height: 10),
+                    if (!isSmallScreen)
+                      Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.subscriptionPromoTitle,
+                        ),
+                      ),
+                    const SizedBox(height: 18),
+                    Center(
                       child: Text(
-                        "Willst du unseren service länger nutzen? Wir versprechen dir das wir backquest immer weiter entwickeln",
+                        AppLocalizations.of(context)!.subscriptionMethodPrompt,
                       ),
                     ),
-                  const SizedBox(height: 18),
-                  const Center(
-                    child: Text(
-                        "Wähle eine Zahlungsmethode für unbegrenzeten Zugang zu unserer App"),
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedSubscription = 'Jährlich';
-                          });
-                        },
-                        child: Container(
-                          width: rectangleBoxWidth,
-                          padding: EdgeInsets.all(rectangleBoxPadding),
-                          decoration: BoxDecoration(
-                            color: selectedSubscription == 'Jährlich'
-                                ? const Color(0xFF59c977)
-                                : Colors.grey.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: selectedSubscription == 'Jährlich'
-                                    ? const Color(0xFF48a160)
-                                    : Colors.transparent,
-                                offset: const Offset(0, 5),
-                                blurRadius: 0,
-                                spreadRadius: 0,
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            "Jährlich \n 49,99 € \n Jahr",
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedSubscription = 'Monatlich';
-                          });
-                        },
-                        child: Container(
-                          width: rectangleBoxWidth,
-                          padding: EdgeInsets.all(rectangleBoxPadding),
-                          decoration: BoxDecoration(
-                            color: selectedSubscription == 'Monatlich'
-                                ? const Color(0xFF59c977)
-                                : Colors.grey.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: selectedSubscription == 'Monatlich'
-                                    ? const Color(0xFF48a160)
-                                    : Colors.transparent,
-                                offset: const Offset(0, 5),
-                                blurRadius: 0,
-                                spreadRadius: 0,
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            "Monatlich \n 5,99 € \n Monat",
-                            style: Theme.of(context).textTheme.bodyLarge,
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedSubscription =
+                                  AppLocalizations.of(context)!
+                                      .yearlySubscription;
+                            });
+                          },
+                          child: Container(
+                            width: rectangleBoxWidth,
+                            padding: EdgeInsets.all(rectangleBoxPadding),
+                            decoration: BoxDecoration(
+                              color: selectedSubscription ==
+                                      AppLocalizations.of(context)!
+                                          .yearlySubscription
+                                  ? const Color(0xFF59c977)
+                                  : Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: selectedSubscription ==
+                                          AppLocalizations.of(context)!
+                                              .yearlySubscription
+                                      ? const Color(0xFF48a160)
+                                      : Colors.transparent,
+                                  offset: const Offset(0, 5),
+                                  blurRadius: 0,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.yearly,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  PressableButton(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
-                    onPressed: () {
-                      Navigator.of(context).pop(selectedSubscription);
-                      Navigator.push(
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedSubscription =
+                                  AppLocalizations.of(context)!
+                                      .monthlySubscription;
+                            });
+                          },
+                          child: Container(
+                            width: rectangleBoxWidth,
+                            padding: EdgeInsets.all(rectangleBoxPadding),
+                            decoration: BoxDecoration(
+                              color: selectedSubscription ==
+                                      AppLocalizations.of(context)!
+                                          .monthlySubscription
+                                  ? const Color(0xFF59c977)
+                                  : Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: selectedSubscription ==
+                                          AppLocalizations.of(context)!
+                                              .monthlySubscription
+                                      ? const Color(0xFF48a160)
+                                      : Colors.transparent,
+                                  offset: const Offset(0, 5),
+                                  blurRadius: 0,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.monthly,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    PressableButton(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      onPressed: () {
+                        Navigator.of(context).pop(selectedSubscription);
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => PaymentSettingPage(
-                                subscriptionType: selectedSubscription),
-                          ));
-                    },
-                    child: const Text('Jetzt kaufen'),
-                  ),
-                ],
+                              subscriptionType: selectedSubscription,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(AppLocalizations.of(context)!.buyNow),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        });
+            );
+          },
+        );
       },
     ).then((selectedSubscription) {
       if (selectedSubscription != null) {
@@ -912,16 +929,16 @@ class _MainScaffoldState extends State<MainScaffold>
                 ),
                 const SizedBox(height: 10),
                 if (!isSmallScreen)
-                  const Center(
+                  Center(
                     child: Text(
-                      "Möchtest du mehr über unsere App erfahren? Unsere App hilft dir dabei, Rückenschmerzen zu lindern und deine Gesundheit zu verbessern. Wir arbeiten kontinuierlich daran, neue Funktionen und Inhalte hinzuzufügen.",
+                      AppLocalizations.of(context)!.infoDialogTitle,
                       textAlign: TextAlign.center,
                     ),
                   ),
                 const SizedBox(height: 18),
-                const Center(
+                Center(
                   child: Text(
-                    "Unsere App bietet personalisierte Übungen, Tipps und Ratschläge, um deine Rückengesundheit zu verbessern.",
+                    AppLocalizations.of(context)!.infoDialogContent,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -937,7 +954,7 @@ class _MainScaffoldState extends State<MainScaffold>
                       throw 'Could not launch $url';
                     }
                   },
-                  child: const Text('Mehr erfahren'),
+                  child: Text(AppLocalizations.of(context)!.learnMore),
                 ),
               ],
             ),

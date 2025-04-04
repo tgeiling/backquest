@@ -345,5 +345,11 @@
   "agb": "Terms and Conditions",
   "agbContent": "This is the content of the Terms and Conditions for the English version.",
   "chooseSubscription": "Choose Your Subscription",
-  "selectSubscriptionWarning": "Please select a subscription plan"
+  "selectSubscriptionWarning": "Please select a subscription plan",
+  "subscriptionPromoTitle": "Would you like to use our service longer? We promise to continuously improve BackQuest",
+  "subscriptionMethodPrompt": "Choose a payment method for unlimited access to our app",
+  "buyNow": "Buy now",
+  "infoDialogTitle": "Would you like to learn more about our app? Our app helps you relieve back pain and improve your health. We are continuously working to add new features and content.",
+  "infoDialogContent": "Our app offers personalized exercises, tips, and advice to improve your back health.",
+  "learnMore": "Learn more"
 }
