@@ -329,5 +329,21 @@
   "rewardGoldCoin": "Gold Coin",
   "ended": "Sessions",
   "downloadInProgress": "Download In Progress",
-  "pleaseWaitForCurrentDownload": "Please wait for the current download to finish."
+  "pleaseWaitForCurrentDownload": "Please wait for the current download to finish.",
+  "paymentMethodFor": "Payment Method for {subscriptionType}",
+  "inAppPurchase": "In-App Purchase",
+  "yearly": "Yearly: \n $49.99 \n year",
+  "monthly": "Monthly: \n $5.99 \n month",
+  "yearlySubscription": "Yearly",
+  "monthlySubscription": "Monthly",
+  "errorTitle": "Error",
+  "inAppPurchaseNotAvailable": "In-App Purchases are not available.",
+  "subscriptionNotAvailable": "Selected subscription type is not available.",
+  "ok": "OK",
+  "paymentSuccessTitle": "Payment Successful",
+  "paymentSuccessMessage": "Thank you for subscribing to BackQuest!",
+  "agb": "Terms and Conditions",
+  "agbContent": "This is the content of the Terms and Conditions for the English version.",
+  "chooseSubscription": "Choose Your Subscription",
+  "selectSubscriptionWarning": "Please select a subscription plan"
 }

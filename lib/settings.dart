@@ -675,7 +675,7 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
     return selectedSubscription == subscription;
   }
 
-  Widget subscriptionOption(String type, String price) {
+  Widget subscriptionOption(String type, String displayText) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -701,13 +701,15 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
           ],
         ),
         child: ListTile(
-          title: Text('$type: $price',
-              style: TextStyle(
-                  color: isSubscriptionSelected(type)
-                      ? Colors.white
-                      : Colors.grey[400],
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
+          title: Text(
+            displayText,
+            style: TextStyle(
+                color: isSubscriptionSelected(type)
+                    ? Colors.white
+                    : Colors.grey[400],
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -727,15 +729,19 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            title: const Text('Choose Your Subscription',
-                style: TextStyle(color: Colors.white)),
+            title: Text(AppLocalizations.of(context)!.chooseSubscription,
+                style: const TextStyle(color: Colors.white)),
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              subscriptionOption('Jährlich', '€49.99/Jahr'),
-              subscriptionOption('Monatlich', '€5.99/Monat'),
+              subscriptionOption(
+                  AppLocalizations.of(context)!.yearlySubscription,
+                  AppLocalizations.of(context)!.yearly),
+              subscriptionOption(
+                  AppLocalizations.of(context)!.monthlySubscription,
+                  AppLocalizations.of(context)!.monthly),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -749,6 +755,13 @@ class _SubscriptionSettingPageState extends State<SubscriptionSettingPage> {
                     ));
               } else {
                 // Show a message to select a subscription
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!
+                        .selectSubscriptionWarning),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               }
             },
             backgroundColor: Colors.green,
@@ -793,7 +806,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       });
 
       if (available) {
-        const Set<String> productIds = {'03', '04'};
+        // Define product IDs: 0001 for yearly, 0002 for monthly
+        const Set<String> productIds = {'0001', '0002'};
         final ProductDetailsResponse response =
             await inAppPurchase.queryProductDetails(productIds);
 
@@ -841,13 +855,16 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   // Verify purchase
   Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
-      if (purchaseDetails.productID == '03' ||
-          purchaseDetails.productID == '04') {
+      if (purchaseDetails.productID == '0001' ||
+          purchaseDetails.productID == '0002') {
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
         profilProvider.setPayedSubscription(true);
-        profilProvider.setSubType(
-            purchaseDetails.productID == '03' ? 'Monatlich' : 'Jährlich');
+
+        // 0002 is monthly, 0001 is yearly
+        profilProvider.setSubType(purchaseDetails.productID == '0002'
+            ? AppLocalizations.of(context)!.monthlySubscription
+            : AppLocalizations.of(context)!.yearlySubscription);
         profilProvider.setSubStarted(DateTime.now());
 
         profilProvider.setReceiptData(
@@ -858,8 +875,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           textColor: Colors.white,
           context: context,
           type: QuickAlertType.success,
-          title: 'Zahlung Erfolgreich',
-          text: 'Danke, dass Sie BackQuest abonniert haben!',
+          title: AppLocalizations.of(context)!.paymentSuccessTitle,
+          text: AppLocalizations.of(context)!.paymentSuccessMessage,
         );
       }
     } catch (e) {
@@ -891,14 +908,15 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         context: context,
         builder: (_) => AlertDialog(
           backgroundColor: Colors.green,
-          title: const Text('Error'),
-          content: const Text('In-App Purchases are not available.'),
+          title: Text(AppLocalizations.of(context)!.errorTitle),
+          content:
+              Text(AppLocalizations.of(context)!.inAppPurchaseNotAvailable),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         ),
@@ -908,10 +926,14 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
 
     ProductDetails? product;
     try {
-      if (widget.subscriptionType == 'Jährlich') {
-        product = products.firstWhere((product) => product.id == '04');
+      // Select the product based on subscription type
+      if (widget.subscriptionType ==
+          AppLocalizations.of(context)!.yearlySubscription) {
+        // 0001 is for yearly subscription
+        product = products.firstWhere((product) => product.id == '0001');
       } else {
-        product = products.firstWhere((product) => product.id == '03');
+        // 0002 is for monthly subscription
+        product = products.firstWhere((product) => product.id == '0002');
       }
     } catch (e) {
       product = null;
@@ -923,14 +945,14 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Selected subscription type is not available.'),
+          title: Text(AppLocalizations.of(context)!.errorTitle),
+          content: Text(AppLocalizations.of(context)!.subscriptionNotAvailable),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         ),
@@ -990,9 +1012,9 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         ],
       ),
       child: Text(
-        subType == 'Jährlich'
-            ? "Jährlich: \n 49,99 € \n Jahr"
-            : "Monatlich: \n 5,99 € \n Monat",
+        subType == AppLocalizations.of(context)!.yearlySubscription
+            ? AppLocalizations.of(context)!.yearly
+            : AppLocalizations.of(context)!.monthly,
         style: const TextStyle(color: Colors.white, fontSize: 18),
       ),
     );
@@ -1013,7 +1035,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             title: Text(
-              'Payment Method for ${widget.subscriptionType}',
+              AppLocalizations.of(context)!
+                  .paymentMethodFor(widget.subscriptionType),
               style: const TextStyle(color: Colors.white),
             ),
             iconTheme: const IconThemeData(color: Colors.white),
@@ -1028,7 +1051,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    methodTile('In-App Purchase'),
+                    methodTile(AppLocalizations.of(context)!.inAppPurchase),
                   ],
                 ),
               ),
