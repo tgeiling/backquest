@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:backquest/elements.dart';
 import 'package:backquest/services.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -789,12 +792,39 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   bool available = true;
   List<ProductDetails> products = [];
   List<PurchaseDetails> purchases = [];
+  late StreamSubscription<List<PurchaseDetails>> _subscription;
+
+  // Server URL for receipt validation
+  final String _validationUrl = 'http://34.116.240.55:3000/validate-receipt';
 
   @override
   void initState() {
     super.initState();
     inAppPurchase = InAppPurchase.instance;
+
+    // Set up purchase stream listener early
+    final Stream<List<PurchaseDetails>> purchaseUpdated =
+        inAppPurchase.purchaseStream;
+    _subscription = purchaseUpdated.listen(
+      _handlePurchaseUpdates,
+      onDone: () {
+        _subscription.cancel();
+      },
+      onError: (error) {
+        print('Purchase stream error: $error');
+      },
+    );
+
     initializeInAppPurchase();
+
+    // Set default payment method
+    selectedPaymentMethod = AppLocalizations.of(context)!.inAppPurchase;
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 
   // Initialize the in-app purchase system
@@ -811,10 +841,6 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         final ProductDetailsResponse response =
             await inAppPurchase.queryProductDetails(productIds);
 
-        print("##################################");
-        print(response);
-        print("##################################");
-
         if (response.error != null) {
           print('Error querying product details: ${response.error}');
         }
@@ -822,11 +848,35 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         if (response.productDetails.isEmpty) {
           print(
               'No products found. This could be due to the following reasons:');
+          print(
+              '1. Products are not properly configured in App Store/Play Console');
+          print(
+              '2. The app\'s package name/bundle ID doesn\'t match the one in the store');
+          print('3. The app was not properly signed');
         } else {
-          products = response.productDetails;
+          setState(() {
+            products = response.productDetails;
+          });
+
+          // Log product details for debugging
+          for (var product in products) {
+            print(
+                'Found product: ${product.id}, ${product.title}, ${product.price}');
+          }
         }
       } else {
         print('In-App Purchase is not available on this device.');
+
+        // Show a notification to the user
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.inAppPurchaseNotAvailable),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
       print('An error occurred during in-app purchase initialization: $e');
@@ -836,15 +886,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   // Handle purchase updates
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) {
     for (var purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.purchased ||
-          purchaseDetails.status == PurchaseStatus.restored) {
-        _verifyPurchase(purchaseDetails);
-        if (purchaseDetails.pendingCompletePurchase) {
-          inAppPurchase.completePurchase(purchaseDetails);
-        }
-      } else if (purchaseDetails.status == PurchaseStatus.error) {
-        print('Purchase Error: ${purchaseDetails.error}');
-      }
+      _processPurchaseUpdate(purchaseDetails);
     }
 
     setState(() {
@@ -852,36 +894,194 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     });
   }
 
-  // Verify purchase
+  // Process individual purchase update
+  Future<void> _processPurchaseUpdate(PurchaseDetails purchaseDetails) async {
+    if (purchaseDetails.status == PurchaseStatus.pending) {
+      // Show loading indicator
+      _showLoadingDialog(AppLocalizations.of(context)!.buyNow);
+    } else {
+      // Close loading dialog if it's open
+      Navigator.of(context, rootNavigator: true).popUntil((route) {
+        return route.isFirst || route.settings.name != 'loading_dialog';
+      });
+
+      if (purchaseDetails.status == PurchaseStatus.error) {
+        // Handle error case
+        _handlePurchaseError(purchaseDetails.error);
+      } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+          purchaseDetails.status == PurchaseStatus.restored) {
+        // Validate and process successful purchase
+        await _verifyPurchase(purchaseDetails);
+      } else if (purchaseDetails.status == PurchaseStatus.canceled) {
+        print('Purchase cancelled by user');
+      }
+
+      // Complete the purchase to prevent duplicate updates
+      if (purchaseDetails.pendingCompletePurchase) {
+        await inAppPurchase.completePurchase(purchaseDetails);
+      }
+    }
+  }
+
+  // Show loading dialog
+  void _showLoadingDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      routeSettings: const RouteSettings(name: 'loading_dialog'),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(message),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Handle purchase errors
+  void _handlePurchaseError(dynamic error) {
+    if (error != null) {
+      // Extract information from error object regardless of its type
+      final errorMessage = error.toString();
+      print('Purchase Error: $errorMessage');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Purchase failed: $errorMessage'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Verify purchase with server
   Future<void> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
       if (purchaseDetails.productID == '0001' ||
           purchaseDetails.productID == '0002') {
+        // First update local state
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
-        profilProvider.setPayedSubscription(true);
 
-        // 0002 is monthly, 0001 is yearly
-        profilProvider.setSubType(purchaseDetails.productID == '0002'
-            ? AppLocalizations.of(context)!.monthlySubscription
-            : AppLocalizations.of(context)!.yearlySubscription);
-        profilProvider.setSubStarted(DateTime.now());
+        // Now send validation request to server
+        Map<String, dynamic> validationData = {
+          'platform': Platform.isIOS ? 'apple' : 'google',
+          'username': '', // Get username if you have it stored
+          'isSubscription': true,
+        };
 
-        profilProvider.setReceiptData(
-            purchaseDetails.verificationData.serverVerificationData);
+        // Add platform-specific validation data
+        if (Platform.isIOS) {
+          validationData['receiptData'] =
+              purchaseDetails.verificationData.serverVerificationData;
+        } else {
+          // For Android
+          if (purchaseDetails is GooglePlayPurchaseDetails) {
+            validationData['packageName'] =
+                'com.backquest.app'; // Your app's package name
+            validationData['productId'] = purchaseDetails.productID;
+            validationData['purchaseToken'] =
+                purchaseDetails.billingClientPurchase.purchaseToken;
+          }
+        }
 
-        QuickAlert.show(
-          backgroundColor: Colors.grey.shade900,
-          textColor: Colors.white,
-          context: context,
-          type: QuickAlertType.success,
-          title: AppLocalizations.of(context)!.paymentSuccessTitle,
-          text: AppLocalizations.of(context)!.paymentSuccessMessage,
+        // Send validation request to server
+        final response = await http.post(
+          Uri.parse(_validationUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(validationData),
         );
+
+        print(
+            'Server validation response: ${response.statusCode} ${response.body}');
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+
+          if (responseData['valid'] == true) {
+            // Update local subscription status regardless
+            profilProvider.setPayedSubscription(true);
+
+            // 0002 is monthly, 0001 is yearly
+            profilProvider.setSubType(purchaseDetails.productID == '0002'
+                ? AppLocalizations.of(context)!.monthlySubscription
+                : AppLocalizations.of(context)!.yearlySubscription);
+            profilProvider.setSubStarted(DateTime.now());
+
+            // Store receipt data
+            profilProvider.setReceiptData(
+                purchaseDetails.verificationData.serverVerificationData);
+
+            // Show success message
+            QuickAlert.show(
+              backgroundColor: Colors.grey.shade900,
+              textColor: Colors.white,
+              context: context,
+              type: QuickAlertType.success,
+              title: AppLocalizations.of(context)!.paymentSuccessTitle,
+              text: AppLocalizations.of(context)!.paymentSuccessMessage,
+            );
+          } else {
+            // Purchase validated as invalid by our server
+            _showInvalidPurchaseAlert(
+                responseData['error'] ?? 'Validation failed');
+          }
+        } else {
+          // Server error
+          print('Server error during validation: ${response.body}');
+          // Still update local state, just log the server error
+          profilProvider.setPayedSubscription(true);
+          profilProvider.setSubType(purchaseDetails.productID == '0002'
+              ? AppLocalizations.of(context)!.monthlySubscription
+              : AppLocalizations.of(context)!.yearlySubscription);
+          profilProvider.setSubStarted(DateTime.now());
+          profilProvider.setReceiptData(
+              purchaseDetails.verificationData.serverVerificationData);
+
+          QuickAlert.show(
+            backgroundColor: Colors.grey.shade900,
+            textColor: Colors.white,
+            context: context,
+            type: QuickAlertType.success,
+            title: AppLocalizations.of(context)!.paymentSuccessTitle,
+            text: AppLocalizations.of(context)!.paymentSuccessMessage +
+                "\n" +
+                "Note: Server validation pending.",
+          );
+        }
       }
     } catch (e) {
       print('Error verifying purchase: $e');
+
+      // Show error alert
+      QuickAlert.show(
+        backgroundColor: Colors.grey.shade900,
+        textColor: Colors.white,
+        context: context,
+        type: QuickAlertType.error,
+        title: "Verification Error",
+        text:
+            "There was an error verifying your purchase. Please contact support if the issue persists.",
+      );
     }
+  }
+
+  // Show invalid purchase alert
+  void _showInvalidPurchaseAlert(String message) {
+    QuickAlert.show(
+      backgroundColor: Colors.grey.shade900,
+      textColor: Colors.white,
+      context: context,
+      type: QuickAlertType.error,
+      title: "Purchase Validation Failed",
+      text: message,
+    );
   }
 
   bool isMethodSelected(String method) {
@@ -891,13 +1091,37 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
   // Purchase a product
   void _purchaseProduct(ProductDetails productDetails) {
     try {
-      print(productDetails);
-      final PurchaseParam purchaseParam =
-          PurchaseParam(productDetails: productDetails);
-      print(purchaseParam);
-      inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+      print('Initiating purchase for: ${productDetails.id}');
+
+      // Configure purchase parameters
+      final PurchaseParam purchaseParam = PurchaseParam(
+        productDetails: productDetails,
+        applicationUserName: null, // Can be used for user identification
+      );
+
+      // Start the purchase flow - always use non-consumable for subscriptions
+      if (Platform.isIOS) {
+        inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+      } else {
+        // On Android, we need to determine if it's a subscription
+        final bool isSubscription =
+            productDetails.id == '0001' || productDetails.id == '0002';
+
+        if (isSubscription) {
+          inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+        } else {
+          inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
+        }
+      }
     } catch (e) {
       print('Error purchasing product: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error initiating purchase: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

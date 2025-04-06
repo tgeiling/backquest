@@ -743,76 +743,139 @@ function authenticateToken(req, res, next) {
   });
 }
 
-const APPLE_RECEIPT_VALIDATION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
-const APPLE_RECEIPT_VALIDATION_URL_SANDBOX = 'https://sandbox.itunes.apple.com/verifyReceipt';
-const GOOGLE_RECEIPT_VALIDATION_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
+// Constants for validation URLs
+const APPLE_PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
+const APPLE_SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
+const GOOGLE_API_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
 
-//const GOOGLE_SERVICE_ACCOUNT_KEY = require('./backquest-68ea5-976c54f2d8e8.json');
-const GOOGLE_SERVICE_ACCOUNT_KEY = "qwe";
+// Load Google service account credentials
+let googleCredentials;
+try {
+  // Try to load credentials from file first
+  const credentialsPath = path.join(__dirname, 'credentials', 'google-service-account.json');
+  if (fs.existsSync(credentialsPath)) {
+    googleCredentials = require(credentialsPath);
+  } else {
+    // Fall back to environment variable if file doesn't exist
+    googleCredentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS || '{}');
+  }
+} catch (error) {
+  console.error('Failed to load Google credentials:', error);
+  googleCredentials = {};
+}
 
-const APPLE_SHARED_SECRET = process.env.APPLE_SHARED_SECRET;
-
+/**
+ * Validates an Apple receipt
+ * @param {string} receiptData - The base64 encoded receipt data
+ * @returns {Promise<{valid: boolean, details: object|null, error: string|null}>}
+ */
 async function validateAppleReceipt(receiptData) {
+  const appleSharedSecret = process.env.APPLE_SHARED_SECRET;
+  
+  if (!appleSharedSecret) {
+    console.error('Apple shared secret is not configured');
+    return { valid: false, details: null, error: 'Configuration error' };
+  }
+  
   try {
-    const response = await axios.post(APPLE_RECEIPT_VALIDATION_URL, {
+    // First try production environment
+    let response = await axios.post(APPLE_PRODUCTION_URL, {
       'receipt-data': receiptData,
-      'password': APPLE_SHARED_SECRET,
+      'password': appleSharedSecret,
     });
-
-    // Retry with the sandbox URL if necessary
+    
+    // If status is 21007, the receipt is from the sandbox environment
     if (response.data.status === 21007) {
-      const sandboxResponse = await axios.post(APPLE_RECEIPT_VALIDATION_URL_SANDBOX, {
+      console.log('Receipt is from sandbox, retrying with sandbox URL');
+      response = await axios.post(APPLE_SANDBOX_URL, {
         'receipt-data': receiptData,
-        'password': APPLE_SHARED_SECRET,
+        'password': appleSharedSecret,
       });
-      return sandboxResponse.data;
     }
-
-    return response.data;
+    
+    // Status 0 indicates successful validation
+    const isValid = response.data.status === 0;
+    
+    // Return validation result
+    return {
+      valid: isValid,
+      details: isValid ? response.data : null,
+      error: isValid ? null : `Apple validation failed with status: ${response.data.status}`
+    };
   } catch (error) {
-    console.error('Error validating Apple receipt:', error);
-    return null;
+    console.error('Error validating Apple receipt:', error.message);
+    return { 
+      valid: false, 
+      details: null, 
+      error: `Validation request failed: ${error.message}`
+    };
   }
 }
 
-// Helper function to validate Google receipt
-async function validateGoogleReceipt(packageName, productId, purchaseToken) {
+/**
+ * Validates a Google Play receipt
+ * @param {string} packageName - The package name of the app
+ * @param {string} productId - The product ID of the purchase
+ * @param {string} purchaseToken - The purchase token to validate
+ * @param {boolean} isSubscription - Whether this is a subscription (true) or one-time product (false)
+ * @returns {Promise<{valid: boolean, details: object|null, error: string|null}>}
+ */
+async function validateGoogleReceipt(packageName, productId, purchaseToken, isSubscription = false) {
+  if (!Object.keys(googleCredentials).length) {
+    console.error('Google API credentials are not configured');
+    return { valid: false, details: null, error: 'Configuration error' };
+  }
+
   try {
-    const authClient = new google.auth.GoogleAuth({
-      credentials: GOOGLE_SERVICE_ACCOUNT_KEY,
-      scopes: ['https://www.googleapis.com/auth/androidpublisher'],
+    // Set up authentication
+    const auth = new GoogleAuth({
+      credentials: googleCredentials,
+      scopes: ['https://www.googleapis.com/auth/androidpublisher']
     });
-
-    const accessToken = await authClient.getAccessToken();
-
-    const url = `${GOOGLE_RECEIPT_VALIDATION_URL}/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}?access_token=${accessToken}`;
-
-    const response = await axios.get(url);
-    return response.data;
+    
+    const client = await auth.getClient();
+    
+    // Determine the endpoint based on whether this is a subscription or one-time purchase
+    const endpoint = isSubscription 
+      ? `${GOOGLE_API_URL}/${packageName}/purchases/subscriptions/${productId}/tokens/${purchaseToken}`
+      : `${GOOGLE_API_URL}/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}`;
+    
+    // Make the validation request
+    const response = await client.request({ url: endpoint });
+    
+    // Check if the purchase is valid
+    // For subscriptions, check the subscription state
+    // For one-time purchases, check the purchaseState
+    let isValid = false;
+    
+    if (isSubscription) {
+      // For subscriptions, check if it's active (not expired, cancelled, etc.)
+      isValid = response.data.expiryTimeMillis > Date.now() && 
+                response.data.paymentState === 1; // 1 = Payment received
+    } else {
+      // For one-time purchases, check if purchase state is 0 (purchased)
+      isValid = response.data.purchaseState === 0;
+    }
+    
+    return {
+      valid: isValid,
+      details: response.data,
+      error: null
+    };
   } catch (error) {
-    console.error('Error validating Google receipt:', error);
-    return null;
+    console.error('Error validating Google receipt:', error.message);
+    return { 
+      valid: false, 
+      details: null, 
+      error: `Validation request failed: ${error.message}`
+    };
   }
-} 
+}
 
-// Endpoint to validate a receipt
-app.post('/validate-receipt', async (req, res) => {
-  const { platform, receiptData, packageName, productId, purchaseToken } = req.body;
-
-  let validationResponse = null;
-
-  if (platform === 'apple') {
-    validationResponse = await validateAppleReceipt(receiptData);
-  } else if (platform === 'google') {
-    validationResponse = await validateGoogleReceipt(packageName, productId, purchaseToken);
-  }
-
-  if (validationResponse && validationResponse.status === 0) {
-    res.json({ valid: true });
-  } else {
-    res.json({ valid: false });
-  }
-});
+module.exports = {
+  validateAppleReceipt,
+  validateGoogleReceipt
+};
 
 const outputPath = '/home/backquest/output'; // Define outputPath
 
