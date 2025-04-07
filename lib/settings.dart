@@ -66,8 +66,9 @@ class SettingsPage extends StatelessWidget {
 
       // Only show delete account option for authenticated users
       settingsTiles.add(SettingsTile(
-        title: "Delete Account", // Add to localizations
+        title: "Delete Account",
         icon: Icons.delete_forever,
+        onTileTap: setAuthenticated,
       ));
     } else {
       settingsTiles.add(LoginTile(
@@ -1481,14 +1482,12 @@ class DeleteAccountPage extends StatefulWidget {
 
 class _DeleteAccountPageState extends State<DeleteAccountPage> {
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _reasonController = TextEditingController();
   bool _isSubmitting = false;
   bool _confirmDelete = false;
 
   @override
   void dispose() {
     _passwordController.dispose();
-    _reasonController.dispose();
     super.dispose();
   }
 
@@ -1525,7 +1524,6 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         },
         body: jsonEncode({
           'password': _passwordController.text,
-          'reason': _reasonController.text,
         }),
       );
 
@@ -1534,24 +1532,21 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
-          title: "Request Submitted",
-          text:
-              "Your account deletion request has been submitted. You will receive a confirmation email shortly.",
+          title: "Account Deleted",
+          text: "Your account has been successfully deleted.",
           onConfirmBtnTap: () {
             // Log the user out
             final AuthService authService = AuthService();
             authService.logout();
-            widget.setAuthenticated(false);
-
-            // Navigate back to the main screen
             Navigator.of(context).popUntil((route) => route.isFirst);
+            widget.setAuthenticated(false);
           },
         );
       } else {
         // Handle various error responses
         final Map<String, dynamic> responseData = json.decode(response.body);
         _showErrorSnackBar(
-            responseData['message'] ?? "Failed to submit deletion request");
+            responseData['message'] ?? "Failed to delete account");
       }
     } catch (e) {
       _showErrorSnackBar("Network error: $e");
@@ -1592,85 +1587,118 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: const Text(
+                      "Warning: Account deletion is permanent. All your data, including progress and subscription information, will be permanently removed.",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24.0),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: "Confirm Password",
+                      labelStyle: TextStyle(color: Colors.white),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      unselectedWidgetColor: Colors
+                          .white, // This changes the border color of the unchecked checkbox
+                      checkboxTheme: CheckboxThemeData(
+                        fillColor: MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.selected)) {
+                            return Colors.red; // When selected
+                          }
+                          return Colors
+                              .transparent; // When unselected (makes the inside transparent)
+                        }),
+                        checkColor: MaterialStateProperty.all(
+                            Colors.white), // The check mark color
+                        side: const BorderSide(
+                            color: Colors.white,
+                            width: 2), // Explicit border color and width
+                      ),
+                    ),
+                    child: CheckboxListTile(
+                      title: const Text(
+                        "I understand this action is permanent and cannot be undone",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      value: _confirmDelete,
+                      onChanged: (value) {
+                        setState(() {
+                          _confirmDelete = value ?? false;
+                        });
+                      },
+                      activeColor: Colors.red,
+                      checkColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 24.0),
+                  PressableButton(
+                    onPressed: _isSubmitting ? null : _requestAccountDeletion,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 16),
+                    color: Colors.red,
+                    shadowColor: Colors.red.shade900,
+                    child: const Text(
+                      "Delete My Account",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_isSubmitting)
               Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Text(
-                  "Warning: Account deletion is permanent. All your data, including progress and subscription information, will be permanently removed.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24.0),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: "Confirm Password",
-                  labelStyle: TextStyle(color: Colors.white),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _reasonController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: "Reason for Leaving (Optional)",
-                  labelStyle: TextStyle(color: Colors.white),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              const SizedBox(height: 16.0),
-              CheckboxListTile(
-                title: const Text(
-                  "I understand this action is permanent and cannot be undone",
-                  style: TextStyle(color: Colors.white),
-                ),
-                value: _confirmDelete,
-                onChanged: (value) {
-                  setState(() {
-                    _confirmDelete = value ?? false;
-                  });
-                },
-                activeColor: Colors.red,
-                checkColor: Colors.white,
-              ),
-              const SizedBox(height: 24.0),
-              PressableButton(
-                onPressed: _isSubmitting ? null : _requestAccountDeletion,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                color: Colors.red,
-                shadowColor: Colors.red.shade900,
-                child: _isSubmitting
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        "Request Account Deletion",
+                color: Colors.black54, // Semi-transparent background
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "Deleting account...",
                         style: TextStyle(
                           color: Colors.white,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     ]);

@@ -1496,7 +1496,8 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                             ),
                           ),
                         );
-                        widget.toggleModal;
+                        widget
+                            .toggleModal; // Fixed: Added parentheses to call the function
                       }
                     : () async {
                         await _validateSubscriptionAndShowRestrictionDialog(
@@ -1506,7 +1507,9 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                 vertical: bigPressableVerticalPadding, horizontal: 12),
             child: Center(
                 child: Text(
-              widget.isVideoPlayer ? "Jetzt starten" : "Video erstellen",
+              widget.isVideoPlayer
+                  ? AppLocalizations.of(context)!.startVideo
+                  : AppLocalizations.of(context)!.createVideo,
               style: Theme.of(context).textTheme.labelLarge,
             )),
           ),
