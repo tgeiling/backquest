@@ -194,6 +194,47 @@ app.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
+app.post('/requestDeletion', authenticateToken, async (req, res) => {
+  try {
+    const { password } = req.body;
+    
+    // Find the user by username from the JWT token
+    const user = await User.findOne({ username: req.user.username });
+    
+    if (!user) {
+      return res.status(404).send({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+    
+    // Quick password verification
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).send({ 
+        success: false, 
+        message: 'Incorrect password' 
+      });
+    }
+    
+    // Just delete it immediately
+    await User.deleteOne({ _id: user._id });
+    
+    // Return success
+    res.status(200).send({ 
+      success: true, 
+      message: 'Account deleted successfully' 
+    });
+    
+  } catch (error) {
+    console.error("Account deletion error:", error);
+    res.status(500).send({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+});
+
 app.get('/userFeedback', async (req, res) => {
   try {
     const users = await User.find({});

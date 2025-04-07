@@ -20,17 +20,71 @@ import 'auth.dart';
 class SettingsPage extends StatelessWidget {
   final Function(bool) setAuthenticated;
   final VoidCallback setQuestionnairDone;
+  final bool authenticated;
 
   const SettingsPage({
     Key? key,
     required this.setAuthenticated,
     required this.setQuestionnairDone,
+    required this.authenticated,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
     bool payedUp = profilProvider.payedSubscription == true ? true : false;
+
+    // Create a list to hold all the settings tiles
+    List<Widget> settingsTiles = [
+      SettingsTile(
+          title: AppLocalizations.of(context)!.adjustGoals,
+          icon: Icons.bar_chart),
+      SettingsTile(
+          title: AppLocalizations.of(context)!.adjustPainAreas,
+          icon: Icons.sports_tennis),
+      SettingsTile(
+          title: AppLocalizations.of(context)!.adjustFitnessLevel,
+          icon: Icons.bolt),
+      SettingsTile(
+          title: AppLocalizations.of(context)!.termsConditions,
+          icon: Icons.article),
+      SettingsTile(
+          title: AppLocalizations.of(context)!.privacyPolicy,
+          icon: Icons.privacy_tip),
+      SettingsTile(
+          title: AppLocalizations.of(context)!.impressum,
+          icon: Icons.info_outline),
+    ];
+
+    // Conditionally add login or logout based on authentication status
+    if (authenticated) {
+      settingsTiles.add(SettingsTile(
+        title: AppLocalizations.of(context)!.logout,
+        icon: Icons.logout,
+        onTileTap: setAuthenticated,
+      ));
+
+      // Only show delete account option for authenticated users
+      settingsTiles.add(SettingsTile(
+        title: "Delete Account", // Add to localizations
+        icon: Icons.delete_forever,
+      ));
+    } else {
+      settingsTiles.add(LoginTile(
+        title: AppLocalizations.of(context)!.login,
+        icon: Icons.login,
+        setAuthenticated: setAuthenticated,
+        setQuestionnairDone: setQuestionnairDone,
+      ));
+    }
+
+    // Add subscription tile
+    settingsTiles.add(SettingsTile(
+      title: payedUp
+          ? AppLocalizations.of(context)!.mySubscription
+          : AppLocalizations.of(context)!.subscribeBackQuest,
+      icon: Icons.payments_sharp,
+    ));
 
     return Scaffold(
         extendBodyBehindAppBar: true,
@@ -57,42 +111,7 @@ class SettingsPage extends StatelessWidget {
           ListView(
             children: ListTile.divideTiles(
               context: context,
-              tiles: [
-                SettingsTile(
-                    title: AppLocalizations.of(context)!.adjustGoals,
-                    icon: Icons.bar_chart),
-                SettingsTile(
-                    title: AppLocalizations.of(context)!.adjustPainAreas,
-                    icon: Icons.sports_tennis),
-                SettingsTile(
-                    title: AppLocalizations.of(context)!.adjustFitnessLevel,
-                    icon: Icons.bolt),
-                SettingsTile(
-                    title: AppLocalizations.of(context)!.termsConditions,
-                    icon: Icons.article),
-                SettingsTile(
-                    title: AppLocalizations.of(context)!.privacyPolicy,
-                    icon: Icons.privacy_tip),
-                SettingsTile(
-                    title: AppLocalizations.of(context)!.impressum,
-                    icon: Icons.info_outline),
-                LoginTile(
-                  title: AppLocalizations.of(context)!.login,
-                  icon: Icons.login,
-                  setAuthenticated: setAuthenticated,
-                  setQuestionnairDone: setQuestionnairDone,
-                ),
-                SettingsTile(
-                  title: AppLocalizations.of(context)!.logout,
-                  icon: Icons.logout,
-                  onTileTap: setAuthenticated,
-                ),
-                SettingsTile(
-                    title: payedUp
-                        ? AppLocalizations.of(context)!.mySubscription
-                        : AppLocalizations.of(context)!.subscribeBackQuest,
-                    icon: Icons.payments_sharp),
-              ],
+              tiles: settingsTiles,
             ).toList(),
           ),
         ]));
@@ -172,6 +191,15 @@ class SettingsTile extends StatelessWidget {
           authService.logout();
           onTileTap?.call(false);
           Navigator.pop(context);
+        } else if (title == "Delete Account") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DeleteAccountPage(
+                setAuthenticated: onTileTap ?? ((_) {}),
+              ),
+            ),
+          );
         } else if (title == AppLocalizations.of(context)!.mySubscription ||
             title == AppLocalizations.of(context)!.subscribeBackQuest) {
           Navigator.push(
@@ -1436,5 +1464,215 @@ class Kontakt extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class DeleteAccountPage extends StatefulWidget {
+  final Function(bool) setAuthenticated;
+
+  const DeleteAccountPage({
+    Key? key,
+    required this.setAuthenticated,
+  }) : super(key: key);
+
+  @override
+  _DeleteAccountPageState createState() => _DeleteAccountPageState();
+}
+
+class _DeleteAccountPageState extends State<DeleteAccountPage> {
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _reasonController = TextEditingController();
+  bool _isSubmitting = false;
+  bool _confirmDelete = false;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _reasonController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _requestAccountDeletion() async {
+    if (_passwordController.text.isEmpty) {
+      _showErrorSnackBar("Please enter your password");
+      return;
+    }
+
+    if (!_confirmDelete) {
+      _showErrorSnackBar("Please confirm account deletion");
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final token = await getAuthToken();
+      if (token == null) {
+        _showErrorSnackBar("Authentication error. Please login again.");
+        setState(() {
+          _isSubmitting = false;
+        });
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse('http://34.116.240.55:3000/requestDeletion'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'password': _passwordController.text,
+          'reason': _reasonController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Account deletion request successful
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          title: "Request Submitted",
+          text:
+              "Your account deletion request has been submitted. You will receive a confirmation email shortly.",
+          onConfirmBtnTap: () {
+            // Log the user out
+            final AuthService authService = AuthService();
+            authService.logout();
+            widget.setAuthenticated(false);
+
+            // Navigate back to the main screen
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+        );
+      } else {
+        // Handle various error responses
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        _showErrorSnackBar(
+            responseData['message'] ?? "Failed to submit deletion request");
+      }
+    } catch (e) {
+      _showErrorSnackBar("Network error: $e");
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: <Widget>[
+      Image.asset(
+        "assets/settingsbg.PNG",
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.cover,
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+          title: const Text(
+            "Delete Account",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: const Text(
+                  "Warning: Account deletion is permanent. All your data, including progress and subscription information, will be permanently removed.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24.0),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Confirm Password",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _reasonController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: "Reason for Leaving (Optional)",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 16.0),
+              CheckboxListTile(
+                title: const Text(
+                  "I understand this action is permanent and cannot be undone",
+                  style: TextStyle(color: Colors.white),
+                ),
+                value: _confirmDelete,
+                onChanged: (value) {
+                  setState(() {
+                    _confirmDelete = value ?? false;
+                  });
+                },
+                activeColor: Colors.red,
+                checkColor: Colors.white,
+              ),
+              const SizedBox(height: 24.0),
+              PressableButton(
+                onPressed: _isSubmitting ? null : _requestAccountDeletion,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                color: Colors.red,
+                shadowColor: Colors.red.shade900,
+                child: _isSubmitting
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        "Request Account Deletion",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 }

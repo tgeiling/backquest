@@ -522,6 +522,7 @@ class ProfilPageState extends State<ProfilPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SettingsPage(
+                                          authenticated: widget.isLoggedIn(),
                                           setAuthenticated:
                                               widget.setAuthenticated,
                                           setQuestionnairDone:
