@@ -1358,13 +1358,23 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       aspectRatioItems = 8;
     }
 
-    bool isDateSevenDaysAgo(String isoDateString) {
-      DateTime parsedDate = DateTime.parse(isoDateString).toLocal();
-      DateTime currentDate = DateTime.now().toLocal();
-      DateTime sevenDaysAgo = currentDate.subtract(Duration(days: 7)).toLocal();
+    bool isDateSevenDaysAgo(String? isoDateString) {
+      if (isoDateString == null || isoDateString.isEmpty) {
+        return true; // If there's no date, treat as if it's ready for next video
+      }
 
-      return parsedDate.isBefore(sevenDaysAgo) ||
-          parsedDate.isAtSameMomentAs(sevenDaysAgo);
+      try {
+        DateTime parsedDate = DateTime.parse(isoDateString).toLocal();
+        DateTime currentDate = DateTime.now().toLocal();
+        DateTime sevenDaysAgo =
+            currentDate.subtract(Duration(days: 7)).toLocal();
+
+        return parsedDate.isBefore(sevenDaysAgo) ||
+            parsedDate.isAtSameMomentAs(sevenDaysAgo);
+      } catch (e) {
+        print("Error parsing date: $e");
+        return true; // If there's an error parsing, allow video creation
+      }
     }
 
     final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
@@ -1449,7 +1459,7 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
             ),
           ),
           const SizedBox(height: 30),
-          PressableButton(
+          /* PressableButton(
             onPressed: widget.authenticated && payedUp
                 ? widget.isVideoPlayer
                     ? () {
@@ -1496,8 +1506,55 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
                             ),
                           ),
                         );
+                        widget.toggleModal;
+                      }
+                    : () async {
+                        await _validateSubscriptionAndShowRestrictionDialog(
+                            profilProvider);
+                      },
+            padding: EdgeInsets.symmetric(
+                vertical: bigPressableVerticalPadding, horizontal: 12),
+            child: Center(
+                child: Text(
+              widget.isVideoPlayer ? "Jetzt starten" : "Video erstellen",
+              style: Theme.of(context).textTheme.labelLarge,
+            )),
+          ), */
+
+          PressableButton(
+            onPressed: widget.isVideoPlayer
+                ? (widget.authenticated && payedUp) || readyForNextVideo
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VideoCombinerScreen(
+                              levelId: widget.levelId,
+                              levelNotifier: Provider.of<LevelNotifier>(context,
+                                  listen: false),
+                              profilProvider: Provider.of<ProfilProvider>(
+                                  context,
+                                  listen: false),
+                              focus: selectedFocus,
+                              goal: selectedGoal,
+                              duration: selectedDuration,
+                            ),
+                          ),
+                        );
                         widget
                             .toggleModal; // Fixed: Added parentheses to call the function
+                      }
+                    : () async {
+                        await _validateSubscriptionAndShowRestrictionDialog(
+                            profilProvider);
+                      }
+                : widget.authenticated && payedUp
+                    ? () {
+                        downloadScreenKey.currentState!.combineAndDownloadVideo(
+                            selectedFocus,
+                            selectedGoal,
+                            selectedDuration,
+                            ProfilProvider().fitnessLevel);
                       }
                     : () async {
                         await _validateSubscriptionAndShowRestrictionDialog(
@@ -1513,44 +1570,6 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
               style: Theme.of(context).textTheme.labelLarge,
             )),
           ),
-          /*
-          PressableButton(
-            onPressed: widget.isVideoPlayer
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VideoCombinerScreen(
-                          levelId: widget.levelId,
-                          levelNotifier: Provider.of<LevelNotifier>(context,
-                              listen: false),
-                          profilProvider: Provider.of<ProfilProvider>(context,
-                              listen: false),
-                          focus: selectedFocus,
-                          goal: selectedGoal,
-                          duration: selectedDuration,
-                        ),
-                      ),
-                    );
-                    widget.toggleModal;
-                  }
-                : () {
-                    downloadScreenKey.currentState!.combineAndDownloadVideo(
-                        selectedFocus,
-                        selectedGoal,
-                        selectedDuration,
-                        ProfilProvider().fitnessLevel);
-                  },
-            padding: EdgeInsets.symmetric(
-                vertical: bigPressableVerticalPadding, horizontal: 12),
-            child: Center(
-                child: Text(
-              widget.isVideoPlayer
-                  ? AppLocalizations.of(context)!.startVideo
-                  : AppLocalizations.of(context)!.createVideo,
-              style: Theme.of(context).textTheme.labelLarge,
-            )),
-          ), */
         ],
       ),
     );
@@ -1579,15 +1598,78 @@ class _CustomBottomModalState extends State<CustomBottomModal> {
       );
     }
 
-    showVideoRestrictionDialog(profilProvider.lastUpdateString);
+    showVideoRestrictionDialog(profilProvider);
   }
 
-  void showVideoRestrictionDialog(String lastUpdateString) {
-    DateTime lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();
-    DateTime nextAvailableDate = lastUpdateDate.add(Duration(days: 7));
+  void showVideoRestrictionDialog(ProfilProvider profilProvider) {
+    String lastUpdateString = profilProvider.lastUpdateString;
 
-    int daysUntilNextVideo =
-        nextAvailableDate.difference(DateTime.now()).inDays;
+    // Handle the case where lastUpdateString is null or empty
+    if (lastUpdateString == null || lastUpdateString.isEmpty) {
+      // Show a different message if there's no last update date
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            title: Text(
+              AppLocalizations.of(context)!.videoRestriction,
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  AppLocalizations.of(context)!.videoRestrictionInfo,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "Abonnement erforderlich",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  AppLocalizations.of(context)!.ok,
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // Try to parse the date safely
+    DateTime lastUpdateDate;
+    DateTime nextAvailableDate;
+    int daysUntilNextVideo;
+
+    try {
+      lastUpdateDate = DateTime.parse(lastUpdateString).toLocal();
+      nextAvailableDate = lastUpdateDate.add(Duration(days: 7));
+      daysUntilNextVideo = nextAvailableDate.difference(DateTime.now()).inDays;
+
+      // Ensure daysUntilNextVideo is at least 1
+      daysUntilNextVideo = daysUntilNextVideo < 1 ? 1 : daysUntilNextVideo;
+    } catch (e) {
+      print("Error parsing date: $e");
+      // Fallback to a default value
+      daysUntilNextVideo = 7;
+    }
 
     showDialog<void>(
       context: context,
