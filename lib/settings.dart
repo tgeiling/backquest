@@ -6,6 +6,7 @@ import 'package:backquest/elements.dart';
 import 'package:backquest/services.dart';
 import 'package:backquest/stats.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -825,11 +826,15 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
 
   // Server URL for receipt validation
   final String _validationUrl = 'http://34.116.240.55:3000/validate-receipt';
+  final String _androidPackageName = 'com.backquest.app';
 
   @override
   void initState() {
     super.initState();
     inAppPurchase = InAppPurchase.instance;
+
+    // Initialize platform-specific purchase features
+    _initPlatformSpecificPurchase();
 
     // Set up purchase stream listener early
     final Stream<List<PurchaseDetails>> purchaseUpdated =
@@ -844,7 +849,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       },
     );
 
-    initializeInAppPurchase();
+    // Initialize in-app purchases
+    _initializeInAppPurchase();
 
     // Set default payment method
     selectedPaymentMethod = AppLocalizations.of(context)!.inAppPurchase;
@@ -856,8 +862,22 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     super.dispose();
   }
 
+  // Initialize platform-specific purchase settings
+  Future<void> _initPlatformSpecificPurchase() async {
+    if (Platform.isAndroid) {
+      try {
+        final androidAddition = inAppPurchase
+            .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+
+        print('Android IAP platform addition initialized successfully');
+      } catch (e) {
+        print('Error initializing Android IAP: $e');
+      }
+    }
+  }
+
   // Initialize the in-app purchase system
-  Future<void> initializeInAppPurchase() async {
+  Future<void> _initializeInAppPurchase() async {
     try {
       final bool isAvailable = await inAppPurchase.isAvailable();
       setState(() {
@@ -912,7 +932,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     }
   }
 
-  // Handle purchase updates
+  // Handle purchase updates from stream
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) {
     for (var purchaseDetails in purchaseDetailsList) {
       _processPurchaseUpdate(purchaseDetails);
@@ -960,12 +980,18 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
       routeSettings: const RouteSettings(name: 'loading_dialog'),
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.grey.shade800,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const CircularProgressIndicator(),
+              const CircularProgressIndicator(
+                color: Colors.white,
+              ),
               const SizedBox(height: 16),
-              Text(message),
+              Text(
+                message,
+                style: const TextStyle(color: Colors.white),
+              ),
             ],
           ),
         );
@@ -973,20 +999,45 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 
-  // Handle purchase errors
+  // Enhanced purchase error handling
   void _handlePurchaseError(dynamic error) {
-    if (error != null) {
-      // Extract information from error object regardless of its type
-      final errorMessage = error.toString();
-      print('Purchase Error: $errorMessage');
+    String errorMessage;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Purchase failed: $errorMessage'),
-          backgroundColor: Colors.red,
-        ),
-      );
+    if (Platform.isAndroid && error is BillingResultWrapper) {
+      // Android specific error handling
+      switch (error.responseCode) {
+        case BillingResponse.userCanceled:
+          errorMessage = 'Purchase was canceled by user';
+          break;
+        case BillingResponse.serviceUnavailable:
+          errorMessage = 'Google Play service is unavailable';
+          break;
+        case BillingResponse.billingUnavailable:
+          errorMessage = 'Billing is unavailable on this device';
+          break;
+        case BillingResponse.itemAlreadyOwned:
+          errorMessage = 'You already own this item';
+          // Handle this special case - it's not necessarily an error
+          _verifyExistingSubscription();
+          return;
+        case BillingResponse.developerError:
+          errorMessage = 'Developer error occurred';
+          break;
+        default:
+          errorMessage = 'Error code: ${error.responseCode}';
+      }
+    } else {
+      errorMessage = error?.toString() ?? 'Unknown error occurred';
     }
+
+    print('Purchase Error: $errorMessage');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Purchase failed: $errorMessage'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   // Verify purchase with server
@@ -994,14 +1045,12 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     try {
       if (purchaseDetails.productID == '0001' ||
           purchaseDetails.productID == '0002') {
-        // First update local state
         final profilProvider =
             Provider.of<ProfilProvider>(context, listen: false);
 
-        // Now send validation request to server
+        // Create validation data appropriate for the platform
         Map<String, dynamic> validationData = {
           'platform': Platform.isIOS ? 'apple' : 'google',
-          'username': '', // Get username if you have it stored
           'isSubscription': true,
         };
 
@@ -1009,11 +1058,10 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         if (Platform.isIOS) {
           validationData['receiptData'] =
               purchaseDetails.verificationData.serverVerificationData;
-        } else {
+        } else if (Platform.isAndroid) {
           // For Android
           if (purchaseDetails is GooglePlayPurchaseDetails) {
-            validationData['packageName'] =
-                'com.backquest.app'; // Your app's package name
+            validationData['packageName'] = _androidPackageName;
             validationData['productId'] = purchaseDetails.productID;
             validationData['purchaseToken'] =
                 purchaseDetails.billingClientPurchase.purchaseToken;
@@ -1034,18 +1082,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           final Map<String, dynamic> responseData = json.decode(response.body);
 
           if (responseData['valid'] == true) {
-            // Update local subscription status regardless
-            profilProvider.setPayedSubscription(true);
-
-            // 0002 is monthly, 0001 is yearly
-            profilProvider.setSubType(purchaseDetails.productID == '0002'
-                ? AppLocalizations.of(context)!.monthlySubscription
-                : AppLocalizations.of(context)!.yearlySubscription);
-            profilProvider.setSubStarted(DateTime.now());
-
-            // Store receipt data
-            profilProvider.setReceiptData(
-                purchaseDetails.verificationData.serverVerificationData);
+            // Update subscription status based on platform
+            _updateSubscriptionStatus(purchaseDetails);
 
             // Show success message
             QuickAlert.show(
@@ -1057,21 +1095,16 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
               text: AppLocalizations.of(context)!.paymentSuccessMessage,
             );
           } else {
-            // Purchase validated as invalid by our server
+            // Purchase validated as invalid by server
             _showInvalidPurchaseAlert(
                 responseData['error'] ?? 'Validation failed');
           }
         } else {
           // Server error
           print('Server error during validation: ${response.body}');
+
           // Still update local state, just log the server error
-          profilProvider.setPayedSubscription(true);
-          profilProvider.setSubType(purchaseDetails.productID == '0002'
-              ? AppLocalizations.of(context)!.monthlySubscription
-              : AppLocalizations.of(context)!.yearlySubscription);
-          profilProvider.setSubStarted(DateTime.now());
-          profilProvider.setReceiptData(
-              purchaseDetails.verificationData.serverVerificationData);
+          _updateSubscriptionStatus(purchaseDetails);
 
           QuickAlert.show(
             backgroundColor: Colors.grey.shade900,
@@ -1079,9 +1112,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
             context: context,
             type: QuickAlertType.success,
             title: AppLocalizations.of(context)!.paymentSuccessTitle,
-            text: AppLocalizations.of(context)!.paymentSuccessMessage +
-                "\n" +
-                "Note: Server validation pending.",
+            text:
+                "${AppLocalizations.of(context)!.paymentSuccessMessage}\nNote: Server validation pending.",
           );
         }
       }
@@ -1101,6 +1133,57 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     }
   }
 
+  // Update subscription status in app
+  void _updateSubscriptionStatus(PurchaseDetails purchaseDetails) {
+    final profilProvider = Provider.of<ProfilProvider>(context, listen: false);
+
+    // Update subscription status
+    profilProvider.setPayedSubscription(true);
+
+    // Set subscription type (monthly/yearly)
+    profilProvider.setSubType(purchaseDetails.productID == '0002'
+        ? AppLocalizations.of(context)!.monthlySubscription
+        : AppLocalizations.of(context)!.yearlySubscription);
+
+    // Set start date
+    DateTime startDate = DateTime.now();
+
+    // For Google Play, get the actual purchase time if available
+    if (Platform.isAndroid && purchaseDetails is GooglePlayPurchaseDetails) {
+      startDate = DateTime.fromMillisecondsSinceEpoch(
+          purchaseDetails.billingClientPurchase.purchaseTime);
+    }
+
+    profilProvider.setSubStarted(startDate);
+
+    // Store receipt data or purchase token
+    if (Platform.isAndroid && purchaseDetails is GooglePlayPurchaseDetails) {
+      profilProvider
+          .setReceiptData(purchaseDetails.billingClientPurchase.purchaseToken);
+    } else {
+      profilProvider.setReceiptData(
+          purchaseDetails.verificationData.serverVerificationData);
+    }
+  }
+
+  // Verify existing subscription
+  Future<void> _verifyExistingSubscription() async {
+    try {
+      // For simplicity, just restore purchases which will trigger verification
+      await inAppPurchase.restorePurchases();
+
+      // Show info to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Verifying your existing subscription...'),
+          backgroundColor: Colors.blue,
+        ),
+      );
+    } catch (e) {
+      print('Error verifying existing subscription: $e');
+    }
+  }
+
   // Show invalid purchase alert
   void _showInvalidPurchaseAlert(String message) {
     QuickAlert.show(
@@ -1113,11 +1196,12 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 
+  // Determine if a payment method is selected
   bool isMethodSelected(String method) {
     return selectedPaymentMethod == method;
   }
 
-  // Purchase a product
+  // Initiate product purchase
   void _purchaseProduct(ProductDetails productDetails) {
     try {
       print('Initiating purchase for: ${productDetails.id}');
@@ -1128,23 +1212,23 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         applicationUserName: null, // Can be used for user identification
       );
 
-      // Start the purchase flow - always use non-consumable for subscriptions
+      // Start the purchase flow based on platform and product type
       if (Platform.isIOS) {
         inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
-      } else {
-        // On Android, we need to determine if it's a subscription
+      } else if (Platform.isAndroid) {
+        // For Android, use the proper method for subscriptions
         final bool isSubscription =
             productDetails.id == '0001' || productDetails.id == '0002';
 
         if (isSubscription) {
           inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
         } else {
+          // For consumable products
           inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
         }
       }
     } catch (e) {
       print('Error purchasing product: $e');
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error initiating purchase: $e'),
@@ -1154,7 +1238,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     }
   }
 
-  // Handle payment
+  // Handle payment initiation
   void handlePayment() async {
     if (!available) {
       showDialog(
@@ -1213,6 +1297,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     }
   }
 
+  // UI for payment method tile
   Widget methodTile(String method) {
     return Container(
       margin: const EdgeInsets.all(8.0),
@@ -1236,8 +1321,8 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
         title: Text(
           method,
           style: TextStyle(
-              color:
-                  isMethodSelected(method) ? Colors.white : Colors.grey[400]),
+            color: isMethodSelected(method) ? Colors.white : Colors.grey[400],
+          ),
         ),
         onTap: () {
           setState(() {
@@ -1248,6 +1333,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
     );
   }
 
+  // UI for subscription type tile
   Widget typeTile(String subType) {
     return Container(
       width: 130,
@@ -1296,9 +1382,7 @@ class _PaymentSettingPageState extends State<PaymentSettingPage> {
           ),
           body: Column(
             children: [
-              const SizedBox(
-                height: 50,
-              ),
+              const SizedBox(height: 50),
               typeTile(widget.subscriptionType),
               Expanded(
                 child: ListView(
@@ -1702,5 +1786,40 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         ),
       ),
     ]);
+  }
+}
+
+class GooglePlayPurchaseVerifier {
+  // This class should handle the verification of Google Play purchases
+  final String androidPackageName =
+      'com.backquest.app'; // Your app's package name
+
+  Future<bool> verifyPurchase(GooglePlayPurchaseDetails purchaseDetails) async {
+    try {
+      // Construct validation data for server verification
+      final validationData = {
+        'platform': 'google',
+        'packageName': androidPackageName,
+        'productId': purchaseDetails.productID,
+        'purchaseToken': purchaseDetails.billingClientPurchase.purchaseToken,
+        'isSubscription': true,
+      };
+
+      // Send to your server for verification
+      final response = await http.post(
+        Uri.parse('http://34.116.240.55:3000/validate-receipt'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(validationData),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        return responseData['valid'] == true;
+      }
+      return false;
+    } catch (e) {
+      print('Verification error: $e');
+      return false;
+    }
   }
 }
