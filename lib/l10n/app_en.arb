@@ -79,5 +79,21 @@
   "videoDownloadSuccess": "Video downloaded successfully",
   "videoDownloadFailed": "Failed to download video",
   "videoDownloaded": "Video downloaded",
-  "downloadVideo": "Download video"
+  "downloadVideo": "Download video",
+  "videoDownloadSuccess": "Video downloaded successfully",
+  "videoDownloadFailed": "Failed to download video",
+  "videoDownloaded": "Video downloaded",
+  "downloadVideo": "Download video",
+  "offlineVideos": "Offline Videos",
+  "noOfflineVideos": "No offline videos found",
+  "downloadVideoFirst": "Download videos from the home screen to watch offline",
+  "playVideo": "Play video",
+  "deleteVideo": "Delete video",
+  "deleteVideoTitle": "Delete video?",
+  "deleteVideoConfirmation": "Are you sure you want to delete this video? You can download it again later.",
+  "videoDeleted": "Video deleted",
+  "videoDeleteFailed": "Failed to delete video",
+  "delete": "Delete",
+  "exercise": "Exercise",
+  "minutes": "min"
 }

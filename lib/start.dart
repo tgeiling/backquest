@@ -4,11 +4,14 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import 'provider.dart';
 import 'video.dart';
+import 'offline.dart'; // Import the offline page
 
 class StartPage extends StatefulWidget {
   final Function isLoggedIn;
@@ -80,6 +83,84 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
+  // Save metadata for the downloaded video
+  Future<void> _saveVideoMetadata({
+    required String filePath,
+    required String sessionId,
+    required List<String> videoIds,
+  }) async {
+    try {
+      // Generate a display name based on current date and parameters
+      final now = DateTime.now();
+      final dateFormat = DateFormat('MM-dd');
+      final formattedDate = dateFormat.format(now);
+      
+      final appLocalizations = AppLocalizations.of(context)!;
+      final focusName = _getFocusName(appLocalizations);
+      final goalName = _getGoalName(appLocalizations);
+      
+      final displayName = '${appLocalizations.exercise} $formattedDate: $focusName';
+      
+      // Create metadata object
+      final videoMetadata = {
+        'filePath': filePath,
+        'displayName': displayName,
+        'savedDate': now.toIso8601String(),
+        'duration': selectedDuration,
+        'focus': selectedFocus,
+        'goal': selectedGoal,
+        'intensity': selectedIntensity,
+        'sessionId': sessionId,
+        'videoIds': videoIds,
+      };
+      
+      // Load existing metadata
+      final directory = await getApplicationDocumentsDirectory();
+      final metadataFile = File('${directory.path}/video_metadata.json');
+      List<dynamic> existingMetadata = [];
+      
+      if (metadataFile.existsSync()) {
+        final jsonString = await metadataFile.readAsString();
+        existingMetadata = json.decode(jsonString);
+      }
+      
+      // Add new metadata and save
+      existingMetadata.add(videoMetadata);
+      await metadataFile.writeAsString(json.encode(existingMetadata));
+      
+    } catch (e) {
+      print('Error saving video metadata: $e');
+    }
+  }
+
+  String _getFocusName(AppLocalizations localizations) {
+    final focusOptions = [
+      localizations.focusLowerBack,
+      localizations.focusUpperBack,
+      localizations.focusNeck,
+      localizations.focusAll,
+    ];
+    
+    if (selectedFocus >= 0 && selectedFocus < focusOptions.length) {
+      return focusOptions[selectedFocus];
+    }
+    return localizations.focusAll;
+  }
+
+  String _getGoalName(AppLocalizations localizations) {
+    final goalOptions = [
+      localizations.goalMobility,
+      localizations.goalStrength,
+      localizations.goalRelaxation,
+      localizations.goalPrevention,
+    ];
+    
+    if (selectedGoal >= 0 && selectedGoal < goalOptions.length) {
+      return goalOptions[selectedGoal];
+    }
+    return localizations.goalMobility;
+  }
+
   Future<void> _downloadVideo() async {
     setState(() {
       isDownloading = true;
@@ -111,13 +192,21 @@ class _StartPageState extends State<StartPage> {
 
         // Download the video
         final directory = await getApplicationDocumentsDirectory();
-        final videoPath = '${directory.path}/downloaded_video.mp4';
-        final videoUrl = 'http://34.116.240.55:3000/video?sessionId=$sessionId';
+        final filename = 'video_${DateTime.now().millisecondsSinceEpoch}.mp4';
+        final videoPath = '${directory.path}/$filename';
+        final videoUrl = 'https://34.116.240.55:3000/video?sessionId=$sessionId';
 
         final response = await http.get(Uri.parse(videoUrl));
         if (response.statusCode == 200) {
           final file = File(videoPath);
           await file.writeAsBytes(response.bodyBytes);
+
+          // Save video metadata for offline access
+          await _saveVideoMetadata(
+            filePath: videoPath,
+            sessionId: sessionId,
+            videoIds: selectedVideos,
+          );
 
           setState(() {
             isVideoDownloaded = true;
@@ -178,6 +267,7 @@ class _StartPageState extends State<StartPage> {
                 duration: selectedDuration,
                 useLocalVideo: true,
                 sessionId: sessionId,
+                intensity: selectedIntensity,
               ),
         ),
       );
@@ -198,6 +288,7 @@ class _StartPageState extends State<StartPage> {
                 duration: selectedDuration,
                 useLocalVideo: false,
                 sessionId: null,
+                intensity: selectedIntensity,
               ),
         ),
       );
@@ -206,6 +297,15 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       isStarting = false;
     });
+  }
+
+  void _navigateToOfflineVideos() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OfflinePage(),
+      ),
+    );
   }
 
   void showDurationDialog() async {
@@ -286,53 +386,6 @@ class _StartPageState extends State<StartPage> {
                       ),
                       value: index, // Return index as value
                       groupValue: selectedFocus, // Compare with integer
-                      onChanged: (int? value) {
-                        if (value != null) {
-                          Navigator.of(context).pop(value); // Return index
-                        }
-                      },
-                    );
-                  }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-
-    if (selection != null) {
-      setState(() {
-        onSelected(selection);
-        isVideoDownloaded = false; // Reset download state as parameters changed
-      });
-    }
-  }
-
-  void showOptionDialogGoal(
-    List<String> options,
-    String title,
-    void Function(int) onSelected,
-  ) async {
-    int? selection = await showDialog<int>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
-          title: Text(title, style: const TextStyle(color: Colors.white)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children:
-                  options.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    String option = entry.value;
-                    return RadioListTile<int>(
-                      activeColor: Colors.white,
-                      title: Text(
-                        option,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      value: index, // Return index as value
-                      groupValue: selectedGoal, // Compare with integer
                       onChanged: (int? value) {
                         if (value != null) {
                           Navigator.of(context).pop(value); // Return index
@@ -446,6 +499,14 @@ class _StartPageState extends State<StartPage> {
         ),
         backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
         elevation: 0,
+        actions: [
+          // Offline videos button
+          IconButton(
+            icon: Icon(Icons.video_library, color: Colors.white),
+            tooltip: appLocalizations.offlineVideos,
+            onPressed: _navigateToOfflineVideos,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -755,4 +816,51 @@ class _StartPageState extends State<StartPage> {
       ),
     );
   }
-}
+} Reset download state as parameters changed
+      });
+    }
+  }
+
+  void showOptionDialogGoal(
+    List<String> options,
+    String title,
+    void Function(int) onSelected,
+  ) async {
+    int? selection = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+          title: Text(title, style: const TextStyle(color: Colors.white)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  options.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String option = entry.value;
+                    return RadioListTile<int>(
+                      activeColor: Colors.white,
+                      title: Text(
+                        option,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      value: index, // Return index as value
+                      groupValue: selectedGoal, // Compare with integer
+                      onChanged: (int? value) {
+                        if (value != null) {
+                          Navigator.of(context).pop(value); // Return index
+                        }
+                      },
+                    );
+                  }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selection != null) {
+      setState(() {
+        onSelected(selection);
+        isVideoDownloaded = false; //

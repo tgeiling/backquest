@@ -28,6 +28,7 @@ class VideoCombinerScreen extends StatefulWidget {
   final bool useLocalVideo;
   final String? sessionId;
   final int intensity;
+  final String? localVideoPath; // Add path to local video
 
   const VideoCombinerScreen({
     super.key,
@@ -39,6 +40,7 @@ class VideoCombinerScreen extends StatefulWidget {
     this.useLocalVideo = false,
     this.sessionId,
     this.intensity = 1,
+    this.localVideoPath,
   });
 
   @override
@@ -75,8 +77,39 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
     });
 
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final videoPath = '${directory.path}/downloaded_video.mp4';
+      String videoPath;
+
+      if (widget.localVideoPath != null) {
+        // Use the provided specific video path
+        videoPath = widget.localVideoPath!;
+      } else {
+        // Try to find a video in the app's document directory
+        final directory = await getApplicationDocumentsDirectory();
+
+        // Load metadata to find the latest video
+        final metadataFile = File('${directory.path}/video_metadata.json');
+        if (metadataFile.existsSync()) {
+          final jsonString = await metadataFile.readAsString();
+          final List<dynamic> metadata = json.decode(jsonString);
+
+          if (metadata.isNotEmpty) {
+            // Sort by date (newest first)
+            metadata.sort(
+              (a, b) => DateTime.parse(
+                b['savedDate'],
+              ).compareTo(DateTime.parse(a['savedDate'])),
+            );
+
+            // Use the most recent video
+            videoPath = metadata.first['filePath'];
+            selectedVideos = List<String>.from(metadata.first['videoIds']);
+          } else {
+            throw Exception('No saved videos found');
+          }
+        } else {
+          throw Exception('No saved videos found');
+        }
+      }
 
       if (File(videoPath).existsSync()) {
         _videoPlayerController = VideoPlayerController.file(File(videoPath));

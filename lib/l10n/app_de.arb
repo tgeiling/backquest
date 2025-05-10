@@ -79,5 +79,21 @@
   "videoDownloadSuccess": "Video erfolgreich heruntergeladen",
   "videoDownloadFailed": "Fehler beim Herunterladen des Videos",
   "videoDownloaded": "Video heruntergeladen",
-  "downloadVideo": "Video herunterladen"
+  "downloadVideo": "Video herunterladen",
+  "videoDownloadSuccess": "Video erfolgreich heruntergeladen",
+  "videoDownloadFailed": "Fehler beim Herunterladen des Videos",
+  "videoDownloaded": "Video heruntergeladen",
+  "downloadVideo": "Video herunterladen",
+  "offlineVideos": "Offline-Videos",
+  "noOfflineVideos": "Keine Offline-Videos gefunden",
+  "downloadVideoFirst": "Laden Sie Videos vom Startbildschirm herunter, um sie offline anzusehen",
+  "playVideo": "Video abspielen",
+  "deleteVideo": "Video löschen",
+  "deleteVideoTitle": "Video löschen?",
+  "deleteVideoConfirmation": "Sind Sie sicher, dass Sie dieses Video löschen möchten? Sie können es später erneut herunterladen.",
+  "videoDeleted": "Video gelöscht",
+  "videoDeleteFailed": "Video konnte nicht gelöscht werden",
+  "delete": "Löschen",
+  "exercise": "Übung",
+  "minutes": "Min"
 }
