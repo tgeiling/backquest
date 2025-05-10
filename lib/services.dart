@@ -1,37 +1,140 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-//Profile Area
+// Replace with your actual server URL
+const String apiUrl = 'http://34.116.240.55:3000/';
+
+// Get stored auth token
 Future<String?> getAuthToken() async {
-  const storage = FlutterSecureStorage();
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('auth_token');
+}
+
+// Store auth token
+Future<void> saveAuthToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('auth_token', token);
+}
+
+// Clear auth token (logout)
+Future<void> clearAuthToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('auth_token');
+}
+
+// Register new user
+Future<Map<String, dynamic>?> register({
+  required String username,
+  required String password,
+}) async {
   try {
-    final String? token = await storage.read(key: 'authToken');
-    return token;
+    final response = await http.post(
+      Uri.parse('$apiUrl/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return data;
+    } else {
+      print('Registration failed: ${data['message']}');
+      return null;
+    }
   } catch (e) {
-    print("Error reading token from secure storage: $e");
+    print('Error during registration: $e');
     return null;
   }
 }
 
+// Login user
+Future<String?> login({
+  required String username,
+  required String password,
+}) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$apiUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      // Save token and return it
+      final token = data['token'];
+      await saveAuthToken(token);
+      return token;
+    } else {
+      print('Login failed: ${data['message']}');
+      return null;
+    }
+  } catch (e) {
+    print('Error during login: $e');
+    return null;
+  }
+}
+
+// Get guest token
+Future<String?> getGuestToken() async {
+  try {
+    final response = await http.post(
+      Uri.parse('$apiUrl/guest'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final token = data['token'];
+      await saveAuthToken(token);
+      return token;
+    } else {
+      print('Getting guest token failed: ${data['message']}');
+      return null;
+    }
+  } catch (e) {
+    print('Error getting guest token: $e');
+    return null;
+  }
+}
+
+// Validate token
+Future<bool> validateToken(String token) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$apiUrl/validateToken'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'token': token}),
+    );
+
+    final data = jsonDecode(response.body);
+
+    return data['isValid'] == true;
+  } catch (e) {
+    print('Error validating token: $e');
+    return false;
+  }
+}
+
+// Fetch user profile
 Future<Map<String, dynamic>?> fetchProfile(String token) async {
   try {
     final response = await http.get(
-      Uri.parse('http://34.40.38.12:3000/profile'),
+      Uri.parse('$apiUrl/profile'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
 
-    if (response.statusCode == 200) {
-      final profileData = jsonDecode(response.body);
-      return profileData;
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body);
     } else {
-      print(
-        'Failed to fetch profile: ${response.statusCode}, ${response.body}',
-      );
+      print('Failed to fetch profile: ${response.statusCode} ${response.body}');
       return null;
     }
   } catch (e) {
@@ -40,106 +143,68 @@ Future<Map<String, dynamic>?> fetchProfile(String token) async {
   }
 }
 
-void fetchAndPrintProfile(String token) async {
-  Map<String, dynamic>? profileData = await fetchProfile(token);
-
-  if (profileData != null) {
-    print('Profile Data: $profileData');
-  } else {
-    print('Failed to fetch profile or no data returned.');
-  }
-}
-
+// Update user profile
 Future<bool> updateProfile({
   required String token,
-  String? username,
   int? age,
+  int? fitnessLevel,
   double? height,
   double? weight,
   String? gender,
   bool? acceptedGdpr,
+  bool? isExplained,
   Map<String, int>? painAreas,
-  Map<String, DateTime>? lastExerciseDate,
+  Map<String, String>? lastExerciseDate, // Serialized dates as ISO strings
   Map<String, int>? exerciseCount,
-  List<String>? videosWatched,
-  List<String>? completedPrograms,
   int? consecutiveDays,
   int? weeklyGoalProgress,
-  // Legacy parameters for backward compatibility - can be removed if not needed
-  Map<String, List<String>>? decks,
-  String? deckLanguage,
-  int? winStreak,
-  int? exp,
-  int? coins,
-  String? title,
-  Map<String, int>? eloMap,
-  int? skillLevel,
-  List<String>? friends,
-  String? completedLevels,
-  String? completedCardLevels,
-  String? nativeLanguage,
-  List<String>? cardsCollected,
+  int? weeklyGoalTarget,
+  int? duration,
+  int? focus,
+  int? goal,
+  int? intensity,
 }) async {
   try {
-    Map<String, dynamic> body = {};
+    // Build request body with only provided fields
+    final Map<String, dynamic> requestBody = {};
 
-    // Add back pain app profile data
-    if (username != null) body['username'] = username;
-    if (age != null) body['age'] = age;
-    if (height != null) body['height'] = height;
-    if (weight != null) body['weight'] = weight;
-    if (gender != null) body['gender'] = gender;
-    if (acceptedGdpr != null) body['acceptedGdpr'] = acceptedGdpr;
-
-    // Add pain management data
-    if (painAreas != null) body['painAreas'] = painAreas;
-
-    // For the lastExerciseDate, convert DateTime objects to ISO strings
-    if (lastExerciseDate != null) {
-      Map<String, String> dateStringMap = {};
-      lastExerciseDate.forEach((key, value) {
-        dateStringMap[key] = value.toIso8601String();
-      });
-      body['lastExerciseDate'] = dateStringMap;
-    }
-
-    if (exerciseCount != null) body['exerciseCount'] = exerciseCount;
-    if (videosWatched != null) body['videosWatched'] = videosWatched;
-    if (completedPrograms != null)
-      body['completedPrograms'] = completedPrograms;
-    if (consecutiveDays != null) body['consecutiveDays'] = consecutiveDays;
+    if (age != null) requestBody['age'] = age;
+    if (fitnessLevel != null) requestBody['fitnessLevel'] = fitnessLevel;
+    if (height != null) requestBody['height'] = height;
+    if (weight != null) requestBody['weight'] = weight;
+    if (gender != null) requestBody['gender'] = gender;
+    if (acceptedGdpr != null) requestBody['acceptedGdpr'] = acceptedGdpr;
+    if (isExplained != null) requestBody['isExplained'] = isExplained;
+    if (painAreas != null) requestBody['painAreas'] = painAreas;
+    if (lastExerciseDate != null)
+      requestBody['lastExerciseDate'] = lastExerciseDate;
+    if (exerciseCount != null) requestBody['exerciseCount'] = exerciseCount;
+    if (consecutiveDays != null)
+      requestBody['consecutiveDays'] = consecutiveDays;
     if (weeklyGoalProgress != null)
-      body['weeklyGoalProgress'] = weeklyGoalProgress;
-
-    // Legacy parameters - can be kept for backward compatibility
-    if (decks != null) body['decks'] = decks;
-    if (winStreak != null) body['winStreak'] = winStreak;
-    if (exp != null) body['exp'] = exp;
-    if (coins != null) body['coins'] = coins;
-    if (title != null) body['title'] = title;
-    if (eloMap != null) body['elo'] = eloMap;
-    if (skillLevel != null) body['skillLevel'] = skillLevel;
-    if (friends != null) body['friends'] = friends;
-    if (completedLevels != null) body['completedLevels'] = completedLevels;
-    if (completedCardLevels != null)
-      body['completedCardLevels'] = completedCardLevels;
-    if (nativeLanguage != null) body['nativeLanguage'] = nativeLanguage;
-    if (cardsCollected != null) body['cardsCollected'] = cardsCollected;
+      requestBody['weeklyGoalProgress'] = weeklyGoalProgress;
+    if (weeklyGoalTarget != null)
+      requestBody['weeklyGoalTarget'] = weeklyGoalTarget;
+    if (duration != null) requestBody['duration'] = duration;
+    if (focus != null) requestBody['focus'] = focus;
+    if (goal != null) requestBody['goal'] = goal;
+    if (intensity != null) requestBody['intensity'] = intensity;
 
     final response = await http.post(
-      Uri.parse('http://34.40.38.12:3000/updateProfile'),
+      Uri.parse('$apiUrl/updateProfile'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(body),
+      body: jsonEncode(requestBody),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print('Profile updated successfully');
       return true;
     } else {
       print(
-        'Failed to update profile: ${response.statusCode}, ${response.body}',
+        'Failed to update profile: ${response.statusCode} ${response.body}',
       );
       return false;
     }
@@ -148,59 +213,3 @@ Future<bool> updateProfile({
     return false;
   }
 }
-
-//Game Helper Area
-
-int weekNumber(DateTime date) {
-  final startOfYear = DateTime(date.year, 1, 1, 0, 0);
-  final firstMonday = startOfYear.weekday;
-  final daysInFirstWeek = 8 - firstMonday;
-  final diff = date.difference(startOfYear);
-  var weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
-  if (daysInFirstWeek > 3) {
-    weeks += 1;
-  }
-  return weeks;
-}
-
-bool isTablet(BuildContext context) {
-  final size = MediaQuery.of(context).size;
-  final shortestSide = size.shortestSide;
-
-  return shortestSide >= 600;
-}
-
-/* const String serverUrl = 'http://35.246.224.168/validate-receipt';
-
-Future<bool> validateAppleReceipt(String receiptData) async {
-  return await _validateReceipt(receiptData, platform: 'apple');
-}
-
-Future<bool> validateGoogleReceipt(String receiptData) async {
-  return await _validateReceipt(receiptData, platform: 'google');
-}
-
-Future<bool> _validateReceipt(String receiptData, {required String platform}) async {
-  try {
-    final response = await http.post(
-      Uri.parse(serverUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'platform': platform,
-        'receiptData': receiptData,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      return responseData['valid'] == true;
-    } else {
-      print('Failed to validate receipt: ${response.statusCode}');
-      return false;
-    }
-  } catch (e) {
-    print('Error validating receipt: $e');
-    return false;
-  }
-}
- */

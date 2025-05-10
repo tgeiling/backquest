@@ -32,7 +32,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await FirebaseService.initialize();
+    //await FirebaseService.initialize();
     print("Firebase successfully initialized");
   } catch (e) {
     print("Firebase initialization failed: $e");
@@ -53,7 +53,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
@@ -138,21 +137,9 @@ class _MyHomePageState extends State<MyHomePage>
     });
     _checkInitialConnectivity();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profileProvider = Provider.of<ProfileProvider>(
-        context,
-        listen: false,
-      );
-      Future.delayed(Duration(seconds: 3), () {
-        if (profileProvider.nativeLanguage.isEmpty) {
-          _showNativeLanguageDialog();
-        }
-      });
-    });
-
     Future.delayed(Duration(seconds: 2), () {
       if (mounted) {
-        FirebaseService.checkAndProcessPendingNotifications(context);
+        //FirebaseService.checkAndProcessPendingNotifications(context);
       }
     });
   }
@@ -169,11 +156,11 @@ class _MyHomePageState extends State<MyHomePage>
 
     // Then try to sync with server if we're connected
     print("Checking for auth token to sync with server...");
-    try {
+    /* try {
       String? token = await getAuthToken();
       if (token != null) {
         print("Auth token found, attempting server sync");
-        bool syncSuccess = await profileProvider.syncProfile(token);
+       bool syncSuccess = await profileProvider.syncProfile(token);
         if (syncSuccess) {
           print("Server sync successful");
         } else {
@@ -184,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     } catch (e) {
       print("Error during server sync attempt: $e");
-    }
+    } */
   }
 
   void triggerAnimation() {

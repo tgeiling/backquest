@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'services.dart'; // Import the services.dart we created
+
 class ProfileProvider with ChangeNotifier {
   // User Profile Data
   String _username = "";
   int _age = 0;
+  int _fitnessLevel = 0;
   double _height = 0.0; // in cm
   double _weight = 0.0; // in kg
   String _gender = "";
@@ -17,14 +20,20 @@ class ProfileProvider with ChangeNotifier {
   Map<String, DateTime> _lastExerciseDate =
       {}; // Last time exercise was performed
   Map<String, int> _exerciseCount = {}; // Number of times exercise performed
-  List<String> _videosWatched = []; // IDs of education videos watched
-  List<String> _completedPrograms = []; // Completed therapy programs
   int _consecutiveDays = 0; // Streak of days using the app
+  int _weeklyGoalTarget = 3;
   int _weeklyGoalProgress = 0; // Progress toward weekly exercise goal
+  bool _isExplained = false;
+
+  int? _duration;
+  int? _focus;
+  int? _goal;
+  int? _intensity;
 
   // Getters
   String get username => _username;
   int get age => _age;
+  int get fitnessLevel => _fitnessLevel;
   double get height => _height;
   double get weight => _weight;
   String get gender => _gender;
@@ -34,10 +43,15 @@ class ProfileProvider with ChangeNotifier {
   Map<String, DateTime> get lastExerciseDate =>
       Map.unmodifiable(_lastExerciseDate);
   Map<String, int> get exerciseCount => Map.unmodifiable(_exerciseCount);
-  List<String> get videosWatched => List.unmodifiable(_videosWatched);
-  List<String> get completedPrograms => List.unmodifiable(_completedPrograms);
   int get consecutiveDays => _consecutiveDays;
   int get weeklyGoalProgress => _weeklyGoalProgress;
+  int get weeklyGoalTarget => _weeklyGoalTarget;
+  bool get isExplained => _isExplained;
+
+  int? get duration => _duration;
+  int? get focus => _focus;
+  int? get goal => _goal;
+  int? get intensity => _intensity;
 
   // Constructor
   ProfileProvider() {
@@ -53,6 +67,12 @@ class ProfileProvider with ChangeNotifier {
 
   void setAge(int age) {
     _age = age;
+    notifyListeners();
+    savePreferences();
+  }
+
+  void setFitnessLevel(int fitnessLevel) {
+    _fitnessLevel = fitnessLevel;
     notifyListeners();
     savePreferences();
   }
@@ -81,6 +101,20 @@ class ProfileProvider with ChangeNotifier {
     savePreferences();
   }
 
+  void setIsExplained(bool explained) {
+    _isExplained = explained;
+    notifyListeners();
+    savePreferences();
+  }
+
+  void setWeeklyGoalTarget(int target) {
+    if (target > 0) {
+      _weeklyGoalTarget = target;
+      notifyListeners();
+      savePreferences();
+    }
+  }
+
   // Pain Management Methods
   void updatePainArea(String area, int painLevel) {
     _painAreas[area] = painLevel;
@@ -104,8 +138,8 @@ class ProfileProvider with ChangeNotifier {
     // Increment exercise count
     _exerciseCount[exerciseId] = (_exerciseCount[exerciseId] ?? 0) + 1;
 
-    // Update weekly goal progress
-    _weeklyGoalProgress += durationMinutes;
+    // Increment weekly goal progress by 1 (not by minutes)
+    _weeklyGoalProgress += 1;
 
     // Check and update consecutive days streak
     _updateConsecutiveDays();
@@ -150,25 +184,24 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  void addVideoWatched(String videoId) {
-    if (!_videosWatched.contains(videoId)) {
-      _videosWatched.add(videoId);
-      notifyListeners();
-      savePreferences();
-    }
-  }
-
-  void completeProgram(String programId) {
-    if (!_completedPrograms.contains(programId)) {
-      _completedPrograms.add(programId);
-      notifyListeners();
-      savePreferences();
-    }
-  }
-
   // Reset Weekly Data Method
   void resetWeeklyGoalProgress() {
     _weeklyGoalProgress = 0;
+    notifyListeners();
+    savePreferences();
+  }
+
+  // Set Video Preferences
+  void saveVideoPreferences({
+    int? duration,
+    int? focus,
+    int? goal,
+    int? intensity,
+  }) {
+    _duration = duration;
+    _focus = focus;
+    _goal = goal;
+    _intensity = intensity;
     notifyListeners();
     savePreferences();
   }
@@ -181,10 +214,12 @@ class ProfileProvider with ChangeNotifier {
       // Save User Profile Data
       await prefs.setString('username', _username);
       await prefs.setInt('age', _age);
+      await prefs.setInt('fitnessLevel', _fitnessLevel);
       await prefs.setDouble('height', _height);
       await prefs.setDouble('weight', _weight);
       await prefs.setString('gender', _gender);
       await prefs.setBool('acceptedGdpr', _acceptedGdpr);
+      await prefs.setBool('isExplained', _isExplained);
 
       // Save Pain Data
       await prefs.setString('painAreas', json.encode(_painAreas));
@@ -199,10 +234,24 @@ class ProfileProvider with ChangeNotifier {
         json.encode(lastExerciseDateMap),
       );
       await prefs.setString('exerciseCount', json.encode(_exerciseCount));
-      await prefs.setStringList('videosWatched', _videosWatched);
-      await prefs.setStringList('completedPrograms', _completedPrograms);
       await prefs.setInt('consecutiveDays', _consecutiveDays);
       await prefs.setInt('weeklyGoalProgress', _weeklyGoalProgress);
+      await prefs.setInt('weeklyGoalTarget', _weeklyGoalTarget);
+
+      // Save video preferences
+      final Map<String, dynamic> videoPrefs = {
+        'duration': _duration,
+        'focus': _focus,
+        'goal': _goal,
+        'intensity': _intensity,
+      };
+      await prefs.setString('videoPreferences', json.encode(videoPrefs));
+
+      // Sync with server if we have a token
+      String? token = await getAuthToken();
+      if (token != null && _username.isNotEmpty) {
+        await syncToServer(token);
+      }
     } catch (e) {
       print("Error saving preferences: $e");
     }
@@ -215,10 +264,12 @@ class ProfileProvider with ChangeNotifier {
       // Load User Profile Data
       _username = prefs.getString('username') ?? "";
       _age = prefs.getInt('age') ?? 0;
+      _fitnessLevel = prefs.getInt('fitnessLevel') ?? 0;
       _height = prefs.getDouble('height') ?? 0.0;
       _weight = prefs.getDouble('weight') ?? 0.0;
       _gender = prefs.getString('gender') ?? "";
       _acceptedGdpr = prefs.getBool('acceptedGdpr') ?? false;
+      _isExplained = prefs.getBool('isExplained') ?? false;
 
       // Load Pain Data
       String? painAreasJson = prefs.getString('painAreas');
@@ -259,10 +310,24 @@ class ProfileProvider with ChangeNotifier {
         }
       }
 
-      _videosWatched = prefs.getStringList('videosWatched') ?? [];
-      _completedPrograms = prefs.getStringList('completedPrograms') ?? [];
       _consecutiveDays = prefs.getInt('consecutiveDays') ?? 0;
       _weeklyGoalProgress = prefs.getInt('weeklyGoalProgress') ?? 0;
+      _weeklyGoalTarget = prefs.getInt('weeklyGoalTarget') ?? 3;
+
+      // Load video preferences
+      String? videoPrefsJson = prefs.getString('videoPreferences');
+      if (videoPrefsJson != null && videoPrefsJson.isNotEmpty) {
+        try {
+          Map<String, dynamic> decoded = json.decode(videoPrefsJson);
+          _duration = decoded['duration'];
+          _focus = decoded['focus'];
+          _goal = decoded['goal'];
+          _intensity = decoded['intensity'];
+        } catch (e) {
+          print("Error parsing video preferences JSON: $e");
+          // Keep default null values
+        }
+      }
 
       notifyListeners();
     } catch (e) {
@@ -271,32 +336,138 @@ class ProfileProvider with ChangeNotifier {
       _painAreas = {};
       _lastExerciseDate = {};
       _exerciseCount = {};
-      _videosWatched = [];
-      _completedPrograms = [];
       notifyListeners();
     }
   }
 
-  // Reset all data - useful for logout or testing
-  Future<void> clearAllData() async {
-    _username = "";
-    _age = 0;
-    _height = 0.0;
-    _weight = 0.0;
-    _gender = "";
-    _acceptedGdpr = false;
+  // Sync profile with server
+  Future<bool> syncProfile(String token) async {
+    try {
+      Map<String, dynamic>? profileData = await fetchProfile(token);
 
-    _painAreas = {};
-    _lastExerciseDate = {};
-    _exerciseCount = {};
-    _videosWatched = [];
-    _completedPrograms = [];
-    _consecutiveDays = 0;
-    _weeklyGoalProgress = 0;
+      if (profileData != null) {
+        // Update user profile data
+        _username = profileData['username'] ?? _username;
+        _age = profileData['age'] ?? _age;
+        _fitnessLevel = profileData['fitnessLevel'] ?? _fitnessLevel;
 
-    notifyListeners();
+        // Handle numeric types properly (double vs int)
+        if (profileData['height'] != null) {
+          _height =
+              (profileData['height'] is int)
+                  ? (profileData['height'] as int).toDouble()
+                  : profileData['height'];
+        }
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+        if (profileData['weight'] != null) {
+          _weight =
+              (profileData['weight'] is int)
+                  ? (profileData['weight'] as int).toDouble()
+                  : profileData['weight'];
+        }
+
+        _gender = profileData['gender'] ?? _gender;
+        _acceptedGdpr = profileData['acceptedGdpr'] ?? _acceptedGdpr;
+        _isExplained = profileData['isExplained'] ?? _isExplained;
+
+        // Handle pain areas
+        if (profileData.containsKey('painAreas') &&
+            profileData['painAreas'] is Map) {
+          final painAreasData =
+              profileData['painAreas'] as Map<String, dynamic>;
+          _painAreas = {};
+          painAreasData.forEach((key, value) {
+            if (value is int) {
+              _painAreas[key] = value;
+            }
+          });
+        }
+
+        // Handle lastExerciseDate - convert ISO strings to DateTime
+        if (profileData.containsKey('lastExerciseDate') &&
+            profileData['lastExerciseDate'] is Map) {
+          final lastExerciseDateData =
+              profileData['lastExerciseDate'] as Map<String, dynamic>;
+          _lastExerciseDate = {};
+          lastExerciseDateData.forEach((key, value) {
+            if (value is String) {
+              try {
+                _lastExerciseDate[key] = DateTime.parse(value);
+              } catch (e) {
+                print("Error parsing date: $e");
+              }
+            }
+          });
+        }
+
+        // Handle exerciseCount
+        if (profileData.containsKey('exerciseCount') &&
+            profileData['exerciseCount'] is Map) {
+          final exerciseCountData =
+              profileData['exerciseCount'] as Map<String, dynamic>;
+          _exerciseCount = {};
+          exerciseCountData.forEach((key, value) {
+            if (value is int) {
+              _exerciseCount[key] = value;
+            }
+          });
+        }
+
+        _consecutiveDays = profileData['consecutiveDays'] ?? _consecutiveDays;
+        _weeklyGoalProgress =
+            profileData['weeklyGoalProgress'] ?? _weeklyGoalProgress;
+        _weeklyGoalTarget =
+            profileData['weeklyGoalTarget'] ?? _weeklyGoalTarget;
+
+        // Handle video preferences
+        _duration = profileData['duration'];
+        _focus = profileData['focus'];
+        _goal = profileData['goal'];
+        _intensity = profileData['intensity'];
+
+        notifyListeners();
+        await savePreferences(); // Save to local storage
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error during profile sync: $e");
+      return false;
+    }
+  }
+
+  // Helper method to sync data to server
+  Future<bool> syncToServer(String token) async {
+    try {
+      // Convert lastExerciseDate to ISO string format for API
+      final Map<String, String> lastExerciseDateMap = {};
+      _lastExerciseDate.forEach((key, value) {
+        lastExerciseDateMap[key] = value.toIso8601String();
+      });
+
+      return await updateProfile(
+        token: token,
+        age: _age,
+        fitnessLevel: _fitnessLevel,
+        height: _height,
+        weight: _weight,
+        gender: _gender,
+        acceptedGdpr: _acceptedGdpr,
+        isExplained: _isExplained,
+        painAreas: _painAreas,
+        lastExerciseDate: lastExerciseDateMap,
+        exerciseCount: _exerciseCount,
+        consecutiveDays: _consecutiveDays,
+        weeklyGoalProgress: _weeklyGoalProgress,
+        weeklyGoalTarget: _weeklyGoalTarget,
+        duration: _duration,
+        focus: _focus,
+        goal: _goal,
+        intensity: _intensity,
+      );
+    } catch (e) {
+      print("Error syncing to server: $e");
+      return false;
+    }
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -13,8 +12,7 @@ import 'provider.dart';
 import 'services.dart';
 
 class AuthService {
-  final String baseUrl =
-      'http://34.116.240.55:3000'; // Replace with your server's IP
+  final String baseUrl = 'http://34.116.240.55:3000';
   final storage = const FlutterSecureStorage();
 
   // Login function
@@ -99,12 +97,12 @@ class AuthService {
   Future<String?> getGuestToken() async {
     try {
       final response = await http
-          .post(Uri.parse('$baseUrl/guestnode'))
+          .post(Uri.parse('$baseUrl/guest'))
           .timeout(
             const Duration(seconds: 5), // 5 second timeout
           );
       if (response.statusCode == 200) {
-        final token = jsonDecode(response.body)['accessToken'];
+        final token = jsonDecode(response.body)['token'];
         return token;
       } else {
         print('Failed to get guest token: ${response.statusCode}');
@@ -190,7 +188,7 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
-        return !result['isValid'];
+        return result['isGuest'] == true;
       } else {
         print('Failed to validate token: ${response.body}');
         return true;
@@ -232,134 +230,24 @@ class _LoginScreenState extends State<LoginScreen> {
       final token = await getAuthToken();
 
       if (token != null) {
-        final profileData = await fetchProfile(token);
+        // Attempt to sync the profile with the server
+        bool syncSuccess = await profileProvider.syncProfile(token);
 
-        if (profileData != null) {
-          await prefs.clear();
-
-          if (profileData.containsKey('username')) {
-            profileProvider.setUsername(profileData['username']);
-          }
-
-          if (profileData.containsKey('age')) {
-            profileProvider.setAge(profileData['age']);
-          }
-
-          if (profileData.containsKey('height')) {
-            profileProvider.setHeight(profileData['height'].toDouble());
-          }
-
-          if (profileData.containsKey('weight')) {
-            profileProvider.setWeight(profileData['weight'].toDouble());
-          }
-
-          if (profileData.containsKey('gender')) {
-            profileProvider.setGender(profileData['gender']);
-          }
-
-          if (profileData.containsKey('acceptedGdpr')) {
-            profileProvider.setAcceptedGdpr(profileData['acceptedGdpr']);
-          }
-
-          // Handle pain management data
-          if (profileData.containsKey('painAreas') &&
-              profileData['painAreas'] is Map) {
-            Map<String, dynamic> painAreasMap = profileData['painAreas'];
-
-            painAreasMap.forEach((area, painLevel) {
-              if (painLevel is int) {
-                profileProvider.updatePainArea(area, painLevel);
-              }
-            });
-          }
-
-          // Handle exercise data
-          if (profileData.containsKey('lastExerciseDate') &&
-              profileData['lastExerciseDate'] is Map) {
-            Map<String, dynamic> dateMap = profileData['lastExerciseDate'];
-
-            dateMap.forEach((exerciseId, dateStr) {
-              if (dateStr is String) {
-                final exerciseDate = DateTime.parse(dateStr);
-                // We don't have a direct setter for this in ProfileProvider,
-                // so we'd need to add one or use recordExercise instead
-              }
-            });
-          }
-
-          if (profileData.containsKey('exerciseCount') &&
-              profileData['exerciseCount'] is Map) {
-            Map<String, dynamic> countMap = profileData['exerciseCount'];
-
-            // Similarly, we'd need a setter for this or use recordExercise
-          }
-
-          if (profileData.containsKey('videosWatched') &&
-              profileData['videosWatched'] is List) {
-            List<String> videosList = List<String>.from(
-              profileData['videosWatched'],
-            );
-            videosList.forEach((videoId) {
-              profileProvider.addVideoWatched(videoId);
-            });
-          }
-
-          if (profileData.containsKey('completedPrograms') &&
-              profileData['completedPrograms'] is List) {
-            List<String> programsList = List<String>.from(
-              profileData['completedPrograms'],
-            );
-            programsList.forEach((programId) {
-              profileProvider.completeProgram(programId);
-            });
-          }
-
-          if (profileData.containsKey('consecutiveDays')) {
-            // We would need to add a setter for this in ProfileProvider
-          }
-
-          if (profileData.containsKey('weeklyGoalProgress')) {
-            // We would need to add a setter for this in ProfileProvider
-          }
-
-          await profileProvider.savePreferences();
+        if (syncSuccess) {
+          // Profile synced successfully
           widget.setAuthenticated(true);
           Navigator.popUntil(context, (route) => route.isFirst);
         } else {
-          // If no profile data exists, create initial profile
-          getAuthToken().then((token) {
-            if (token != null) {
-              updateProfile(
-                token: token,
-                username: profileProvider.username,
-                age: profileProvider.age,
-                height: profileProvider.height,
-                weight: profileProvider.weight,
-                gender: profileProvider.gender,
-                acceptedGdpr: profileProvider.acceptedGdpr,
-                painAreas: profileProvider.painAreas,
-                lastExerciseDate: profileProvider.lastExerciseDate,
-                exerciseCount: profileProvider.exerciseCount,
-                videosWatched: profileProvider.videosWatched,
-                completedPrograms: profileProvider.completedPrograms,
-                consecutiveDays: profileProvider.consecutiveDays,
-                weeklyGoalProgress: profileProvider.weeklyGoalProgress,
-              ).then((success) {
-                if (success) {
-                  print("Profile updated successfully.");
-                } else {
-                  print("Failed to update profile.");
-                }
-              });
-            } else {
-              print("auth.dart");
-              print("No auth token available.");
-            }
-          });
+          // If sync fails, create initial profile
+          print("Failed to sync profile. Creating initial profile.");
 
-          profileProvider.loadPreferences();
+          // Ensure we have a username set at minimum
+          profileProvider.setUsername(_usernameController.text);
+
+          // Save the basic profile
+          await profileProvider.savePreferences();
+
           widget.setAuthenticated(true);
-
           Navigator.popUntil(context, (route) => route.isFirst);
         }
       } else {
