@@ -36,6 +36,9 @@ dependencies:
   firebase_messaging: ^15.2.4
   flutter_local_notifications: ^18.0.1
   flutter_svg: ^2.1.0
+  flutter_background_service: ^5.1.0
+  flutter_background_service_android: ^6.3.0
+  path_provider: ^2.1.5
 
 dev_dependencies:
 

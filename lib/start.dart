@@ -6,12 +6,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'provider.dart';
 import 'video.dart';
 import 'offline.dart'; // Import the offline page
+import 'downloadmanager.dart';
 
 class StartPage extends StatefulWidget {
   final Function isLoggedIn;
@@ -35,9 +35,10 @@ class _StartPageState extends State<StartPage> {
   int selectedGoal = 0;
   int selectedIntensity = 1; // Medium as default
   bool isStarting = false;
-  bool isDownloading = false;
-  bool isVideoDownloaded = false;
-  String? sessionId;
+  bool shouldDownload = false; // Added checkbox state for download option
+
+  // Access the download manager
+  final DownloadManager _downloadManager = DownloadManager();
 
   @override
   void initState() {
@@ -45,7 +46,6 @@ class _StartPageState extends State<StartPage> {
     // Load saved preferences if available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadPreferences();
-      _checkForDownloadedVideo();
     });
   }
 
@@ -61,15 +61,6 @@ class _StartPageState extends State<StartPage> {
     selectedIntensity = profileProvider.intensity ?? 1;
   }
 
-  Future<void> _checkForDownloadedVideo() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final videoPath = '${directory.path}/downloaded_video.mp4';
-
-    setState(() {
-      isVideoDownloaded = File(videoPath).existsSync();
-    });
-  }
-
   void _savePreferences() {
     final profileProvider = Provider.of<ProfileProvider>(
       context,
@@ -83,56 +74,6 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  // Save metadata for the downloaded video
-  Future<void> _saveVideoMetadata({
-    required String filePath,
-    required String sessionId,
-    required List<String> videoIds,
-  }) async {
-    try {
-      // Generate a display name based on current date and parameters
-      final now = DateTime.now();
-      final dateFormat = DateFormat('MM-dd');
-      final formattedDate = dateFormat.format(now);
-      
-      final appLocalizations = AppLocalizations.of(context)!;
-      final focusName = _getFocusName(appLocalizations);
-      final goalName = _getGoalName(appLocalizations);
-      
-      final displayName = '${appLocalizations.exercise} $formattedDate: $focusName';
-      
-      // Create metadata object
-      final videoMetadata = {
-        'filePath': filePath,
-        'displayName': displayName,
-        'savedDate': now.toIso8601String(),
-        'duration': selectedDuration,
-        'focus': selectedFocus,
-        'goal': selectedGoal,
-        'intensity': selectedIntensity,
-        'sessionId': sessionId,
-        'videoIds': videoIds,
-      };
-      
-      // Load existing metadata
-      final directory = await getApplicationDocumentsDirectory();
-      final metadataFile = File('${directory.path}/video_metadata.json');
-      List<dynamic> existingMetadata = [];
-      
-      if (metadataFile.existsSync()) {
-        final jsonString = await metadataFile.readAsString();
-        existingMetadata = json.decode(jsonString);
-      }
-      
-      // Add new metadata and save
-      existingMetadata.add(videoMetadata);
-      await metadataFile.writeAsString(json.encode(existingMetadata));
-      
-    } catch (e) {
-      print('Error saving video metadata: $e');
-    }
-  }
-
   String _getFocusName(AppLocalizations localizations) {
     final focusOptions = [
       localizations.focusLowerBack,
@@ -140,7 +81,7 @@ class _StartPageState extends State<StartPage> {
       localizations.focusNeck,
       localizations.focusAll,
     ];
-    
+
     if (selectedFocus >= 0 && selectedFocus < focusOptions.length) {
       return focusOptions[selectedFocus];
     }
@@ -154,90 +95,11 @@ class _StartPageState extends State<StartPage> {
       localizations.goalRelaxation,
       localizations.goalPrevention,
     ];
-    
+
     if (selectedGoal >= 0 && selectedGoal < goalOptions.length) {
       return goalOptions[selectedGoal];
     }
     return localizations.goalMobility;
-  }
-
-  Future<void> _downloadVideo() async {
-    setState(() {
-      isDownloading = true;
-    });
-
-    // Save preferences before starting
-    _savePreferences();
-
-    try {
-      // Get user fitness level from provider
-      final profileProvider = Provider.of<ProfileProvider>(
-        context,
-        listen: false,
-      );
-      final userFitnessLevel = profileProvider.fitnessLevel;
-
-      // Request video concatenation from server
-      final sessionId = await combineVideos(
-        selectedFocus,
-        selectedGoal,
-        duration: selectedDuration,
-        userFitnessLevel: userFitnessLevel,
-        intensity: selectedIntensity,
-      );
-
-      if (sessionId != null) {
-        // Store session ID for future use
-        this.sessionId = sessionId;
-
-        // Download the video
-        final directory = await getApplicationDocumentsDirectory();
-        final filename = 'video_${DateTime.now().millisecondsSinceEpoch}.mp4';
-        final videoPath = '${directory.path}/$filename';
-        final videoUrl = 'https://34.116.240.55:3000/video?sessionId=$sessionId';
-
-        final response = await http.get(Uri.parse(videoUrl));
-        if (response.statusCode == 200) {
-          final file = File(videoPath);
-          await file.writeAsBytes(response.bodyBytes);
-
-          // Save video metadata for offline access
-          await _saveVideoMetadata(
-            filePath: videoPath,
-            sessionId: sessionId,
-            videoIds: selectedVideos,
-          );
-
-          setState(() {
-            isVideoDownloaded = true;
-            isDownloading = false;
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.videoDownloadSuccess),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          throw Exception('Failed to download video: ${response.statusCode}');
-        }
-      } else {
-        throw Exception('Failed to generate video session');
-      }
-    } catch (e) {
-      print('Error downloading video: $e');
-      setState(() {
-        isDownloading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.videoDownloadFailed),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
 
   void _startVideo() {
@@ -248,64 +110,101 @@ class _StartPageState extends State<StartPage> {
     // Save preferences before starting
     _savePreferences();
 
-    // Add your video starting logic here
-    // Check if we have a downloaded video or need to stream
-    if (isVideoDownloaded) {
-      // Play locally downloaded video
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => VideoCombinerScreen(
-                profileProvider: Provider.of<ProfileProvider>(
-                  context,
-                  listen: false,
-                ),
-                levelId: 1, // Set appropriate level ID
-                focus: selectedFocus,
-                goal: selectedGoal,
-                duration: selectedDuration,
-                useLocalVideo: true,
-                sessionId: sessionId,
-                intensity: selectedIntensity,
-              ),
-        ),
+    // If download option is selected, set download parameters and show dialog
+    if (shouldDownload) {
+      _downloadManager.setDownloadParameters(
+        duration: selectedDuration,
+        focus: selectedFocus,
+        goal: selectedGoal,
+        intensity: selectedIntensity,
+        selectedVideos: [], // Set your selected videos if needed
       );
-    } else {
-      // Stream video from server
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => VideoCombinerScreen(
-                profileProvider: Provider.of<ProfileProvider>(
-                  context,
-                  listen: false,
-                ),
-                levelId: 1, // Set appropriate level ID
-                focus: selectedFocus,
-                goal: selectedGoal,
-                duration: selectedDuration,
-                useLocalVideo: false,
-                sessionId: null,
-                intensity: selectedIntensity,
+
+      // Show a dialog that the download has started
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            title: Text(
+              AppLocalizations.of(context)!.downloadingVideo,
+              style: TextStyle(
+                color: const Color.fromRGBO(97, 184, 115, 1),
+                fontWeight: FontWeight.bold,
               ),
-        ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    const Color.fromRGBO(97, 184, 115, 1),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)!.downloadStarted,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                child: Text(
+                  AppLocalizations.of(context)!.ok,
+                  style: TextStyle(
+                    color: const Color.fromRGBO(97, 184, 115, 1),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
       );
+
+      // Start the download without navigating to offline page
+      _downloadManager.startDownload(context);
+
+      setState(() {
+        isStarting = false;
+        shouldDownload = false; // Reset download flag after initiating
+      });
+      return;
     }
+
+    // If no download option, just start the streaming video
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => VideoCombinerScreen(
+              profileProvider: Provider.of<ProfileProvider>(
+                context,
+                listen: false,
+              ),
+              levelId: 1, // Set appropriate level ID
+              focus: selectedFocus,
+              goal: selectedGoal,
+              duration: selectedDuration,
+              useLocalVideo:
+                  false, // Always stream by default in the start page
+              sessionId: null,
+              intensity: selectedIntensity,
+            ),
+      ),
+    );
 
     setState(() {
       isStarting = false;
     });
-  }
-
-  void _navigateToOfflineVideos() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OfflinePage(),
-      ),
-    );
   }
 
   void showDurationDialog() async {
@@ -355,7 +254,6 @@ class _StartPageState extends State<StartPage> {
     if (duration != null) {
       setState(() {
         selectedDuration = duration;
-        isVideoDownloaded = false; // Reset download state as parameters changed
       });
     }
   }
@@ -402,7 +300,52 @@ class _StartPageState extends State<StartPage> {
     if (selection != null) {
       setState(() {
         onSelected(selection);
-        isVideoDownloaded = false; // Reset download state as parameters changed
+      });
+    }
+  }
+
+  void showOptionDialogGoal(
+    List<String> options,
+    String title,
+    void Function(int) onSelected,
+  ) async {
+    int? selection = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+          title: Text(title, style: const TextStyle(color: Colors.white)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  options.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String option = entry.value;
+                    return RadioListTile<int>(
+                      activeColor: Colors.white,
+                      title: Text(
+                        option,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      value: index, // Return index as value
+                      groupValue: selectedGoal, // Compare with integer
+                      onChanged: (int? value) {
+                        if (value != null) {
+                          Navigator.of(context).pop(value); // Return index
+                        }
+                      },
+                    );
+                  }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selection != null) {
+      setState(() {
+        onSelected(selection);
       });
     }
   }
@@ -454,7 +397,6 @@ class _StartPageState extends State<StartPage> {
     if (selection != null) {
       setState(() {
         selectedIntensity = selection;
-        isVideoDownloaded = false; // Reset download state as parameters changed
       });
     }
   }
@@ -492,22 +434,6 @@ class _StartPageState extends State<StartPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          appLocalizations.backPainVideo,
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
-        elevation: 0,
-        actions: [
-          // Offline videos button
-          IconButton(
-            icon: Icon(Icons.video_library, color: Colors.white),
-            tooltip: appLocalizations.offlineVideos,
-            onPressed: _navigateToOfflineVideos,
-          ),
-        ],
-      ),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -594,13 +520,8 @@ class _StartPageState extends State<StartPage> {
                         ),
                         SizedBox(height: spacing),
 
-                        // Download Video Button
-                        _buildDownloadButton(
-                          height: buttonHeight,
-                          width: buttonWidth,
-                          isDownloading: isDownloading,
-                          isDownloaded: isVideoDownloaded,
-                          onTap: _downloadVideo,
+                        // Download Checkbox
+                        _buildDownloadCheckbox(
                           appLocalizations: appLocalizations,
                         ),
                         SizedBox(height: spacing),
@@ -696,14 +617,7 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  Widget _buildDownloadButton({
-    required double height,
-    required double width,
-    required bool isDownloading,
-    required bool isDownloaded,
-    required VoidCallback onTap,
-    required AppLocalizations appLocalizations,
-  }) {
+  Widget _buildDownloadCheckbox({required AppLocalizations appLocalizations}) {
     return Center(
       child: Neumorphic(
         style: NeumorphicStyle(
@@ -714,49 +628,43 @@ class _StartPageState extends State<StartPage> {
           lightSource: LightSource.topLeft,
           color: Colors.grey[100],
         ),
-        child: InkWell(
-          onTap: isDownloading || isDownloaded ? null : onTap,
-          child: Container(
-            height: height,
-            width: width,
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                isDownloaded
-                    ? Icon(Icons.check_circle, color: Colors.green, size: 24)
-                    : Icon(
-                      Icons.download,
-                      color: const Color.fromRGBO(97, 184, 115, 1),
-                      size: 24,
-                    ),
-                SizedBox(width: 16),
-                Expanded(
-                  child:
-                      isDownloading
-                          ? Center(
-                            child: LinearProgressIndicator(
-                              backgroundColor: Colors.grey[300],
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                const Color.fromRGBO(97, 184, 115, 1),
-                              ),
-                            ),
-                          )
-                          : Text(
-                            isDownloaded
-                                ? appLocalizations.videoDownloaded
-                                : appLocalizations.downloadVideo,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  isDownloaded
-                                      ? Colors.green
-                                      : Colors.grey[800],
-                            ),
-                          ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Icon(
+                Icons.download,
+                color: const Color.fromRGBO(97, 184, 115, 1),
+                size: 24,
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  appLocalizations.downloadVideo,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
                 ),
-              ],
-            ),
+              ),
+              // Checkbox for download option
+              Transform.scale(
+                scale: 1.2,
+                child: Checkbox(
+                  value: shouldDownload,
+                  activeColor: const Color.fromRGBO(97, 184, 115, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      shouldDownload = value ?? false;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -801,7 +709,9 @@ class _StartPageState extends State<StartPage> {
                           ),
                           SizedBox(width: 12),
                           Text(
-                            appLocalizations.startVideo,
+                            shouldDownload
+                                ? '${appLocalizations.startVideo} & ${appLocalizations.downloadVideo}'
+                                : appLocalizations.startVideo,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -816,51 +726,4 @@ class _StartPageState extends State<StartPage> {
       ),
     );
   }
-} Reset download state as parameters changed
-      });
-    }
-  }
-
-  void showOptionDialogGoal(
-    List<String> options,
-    String title,
-    void Function(int) onSelected,
-  ) async {
-    int? selection = await showDialog<int>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
-          title: Text(title, style: const TextStyle(color: Colors.white)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children:
-                  options.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    String option = entry.value;
-                    return RadioListTile<int>(
-                      activeColor: Colors.white,
-                      title: Text(
-                        option,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      value: index, // Return index as value
-                      groupValue: selectedGoal, // Compare with integer
-                      onChanged: (int? value) {
-                        if (value != null) {
-                          Navigator.of(context).pop(value); // Return index
-                        }
-                      },
-                    );
-                  }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-
-    if (selection != null) {
-      setState(() {
-        onSelected(selection);
-        isVideoDownloaded = false; //
+}

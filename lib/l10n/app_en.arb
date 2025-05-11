@@ -95,5 +95,7 @@
   "videoDeleteFailed": "Failed to delete video",
   "delete": "Delete",
   "exercise": "Exercise",
-  "minutes": "min"
+  "minutes": "min",
+  "downloadingVideo": "Downloading video...",
+  "pleaseWait": "Please wait while the video is being downloaded"
 }

@@ -95,5 +95,7 @@
   "videoDeleteFailed": "Video konnte nicht gelöscht werden",
   "delete": "Löschen",
   "exercise": "Übung",
-  "minutes": "Min"
+  "minutes": "Min",
+  "downloadingVideo": "Video wird heruntergeladen...",
+  "pleaseWait": "Bitte warten Sie, während das Video heruntergeladen wird"
 }

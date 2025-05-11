@@ -12,6 +12,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 
+import 'offline.dart';
 import 'provider.dart';
 import 'start.dart';
 import 'auth.dart';
@@ -20,6 +21,7 @@ import 'firebase_options.dart';
 import 'firebaseservice.dart';
 import 'localization_service.dart';
 import 'services.dart';
+import 'downloadmanager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +40,8 @@ void main() async {
     print("Firebase initialization failed: $e");
     // Continue without Firebase
   }
+
+  await BackgroundService.initializeService();
 
   runApp(
     MultiProvider(
@@ -329,6 +333,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final downloadManager = DownloadManager();
+
     return Scaffold(
       body: Stack(
         children: [
@@ -348,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage>
                 ),
               ),
               Center(child: Text("Übungen")),
-              Center(child: Text("Offline")),
+              Center(child: OfflinePage()),
               Center(child: Text("Settings")),
               /* SettingsPage(
                 setAuthenticated: _setAuthenticated,
@@ -358,12 +364,46 @@ class _MyHomePageState extends State<MyHomePage>
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Download progress indicator above bottom navigation bar
+          StreamBuilder<Map<String, dynamic>>(
+            stream: downloadManager.downloadInfoStream,
+            builder: (context, snapshot) {
+              final downloadInfo = snapshot.data;
+              final isDownloading = downloadInfo?['isDownloading'] ?? false;
+              final progress = downloadInfo?['progress'] ?? 0.0;
+
+              if (!isDownloading) {
+                return SizedBox.shrink();
+              }
+
+              return Container(
+                height: 3,
+                width: double.infinity,
+                color: Colors.grey[200],
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: progress,
+                  child: Container(
+                    color: const Color.fromRGBO(97, 184, 115, 1),
+                  ),
+                ),
+              );
+            },
+          ),
+          _buildBottomNavigationBar(),
+        ],
+      ),
     );
   }
 
+  // Replace the StreamBuilder code in _buildBottomNavigationBar with this:
+
   Widget _buildBottomNavigationBar() {
     final bool isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+    final downloadManager = DownloadManager();
 
     return SalomonBottomBar(
       backgroundColor: Colors.grey[200],
@@ -385,9 +425,9 @@ class _MyHomePageState extends State<MyHomePage>
           title: AppLocalizations.of(context)!.menu2,
           isTablet: isTablet,
         ),
-        _buildBottomBarItem(
-          icon: Icons.save,
-          title: AppLocalizations.of(context)!.menu3,
+        // Save icon with download indicator badge
+        _buildDownloadIndicatorItem(
+          downloadManager: downloadManager,
           isTablet: isTablet,
         ),
         _buildBottomBarItem(
@@ -396,6 +436,69 @@ class _MyHomePageState extends State<MyHomePage>
           isTablet: isTablet,
         ),
       ],
+    );
+  }
+
+  // Add this new method to handle the download indicator item
+  // Replace the _buildDownloadIndicatorItem method in main.dart with this:
+
+  SalomonBottomBarItem _buildDownloadIndicatorItem({
+    required DownloadManager downloadManager,
+    required bool isTablet,
+  }) {
+    // Fixed width like other items
+    double fixedWidth = (MediaQuery.of(context).size.width / 5 - 10) * 0.6;
+
+    return SalomonBottomBarItem(
+      icon: StreamBuilder<Map<String, dynamic>>(
+        stream: downloadManager.downloadInfoStream,
+        builder: (context, snapshot) {
+          final isDownloading = snapshot.data?['isDownloading'] ?? false;
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              NeumorphicIcon(
+                Icons.save,
+                size: isTablet ? 55 : 32,
+                style: NeumorphicStyle(depth: 2, color: Colors.grey.shade400),
+              ),
+              if (isDownloading)
+                Positioned(
+                  right: -5,
+                  top: -5,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(97, 184, 115, 1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '↓',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isTablet ? 14 : 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+      title: Container(
+        width: fixedWidth,
+        child: Text(
+          AppLocalizations.of(context)!.menu3,
+          style: TextStyle(
+            fontSize: isTablet ? 17 : MediaQuery.of(context).size.width * 0.030,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      ),
+      selectedColor: Colors.blueGrey[700],
     );
   }
 
