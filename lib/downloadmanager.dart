@@ -25,9 +25,6 @@ class DownloadManager {
   DownloadManager._internal() {
     // Initialize background service
     BackgroundService.initializeService();
-
-    // Recover any in-progress downloads after app restart
-    _recoverDownload();
   }
 
   // Download state
@@ -59,26 +56,6 @@ class DownloadManager {
   Stream<Map<String, dynamic>> get downloadInfoStream =>
       _downloadInfoController.stream;
 
-  // Method to recover download after app restart
-  Future<void> _recoverDownload() async {
-    // Check shared preferences for any in-progress download
-    final prefs = await SharedPreferences.getInstance();
-    final savedProgress = prefs.getDouble('download_progress');
-    final savedName = prefs.getString('download_name');
-
-    if (savedProgress != null && savedName != null) {
-      // Restore download state
-      isDownloading = true;
-      downloadProgress = savedProgress;
-      displayName = savedName;
-
-      // Update streams
-      _downloadStateController.add(true);
-      _downloadProgressController.add(downloadProgress);
-      _updateDownloadInfo();
-    }
-  }
-
   // Method to set download parameters
   void setDownloadParameters({
     required int duration,
@@ -106,6 +83,9 @@ class DownloadManager {
       downloadError = "Download parameters not set";
       return false;
     }
+
+    // Store context globally
+    final scaffoldMessengerState = ScaffoldMessenger.of(context);
 
     isDownloading = true;
     downloadProgress = 0.0;
@@ -148,7 +128,7 @@ class DownloadManager {
       );
       final userFitnessLevel = profileProvider.fitnessLevel;
 
-      // Request video concatenation from server
+      // IMPORTANT FIX: First request concatenation from server - same as streaming version
       sessionId = await combineVideos(
         focus!,
         goal!,
@@ -157,98 +137,115 @@ class DownloadManager {
         intensity: intensity!,
       );
 
-      if (sessionId != null) {
-        // Download the video
-        final directory = await getApplicationDocumentsDirectory();
-        final videoPath = '${directory.path}/$currentFileName';
+      if (sessionId == null) {
+        throw Exception('Failed to get session ID for video concatenation');
+      }
 
-        // Use HTTP instead of HTTPS due to cleartext traffic issue
-        final videoUrl = 'http://34.116.240.55:3000/video?sessionId=$sessionId';
+      // Now download the video using the sessionId
+      final directory = await getApplicationDocumentsDirectory();
+      final videoPath = '${directory.path}/$currentFileName';
 
-        // Download with progress tracking
-        final request = http.Request('GET', Uri.parse(videoUrl));
-        final response = await http.Client().send(request);
+      // Use the correct URL with sessionId parameter
+      final videoUrl = 'http://34.116.240.55:3000/video?sessionId=$sessionId';
 
-        if (response.statusCode == 200) {
-          final file = File(videoPath);
-          final sink = file.openWrite();
+      // Track download progress
+      final client = http.Client();
+      final request = http.Request('GET', Uri.parse(videoUrl));
 
-          final contentLength = response.contentLength ?? 0;
-          int receivedBytes = 0;
-
-          await for (final chunk in response.stream) {
-            if (!isDownloading) {
-              // If download was canceled
-              await sink.flush();
-              await sink.close();
-              file.deleteSync();
-              _downloadStateController.add(false);
-              return false;
-            }
-
-            sink.add(chunk);
-            receivedBytes += chunk.length;
-
-            if (contentLength > 0) {
-              downloadProgress = receivedBytes / contentLength;
-              _downloadProgressController.add(downloadProgress);
-              _updateDownloadInfo();
-
-              // Update background service with progress
-              BackgroundService.updateDownloadProgress(
-                downloadProgress,
-                displayName ?? "Video",
-              );
-            }
-          }
-
-          await sink.flush();
-          await sink.close();
-
-          // Save video metadata for offline access
-          await _saveVideoMetadata(
-            context: context,
-            filePath: videoPath,
-            sessionId: sessionId!,
+      // Add timeout and keep-alive for better reliability
+      request.headers['Connection'] = 'keep-alive';
+      final response = await client
+          .send(request)
+          .timeout(
+            Duration(minutes: 10),
+            onTimeout: () {
+              throw TimeoutException('Download timed out after 10 minutes');
+            },
           );
 
-          // Successfully completed
-          downloadProgress = 1.0;
-          _downloadProgressController.add(1.0);
-          _updateDownloadInfo();
+      if (response.statusCode == 200) {
+        final file = File(videoPath);
+        final contentLength = response.contentLength ?? 0;
 
-          // Signal completion to background service
-          BackgroundService.completeDownload();
+        // CHANGED: Create a file sink to write chunks directly to disk
+        final sink = file.openWrite();
+        int downloadedBytes = 0;
 
-          ScaffoldMessenger.of(context).showSnackBar(
+        // CHANGED: Stream each chunk directly to disk
+        await for (var chunk in response.stream) {
+          // Write chunk directly to file instead of keeping in memory
+          sink.add(chunk);
+          downloadedBytes += chunk.length;
+
+          // Update progress
+          if (contentLength > 0) {
+            downloadProgress = downloadedBytes / contentLength;
+            _downloadProgressController.add(downloadProgress);
+            _updateDownloadInfo();
+
+            // Update background service
+            BackgroundService.updateDownloadProgress(
+              downloadProgress,
+              displayName ?? 'Video',
+            );
+          }
+        }
+
+        // CHANGED: Close file properly
+        await sink.flush();
+        await sink.close();
+
+        // Save video metadata for offline access
+        await _saveVideoMetadata(
+          context: context,
+          filePath: videoPath,
+          sessionId: sessionId!,
+        );
+
+        // Successfully completed
+        downloadProgress = 1.0;
+        _downloadProgressController.add(1.0);
+        _updateDownloadInfo();
+
+        // Signal completion to background service
+        BackgroundService.completeDownload();
+
+        // Show success message
+        try {
+          scaffoldMessengerState.showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.videoDownloadSuccess),
               backgroundColor: Colors.green,
             ),
           );
-
-          isDownloading = false;
-          displayName = null;
-          currentFileName = null;
-          _downloadStateController.add(false);
-          _updateDownloadInfo();
-          return true;
-        } else {
-          throw Exception('Failed to download video: ${response.statusCode}');
+        } catch (e) {
+          print('Error showing success SnackBar: $e');
         }
+
+        isDownloading = false;
+        displayName = null;
+        currentFileName = null;
+        _downloadStateController.add(false);
+        _updateDownloadInfo();
+        return true;
       } else {
-        throw Exception('Failed to generate video session');
+        throw Exception('Failed to download video: ${response.statusCode}');
       }
     } catch (e) {
       print('Error downloading video: $e');
       downloadError = e.toString();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.videoDownloadFailed),
-          backgroundColor: Colors.red,
-        ),
-      );
+      // Use the stored scaffold messenger state instead of context
+      try {
+        scaffoldMessengerState.showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.videoDownloadFailed),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } catch (e) {
+        print('Error showing error SnackBar: $e');
+      }
 
       isDownloading = false;
       displayName = null;
@@ -347,6 +344,8 @@ class DownloadManager {
   }
 }
 
+// Add this annotation to make the class accessible to native code
+@pragma('vm:entry-point')
 class BackgroundService {
   static final BackgroundService _instance = BackgroundService._internal();
   factory BackgroundService() => _instance;
@@ -393,7 +392,8 @@ class BackgroundService {
     );
   }
 
-  // This is the function that will be called when the service is started
+  // Add the annotation to the onStart method as well
+  @pragma('vm:entry-point')
   static Future<void> onStart(ServiceInstance service) async {
     // For Android, we need to handle foreground service
     if (service is AndroidServiceInstance) {
@@ -412,7 +412,14 @@ class BackgroundService {
 
       // Update notification with progress
       if (service is AndroidServiceInstance) {
-        final progress = (event['progress'] as double?) ?? 0.0;
+        // Fix: Handle both int and double types for progress
+        final progress =
+            event['progress'] != null
+                ? (event['progress'] is int
+                        ? (event['progress'] as int).toDouble()
+                        : event['progress'] as double?) ??
+                    0.0
+                : 0.0;
         final displayName = event['displayName'] as String? ?? 'Video';
 
         service.setForegroundNotificationInfo(
@@ -424,7 +431,12 @@ class BackgroundService {
       // Save progress to shared preferences for recovery
       if (event['progress'] != null) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setDouble('download_progress', event['progress']);
+        // Fix: Convert to double before saving
+        final progressValue =
+            event['progress'] is int
+                ? (event['progress'] as int).toDouble()
+                : (event['progress'] as double?);
+        await prefs.setDouble('download_progress', progressValue ?? 0.0);
         await prefs.setString('download_name', event['displayName'] ?? 'Video');
       }
     });
@@ -450,12 +462,18 @@ class BackgroundService {
     });
 
     // Listen for download cancellation
-    service.on('cancelDownload').listen((event) {
+    service.on('cancelDownload').listen((event) async {
+      // Clean up shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('download_progress');
+      await prefs.remove('download_name');
+
       service.stopSelf();
     });
   }
 
-  // For iOS, a separate background handler is needed
+  // Add the annotation to the iOS background handler as well
+  @pragma('vm:entry-point')
   static Future<bool> onIosBackground(ServiceInstance service) async {
     return true;
   }

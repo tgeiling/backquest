@@ -97,5 +97,6 @@
   "exercise": "Übung",
   "minutes": "Min",
   "downloadingVideo": "Video wird heruntergeladen...",
-  "pleaseWait": "Bitte warten Sie, während das Video heruntergeladen wird"
+  "pleaseWait": "Bitte warten Sie, während das Video heruntergeladen wird",
+  "downloadStarted": "Ihr Download wurde gestartet. Sie können den Fortschritt im Downloads-Tab verfolgen."
 }

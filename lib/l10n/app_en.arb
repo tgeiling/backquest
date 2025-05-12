@@ -97,5 +97,6 @@
   "exercise": "Exercise",
   "minutes": "min",
   "downloadingVideo": "Downloading video...",
-  "pleaseWait": "Please wait while the video is being downloaded"
+  "pleaseWait": "Please wait while the video is being downloaded",
+  "downloadStarted": "Your download has been started. You can view its progress in the downloads tab."
 }
