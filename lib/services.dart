@@ -163,11 +163,14 @@ Future<bool> updateProfile({
   int? focus,
   int? goal,
   int? intensity,
+  bool? payedSubscription,
+  String? subType,
+  String? subStarted,
+  String? receiptData,
 }) async {
   try {
     // Build request body with only provided fields
     final Map<String, dynamic> requestBody = {};
-
     if (age != null) requestBody['age'] = age;
     if (fitnessLevel != null) requestBody['fitnessLevel'] = fitnessLevel;
     if (height != null) requestBody['height'] = height;
@@ -189,6 +192,12 @@ Future<bool> updateProfile({
     if (focus != null) requestBody['focus'] = focus;
     if (goal != null) requestBody['goal'] = goal;
     if (intensity != null) requestBody['intensity'] = intensity;
+    // Add subscription fields
+    if (payedSubscription != null)
+      requestBody['payedSubscription'] = payedSubscription;
+    if (subType != null) requestBody['subType'] = subType;
+    if (subStarted != null) requestBody['subStarted'] = subStarted;
+    if (receiptData != null) requestBody['receiptData'] = receiptData;
 
     final response = await http.post(
       Uri.parse('$apiUrl/updateProfile'),
@@ -198,7 +207,6 @@ Future<bool> updateProfile({
       },
       body: jsonEncode(requestBody),
     );
-
     if (response.statusCode >= 200 && response.statusCode < 300) {
       print('Profile updated successfully');
       return true;

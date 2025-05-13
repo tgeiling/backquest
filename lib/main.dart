@@ -1,27 +1,24 @@
 import 'dart:async';
-import 'dart:math';
 
+import 'package:backquest/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:get_it/get_it.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get_it/get_it.dart';
 
 import 'offline.dart';
+import 'payment_service.dart';
 import 'provider.dart';
+import 'services.dart';
 import 'start.dart';
 import 'auth.dart';
-import 'settings.dart';
 import 'firebase_options.dart';
-import 'firebaseservice.dart';
 import 'localization_service.dart';
-import 'services.dart';
 import 'downloadmanager.dart';
+import 'exercise.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -158,13 +155,17 @@ class _MyHomePageState extends State<MyHomePage>
     print("Loading local preferences and levels...");
     await profileProvider.loadPreferences();
 
+    // Initialize payment service
+    final paymentService = PaymentService(profileProvider: profileProvider);
+    await paymentService.initialize();
+
     // Then try to sync with server if we're connected
     print("Checking for auth token to sync with server...");
-    /* try {
+    try {
       String? token = await getAuthToken();
       if (token != null) {
         print("Auth token found, attempting server sync");
-       bool syncSuccess = await profileProvider.syncProfile(token);
+        bool syncSuccess = await profileProvider.syncProfile(token);
         if (syncSuccess) {
           print("Server sync successful");
         } else {
@@ -175,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
     } catch (e) {
       print("Error during server sync attempt: $e");
-    } */
+    }
   }
 
   void triggerAnimation() {
@@ -353,9 +354,14 @@ class _MyHomePageState extends State<MyHomePage>
                   isAuthenticated: isAuthenticated,
                 ),
               ),
-              Center(child: Text("Übungen")),
+              Center(child: ExercisesPage()),
               Center(child: OfflinePage()),
-              Center(child: Text("Settings")),
+              Center(
+                child: SettingsPage(
+                  setAuthenticated: _setAuthenticated,
+                  isAuthenticated: isAuthenticated,
+                ),
+              ),
               /* SettingsPage(
                 setAuthenticated: _setAuthenticated,
                 isLoggedIn: isLoggedIn,

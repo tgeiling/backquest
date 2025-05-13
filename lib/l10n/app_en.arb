@@ -98,5 +98,220 @@
   "minutes": "min",
   "downloadingVideo": "Downloading video...",
   "pleaseWait": "Please wait while the video is being downloaded",
-  "downloadStarted": "Your download has been started. You can view its progress in the downloads tab."
+  "downloadStarted": "Your download has been started. You can view its progress in the downloads tab.",
+  "exercises": "Exercises",
+  "allOurExercises": "All Our Exercises",
+  "startExercise": "Start Exercise",
+  "searchExercises": "Search Exercises",
+  "exercisesPageTitle": "View Exercises",
+  "settingsTitle": "Settings",
+  "adjustGoals": "Adjust Weekly Goals",
+  "adjustPainAreas": "Adjust Pain Areas",
+  "adjustFitnessLevel": "Adjust Fitness Level",
+  "termsConditions": "Terms & Conditions",
+  "privacyPolicy": "Privacy Policy",
+  "impressum": "Impressum",
+  "logout": "Logout",
+  "login": "Login",
+  "mySubscription": "My Subscription",
+  "subscribeBackQuest": "Subscribe to BackQuest Pro",
+  "contact": "Contact",
+  "informationFor": "Information for {title}",
+  "weeklyGoalPrompt": "How many times per week would you like to exercise?",
+  "weeklyGoalLabel": "{count} times per week",
+  "setFitnessLevel": "Set Fitness Level",
+  "currentFitnessLevelQuestion": "How often do you currently exercise?",
+  "frequencyRarely": "Rarely or never",
+  "frequencyMultipleMonthly": "A few times per month",
+  "frequencyWeekly": "Once per week",
+  "frequencyMultipleWeekly": "Multiple times per week",
+  "frequencyDaily": "Daily",
+  "editPainAreasTitle": "Edit Pain Areas",
+  "selectPainAreasPrompt": "Select the areas where you experience pain:",
+  "lowerBack": "Lower Back",
+  "upperBack": "Upper Back",
+  "neck": "Neck",
+  "knee": "Knee",
+  "wrists": "Wrists",
+  "feet": "Feet",
+  "ankle": "Ankle",
+  "hip": "Hip",
+  "jaw": "Jaw",
+  "shoulder": "Shoulder",
+  "profileUpdateSuccess": "Profile updated successfully",
+  "profileUpdateError": "Failed to update profile",
+  "authTokenUnavailable": "Authentication token unavailable",
+  "activeSubscription": "Active Subscription",
+  "noActiveSubscription": "No Active Subscription",
+  "subscriptionTypeLabel": "Type: {type}",
+  "subscriptionStartedLabel": "Started: {date}",
+  "premiumFeaturesActive": "Your premium features are currently active.",
+  "upgradePrompt": "Upgrade to premium to unlock all features!",
+  "availablePlans": "Available Plans",
+  "monthlySubscription": "Monthly",
+  "yearlySubscription": "Annual (Best Value)",
+  "fullAccessDescription": "Full access to all premium features",
+  "monthlyPrice": "€9.99/month",
+  "yearlyPrice": "€69.99/year",
+  "savePercent": "SAVE 40%",
+  "restorePurchases": "Restore Previous Purchases",
+  "cancelSubscription": "Cancel Subscription",
+  "cancelConfirmTitle": "Cancel Subscription?",
+  "cancelConfirmMessage": "Are you sure you want to cancel your subscription? You will still have access until the end of your current billing period.",
+  "cancelNo": "NO",
+  "cancelYes": "YES, CANCEL",
+  "subscriptionActivated": "Subscription activated successfully!",
+  "subscriptionCanceled": "Subscription canceled successfully",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirm": "Are you sure you want to delete your account?",
+  
+  "alternatingKneeHugsName": "Alternating Knee Hugs",
+  "alternatingKneeHugsText": "Warm up your body and improve mobility in your hips and lower back with this gentle movement. Alternately hug your left and right knee while standing.",
+  
+  "bwsRotationName": "Thoracic Spine Rotation",
+  "bwsRotationText": "This exercise improves the mobility of your thoracic spine and releases tension in your mid-back. Gently rotate your upper body from side to side.",
+  
+  "aufwachenderHundName": "Waking Dog",
+  "aufwachenderHundText": "This yoga-inspired movement stretches the entire back of your body while strengthening your shoulders. Start in downward dog and move in a controlled manner forward into plank position.",
+  
+  "babyRollingName": "Baby Rolling",
+  "babyRollingText": "Remember how you rolled effortlessly as a baby? This exercise improves the connection between your upper and lower body and promotes segmental movement of the spine. It provides more mobility and coordination throughout the body.",
+  
+  "boxerCrunchName": "Boxer Crunch",
+  "boxerCrunchText": "Imagine you're in a boxing ring, but instead of fighting an opponent, you're fighting belly fat and instability! This exercise combines the power of a crunch with a dynamic rotational movement that particularly targets your oblique abdominal muscles.",
+  
+  "kindToCobraName": "Child to Cobra",
+  "kindToCobraText": "This gentle spine exercise releases tension in your back and improves flexibility. Move in a controlled manner from child's pose to cobra pose and back again.",
+  
+  "childPoseName": "Child's Pose",
+  "childPoseText": "A calming resting position that gently stretches your back and reduces stress. Ideal for relaxing between more strenuous exercises.",
+  
+  "dynamicSingleArmChildPoseName": "Dynamic Single Arm Child's Pose",
+  "dynamicSingleArmChildPoseText": "A variation of the classic child's pose that additionally stretches the shoulders and sides of the torso. Alternately extend one arm to the side while remaining in child's pose.",
+  
+  "grosserGartenzwergName": "Deep Squat Hold",
+  "grosserGartenzwergText": "This position strengthens your legs while improving hip mobility. Similar to a deep squat, but with an upright upper body.",
+  
+  "hipSwifelName": "Hip Circles",
+  "hipSwifelText": "Circle your hips to release stiffness and improve mobility. This exercise specifically targets mobility of the lower back and hips.",
+  
+  "hipSwifelLehnenName": "Supported Hip Circles",
+  "hipSwifelLehnenText": "A supported version of hip circles where you brace yourself against a wall or chair. Ideal for beginners or when you need additional stability.",
+  
+  "katzeKuhName": "Cat-Cow",
+  "katzeKuhText": "This classic yoga exercise promotes spinal flexibility. Alternate between rounding (cat) and arching (cow) your back in a quadruped position.",
+  
+  "kleineCobraLiftsName": "Small Cobra Lifts",
+  "kleineCobraLiftsText": "Strengthen the back muscles with small, controlled lifts in the cobra position. This exercise helps activate the muscles that are important for healthy spinal posture.",
+  
+  "kneeHugName": "Knee Hug",
+  "kneeHugText": "A simple but effective stretch for the lower back and gluteal muscles. While lying down, bring both knees to your chest and gently hold them with your hands.",
+  
+  "krabbelnMitTapName": "Crawling with Shoulder Tap",
+  "krabbelnMitTapText": "This exercise improves coordination while strengthening core stability. Crawl forward and alternately tap the opposite shoulder with your hand.",
+  
+  "langsitzFusskreiseName": "Seated Foot Circles",
+  "langsitzFusskreiseText": "Improve the mobility of your feet and ankles with circular movements while seated with legs extended. This exercise can help release tension in the lower back.",
+  
+  "laufenderHundName": "Running Dog",
+  "laufenderHundText": "A dynamic variation of downward facing dog. Alternately lift your heels as if you were running in place. Activates the calf muscles and stretches the Achilles tendons.",
+  
+  "rlNackenrotationenName": "Supine Neck Rotations",
+  "rlNackenrotationenText": "Gentle rotations of the head while lying down to release neck tension. Slowly turn your head from side to side while lying on your back.",
+  
+  "rolleZuSeitsitzName": "Roll to Side Sit",
+  "rolleZuSeitsitzText": "An exercise for core strength and mobility. Roll from a supine position into a side-sitting position without using your hands.",
+  
+  "scapulaPushupName": "Scapular Push-up",
+  "scapulaPushupText": "Strengthen the muscles between your shoulder blades with this modified push-up variation. Focus on squeezing and spreading your shoulder blades.",
+  
+  "ruckendehnungSchneidersitzName": "Cross-Legged Back Stretch",
+  "ruckendehnungSchneidersitzText": "This gentle stretch opens the lower back and hips. Sit cross-legged and slowly bend forward.",
+  
+  "triangleStretchName": "Triangle Stretch",
+  "triangleStretchText": "A lateral stretch for the torso that also opens the hips. Similar to the triangle pose in yoga, but with modified alignment for the back.",
+  
+  "kaferAngewinkeltName": "Modified Dead Bug",
+  "kaferAngewinkeltText": "A safe version of the dead bug exercise for the abdomen that simultaneously stabilizes the lower back. Keep your knees at a 90-degree angle and move your arms.",
+  
+  "tuckedKrokodilatmungName": "Tucked Crocodile Breathing",
+  "tuckedKrokodilatmungText": "A breathing exercise in the side-lying position that helps relax and reduce back pain. Focus on deep abdominal breathing with slightly bent knees.",
+  
+  "seitlageOberschenkeldehnungName": "Side-Lying Quad Stretch",
+  "seitlageOberschenkeldehnungText": "Stretch the front of your thighs while remaining in a side-lying position. This position is particularly gentle on the back.",
+  
+  "supineRotationsName": "Supine Rotations",
+  "supineRotationsText": "This gentle twisting of the spine helps release tension in the middle and lower back. Let your knees slowly fall from side to side.",
+  
+  "liegendeMeditationName": "Supine Meditation",
+  "liegendeMeditationText": "A relaxing position for mindful body awareness. Focus on your breath and the sensations in your body, especially in your back.",
+  
+  "barenhockeName": "Bear Squat",
+  "barenhockeText": "A deep squat that mobilizes hips, ankles, and lower back. Imagine you're a bear making yourself small to hide.",
+  
+  "krabbePiriformisBeidseitigName": "Quadruped Piriformis Stretch (Both Sides)",
+  "krabbePiriformisBeidseitigText": "A stretch for the piriformis muscle, which often contributes to sciatic pain. This variation is performed in the quadruped position.",
+  
+  "krabbeScapulaPushUpName": "Quadruped Scapular Push-Up",
+  "krabbeScapulaPushUpText": "Strengthen the shoulder blade muscles from the quadruped position. This exercise improves the stability of the upper back muscles.",
+  
+  "gluteBridgeName": "Glute Bridge",
+  "gluteBridgeText": "Strengthen the gluteal and back muscles with this simple but effective exercise. Lift your pelvis and hold the position while squeezing your glute muscles.",
+  
+  "knienderSeitplankTapsName": "Kneeling Side Plank Taps",
+  "knienderSeitplankTapsText": "A modified version of the side plank that strengthens the lateral core musculature without overloading the back.",
+  
+  "standSchulterkreiseName": "Standing Shoulder Circles",
+  "standSchulterkreiseText": "Release tension in shoulders and upper back with large circular movements of the shoulders while standing.",
+  
+  "gegratschteVorbeugeSideToSideName": "Wide-Legged Forward Bend with Side Movement",
+  "gegratschteVorbeugeSideToSideText": "This variant of the wide-legged forward bend adds a lateral component to stretch the sides of the back and the hips.",
+  
+  "gegratschteVorbeugeMitRotationName": "Wide-Legged Forward Bend with Rotation",
+  "gegratschteVorbeugeMitRotationText": "Add a twist to the wide-legged forward bend to rotate the spine and mobilize the mid-back.",
+  
+  "mountainPoseZuJeffersonCurlName": "Mountain Pose to Jefferson Curl",
+  "mountainPoseZuJeffersonCurlText": "This exercise begins in the upright mountain pose and transitions into a controlled, vertebra-by-vertebra forward roll called the Jefferson Curl.",
+  
+  "gegratschteVorbeugeRunterrollenName": "Wide-Legged Forward Bend with Roll Down",
+  "gegratschteVorbeugeRunterrollenText": "Roll down vertebra by vertebra from the upright position into the forward bend. This exercise improves the segmental mobility of the spine.",
+  
+  "easyHockeZuVorbeugeName": "Easy Squat to Forward Bend",
+  "easyHockeZuVorbeugeText": "Move in a controlled manner from a light squat into a forward bend. This exercise mobilizes hips and lower back.",
+  
+  "hockeReinkommenName": "Entering the Squat",
+  "hockeReinkommenText": "A gentle method to get into the squat without straining the back. Especially helpful for people with limited mobility.",
+  
+  "hockeRotationZuVorbeugeName": "Squat with Rotation to Forward Bend",
+  "hockeRotationZuVorbeugeText": "Combine the squat with a rotation and then go into a forward bend. This combination mobilizes different areas of the spine.",
+  
+  "kniebeugeSchwingenName": "Squats with Swing",
+  "kniebeugeSchwingenText": "Dynamic squats with a swinging arm movement that improve the flow of the exercise and mobilize the back.",
+  
+  "hufteLockernName": "Loosening Hips",
+  "hufteLockernText": "Gentle circular and rocking movements to mobilize the hip joints and prepare for further exercises.",
+  
+  "standHuftCARsName": "Standing Hip CARs",
+  "standHuftCARsText": "Controlled Articular Rotations (CARs) for the hip while standing. This technique improves movement control and range of motion of the hip joint.",
+  
+  "schwingendesOffnenName": "Swinging Opening",
+  "schwingendesOffnenText": "Swing your arms open to the side to stretch the chest and promote circulation. An invigorating exercise for the entire upper body.",
+  
+  "abschlussSchwingenName": "Closing Swing",
+  "abschlussSchwingenText": "A gentle swinging movement to conclude a workout. Helps to relax the body and calm the circulation.",
+  
+  "standBwsOffnenName": "Standing Thoracic Opening",
+  "standBwsOffnenText": "Open the thoracic spine by retracting the shoulder blades while standing. This exercise helps correct a forward-leaning posture.",
+  
+  "standArmeAuswringenName": "Standing Arm Wringing",
+  "standArmeAuswringenText": "A dynamic exercise where you wring out your arms like a wet cloth. Releases tension in shoulders and upper back.",
+  
+  "standHalbeNackenkreiseName": "Standing Half Neck Circles",
+  "standHalbeNackenkreiseText": "Gentle half-circular movements with the head from side to side. Important: only make the half circle and don't roll your head backward.",
+  
+  "seitlicheSchwungeName": "Lateral Swings",
+  "seitlicheSchwungeText": "Swing your arms dynamically to the side to mobilize the upper body and stimulate circulation.",
+  
+  "schwungeZurDeckeName": "Ceiling Swings",
+  "schwungeZurDeckeText": "Swing your arms upward toward the ceiling to mobilize the shoulders and stretch the spine."
 }

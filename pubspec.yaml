@@ -39,6 +39,9 @@ dependencies:
   flutter_background_service: ^5.1.0
   flutter_background_service_android: ^6.3.0
   path_provider: ^2.1.5
+  in_app_purchase: ^3.2.0
+  in_app_purchase_android: ^0.4.0
+  in_app_purchase_storekit: ^0.3.22+1
 
 dev_dependencies:
 
@@ -73,3 +76,6 @@ flutter:
   assets:
     - assets/logo.png
     - assets/playstorelogo.png
+    - assets/settingsbg.PNG
+    - assets/thumbnails/
+    - assets/gifs/

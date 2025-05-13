@@ -11,6 +11,9 @@ const fs = require('fs');
 const path = require('path');
 const cron = require('node-cron');
 const { v4: uuidv4 } = require('uuid');
+const { google } = require('googleapis');
+const { GoogleAuth } = require('google-auth-library');
+const axios = require('axios');
 
 // Create express app
 const app = express();
@@ -57,6 +60,16 @@ const UserSchema = new mongoose.Schema({
   intensity: { type: Number, default: null },
   
   createdAt: { type: Date, default: Date.now },
+
+  subscription: {
+    active: { type: Boolean, default: false },
+    type: { type: String, enum: ['monthly', 'yearly', null], default: null },
+    validUntil: { type: Date, default: null },
+    receipt: { type: String, default: null },
+    platform: { type: String, enum: ['ios', 'android', null], default: null },
+    startedAt: { type: Date, default: null },
+    lastValidated: { type: Date, default: null }
+  },
   
   // Feedback data
   feedback: [{
@@ -64,6 +77,60 @@ const UserSchema = new mongoose.Schema({
     difficulty: Number,
     painAreas: [String]
   }]
+});
+
+// Create an index on validUntil for efficient queries
+UserSchema.index({ 'subscription.validUntil': 1 });
+
+// Add a method to check if subscription is active
+UserSchema.methods.hasActiveSubscription = function() {
+  if (!this.subscription || !this.subscription.active) {
+    return false;
+  }
+  
+  return this.subscription.validUntil > new Date();
+};
+
+// Add a static method to find users with expiring subscriptions
+UserSchema.statics.findExpiringSubscriptions = function(daysToExpire = 3) {
+  const now = new Date();
+  const expiryDate = new Date(now);
+  expiryDate.setDate(expiryDate.getDate() + daysToExpire);
+  
+  return this.find({
+    'subscription.active': true,
+    'subscription.validUntil': {
+      $gt: now,
+      $lt: expiryDate
+    }
+  });
+};
+
+// Create a task to check for expired subscriptions daily
+cron.schedule('0 0 * * *', async () => {
+  console.log('Running expired subscription check...');
+  try {
+    const now = new Date();
+    
+    // Find users with expired subscriptions
+    const expiredUsers = await User.find({
+      'subscription.active': true,
+      'subscription.validUntil': { $lt: now }
+    });
+    
+    console.log(`Found ${expiredUsers.length} users with expired subscriptions`);
+    
+    // Update them as inactive
+    for (const user of expiredUsers) {
+      user.subscription.active = false;
+      await user.save();
+      console.log(`Deactivated subscription for user: ${user.username}`);
+      
+      // Here you could also send notification emails about expiration
+    }
+  } catch (error) {
+    console.error('Error checking expired subscriptions:', error);
+  }
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -89,6 +156,334 @@ const Video = mongoose.model('Video', VideoSchema);
 
 // Storage for active video sessions
 const videoSessions = {};
+
+
+
+
+
+//
+// payment area
+//
+
+
+
+
+
+
+const APPLE_SECRET = process.env.APPLE_SECRET;
+// Constants for validation URLs
+const APPLE_PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
+const APPLE_SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
+const GOOGLE_API_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications';
+
+// Load Google service account credentials
+let googleCredentials;
+try {
+  // Try to load credentials from file first
+  const credentialsPath = path.join(__dirname, 'credentials', 'google-service-account.json');
+  if (fs.existsSync(credentialsPath)) {
+    googleCredentials = require(credentialsPath);
+  } else {
+    // Fall back to environment variable if file doesn't exist
+    googleCredentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS || '{}');
+  }
+} catch (error) {
+  console.error('Failed to load Google credentials:', error);
+  googleCredentials = {};
+}
+
+// Validate receipt from app
+app.post('/validate_receipt', authenticateToken, async (req, res) => {
+  try {
+    const { receipt, subscription_type, platform } = req.body;
+    
+    if (!receipt || !subscription_type || !platform) {
+      return res.status(400).json({ message: 'Missing required data' });
+    }
+    
+    let isValid = false;
+    let validUntil = null;
+    
+    // Validate with the appropriate app store
+    if (platform === 'ios') {
+      const validationResult = await validateAppleReceipt(receipt);
+      isValid = validationResult.isValid;
+      validUntil = validationResult.validUntil;
+    } else if (platform === 'android') {
+      const validationResult = await validateGoogleReceipt(receipt, subscription_type);
+      isValid = validationResult.isValid;
+      validUntil = validationResult.validUntil;
+    } else {
+      return res.status(400).json({ message: 'Invalid platform' });
+    }
+    
+    // If valid, update user subscription in database
+    if (isValid && validUntil) {
+      // Find the user
+      const user = await User.findOne({ username: req.user.username });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      // Update user subscription status in database
+      user.subscription = {
+        active: true,
+        type: subscription_type,
+        validUntil: validUntil,
+        receipt: receipt,
+        platform: platform,
+        lastValidated: new Date()
+      };
+      
+      await user.save();
+    }
+    
+    res.json({
+      is_valid: isValid,
+      valid_until: validUntil ? validUntil.toISOString() : null
+    });
+  } catch (error) {
+    console.error('Receipt validation error:', error);
+    res.status(500).json({ message: 'Server error during validation' });
+  }
+});
+
+// Record subscription (when a user makes a new purchase)
+app.post('/record_subscription', authenticateToken, async (req, res) => {
+  try {
+    const { subscription_id, receipt, subscription_type, started_at, platform } = req.body;
+    
+    // Find the user
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Calculate expiry date based on subscription type
+    const startDate = new Date(started_at);
+    let validUntil;
+    
+    if (subscription_type === 'yearly') {
+      validUntil = new Date(startDate);
+      validUntil.setFullYear(validUntil.getFullYear() + 1);
+    } else {
+      validUntil = new Date(startDate);
+      validUntil.setMonth(validUntil.getMonth() + 1);
+    }
+    
+    // Update user subscription in database
+    user.subscription = {
+      active: true,
+      type: subscription_type,
+      validUntil: validUntil,
+      receipt: receipt,
+      platform: platform,
+      startedAt: startDate
+    };
+    
+    await user.save();
+    
+    res.json({ 
+      success: true, 
+      valid_until: validUntil.toISOString() 
+    });
+  } catch (error) {
+    console.error('Recording subscription error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get subscription status
+app.get('/subscription_status', authenticateToken, async (req, res) => {
+  try {
+    // Find the user
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // If user has no subscription data
+    if (!user.subscription) {
+      return res.json({
+        is_paid: false
+      });
+    }
+    
+    // Check if subscription is still valid
+    const now = new Date();
+    const isValid = user.subscription.active && user.subscription.validUntil > now;
+    
+    res.json({
+      is_paid: isValid,
+      subscription_type: isValid ? user.subscription.type : null,
+      started_at: isValid ? user.subscription.startedAt.toISOString() : null,
+      valid_until: isValid ? user.subscription.validUntil.toISOString() : null,
+      receipt: isValid ? user.subscription.receipt : null
+    });
+  } catch (error) {
+    console.error('Checking subscription status error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Cancel subscription notification
+app.post('/cancel_subscription', authenticateToken, async (req, res) => {
+  try {
+    // Find the user
+    const user = await User.findOne({ username: req.user.username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update subscription status to cancelled
+    if (user.subscription) {
+      user.subscription.active = false;
+    }
+    
+    await user.save();
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Cancel subscription error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Apple receipt validation function
+async function validateAppleReceipt(receipt) {
+  try {
+    // Sandbox environment for testing, use 'buy.itunes.apple.com' for production
+    const endpoint = 'sandbox.itunes.apple.com';
+    const validationUrl = `https://${endpoint}/verifyReceipt`;
+    
+    const response = await axios.post(validationUrl, {
+      'receipt-data': receipt,
+      'password': APPLE_SECRET, // Your App-Specific Shared Secret
+      'exclude-old-transactions': true
+    });
+    
+    const data = response.data;
+    
+    // Status 0 means successful validation
+    if (data.status === 0) {
+      // Find the latest subscription receipt
+      let latestExpiry = null;
+      let productId = null;
+      
+      if (data.latest_receipt_info && data.latest_receipt_info.length > 0) {
+        // Sort receipts by expiration date (descending)
+        const sortedReceipts = data.latest_receipt_info.sort((a, b) => {
+          return parseInt(b.expires_date_ms) - parseInt(a.expires_date_ms);
+        });
+        
+        // Get the latest receipt
+        const latestReceipt = sortedReceipts[0];
+        
+        // Convert expiration date from milliseconds to Date
+        latestExpiry = new Date(parseInt(latestReceipt.expires_date_ms));
+        productId = latestReceipt.product_id;
+        
+        // Check if subscription matches our products
+        if (productId !== '0001' && productId !== '0002') {
+          console.warn(`Unrecognized product ID: ${productId}`);
+        }
+      }
+      
+      // Check if subscription is still valid
+      const isValid = latestExpiry && latestExpiry > new Date();
+      
+      return {
+        isValid,
+        validUntil: latestExpiry,
+        productId
+      };
+    }
+    
+    console.warn(`Apple receipt validation failed with status: ${data.status}`);
+    return {
+      isValid: false,
+      validUntil: null
+    };
+  } catch (error) {
+    console.error('Apple receipt validation error:', error);
+    return {
+      isValid: false,
+      validUntil: null
+    };
+  }
+}
+
+// Google receipt validation function
+async function validateGoogleReceipt(receipt, subscription_type) {
+  if (!Object.keys(googleCredentials).length) {
+    console.error('Google API credentials are not configured');
+    return { isValid: false, validUntil: null, error: 'Configuration error' };
+  }
+
+  try {
+    // Parse receipt data to extract necessary information
+    let receiptData;
+    try {
+      receiptData = JSON.parse(receipt);
+    } catch (e) {
+      console.error('Failed to parse receipt data:', e);
+      return { isValid: false, validUntil: null, error: 'Invalid receipt format' };
+    }
+
+    const { packageName, productId, purchaseToken } = receiptData;
+    
+    if (!packageName || !productId || !purchaseToken) {
+      console.error('Missing required fields in receipt data');
+      return { isValid: false, validUntil: null, error: 'Incomplete receipt data' };
+    }
+
+    // Set up authentication
+    const auth = new GoogleAuth({
+      credentials: googleCredentials,
+      scopes: ['https://www.googleapis.com/auth/androidpublisher']
+    });
+    
+    const client = await auth.getClient();
+    
+    // This is a subscription validation
+    const endpoint = `${GOOGLE_API_URL}/${packageName}/purchases/subscriptions/${productId}/tokens/${purchaseToken}`;
+    
+    // Make the validation request
+    const response = await client.request({ url: endpoint });
+    
+    // Check if the subscription is valid
+    const expiryTimeMillis = parseInt(response.data.expiryTimeMillis);
+    const currentTimeMillis = Date.now();
+    
+    const isValid = expiryTimeMillis > currentTimeMillis && 
+                   response.data.paymentState === 1; // 1 = Payment received
+    
+    // Calculate valid until date
+    const validUntil = new Date(expiryTimeMillis);
+    
+    return {
+      isValid,
+      validUntil: isValid ? validUntil : null,
+      productId: productId
+    };
+  } catch (error) {
+    console.error('Error validating Google receipt:', error.message);
+    return { 
+      isValid: false, 
+      validUntil: null, 
+      error: `Validation request failed: ${error.message}`
+    };
+  }
+}
+
+//
+// payment area
+//
+
+
+
+
+
 
 // Test route
 app.get('/test', (req, res) => {

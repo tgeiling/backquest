@@ -30,6 +30,12 @@ class ProfileProvider with ChangeNotifier {
   int? _goal;
   int? _intensity;
 
+  // Subscription Data
+  bool? _payedSubscription;
+  String? _subType;
+  String? _subStarted;
+  String? _receiptData;
+
   // Getters
   String get username => _username;
   int get age => _age;
@@ -52,6 +58,12 @@ class ProfileProvider with ChangeNotifier {
   int? get focus => _focus;
   int? get goal => _goal;
   int? get intensity => _intensity;
+
+  // Subscription Getters
+  bool? get payedSubscription => _payedSubscription;
+  String? get subType => _subType;
+  String? get subStarted => _subStarted;
+  String? get receiptData => _receiptData;
 
   // Constructor
   ProfileProvider() {
@@ -113,6 +125,21 @@ class ProfileProvider with ChangeNotifier {
       notifyListeners();
       savePreferences();
     }
+  }
+
+  // Subscription Methods
+  void setSubscription({
+    required bool isPaid,
+    String? type,
+    String? started,
+    String? receipt,
+  }) {
+    _payedSubscription = isPaid;
+    _subType = type;
+    _subStarted = started;
+    _receiptData = receipt;
+    notifyListeners();
+    savePreferences();
   }
 
   // Pain Management Methods
@@ -247,6 +274,15 @@ class ProfileProvider with ChangeNotifier {
       };
       await prefs.setString('videoPreferences', json.encode(videoPrefs));
 
+      // Save subscription data
+      final Map<String, dynamic> subscriptionData = {
+        'payedSubscription': _payedSubscription,
+        'subType': _subType,
+        'subStarted': _subStarted,
+        'receiptData': _receiptData,
+      };
+      await prefs.setString('subscriptionData', json.encode(subscriptionData));
+
       // Sync with server if we have a token
       String? token = await getAuthToken();
       if (token != null && _username.isNotEmpty) {
@@ -325,6 +361,21 @@ class ProfileProvider with ChangeNotifier {
           _intensity = decoded['intensity'];
         } catch (e) {
           print("Error parsing video preferences JSON: $e");
+          // Keep default null values
+        }
+      }
+
+      // Load subscription data
+      String? subscriptionJson = prefs.getString('subscriptionData');
+      if (subscriptionJson != null && subscriptionJson.isNotEmpty) {
+        try {
+          Map<String, dynamic> decoded = json.decode(subscriptionJson);
+          _payedSubscription = decoded['payedSubscription'];
+          _subType = decoded['subType'];
+          _subStarted = decoded['subStarted'];
+          _receiptData = decoded['receiptData'];
+        } catch (e) {
+          print("Error parsing subscription data JSON: $e");
           // Keep default null values
         }
       }
@@ -425,6 +476,12 @@ class ProfileProvider with ChangeNotifier {
         _goal = profileData['goal'];
         _intensity = profileData['intensity'];
 
+        // Handle subscription data
+        _payedSubscription = profileData['payedSubscription'];
+        _subType = profileData['subType'];
+        _subStarted = profileData['subStarted'];
+        _receiptData = profileData['receiptData'];
+
         notifyListeners();
         await savePreferences(); // Save to local storage
         return true;
@@ -464,6 +521,10 @@ class ProfileProvider with ChangeNotifier {
         focus: _focus,
         goal: _goal,
         intensity: _intensity,
+        payedSubscription: _payedSubscription,
+        subType: _subType,
+        subStarted: _subStarted,
+        receiptData: _receiptData,
       );
     } catch (e) {
       print("Error syncing to server: $e");

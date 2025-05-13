@@ -98,5 +98,221 @@
   "minutes": "Min",
   "downloadingVideo": "Video wird heruntergeladen...",
   "pleaseWait": "Bitte warten Sie, während das Video heruntergeladen wird",
-  "downloadStarted": "Ihr Download wurde gestartet. Sie können den Fortschritt im Downloads-Tab verfolgen."
+  "downloadStarted": "Ihr Download wurde gestartet. Sie können den Fortschritt im Downloads-Tab verfolgen.",
+  "exercises": "Übungen",
+  "allOurExercises": "Alle unsere Übungen",
+  "startExercise": "Übung starten",
+  "searchExercises": "Übungen suchen",
+  "exercisesPageTitle": "Übungen aufrufen",
+  "settingsTitle": "Einstellungen",
+  "adjustGoals": "Wochenziele anpassen",
+  "adjustPainAreas": "Schmerzbereiche anpassen",
+  "adjustFitnessLevel": "Fitnesslevel anpassen",
+  "termsConditions": "AGB",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "impressum": "Impressum",
+  "logout": "Abmelden",
+  "login": "Anmelden",
+  "mySubscription": "Mein Abonnement",
+  "subscribeBackQuest": "BackQuest Pro abonnieren",
+  "contact": "Kontakt",
+  "informationFor": "Informationen zu {title}",
+  "weeklyGoalPrompt": "Wie oft pro Woche möchten Sie trainieren?",
+  "weeklyGoalLabel": "{count} mal pro Woche",
+  "setFitnessLevel": "Fitnesslevel festlegen",
+  "currentFitnessLevelQuestion": "Wie oft trainieren Sie derzeit?",
+  "frequencyRarely": "Selten oder nie",
+  "frequencyMultipleMonthly": "Einige Male im Monat",
+  "frequencyWeekly": "Einmal pro Woche",
+  "frequencyMultipleWeekly": "Mehrmals pro Woche",
+  "frequencyDaily": "Täglich",
+  "editPainAreasTitle": "Schmerzbereiche bearbeiten",
+  "selectPainAreasPrompt": "Wählen Sie die Bereiche, in denen Sie Schmerzen haben:",
+  "lowerBack": "Unterer Rücken",
+  "upperBack": "Oberer Rücken",
+  "neck": "Nacken",
+  "knee": "Knie",
+  "wrists": "Handgelenke",
+  "feet": "Füße",
+  "ankle": "Knöchel",
+  "hip": "Hüfte",
+  "jaw": "Kiefer",
+  "shoulder": "Schulter",
+  "profileUpdateSuccess": "Profil erfolgreich aktualisiert",
+  "profileUpdateError": "Fehler beim Aktualisieren des Profils",
+  "authTokenUnavailable": "Authentifizierungstoken nicht verfügbar",
+  "activeSubscription": "Aktives Abonnement",
+  "noActiveSubscription": "Kein aktives Abonnement",
+  "subscriptionTypeLabel": "Typ: {type}",
+  "subscriptionStartedLabel": "Begonnen: {date}",
+  "premiumFeaturesActive": "Ihre Premium-Funktionen sind derzeit aktiv.",
+  "upgradePrompt": "Upgraden Sie auf Premium, um alle Funktionen freizuschalten!",
+  "availablePlans": "Verfügbare Pläne",
+  "monthlySubscription": "Monatlich",
+  "yearlySubscription": "Jährlich (Bestes Angebot)",
+  "fullAccessDescription": "Voller Zugriff auf alle Premium-Funktionen",
+  "monthlyPrice": "€9,99/Monat",
+  "yearlyPrice": "€69,99/Jahr",
+  "savePercent": "40% SPAREN",
+  "restorePurchases": "Frühere Käufe wiederherstellen",
+  "cancelSubscription": "Abonnement kündigen",
+  "cancelConfirmTitle": "Abonnement kündigen?",
+  "cancelConfirmMessage": "Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten? Sie haben weiterhin Zugriff bis zum Ende Ihres aktuellen Abrechnungszeitraums.",
+  "cancelNo": "NEIN",
+  "cancelYes": "JA, KÜNDIGEN",
+  "subscriptionActivated": "Abonnement erfolgreich aktiviert!",
+  "subscriptionCanceled": "Abonnement erfolgreich gekündigt",
+  "deleteAccount": "Konto löschen",
+  "deleteAccountConfirm": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?",
+  
+  "alternatingKneeHugsName": "Alternierende Knie-Umarmungen",
+  "alternatingKneeHugsText": "Wärme deinen Körper auf und verbessere die Mobilität in Hüften und unterem Rücken mit dieser sanften Bewegung. Umarme abwechselnd dein linkes und rechtes Knie im Stehen.",
+  
+  "bwsRotationName": "BWS-Rotation",
+  "bwsRotationText": "Diese Übung verbessert die Beweglichkeit deiner Brustwirbelsäule und löst Verspannungen im mittleren Rücken. Drehe deinen Oberkörper sanft von Seite zu Seite.",
+  
+  "aufwachenderHundName": "Aufwachender Hund",
+  "aufwachenderHundText": "Diese Yoga-inspirierte Bewegung dehnt die gesamte Rückseite deines Körpers und stärkt gleichzeitig die Schultern. Beginne im herabschauenden Hund und bewege dich kontrolliert nach vorne in die Planke.",
+  
+  "babyRollingName": "Baby-Rollen",
+  "babyRollingText": "Erinnerst du dich, wie du als Baby unbeschwert gerollt bist? Diese Übung verbessert die Verbindung zwischen Ober- und Unterkörper und fördert die segmentale Bewegung der Wirbelsäule. Sie sorgt für mehr Beweglichkeit und Koordination im gesamten Körper.",
+  
+  "boxerCrunchName": "Boxer-Crunch",
+  "boxerCrunchText": "Stell dir vor, du bist im Boxring, aber anstelle eines Gegners kämpfst du gegen Bauchfett und Instabilität! Diese Übung kombiniert die Kraft eines Crunches mit einer dynamischen Rotationsbewegung, die vor allem deine schrägen Bauchmuskeln anspricht.",
+  
+  "kindToCobraName": "Kind zu Kobra",
+  "kindToCobraText": "Diese sanfte Wirbelsäulenübung löst Verspannungen im Rücken und verbessert die Flexibilität. Bewege dich kontrolliert aus der Kindsposition in die Kobra und wieder zurück.",
+  
+  "childPoseName": "Kindsposition",
+  "childPoseText": "Eine beruhigende Ruheposition, die deinen Rücken sanft dehnt und Stress abbaut. Ideal zum Entspannen zwischen anstrengenderen Übungen.",
+  
+  "dynamicSingleArmChildPoseName": "Dynamische Einarm-Kindsposition",
+  "dynamicSingleArmChildPoseText": "Eine Variation der klassischen Kindsposition, die zusätzlich die Schultern und Seiten des Rumpfes dehnt. Strecke abwechselnd einen Arm zur Seite, während du in der Kindsposition bleibst.",
+  
+  "grosserGartenzwergName": "Großer Gartenzwerg",
+  "grosserGartenzwergText": "Diese Haltung stärkt deine Beine und verbessert gleichzeitig die Beweglichkeit der Hüften. Ähnlich wie eine tiefe Hocke, aber mit aufrechtem Oberkörper.",
+  
+  "hipSwifelName": "Hüft-Kreisel",
+  "hipSwifelText": "Kreise deine Hüften, um Steifheit zu lösen und die Beweglichkeit zu verbessern. Diese Übung zielt speziell auf die Mobilität des unteren Rückens und der Hüften ab.",
+  
+  "hipSwifelLehnenName": "Hüft-Kreisel im Lehnen",
+  "hipSwifelLehnenText": "Eine unterstützte Version des Hüft-Kreisels, bei der du dich an einer Wand oder einem Stuhl abstützt. Ideal für Anfänger oder wenn du zusätzliche Stabilität benötigst.",
+  
+  "katzeKuhName": "Katze-Kuh",
+  "katzeKuhText": "Diese klassische Yoga-Übung fördert die Flexibilität der Wirbelsäule. Wechsle zwischen Rundung (Katze) und Durchhängen (Kuh) des Rückens im Vierfüßlerstand.",
+  
+  "kleineCobraLiftsName": "Kleine Kobra-Lifts",
+  "kleineCobraLiftsText": "Stärke die Rückenmuskulatur mit kleinen, kontrollierten Hebungen in der Kobra-Position. Diese Übung hilft, die Muskeln zu aktivieren, die für eine gesunde Wirbelsäulenhaltung wichtig sind.",
+  
+  "kneeHugName": "Knie-Umarmung",
+  "kneeHugText": "Eine einfache aber effektive Dehnung für den unteren Rücken und die Gesäßmuskulatur. Bringe im Liegen beide Knie zur Brust und halte sie sanft mit den Händen.",
+  
+  "krabbelnMitTapName": "Krabbeln mit Tap",
+  "krabbelnMitTapText": "Diese Übung verbessert die Koordination und stärkt gleichzeitig die Rumpfstabilität. Krabbele vorwärts und tippe abwechselnd mit der Hand die gegenüberliegende Schulter an.",
+  
+  "langsitzFusskreiseName": "Langsitz-Fußkreise",
+  "langsitzFusskreiseText": "Verbessere die Beweglichkeit deiner Füße und Knöchel mit kreisenden Bewegungen im Langsitz. Diese Übung kann helfen, Spannung im unteren Rücken zu lösen.",
+  
+  "laufenderHundName": "Laufender Hund",
+  "laufenderHundText": "Eine dynamische Variation des herabschauenden Hundes. Hebe abwechselnd die Fersen, als würdest du auf der Stelle laufen. Aktiviert die Wadenmuskulatur und dehnt die Achillessehnen.",
+  
+  "rlNackenrotationenName": "RL-Nackenrotationen",
+  "rlNackenrotationenText": "Sanfte Rotationen des Kopfes im Liegen, um Nackenverspannungen zu lösen. Drehe den Kopf langsam von einer Seite zur anderen, während du auf dem Rücken liegst.",
+  
+  "rolleZuSeitsitzName": "Rolle zum Seitsitz",
+  "rolleZuSeitsitzText": "Eine Übung für die Rumpfkraft und -mobilität. Rolle aus der Rückenlage kontrolliert in den Seitsitz, ohne die Hände zu benutzen.",
+  
+  "scapulaPushupName": "Schulterblatt-Liegestütz",
+  "scapulaPushupText": "Stärke die Muskulatur zwischen den Schulterblättern mit dieser modifizierten Liegestützvariante. Konzentriere dich darauf, die Schulterblätter zusammenzuziehen und zu spreizen.",
+  
+  "ruckendehnungSchneidersitzName": "Rückendehnung im Schneidersitz",
+  "ruckendehnungSchneidersitzText": "Diese sanfte Dehnung öffnet den unteren Rücken und die Hüften. Sitze im Schneidersitz und beuge dich langsam nach vorne.",
+  
+  "triangleStretchName": "Dreiecksdehnung",
+  "triangleStretchText": "Eine seitliche Dehnung für den Rumpf, die auch die Hüften öffnet. Ähnlich der Dreieckshaltung im Yoga, aber mit modifizierter Ausrichtung für den Rücken.",
+  
+  "kaferAngewinkeltName": "Angewinkelter Käfer",
+  "kaferAngewinkeltText": "Eine sichere Version der Käfer-Übung für den Bauch, die gleichzeitig den unteren Rücken stabilisiert. Halte die Knie in einem 90-Grad-Winkel und bewege die Arme.",
+  
+  "tuckedKrokodilatmungName": "Zusammengerollte Krokodilatmung",
+  "tuckedKrokodilatmungText": "Eine Atemübung in Seitenlage, die zur Entspannung und Verringerung von Rückenschmerzen beiträgt. Konzentriere dich auf tiefe Bauchatmung mit leicht angewinkelten Knien.",
+  
+  "seitlageOberschenkeldehnungName": "Oberschenkeldehnung in Seitenlage",
+  "seitlageOberschenkeldehnungText": "Dehne die Vorderseite deiner Oberschenkel, während du in Seitenlage bleibst. Diese Position ist besonders schonend für den Rücken.",
+  
+  "supineRotationsName": "Liegende Rotationen",
+  "supineRotationsText": "Diese sanfte Drehung der Wirbelsäule hilft, Verspannungen im mittleren und unteren Rücken zu lösen. Lasse deine Knie langsam von einer Seite zur anderen fallen.",
+  
+  "liegendeMeditationName": "Liegende Meditation",
+  "liegendeMeditationText": "Eine entspannende Position für die bewusste Körperwahrnehmung. Konzentriere dich auf deinen Atem und die Empfindungen im Körper, insbesondere im Rücken.",
+  
+  "barenhockeName": "Bärenhocke",
+  "barenhockeText": "Eine tiefe Hocke, die Hüften, Knöchel und unteren Rücken mobilisiert. Stelle dir vor, du bist ein Bär, der sich klein macht, um sich zu verstecken.",
+  
+  "krabbePiriformisBeidseitigName": "Krabben-Piriformis Beidseitig",
+  "krabbePiriformisBeidseitigText": "Eine Dehnung für den Piriformis-Muskel, der oft zu Ischiasschmerzen beiträgt. Diese Variation wird im Vierfüßlerstand durchgeführt.",
+  
+  "krabbeScapulaPushUpName": "Krabben-Schulterblatt-Push-Up",
+  "krabbeScapulaPushUpText": "Stärke die Schulterblatt-Muskulatur aus dem Vierfüßlerstand. Diese Übung verbessert die Stabilität der oberen Rückenmuskulatur.",
+  
+  "gluteBridgeName": "Gesäßbrücke",
+  "gluteBridgeText": "Kräftige die Gesäß- und Rückenmuskulatur mit dieser einfachen aber effektiven Übung. Hebe das Becken an und halte die Position, während du die Gesäßmuskeln anspannst.",
+  
+  "knienderSeitplankTapsName": "Kniender Seitplanken-Taps",
+  "knienderSeitplankTapsText": "Eine modifizierte Version des Seitplankens, die die seitliche Rumpfmuskulatur stärkt, ohne den Rücken zu überlasten.",
+  
+  "standSchulterkreiseName": "Schulterkreise im Stehen",
+  "standSchulterkreiseText": "Löse Spannung in Schultern und oberem Rücken mit großen kreisenden Bewegungen der Schultern im Stehen.",
+  
+  "gegratschteVorbeugeSideToSideName": "Gegrätschte Vorbeuge mit Seitwärtsbewegung",
+  "gegratschteVorbeugeSideToSideText": "Diese Variante der gegrätschten Vorbeuge fügt eine seitliche Komponente hinzu, um die Seitenbereiche des Rückens und die Hüften zu dehnen.",
+  
+  "gegratschteVorbeugeMitRotationName": "Gegrätschte Vorbeuge mit Rotation",
+  "gegratschteVorbeugeMitRotationText": "Füge eine Drehung zur gegrätschten Vorbeuge hinzu, um die Wirbelsäule zu rotieren und den mittleren Rücken zu mobilisieren.",
+  
+  "mountainPoseZuJeffersonCurlName": "Berghaltung zu Jefferson Curl",
+  "mountainPoseZuJeffersonCurlText": "Diese Übung beginnt in der aufrechten Berghaltung und geht in eine kontrollierte, wirbelsäulenweise Abrollbewegung über, die Jefferson Curl genannt wird.",
+  
+  "gegratschteVorbeugeRunterrollenName": "Gegrätschte Vorbeuge mit Abrollen",
+  "gegratschteVorbeugeRunterrollenText": "Rolle wirbelsäulenweise von der aufrechten Position in die Vorbeuge ab. Diese Übung verbessert die segmentale Beweglichkeit der Wirbelsäule.",
+  
+  "easyHockeZuVorbeugeName": "Einfache Hocke zu Vorbeuge",
+  "easyHockeZuVorbeugeText": "Bewege dich kontrolliert aus einer leichten Hocke in die Vorbeuge. Diese Übung mobilisiert Hüften und unteren Rücken.",
+  
+  "hockeReinkommenName": "In die Hocke kommen",
+  "hockeReinkommenText": "Eine sanfte Methode, um in die Hocke zu gelangen, ohne den Rücken zu belasten. Besonders hilfreich für Menschen mit eingeschränkter Mobilität.",
+  
+  "hockeRotationZuVorbeugeName": "Hocke mit Rotation zu Vorbeuge",
+  "hockeRotationZuVorbeugeText": "Verbinde die Hocke mit einer Rotation und gehe dann in die Vorbeuge. Diese Kombination mobilisiert verschiedene Bereiche der Wirbelsäule.",
+  
+  "kniebeugeSchwingenName": "Kniebeugen mit Schwingen",
+  "kniebeugeSchwingenText": "Dynamische Kniebeugen mit einer schwingenden Armbewegung, die den Fluss der Übung verbessern und den Rücken mobilisieren.",
+  
+  "hufteLockernName": "Hüften lockern",
+  "hufteLockernText": "Sanfte kreisende und wippende Bewegungen, um die Hüftgelenke zu mobilisieren und auf weitere Übungen vorzubereiten.",
+  
+  "standHuftCARsName": "Hüft-CARs im Stehen",
+  "standHuftCARsText": "Kontrollierte Artikuläre Rotationen (CARs) für die Hüfte im Stehen. Diese Technik verbessert die Bewegungskontrolle und den Bewegungsumfang des Hüftgelenks.",
+  
+  "schwingendesOffnenName": "Schwingendes Öffnen",
+  "schwingendesOffnenText": "Schwinge deine Arme öffnend zur Seite, um den Brustkorb zu dehnen und die Durchblutung zu fördern. Eine belebende Übung für den gesamten Oberkörper.",
+  
+  "abschlussSchwingenName": "Abschluss-Schwingen",
+  "abschlussSchwingenText": "Eine sanfte schwingende Bewegung zum Abschluss eines Trainings. Hilft, den Körper zu entspannen und den Kreislauf zu beruhigen.",
+  
+  "standBwsOffnenName": "BWS-Öffnen im Stehen",
+  "standBwsOffnenText": "Öffne die Brustwirbelsäule durch Zurückziehen der Schulterblätter im Stehen. Diese Übung hilft, eine nach vorne gebeugte Haltung zu korrigieren.",
+  
+  "standArmeAuswringenName": "Arme auswringen im Stehen",
+  "standArmeAuswringenText": "Eine dynamische Übung, bei der du deine Arme wie einen nassen Lappen auswringst. Löst Spannung in Schultern und oberem Rücken.",
+  
+  "standHalbeNackenkreiseName": "Halbe Nackenkreise im Stehen",
+  "standHalbeNackenkreiseText": "Sanfte halbe Kreisbewegungen mit dem Kopf von einer Seite zur anderen. Wichtig: nur den halben Kreis machen und nicht den Kopf nach hinten rollen lassen.",
+  
+  "seitlicheSchwungeName": "Seitliche Schwünge",
+  "seitlicheSchwungeText": "Schwinge deine Arme dynamisch zur Seite, um den Oberkörper zu mobilisieren und die Durchblutung anzuregen.",
+  
+  "schwungeZurDeckeName": "Schwünge zur Decke",
+  "schwungeZurDeckeText": "Schwinge deine Arme nach oben in Richtung Decke, um die Schultern zu mobilisieren und die Wirbelsäule zu strecken."
+
 }
