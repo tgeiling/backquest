@@ -7,8 +7,11 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'provider.dart';
+import 'services.dart';
+import 'settings.dart';
 import 'video.dart';
 import 'offline.dart'; // Import the offline page
 import 'downloadmanager.dart';
@@ -36,6 +39,7 @@ class _StartPageState extends State<StartPage> {
   int selectedIntensity = 1; // Medium as default
   bool isStarting = false;
   bool shouldDownload = false; // Added checkbox state for download option
+  bool _canWatchVideo = true; // Track if user can watch video
 
   // Access the download manager
   final DownloadManager _downloadManager = DownloadManager();
@@ -46,6 +50,7 @@ class _StartPageState extends State<StartPage> {
     // Load saved preferences if available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadPreferences();
+      _checkVideoAvailability();
     });
   }
 
@@ -60,6 +65,47 @@ class _StartPageState extends State<StartPage> {
     selectedGoal = profileProvider.goal ?? 0;
     selectedIntensity = profileProvider.intensity ?? 1;
   }
+
+  // Check if user can watch more videos based on subscription or weekly limit
+  void _checkVideoAvailability() async {
+    final profileProvider = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
+
+    // If user has an active subscription, they can watch unlimited videos
+    if (profileProvider.payedSubscription == true) {
+      setState(() {
+        _canWatchVideo = true;
+      });
+      return;
+    }
+
+    // For non-subscribers, check if they've already watched a video this week
+    // Get current date info for week comparison
+    final DateTime now = DateTime.now();
+    final int currentWeek = getWeekNumber(now);
+    final int currentYear = now.year;
+
+    // Add a dedicated flag in SharedPreferences to track weekly viewing status
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int lastViewedWeek = prefs.getInt('lastViewedWeek') ?? 0;
+    final int lastViewedYear = prefs.getInt('lastViewedYear') ?? 0;
+
+    // Check if user has already watched a video in current week
+    final bool hasWatchedVideoThisWeek =
+        (currentWeek == lastViewedWeek && currentYear == lastViewedYear);
+
+    setState(() {
+      _canWatchVideo = !hasWatchedVideoThisWeek;
+      // Reset download checkbox if they can't watch videos
+      if (!_canWatchVideo) {
+        shouldDownload = false;
+      }
+    });
+  }
+
+  // Helper method to get week number from a date
 
   void _savePreferences() {
     final profileProvider = Provider.of<ProfileProvider>(
@@ -103,6 +149,18 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _startVideo() {
+    final profileProvider = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
+
+    // Check if user can watch more videos (has subscription or hasn't used weekly limit)
+    if (!_canWatchVideo) {
+      // Show subscription required dialog
+      _showSubscriptionRequiredDialog();
+      return;
+    }
+
     setState(() {
       isStarting = true;
     });
@@ -200,11 +258,69 @@ class _StartPageState extends State<StartPage> {
               intensity: selectedIntensity,
             ),
       ),
-    );
+    ).then((_) {
+      // After returning from the video screen, check availability again
+      _checkVideoAvailability();
+    });
 
     setState(() {
       isStarting = false;
     });
+  }
+
+  // Show dialog when subscription is required
+  void _showSubscriptionRequiredDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            AppLocalizations.of(context)?.subscriptionRequiredTitle ??
+                'Subscription Required',
+            style: TextStyle(
+              color: const Color.fromRGBO(97, 184, 115, 1),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)?.subscriptionRequiredMessage ??
+                'You have reached your weekly video limit. Subscribe to watch unlimited videos.',
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              child: Text(
+                AppLocalizations.of(context)?.subscribeNow ?? 'Subscribe Now',
+                style: TextStyle(
+                  color: const Color.fromRGBO(97, 184, 115, 1),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Navigate to subscription page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SubscriptionSettingPage(),
+                  ),
+                );
+              },
+            ),
+            TextButton(
+              child: Text(
+                AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void showDurationDialog() async {
@@ -413,6 +529,10 @@ class _StartPageState extends State<StartPage> {
     // Get localized strings
     final appLocalizations = AppLocalizations.of(context)!;
 
+    // Get subscription status from provider
+    final profileProvider = Provider.of<ProfileProvider>(context);
+    final bool isSubscribed = profileProvider.payedSubscription == true;
+
     // Define focus area options
     final focusOptions = [
       appLocalizations.focusLowerBack,
@@ -520,9 +640,10 @@ class _StartPageState extends State<StartPage> {
                         ),
                         SizedBox(height: spacing),
 
-                        // Download Checkbox
+                        // Download Checkbox - Disabled for non-subscribers
                         _buildDownloadCheckbox(
                           appLocalizations: appLocalizations,
+                          isEnabled: isSubscribed,
                         ),
                         SizedBox(height: spacing),
 
@@ -532,6 +653,15 @@ class _StartPageState extends State<StartPage> {
                           width: buttonWidth,
                           isStarting: isStarting,
                           onTap: _startVideo,
+                          appLocalizations: appLocalizations,
+                          canWatch: _canWatchVideo,
+                        ),
+
+                        // Subscription Status or Weekly Limit Indicator
+                        SizedBox(height: spacing),
+                        _buildStatusIndicator(
+                          isSubscribed: isSubscribed,
+                          canWatch: _canWatchVideo,
                           appLocalizations: appLocalizations,
                         ),
                       ],
@@ -617,7 +747,10 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  Widget _buildDownloadCheckbox({required AppLocalizations appLocalizations}) {
+  Widget _buildDownloadCheckbox({
+    required AppLocalizations appLocalizations,
+    required bool isEnabled,
+  }) {
     return Center(
       child: Neumorphic(
         style: NeumorphicStyle(
@@ -634,7 +767,10 @@ class _StartPageState extends State<StartPage> {
             children: [
               Icon(
                 Icons.download,
-                color: const Color.fromRGBO(97, 184, 115, 1),
+                color:
+                    isEnabled
+                        ? const Color.fromRGBO(97, 184, 115, 1)
+                        : Colors.grey[400],
                 size: 24,
               ),
               SizedBox(width: 16),
@@ -644,24 +780,27 @@ class _StartPageState extends State<StartPage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                    color: isEnabled ? Colors.grey[800] : Colors.grey[400],
                   ),
                 ),
               ),
-              // Checkbox for download option
+              // Checkbox for download option - disabled for non-subscribers
               Transform.scale(
                 scale: 1.2,
                 child: Checkbox(
-                  value: shouldDownload,
+                  value: isEnabled ? shouldDownload : false,
                   activeColor: const Color.fromRGBO(97, 184, 115, 1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  onChanged: (bool? value) {
-                    setState(() {
-                      shouldDownload = value ?? false;
-                    });
-                  },
+                  onChanged:
+                      isEnabled
+                          ? (bool? value) {
+                            setState(() {
+                              shouldDownload = value ?? false;
+                            });
+                          }
+                          : null,
                 ),
               ),
             ],
@@ -677,7 +816,14 @@ class _StartPageState extends State<StartPage> {
     required bool isStarting,
     required VoidCallback onTap,
     required AppLocalizations appLocalizations,
+    required bool canWatch,
   }) {
+    // Get subscription info
+    final bool isSubscribed =
+        Provider.of<ProfileProvider>(context).payedSubscription == true;
+    final Color buttonColor =
+        canWatch ? const Color.fromRGBO(97, 184, 115, 1) : Colors.grey[400]!;
+
     return Center(
       child: Neumorphic(
         style: NeumorphicStyle(
@@ -686,7 +832,7 @@ class _StartPageState extends State<StartPage> {
           depth: 4,
           intensity: 0.8,
           lightSource: LightSource.topLeft,
-          color: const Color.fromRGBO(97, 184, 115, 1),
+          color: buttonColor,
         ),
         child: InkWell(
           onTap: isStarting ? null : onTap,
@@ -709,7 +855,7 @@ class _StartPageState extends State<StartPage> {
                           ),
                           SizedBox(width: 12),
                           Text(
-                            shouldDownload
+                            shouldDownload && isSubscribed
                                 ? '${appLocalizations.startVideo} & ${appLocalizations.downloadVideo}'
                                 : appLocalizations.startVideo,
                             style: TextStyle(
@@ -722,6 +868,81 @@ class _StartPageState extends State<StartPage> {
                       ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  // New widget to show subscription status or weekly limit indicator
+  Widget _buildStatusIndicator({
+    required bool isSubscribed,
+    required bool canWatch,
+    required AppLocalizations appLocalizations,
+  }) {
+    final String statusText =
+        isSubscribed
+            ? appLocalizations.subscribedStatus ??
+                'Subscribed: Unlimited Access'
+            : canWatch
+            ? appLocalizations.freeUserCanWatch ??
+                'Free User: 1 video available this week'
+            : appLocalizations.freeUserLimit ??
+                'Free User: Weekly limit reached';
+
+    final Color statusColor =
+        isSubscribed
+            ? const Color.fromRGBO(97, 184, 115, 1)
+            : canWatch
+            ? Colors.orange
+            : Colors.red;
+
+    final IconData statusIcon =
+        isSubscribed
+            ? Icons.verified
+            : canWatch
+            ? Icons.timer
+            : Icons.block;
+
+    return Center(
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: statusColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: statusColor.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(statusIcon, color: statusColor, size: 20),
+            SizedBox(width: 8),
+            Text(
+              statusText,
+              style: TextStyle(color: statusColor, fontWeight: FontWeight.bold),
+            ),
+            if (!isSubscribed) ...[
+              SizedBox(width: 8),
+              TextButton(
+                onPressed: () {
+                  // Navigate to subscription page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SubscriptionSettingPage(),
+                    ),
+                  );
+                },
+                child: Text(
+                  appLocalizations.upgradeNow ?? 'Upgrade',
+                  style: TextStyle(
+                    color: statusColor,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

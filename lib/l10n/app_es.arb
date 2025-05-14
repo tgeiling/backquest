@@ -158,6 +158,13 @@
   "subscriptionCanceled": "Suscripción cancelada con éxito",
   "deleteAccount": "Eliminar cuenta",
   "deleteAccountConfirm": "¿Está seguro de que desea eliminar su cuenta?",
+  "subscriptionRequiredTitle": "Se requiere suscripción",
+  "subscriptionRequiredMessage": "Has alcanzado tu límite semanal de videos. Suscríbete para ver videos ilimitados.",
+  "subscribeNow": "Suscríbete ahora",
+  "subscribedStatus": "Suscrito: Acceso ilimitado",
+  "freeUserCanWatch": "Usuario gratuito: 1 video disponible esta semana",
+  "freeUserLimit": "Usuario gratuito: Límite semanal alcanzado",
+  "upgradeNow": "Mejorar",
   
   "alternatingKneeHugsName": "Abrazos de Rodillas Alternados",
   "alternatingKneeHugsText": "Calienta tu cuerpo y mejora la movilidad en tus caderas y parte baja de la espalda con este suave movimiento. Abraza alternativamente tu rodilla izquierda y derecha mientras estás de pie.",

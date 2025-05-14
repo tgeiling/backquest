@@ -1,14 +1,29 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Replace with your actual server URL
-const String apiUrl = 'http://34.116.240.55:3000/';
+const String apiUrl = 'http://34.116.240.55:3000';
 
 // Get stored auth token
 Future<String?> getAuthToken() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString('auth_token');
+  try {
+    final storage = const FlutterSecureStorage();
+    return await storage
+        .read(key: 'authToken')
+        .timeout(
+          const Duration(seconds: 3),
+          onTimeout: () {
+            print("Secure storage read timed out");
+            return null;
+          },
+        );
+  } catch (e) {
+    print("Error reading auth token: $e");
+    return null;
+  }
 }
 
 // Store auth token
@@ -220,4 +235,23 @@ Future<bool> updateProfile({
     print('Error updating profile: $e');
     return false;
   }
+}
+
+int getWeekNumber(DateTime date) {
+  // The ISO week number calculation
+  int dayOfYear = int.parse(DateFormat('D').format(date));
+  int woy = ((dayOfYear - date.weekday + 10) / 7).floor();
+  if (woy < 1) {
+    woy = numOfWeeks(date.year - 1);
+  } else if (woy > numOfWeeks(date.year)) {
+    woy = 1;
+  }
+  return woy;
+}
+
+// Helper method to get number of weeks in a year
+int numOfWeeks(int year) {
+  DateTime dec28 = DateTime(year, 12, 28);
+  int dayOfDec28 = int.parse(DateFormat('D').format(dec28));
+  return ((dayOfDec28 - dec28.weekday + 10) / 7).floor();
 }

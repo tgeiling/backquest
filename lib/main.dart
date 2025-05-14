@@ -262,6 +262,10 @@ class _MyHomePageState extends State<MyHomePage>
     });
 
     try {
+      if (!mounted) {
+        print("Widget not mounted, skipping authentication check");
+        return;
+      }
       bool isGuest = await _authService.isGuestToken().timeout(
         const Duration(seconds: 5),
         onTimeout: () => true, // Assume guest if timeout

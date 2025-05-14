@@ -13,7 +13,7 @@ import 'services.dart';
 
 class AuthService {
   final String baseUrl = 'http://34.116.240.55:3000';
-  final storage = const FlutterSecureStorage();
+  final SecureStorageService _storageService = SecureStorageService();
 
   // Login function
   Future<bool> login(String username, String password) async {
@@ -33,7 +33,7 @@ class AuthService {
               response.body,
             )['token']; // Key should match the server response
         if (token != null) {
-          await storage.write(key: 'authToken', value: token);
+          await _storageService.write('authToken', token);
           return true;
         } else {
           print('Token is null');
@@ -84,7 +84,7 @@ class AuthService {
         onTimeout: () => null,
       );
       if (token != null) {
-        await storage.write(key: 'authToken', value: token);
+        await _storageService.write('authToken', token);
       } else {
         print('Failed to obtain guest token.');
       }
@@ -116,7 +116,7 @@ class AuthService {
 
   // Validate token function
   Future<bool> validateToken() async {
-    final token = await storage.read(key: 'authToken');
+    final token = await _storageService.read('authToken');
 
     try {
       final response = await http.post(
@@ -140,13 +140,13 @@ class AuthService {
 
   // Logout function (removes token from storage)
   Future<void> logout() async {
-    await storage.delete(key: 'authToken');
+    await _storageService.delete('authToken');
     await setGuestToken();
   }
 
   // Check if token is expired
   Future<bool> isTokenExpired() async {
-    final token = await storage.read(key: 'authToken');
+    final token = await _storageService.read('authToken');
     if (token == null) return true;
 
     final expiration = getTokenExpiration(token);
@@ -177,7 +177,7 @@ class AuthService {
   }
 
   Future<bool> isGuestToken() async {
-    final token = await storage.read(key: 'authToken');
+    final token = await _storageService.read('authToken');
 
     try {
       final response = await http.post(
@@ -216,7 +216,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _authService = AuthService();
 
   void _attemptLogin() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool success = await _authService.login(
       _usernameController.text,
       _passwordController.text,
@@ -609,5 +608,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+}
+
+class SecureStorageService {
+  static final SecureStorageService _instance =
+      SecureStorageService._internal();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  bool _isDisposed = false;
+
+  factory SecureStorageService() {
+    return _instance;
+  }
+
+  SecureStorageService._internal();
+
+  Future<String?> read(String key) async {
+    if (_isDisposed) return null;
+    try {
+      return await _storage.read(key: key);
+    } catch (e) {
+      print("Secure storage read error: $e");
+      return null;
+    }
+  }
+
+  Future<void> write(String key, String? value) async {
+    if (_isDisposed) return;
+    try {
+      await _storage.write(key: key, value: value);
+    } catch (e) {
+      print("Secure storage write error: $e");
+    }
+  }
+
+  Future<void> delete(String key) async {
+    if (_isDisposed) return;
+    try {
+      await _storage.delete(key: key);
+    } catch (e) {
+      print("Secure storage delete error: $e");
+    }
+  }
+
+  void dispose() {
+    _isDisposed = true;
   }
 }

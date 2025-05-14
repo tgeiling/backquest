@@ -36,6 +36,9 @@ class ProfileProvider with ChangeNotifier {
   String? _subStarted;
   String? _receiptData;
 
+  int _lastViewedWeek = 0;
+  int _lastViewedYear = 0;
+
   // Getters
   String get username => _username;
   int get age => _age;
@@ -64,6 +67,9 @@ class ProfileProvider with ChangeNotifier {
   String? get subType => _subType;
   String? get subStarted => _subStarted;
   String? get receiptData => _receiptData;
+
+  int get lastViewedWeek => _lastViewedWeek;
+  int get lastViewedYear => _lastViewedYear;
 
   // Constructor
   ProfileProvider() {
@@ -138,6 +144,13 @@ class ProfileProvider with ChangeNotifier {
     _subType = type;
     _subStarted = started;
     _receiptData = receipt;
+    notifyListeners();
+    savePreferences();
+  }
+
+  void setLastVideoWeekInfo(int week, int year) {
+    _lastViewedWeek = week;
+    _lastViewedYear = year;
     notifyListeners();
     savePreferences();
   }
@@ -283,6 +296,9 @@ class ProfileProvider with ChangeNotifier {
       };
       await prefs.setString('subscriptionData', json.encode(subscriptionData));
 
+      await prefs.setInt('lastViewedWeek', _lastViewedWeek);
+      await prefs.setInt('lastViewedYear', _lastViewedYear);
+
       // Sync with server if we have a token
       String? token = await getAuthToken();
       if (token != null && _username.isNotEmpty) {
@@ -379,6 +395,9 @@ class ProfileProvider with ChangeNotifier {
           // Keep default null values
         }
       }
+
+      _lastViewedWeek = prefs.getInt('lastViewedWeek') ?? 0;
+      _lastViewedYear = prefs.getInt('lastViewedYear') ?? 0;
 
       notifyListeners();
     } catch (e) {

@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'localization_service.dart';
 import 'package:chewie/chewie.dart';
 import 'package:get_it/get_it.dart';
@@ -65,6 +68,7 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 
   @override
   void dispose() {
+    _videoPlayerController?.removeListener(videoProgressListener);
     _videoPlayerController?.dispose();
     _chewieController?.dispose();
     hasBeenUpdated = false;
@@ -72,6 +76,8 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   }
 
   Future<void> _initializeLocalVideo() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
     });
@@ -111,9 +117,13 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         }
       }
 
+      if (!mounted) return; // Check if widget is still mounted
+
       if (File(videoPath).existsSync()) {
         _videoPlayerController = VideoPlayerController.file(File(videoPath));
         await _videoPlayerController!.initialize();
+
+        if (!mounted) return; // Check again after await
 
         _createChewieController();
 
@@ -129,11 +139,15 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
     } catch (e) {
       print('Error initializing local video: $e');
       // Fall back to streaming if there's an error
-      _startVideoCombining();
+      if (mounted) {
+        _startVideoCombining();
+      }
     }
   }
 
   Future<void> _startVideoCombining() async {
+    if (!mounted) return; // Add this check before setting state
+
     setState(() {
       _isLoading = true;
     });
@@ -146,6 +160,8 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
 
         _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
         await _videoPlayerController!.initialize();
+
+        if (!mounted) return; // Add this check after awaiting operations
 
         _createChewieController();
 
@@ -175,6 +191,8 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         }),
       );
 
+      if (!mounted) return; // Add this check after network request
+
       if (response.statusCode == 200) {
         // Parse the response to get the session ID
         final jsonResponse = json.decode(response.body);
@@ -193,6 +211,8 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         _videoPlayerController = VideoPlayerController.network(outputVideoUrl);
         await _videoPlayerController!.initialize();
 
+        if (!mounted) return; // Add this check after another await
+
         _createChewieController();
 
         setState(() {
@@ -202,15 +222,21 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
         _videoPlayerController!.addListener(videoProgressListener);
       } else {
         print('Failed to fetch session ID: ${response.body}');
+        if (mounted) {
+          // Check before setState
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error combining videos: $e');
+      if (mounted) {
+        // Check before setState
         setState(() {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error combining videos: $e');
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -230,6 +256,8 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
   Duration watchedDuration = Duration.zero;
 
   void videoProgressListener() {
+    if (!mounted) return;
+
     if (_chewieController != null) {
       final duration = _chewieController!.videoPlayerController.value.duration;
       final requiredWatchDuration =
@@ -244,30 +272,57 @@ class _VideoCombinerScreenState extends State<VideoCombinerScreen> {
       if (watchedDuration > requiredWatchDuration && !hasBeenUpdated) {
         if (widget.levelId != 0) {
           // Record this as a completed exercise
-          // This will increment _weeklyGoalProgress by 1
           widget.profileProvider.recordExercise(
-            'video_${widget.levelId}', // Create a unique exercise ID based on the video ID
-            (duration.inSeconds / 60)
-                .ceil(), // Still pass duration for other tracking purposes
+            'video_${widget.levelId}',
+            (duration.inSeconds / 60).ceil(),
           );
 
           // Mark as updated so we don't increment multiple times
           hasBeenUpdated = true;
 
-          final progress = widget.profileProvider.weeklyGoalProgress;
-          final target = widget.profileProvider.weeklyGoalTarget;
+          // Record that user has watched a video this week
+          _recordWeeklyVideoView();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Exercise completed! $progress of $target weekly exercises completed',
+          // Check if the widget is still mounted before showing SnackBar
+          if (mounted) {
+            final progress = widget.profileProvider.weeklyGoalProgress;
+            final target = widget.profileProvider.weeklyGoalTarget;
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Exercise completed! $progress of $target weekly exercises completed',
+                ),
+                duration: Duration(seconds: 3),
               ),
-              duration: Duration(seconds: 3),
-            ),
-          );
+            );
+          }
         }
       }
     }
+  }
+
+  Future<void> _recordWeeklyVideoView() async {
+    // Only needed for free users (subscribers have unlimited access)
+    final profileProvider = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
+
+    if (profileProvider.payedSubscription == true) {
+      return; // No need to track for subscribers
+    }
+
+    final DateTime now = DateTime.now();
+    final int currentWeek = getWeekNumber(now);
+    final int currentYear = now.year;
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('lastViewedWeek', currentWeek);
+    await prefs.setInt('lastViewedYear', currentYear);
+
+    // Also update in provider to keep data in sync
+    profileProvider.setLastVideoWeekInfo(currentWeek, currentYear);
   }
 
   @override

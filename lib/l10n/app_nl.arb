@@ -158,6 +158,13 @@
   "subscriptionCanceled": "Abonnement succesvol opgezegd",
   "deleteAccount": "Account verwijderen",
   "deleteAccountConfirm": "Weet u zeker dat u uw account wilt verwijderen?",
+  "subscriptionRequiredTitle": "Abonnement vereist",
+  "subscriptionRequiredMessage": "Je hebt je wekelijkse videolimiet bereikt. Abonneer om onbeperkt video's te bekijken.",
+  "subscribeNow": "Nu abonneren",
+  "subscribedStatus": "Geabonneerd: Onbeperkte toegang",
+  "freeUserCanWatch": "Gratis gebruiker: 1 video beschikbaar deze week",
+  "freeUserLimit": "Gratis gebruiker: Wekelijkse limiet bereikt",
+  "upgradeNow": "Upgraden",
   
   "alternatingKneeHugsName": "Afwisselende Knie-omhelzingen",
   "alternatingKneeHugsText": "Warm je lichaam op en verbeter de mobiliteit in je heupen en onderrug met deze zachte beweging. Omhels afwisselend je linker- en rechterknie terwijl je staat.",

@@ -164,6 +164,13 @@
   "subscriptionCanceled": "Abonnement erfolgreich gekündigt",
   "deleteAccount": "Konto löschen",
   "deleteAccountConfirm": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?",
+  "subscriptionRequiredTitle": "Abonnement erforderlich",
+  "subscriptionRequiredMessage": "Du hast dein wöchentliches Videolimit erreicht. Abonniere, um unbegrenzt Videos anzusehen.",
+  "subscribeNow": "Jetzt abonnieren",
+  "subscribedStatus": "Abonniert: Unbegrenzter Zugriff",
+  "freeUserCanWatch": "Kostenloser Nutzer: 1 Video diese Woche verfügbar",
+  "freeUserLimit": "Kostenloser Nutzer: Wöchentliches Limit erreicht",
+  "upgradeNow": "Upgraden",
   
   "alternatingKneeHugsName": "Alternierende Knie-Umarmungen",
   "alternatingKneeHugsText": "Wärme deinen Körper auf und verbessere die Mobilität in Hüften und unterem Rücken mit dieser sanften Bewegung. Umarme abwechselnd dein linkes und rechtes Knie im Stehen.",

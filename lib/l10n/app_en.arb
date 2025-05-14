@@ -164,6 +164,13 @@
   "subscriptionCanceled": "Subscription canceled successfully",
   "deleteAccount": "Delete Account",
   "deleteAccountConfirm": "Are you sure you want to delete your account?",
+  "subscriptionRequiredTitle": "Subscription Required",
+  "subscriptionRequiredMessage": "You have reached your weekly video limit. Subscribe to watch unlimited videos.",
+  "subscribeNow": "Subscribe Now",
+  "subscribedStatus": "Subscribed: Unlimited Access",
+  "freeUserCanWatch": "Free User: 1 video available this week",
+  "freeUserLimit": "Free User: Weekly limit reached",
+  "upgradeNow": "Upgrade",
   
   "alternatingKneeHugsName": "Alternating Knee Hugs",
   "alternatingKneeHugsText": "Warm up your body and improve mobility in your hips and lower back with this gentle movement. Alternately hug your left and right knee while standing.",
