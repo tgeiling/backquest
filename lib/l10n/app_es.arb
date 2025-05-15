@@ -92,7 +92,7 @@
   "minutes": "min",
   "downloadingVideo": "Descargando video...",
   "pleaseWait": "Por favor espera mientras se descarga el video",
-  "downloadStarted": "Tu descarga ha comenzado. Puedes ver su progreso en la pestaña de descargas.",
+  "downloadStarted": "Tu descarga de video ha comenzado. Puedes seguir su progreso en la pestaña Descargas. Una vez completado, el video aparecerá en la pestaña Sin conexión, ubicada a la derecha de la pestaña Principal. El video se guardará en el almacenamiento interno de tu dispositivo, por lo que podrás verlo en cualquier momento, incluso sin conexión a internet. Ten en cuenta que si desinstalas la aplicación, todos los videos descargados se eliminarán de forma permanente.",
   "exercises": "Ejercicios",
   "allOurExercises": "Todos Nuestros Ejercicios",
   "startExercise": "Comenzar Ejercicio",
@@ -165,6 +165,9 @@
   "freeUserCanWatch": "Usuario gratuito: 1 video disponible esta semana",
   "freeUserLimit": "Usuario gratuito: Límite semanal alcanzado",
   "upgradeNow": "Mejorar",
+  "upgradeForUnlimited": "Actualiza para videos ilimitados",
+  "confirm": "Confirmar",
+  "chooseMinutes": "Elige entre 5 a 30 minutos",
   
   "alternatingKneeHugsName": "Abrazos de Rodillas Alternados",
   "alternatingKneeHugsText": "Calienta tu cuerpo y mejora la movilidad en tus caderas y parte baja de la espalda con este suave movimiento. Abraza alternativamente tu rodilla izquierda y derecha mientras estás de pie.",

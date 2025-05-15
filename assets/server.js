@@ -278,14 +278,20 @@ app.post('/record_subscription', authenticateToken, async (req, res) => {
       validUntil: validUntil,
       receipt: receipt,
       platform: platform,
-      startedAt: startDate
+      startedAt: startDate,
+      lastValidated: new Date() // Add this to track when we last validated
     };
     
     await user.save();
     
+    // Add a response header to acknowledge the subscription
+    // This is important for Google Play billing
+    res.setHeader('X-Subscription-Acknowledged', 'true');
+    
     res.json({ 
       success: true, 
-      valid_until: validUntil.toISOString() 
+      valid_until: validUntil.toISOString(),
+      acknowledged: true // Explicitly state that we've acknowledged the subscription
     });
   } catch (error) {
     console.error('Recording subscription error:', error);

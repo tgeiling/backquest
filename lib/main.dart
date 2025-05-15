@@ -266,6 +266,7 @@ class _MyHomePageState extends State<MyHomePage>
         print("Widget not mounted, skipping authentication check");
         return;
       }
+
       bool isGuest = await _authService.isGuestToken().timeout(
         const Duration(seconds: 5),
         onTimeout: () => true, // Assume guest if timeout
@@ -281,6 +282,16 @@ class _MyHomePageState extends State<MyHomePage>
           _setAuthenticated(true);
           print("isLoggedIn");
         });
+
+        // After login, explicitly verify subscription status
+        final profileProvider = Provider.of<ProfileProvider>(
+          context,
+          listen: false,
+        );
+        final paymentService = PaymentService(profileProvider: profileProvider);
+        await paymentService.initialize();
+        await paymentService.verifySubscription();
+
         if (tokenExpired) {
           setState(() {
             _setAuthenticated(false);

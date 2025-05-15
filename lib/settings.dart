@@ -881,234 +881,419 @@ class SubscriptionSettingPage extends StatelessWidget {
     final String? subType = profileProvider.subType;
     final String? subStarted = profileProvider.subStarted;
 
+    // Get screen size for responsive layouts
+    final Size screenSize = MediaQuery.of(context).size;
+    final bool isSmallScreen = screenSize.width < 380;
+
     return Stack(
       children: <Widget>[
-        Image.asset(
-          "assets/settingsbg.PNG",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
+        // Background image with responsive fit
+        SizedBox(
+          height: screenSize.height,
+          width: screenSize.width,
+          child: Image.asset("assets/settingsbg.PNG", fit: BoxFit.cover),
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             iconTheme: const IconThemeData(color: Colors.white),
-            title: Text(
-              AppLocalizations.of(context)!.mySubscription,
-              style: const TextStyle(color: Colors.white),
+            title: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                AppLocalizations.of(context)!.mySubscription,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Subscription status card
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child:
-                      isPaid
-                          ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Active Subscription',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Type: ${subType ?? "Premium"}',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              if (subStarted != null) ...[
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Started: $subStarted',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ],
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Your premium features are currently active.',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          )
-                          : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'No Active Subscription',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Upgrade to premium to unlock all features!',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal:
+                          constraints.maxWidth * 0.05, // Responsive padding
+                      vertical: 16.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Subscription status card
+                        Container(
+                          width: double.infinity,
+                          constraints: BoxConstraints(
+                            maxWidth: constraints.maxWidth,
                           ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Subscription options (placeholder for now)
-                if (!isPaid) ...[
-                  Text(
-                    'Available Plans',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleLarge?.copyWith(color: Colors.white),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Monthly subscription option
-                  SubscriptionOptionTile(
-                    title: 'Monthly',
-                    description: 'Full access to all premium features',
-                    price: '€9.99/month',
-                    onTap: () {
-                      // Create payment service and start purchase
-                      final paymentService = PaymentService(
-                        profileProvider: profileProvider,
-                      );
-
-                      // Just start the purchase process - don't show success yet or pop the screen
-                      paymentService.purchaseSubscription(
-                        PaymentService.monthlySubscriptionId,
-                        context,
-                      );
-                      // The purchase result will be handled by the purchase stream listener
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Annual subscription option
-                  SubscriptionOptionTile(
-                    title: 'Annual (Best Value)',
-                    description: 'Full access to all premium features',
-                    price: '€69.99/year',
-                    isBestValue: true,
-                    onTap: () {
-                      // Create payment service and start purchase
-                      final paymentService = PaymentService(
-                        profileProvider: profileProvider,
-                      );
-
-                      // Just start the purchase process - don't show success yet or pop the screen
-                      paymentService.purchaseSubscription(
-                        PaymentService.yearlySubscriptionId,
-                        context,
-                      );
-                      // The purchase result will be handled by the purchase stream listener
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Restore purchases button
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        final paymentService = PaymentService(
-                          profileProvider: profileProvider,
-                        );
-                        paymentService.restorePurchases(context);
-                      },
-                      child: const Text(
-                        'Restore Previous Purchases',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ),
-                ],
-
-                // Management options for paid users
-                if (isPaid) ...[
-                  const SizedBox(height: 32),
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade800,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                          padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child:
+                              isPaid
+                                  ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'Active Subscription',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleLarge?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Type: ${subType ?? "Premium"}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      if (subStarted != null) ...[
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Started: $subStarted',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        'Your premium features are currently active.',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  )
+                                  : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'No Active Subscription',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleLarge?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        'Upgrade to premium to unlock all features!',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
                         ),
-                      ),
-                      onPressed: () {
-                        // Show a confirmation dialog first
-                        showDialog(
-                          context: context,
-                          builder:
-                              (context) => AlertDialog(
-                                title: const Text('Cancel Subscription?'),
-                                content: const Text(
-                                  'Are you sure you want to cancel your subscription? You will still have access until the end of your current billing period.',
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('NO'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context); // Close dialog
 
-                                      // Create payment service and cancel
-                                      final paymentService = PaymentService(
-                                        profileProvider: profileProvider,
-                                      );
-                                      paymentService
-                                          .cancelSubscription(context)
-                                          .then((success) {
-                                            if (success) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    'Subscription canceled successfully',
-                                                  ),
-                                                ),
-                                              );
-                                              // Force refresh the UI
-                                              Navigator.pop(context);
-                                            }
-                                          });
-                                    },
-                                    child: const Text('YES, CANCEL'),
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red,
-                                    ),
-                                  ),
-                                ],
+                        SizedBox(
+                          height: constraints.maxHeight * 0.04,
+                        ), // Responsive spacing
+                        // Subscription options (placeholder for now)
+                        if (!isPaid) ...[
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Available Plans',
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(height: constraints.maxHeight * 0.02),
+
+                          // Monthly subscription option
+                          _buildResponsiveSubscriptionTile(
+                            context,
+                            title: 'Monthly',
+                            description: 'Full access to all premium features',
+                            price: '€9.99/month',
+                            onTap: () {
+                              // Create payment service and start purchase
+                              final paymentService = PaymentService(
+                                profileProvider: profileProvider,
+                              );
+
+                              // Just start the purchase process - don't show success yet or pop the screen
+                              paymentService.purchaseSubscription(
+                                PaymentService.monthlySubscriptionId,
+                                context,
+                              );
+                              // The purchase result will be handled by the purchase stream listener
+                            },
+                          ),
+
+                          SizedBox(height: constraints.maxHeight * 0.02),
+
+                          // Annual subscription option
+                          _buildResponsiveSubscriptionTile(
+                            context,
+                            title: 'Annual (Best Value)',
+                            description: 'Full access to all premium features',
+                            price: '€69.99/year',
+                            isBestValue: true,
+                            onTap: () {
+                              // Create payment service and start purchase
+                              final paymentService = PaymentService(
+                                profileProvider: profileProvider,
+                              );
+
+                              // Just start the purchase process - don't show success yet or pop the screen
+                              paymentService.purchaseSubscription(
+                                PaymentService.yearlySubscriptionId,
+                                context,
+                              );
+                              // The purchase result will be handled by the purchase stream listener
+                            },
+                          ),
+                          SizedBox(height: constraints.maxHeight * 0.03),
+
+                          // Restore purchases button
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                final paymentService = PaymentService(
+                                  profileProvider: profileProvider,
+                                );
+                                paymentService.restorePurchases(context);
+                              },
+                              child: const FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'Restore Previous Purchases',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
                               ),
-                        );
-                      },
-                      child: const Text('Cancel Subscription'),
+                            ),
+                          ),
+                        ],
+
+                        // Management options for paid users
+                        if (isPaid) ...[
+                          SizedBox(height: constraints.maxHeight * 0.04),
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade800,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 16 : 24,
+                                  vertical: isSmallScreen ? 8 : 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                // Show a confirmation dialog first
+                                showDialog(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text(
+                                          'Cancel Subscription?',
+                                        ),
+                                        content: const Text(
+                                          'Are you sure you want to cancel your subscription? You will still have access until the end of your current billing period.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(context),
+                                            child: const Text('NO'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(
+                                                context,
+                                              ); // Close dialog
+
+                                              // Create payment service and cancel
+                                              final paymentService =
+                                                  PaymentService(
+                                                    profileProvider:
+                                                        profileProvider,
+                                                  );
+                                              paymentService
+                                                  .cancelSubscription(context)
+                                                  .then((success) {
+                                                    if (success) {
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                            'Subscription canceled successfully',
+                                                          ),
+                                                        ),
+                                                      );
+                                                      // Force refresh the UI
+                                                      Navigator.pop(context);
+                                                    }
+                                                  });
+                                            },
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.red,
+                                            ),
+                                            child: const Text('YES, CANCEL'),
+                                          ),
+                                        ],
+                                      ),
+                                );
+                              },
+                              child: const FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text('Cancel Subscription'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                ],
-              ],
+                );
+              },
             ),
           ),
         ),
       ],
+    );
+  }
+
+  // Helper method to build responsive subscription tiles
+  Widget _buildResponsiveSubscriptionTile(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required String price,
+    bool isBestValue = false,
+    required VoidCallback onTap,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isNarrow = constraints.maxWidth < 350;
+
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color:
+                isBestValue
+                    ? Colors.blue.withOpacity(0.2)
+                    : Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border:
+                isBestValue
+                    ? Border.all(color: Colors.blue.shade400, width: 2)
+                    : null,
+          ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: EdgeInsets.all(isNarrow ? 12 : 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isNarrow ? 16 : 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (isBestValue)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade600,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'BEST VALUE',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: isNarrow ? 13 : 14,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          price,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isNarrow ? 16 : 18,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isNarrow ? 12 : 16,
+                          vertical: isNarrow ? 6 : 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade600,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'SUBSCRIBE',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

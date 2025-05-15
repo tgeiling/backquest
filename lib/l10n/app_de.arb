@@ -98,7 +98,7 @@
   "minutes": "Min",
   "downloadingVideo": "Video wird heruntergeladen...",
   "pleaseWait": "Bitte warten Sie, während das Video heruntergeladen wird",
-  "downloadStarted": "Ihr Download wurde gestartet. Sie können den Fortschritt im Downloads-Tab verfolgen.",
+  "downloadStarted": "Dein Video-Download wurde gestartet. Du kannst den Fortschritt im Tab „Downloads“ verfolgen. Nach Abschluss erscheint das Video im Tab „Offline“, rechts neben dem Haupt-Tab. Es wird direkt im internen Speicher deines Geräts gespeichert, sodass du es jederzeit – auch ohne Internetverbindung – ansehen kannst. Bitte beachte: Wenn du die App deinstallierst, werden alle heruntergeladenen Videos dauerhaft gelöscht.",
   "exercises": "Übungen",
   "allOurExercises": "Alle unsere Übungen",
   "startExercise": "Übung starten",
@@ -171,6 +171,9 @@
   "freeUserCanWatch": "Kostenloser Nutzer: 1 Video diese Woche verfügbar",
   "freeUserLimit": "Kostenloser Nutzer: Wöchentliches Limit erreicht",
   "upgradeNow": "Upgraden",
+  "upgradeForUnlimited": "Upgrade für unbegrenzte Videos",
+  "confirm": "Bestätigen",
+  "chooseMinutes": "Wähle zwischen 5 bis 30 Minuten",
   
   "alternatingKneeHugsName": "Alternierende Knie-Umarmungen",
   "alternatingKneeHugsText": "Wärme deinen Körper auf und verbessere die Mobilität in Hüften und unterem Rücken mit dieser sanften Bewegung. Umarme abwechselnd dein linkes und rechtes Knie im Stehen.",

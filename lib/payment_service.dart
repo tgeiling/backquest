@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:backquest/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_purchase_storekit/src/store_kit_wrappers/sk_payment_queue_delegate_wrapper.dart';
@@ -622,44 +623,25 @@ class PaymentService {
   }
 
   /// Verify existing subscription status
+  // Modified version of verifySubscription in payment_service.dart
   Future<bool> verifySubscription() async {
     if (!_isInitialized) {
       await initialize();
     }
 
     try {
-      // Check local storage first
-      final prefs = await SharedPreferences.getInstance();
-      final String? validUntilStr = prefs.getString(_kReceiptValidUntilKey);
-
-      if (validUntilStr != null) {
-        final DateTime validUntil = DateTime.parse(validUntilStr);
-        final bool isValid = validUntil.isAfter(DateTime.now());
-
-        if (isValid) {
-          // Local validation says subscription is active
-          final String? subType = prefs.getString(_kSubscriptionTypeKey);
-          final String? receipt = prefs.getString(_kActiveReceiptKey);
-          final String? startDate = prefs.getString('subscription_started');
-
-          // Update provider
-          profileProvider.setSubscription(
-            isPaid: true,
-            type: subType,
-            started: startDate,
-            receipt: receipt,
-          );
-
-          return true;
-        }
-      }
-
-      // If we have a token and connectivity, attempt to get the latest status from the server
+      // FIRST, check server for subscription data if logged in
       final connectivity = await Connectivity().checkConnectivity();
       if (connectivity != ConnectivityResult.none) {
         String? token = await getAuthToken();
-        if (token != null) {
+        bool isGuest = await AuthService().isGuestToken(); // Add this check
+
+        if (token != null && !isGuest) {
+          // Only check server if not guest mode
           try {
+            print(
+              "Checking subscription status with server as authenticated user",
+            );
             final response = await http.get(
               Uri.parse('${baseUrl}/subscription_status'),
               headers: {'Authorization': 'Bearer $token'},
@@ -685,13 +667,46 @@ class PaymentService {
                     DateTime.parse(data['valid_until']),
                   );
                 }
-
+                print("Server validation successful: Subscription active");
                 return true;
+              } else {
+                print("Server validation: No active subscription found");
               }
+            } else {
+              print("Server validation failed: ${response.statusCode}");
             }
           } catch (e) {
             print('Error verifying subscription with server: $e');
           }
+        }
+      }
+
+      // THEN, check local storage (important for guest mode or offline)
+      final prefs = await SharedPreferences.getInstance();
+      final String? validUntilStr = prefs.getString(_kReceiptValidUntilKey);
+
+      if (validUntilStr != null) {
+        final DateTime validUntil = DateTime.parse(validUntilStr);
+        final bool isValid = validUntil.isAfter(DateTime.now());
+
+        if (isValid) {
+          // Local validation says subscription is active
+          final String? subType = prefs.getString(_kSubscriptionTypeKey);
+          final String? receipt = prefs.getString(_kActiveReceiptKey);
+          final String? startDate = prefs.getString('subscription_started');
+
+          // Update provider
+          profileProvider.setSubscription(
+            isPaid: true,
+            type: subType,
+            started: startDate,
+            receipt: receipt,
+          );
+
+          print(
+            "Local validation successful: Subscription active until $validUntil",
+          );
+          return true;
         }
       }
 

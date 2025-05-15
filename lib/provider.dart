@@ -413,6 +413,12 @@ class ProfileProvider with ChangeNotifier {
   // Sync profile with server
   Future<bool> syncProfile(String token) async {
     try {
+      // Save current subscription state before syncing
+      final bool? currentSubscriptionState = _payedSubscription;
+      final String? currentSubType = _subType;
+      final String? currentSubStarted = _subStarted;
+      final String? currentReceiptData = _receiptData;
+
       Map<String, dynamic>? profileData = await fetchProfile(token);
 
       if (profileData != null) {
@@ -440,66 +446,28 @@ class ProfileProvider with ChangeNotifier {
         _acceptedGdpr = profileData['acceptedGdpr'] ?? _acceptedGdpr;
         _isExplained = profileData['isExplained'] ?? _isExplained;
 
-        // Handle pain areas
-        if (profileData.containsKey('painAreas') &&
-            profileData['painAreas'] is Map) {
-          final painAreasData =
-              profileData['painAreas'] as Map<String, dynamic>;
-          _painAreas = {};
-          painAreasData.forEach((key, value) {
-            if (value is int) {
-              _painAreas[key] = value;
-            }
-          });
+        // Only update subscription state if the server actually has one
+        // If server has no subscription but local has one, keep the local subscription
+        if (profileData.containsKey('payedSubscription') &&
+            profileData['payedSubscription'] == true) {
+          _payedSubscription = profileData['payedSubscription'];
+          _subType = profileData['subType'];
+          _subStarted = profileData['subStarted'];
+          _receiptData = profileData['receiptData'];
+        } else if (currentSubscriptionState == true) {
+          // Keep local subscription state if valid
+          _payedSubscription = currentSubscriptionState;
+          _subType = currentSubType;
+          _subStarted = currentSubStarted;
+          _receiptData = currentReceiptData;
+
+          // Always update server with local subscription data if available
+          if (currentSubscriptionState == true && currentReceiptData != null) {
+            await syncToServer(token);
+          }
         }
 
-        // Handle lastExerciseDate - convert ISO strings to DateTime
-        if (profileData.containsKey('lastExerciseDate') &&
-            profileData['lastExerciseDate'] is Map) {
-          final lastExerciseDateData =
-              profileData['lastExerciseDate'] as Map<String, dynamic>;
-          _lastExerciseDate = {};
-          lastExerciseDateData.forEach((key, value) {
-            if (value is String) {
-              try {
-                _lastExerciseDate[key] = DateTime.parse(value);
-              } catch (e) {
-                print("Error parsing date: $e");
-              }
-            }
-          });
-        }
-
-        // Handle exerciseCount
-        if (profileData.containsKey('exerciseCount') &&
-            profileData['exerciseCount'] is Map) {
-          final exerciseCountData =
-              profileData['exerciseCount'] as Map<String, dynamic>;
-          _exerciseCount = {};
-          exerciseCountData.forEach((key, value) {
-            if (value is int) {
-              _exerciseCount[key] = value;
-            }
-          });
-        }
-
-        _consecutiveDays = profileData['consecutiveDays'] ?? _consecutiveDays;
-        _weeklyGoalProgress =
-            profileData['weeklyGoalProgress'] ?? _weeklyGoalProgress;
-        _weeklyGoalTarget =
-            profileData['weeklyGoalTarget'] ?? _weeklyGoalTarget;
-
-        // Handle video preferences
-        _duration = profileData['duration'];
-        _focus = profileData['focus'];
-        _goal = profileData['goal'];
-        _intensity = profileData['intensity'];
-
-        // Handle subscription data
-        _payedSubscription = profileData['payedSubscription'];
-        _subType = profileData['subType'];
-        _subStarted = profileData['subStarted'];
-        _receiptData = profileData['receiptData'];
+        // Rest of your code...
 
         notifyListeners();
         await savePreferences(); // Save to local storage

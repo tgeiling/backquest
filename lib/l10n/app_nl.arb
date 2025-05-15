@@ -92,7 +92,7 @@
   "minutes": "min",
   "downloadingVideo": "Video wordt gedownload...",
   "pleaseWait": "Even geduld terwijl de video wordt gedownload",
-  "downloadStarted": "Je download is gestart. Je kunt de voortgang bekijken in het downloadstabblad.",
+  "downloadStarted": "Je videodownload is gestart. Je kunt de voortgang volgen in het tabblad Downloads. Na voltooiing verschijnt de video in het tabblad Offline, rechts van het hoofdtabblad. De video wordt opgeslagen op het interne geheugen van je apparaat, zodat je deze op elk moment kunt bekijken – zelfs zonder internetverbinding. Let op: als je de app verwijdert, worden alle gedownloade video's permanent verwijderd.",
   "exercises": "Oefeningen",
   "allOurExercises": "Al Onze Oefeningen",
   "startExercise": "Start Oefening",
@@ -165,6 +165,9 @@
   "freeUserCanWatch": "Gratis gebruiker: 1 video beschikbaar deze week",
   "freeUserLimit": "Gratis gebruiker: Wekelijkse limiet bereikt",
   "upgradeNow": "Upgraden",
+  "confirm": "Bevestigen",
+  "upgradeForUnlimited": "Upgrade voor onbeperkte video's",
+  "chooseMinutes": "Kies tussen 5 tot 30 minuten",
   
   "alternatingKneeHugsName": "Afwisselende Knie-omhelzingen",
   "alternatingKneeHugsText": "Warm je lichaam op en verbeter de mobiliteit in je heupen en onderrug met deze zachte beweging. Omhels afwisselend je linker- en rechterknie terwijl je staat.",

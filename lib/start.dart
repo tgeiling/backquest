@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'payment_service.dart';
 import 'provider.dart';
 import 'services.dart';
 import 'settings.dart';
@@ -51,6 +52,21 @@ class _StartPageState extends State<StartPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadPreferences();
       _checkVideoAvailability();
+
+      final profileProvider = Provider.of<ProfileProvider>(
+        context,
+        listen: false,
+      );
+      if (profileProvider.payedSubscription != true) {
+        final paymentService = PaymentService(profileProvider: profileProvider);
+        paymentService.verifySubscription().then((_) {
+          if (mounted) {
+            setState(() {
+              // This empty setState will force the UI to rebuild
+            });
+          }
+        });
+      }
     });
   }
 
@@ -106,6 +122,11 @@ class _StartPageState extends State<StartPage> {
   }
 
   // Helper method to get week number from a date
+  int getWeekNumber(DateTime date) {
+    int dayOfYear = int.parse(DateFormat("D").format(date));
+    int woy = ((dayOfYear - date.weekday + 10) / 7).floor();
+    return woy;
+  }
 
   void _savePreferences() {
     final profileProvider = Provider.of<ProfileProvider>(
@@ -198,12 +219,6 @@ class _StartPageState extends State<StartPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    const Color.fromRGBO(97, 184, 115, 1),
-                  ),
-                ),
-                SizedBox(height: 20),
                 Text(
                   AppLocalizations.of(context)!.downloadStarted,
                   textAlign: TextAlign.center,
@@ -323,55 +338,120 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  void showDurationDialog() async {
-    int? duration = await showDialog<int>(
+  // Direct minute editor when clicking on the circle
+  void showMinuteEditor() {
+    int currentMinutes = selectedDuration ~/ 60;
+    TextEditingController minuteController = TextEditingController(
+      text: currentMinutes.toString(),
+    );
+
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(12),
           ),
           title: Text(
             AppLocalizations.of(context)!.chooseDuration,
-            style: const TextStyle(color: Colors.white),
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 20,
-              itemBuilder: (BuildContext context, int index) {
-                int minute = 5 + index;
-                return ListTile(
-                  selectedColor: Colors.green,
-                  title: Text(
-                    AppLocalizations.of(context)!.durationTextTwo(minute),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  onTap: () => Navigator.of(context).pop(minute * 60),
-                );
-              },
+            style: TextStyle(
+              color: const Color.fromRGBO(97, 184, 115, 1),
+              fontWeight: FontWeight.bold,
+              fontSize: 18, // Smaller title font
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                AppLocalizations.of(context)!.cancel,
-                style: TextStyle(color: Colors.white),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ), // Reduced padding
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: minuteController,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  suffixText: AppLocalizations.of(context)!.minutes,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 10,
+                  ), // Reduced padding
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8), // Reduced from 10
+                    borderSide: BorderSide(
+                      color: const Color.fromRGBO(97, 184, 115, 1),
+                      width: 2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8), // Reduced from 10
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
+                style: TextStyle(
+                  fontSize: 22, // Reduced from 24
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromRGBO(97, 184, 115, 1),
+                ),
               ),
-              onPressed: () => Navigator.of(context).pop(),
+              SizedBox(height: 8), // Reduced from 10
+              Text(
+                AppLocalizations.of(context)!.chooseMinutes ??
+                    "Choose between 5-30 minutes",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ), // Reduced from 14
+              ),
+            ],
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: Text(
+                    AppLocalizations.of(context)!.cancel ?? 'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text(
+                    AppLocalizations.of(context)!.confirm ?? 'Confirm',
+                    style: TextStyle(
+                      color: const Color.fromRGBO(97, 184, 115, 1),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: () {
+                    // Parse input value
+                    int newMinutes;
+                    try {
+                      newMinutes = int.parse(minuteController.text);
+                      // Apply constraints: 5-30 minutes
+                      if (newMinutes < 5) newMinutes = 5;
+                      if (newMinutes > 30) newMinutes = 30;
+                      setState(() {
+                        selectedDuration = newMinutes * 60;
+                      });
+                    } catch (e) {
+                      // If parsing fails, keep current value
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             ),
           ],
         );
       },
     );
-
-    if (duration != null) {
-      setState(() {
-        selectedDuration = duration;
-      });
-    }
   }
 
   void showOptionDialogFocus(
@@ -519,13 +599,6 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen size for responsive design
-    final size = MediaQuery.of(context).size;
-    final isTablet = size.shortestSide >= 600;
-    final buttonHeight = isTablet ? 70.0 : 60.0;
-    final buttonWidth = isTablet ? size.width * 0.8 : size.width * 0.85;
-    final spacing = isTablet ? 24.0 : 16.0;
-
     // Get localized strings
     final appLocalizations = AppLocalizations.of(context)!;
 
@@ -555,192 +628,298 @@ class _StartPageState extends State<StartPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(spacing),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Title
-                        Text(
-                          appLocalizations.configureVideo,
-                          style: TextStyle(
-                            fontSize: isTablet ? 24 : 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Responsive layout calculations
+            final maxWidth = constraints.maxWidth;
+            final maxHeight = constraints.maxHeight;
+            final isTablet = maxWidth >= 600;
+
+            // Adjust sizing based on screen dimensions
+            final circleSize = maxWidth * 0.40 > 180 ? 180.0 : maxWidth * 0.40;
+            final innerCircleSize = circleSize * 0.9;
+            final buttonHeight = isTablet ? 70.0 : 60.0;
+            final contentPadding = isTablet ? 24.0 : 16.0;
+            final buttonSpacing = isTablet ? 16.0 : 10.0;
+
+            return Center(
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Container(
+                  width: maxWidth,
+                  height: maxHeight,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: EdgeInsets.all(contentPadding),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // Title
+                                Text(
+                                  appLocalizations.configureVideo,
+                                  style: TextStyle(
+                                    fontSize: isTablet ? 24 : 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: buttonSpacing),
+
+                                // Duration Circle - Simplified with direct tap
+                                Center(
+                                  child: GestureDetector(
+                                    onTap: showMinuteEditor,
+                                    child: Container(
+                                      width: circleSize,
+                                      height: circleSize,
+                                      margin: EdgeInsets.symmetric(
+                                        vertical: buttonSpacing,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ),
+                                            blurRadius: 10,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          // Inner colored circle
+                                          Container(
+                                            width: innerCircleSize,
+                                            height: innerCircleSize,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: const Color.fromRGBO(
+                                                97,
+                                                184,
+                                                115,
+                                                0.1,
+                                              ),
+                                              border: Border.all(
+                                                color: const Color.fromRGBO(
+                                                  97,
+                                                  184,
+                                                  115,
+                                                  0.2,
+                                                ),
+                                                width: 2,
+                                              ),
+                                            ),
+                                          ),
+                                          // Time display
+                                          Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                durationMinutes.toString(),
+                                                style: TextStyle(
+                                                  fontSize: circleSize * 0.25,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: const Color.fromRGBO(
+                                                    97,
+                                                    184,
+                                                    115,
+                                                    1,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                appLocalizations.minutes,
+                                                style: TextStyle(
+                                                  fontSize: circleSize * 0.08,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: buttonSpacing),
+
+                                // Options wrapped with FittedBox
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Container(
+                                    width: maxWidth * 0.9,
+                                    child: Column(
+                                      children: [
+                                        // Focus Area Button
+                                        _buildCardButton(
+                                          icon: Icons.flag,
+                                          title: appLocalizations.focusArea,
+                                          value: focusOptions[selectedFocus],
+                                          onTap:
+                                              () => showOptionDialogFocus(
+                                                focusOptions,
+                                                appLocalizations
+                                                    .chooseFocusArea,
+                                                (index) => setState(
+                                                  () => selectedFocus = index,
+                                                ),
+                                              ),
+                                        ),
+                                        SizedBox(height: buttonSpacing),
+
+                                        // Goal Button
+                                        _buildCardButton(
+                                          icon: Icons.track_changes,
+                                          title: appLocalizations.goal,
+                                          value: goalOptions[selectedGoal],
+                                          onTap:
+                                              () => showOptionDialogGoal(
+                                                goalOptions,
+                                                appLocalizations.chooseGoal,
+                                                (index) => setState(
+                                                  () => selectedGoal = index,
+                                                ),
+                                              ),
+                                        ),
+                                        SizedBox(height: buttonSpacing),
+
+                                        // Intensity Button
+                                        _buildCardButton(
+                                          icon: Icons.fitness_center,
+                                          title: appLocalizations.intensity,
+                                          value:
+                                              selectedIntensity == 0
+                                                  ? appLocalizations
+                                                      .intensityLow
+                                                  : selectedIntensity == 1
+                                                  ? appLocalizations
+                                                      .intensityMedium
+                                                  : appLocalizations
+                                                      .intensityHigh,
+                                          onTap: showIntensityDialog,
+                                        ),
+                                        SizedBox(height: buttonSpacing),
+
+                                        // Download Checkbox
+                                        _buildDownloadCheckbox(
+                                          appLocalizations: appLocalizations,
+                                          isEnabled: isSubscribed,
+                                        ),
+                                        SizedBox(height: buttonSpacing),
+
+                                        // Start Video Button
+                                        _buildStartButton(
+                                          isStarting: isStarting,
+                                          onTap: _startVideo,
+                                          appLocalizations: appLocalizations,
+                                          canWatch: _canWatchVideo,
+                                        ),
+
+                                        // Subscription Status Indicator
+                                        SizedBox(height: buttonSpacing),
+                                        _buildStatusIndicator(
+                                          isSubscribed: isSubscribed,
+                                          canWatch: _canWatchVideo,
+                                          appLocalizations: appLocalizations,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: spacing * 2),
-
-                        // Duration Button
-                        _buildConfigButton(
-                          title: appLocalizations.duration,
-                          value: appLocalizations.durationTextTwo(
-                            durationMinutes,
-                          ),
-                          icon: Icons.timer,
-                          onTap: showDurationDialog,
-                          height: buttonHeight,
-                          width: buttonWidth,
-                        ),
-                        SizedBox(height: spacing),
-
-                        // Focus Area Button
-                        _buildConfigButton(
-                          title: appLocalizations.focusArea,
-                          value: focusOptions[selectedFocus],
-                          icon: Icons.flag,
-                          onTap:
-                              () => showOptionDialogFocus(
-                                focusOptions,
-                                appLocalizations.chooseFocusArea,
-                                (index) =>
-                                    setState(() => selectedFocus = index),
-                              ),
-                          height: buttonHeight,
-                          width: buttonWidth,
-                        ),
-                        SizedBox(height: spacing),
-
-                        // Goal Button
-                        _buildConfigButton(
-                          title: appLocalizations.goal,
-                          value: goalOptions[selectedGoal],
-                          icon: Icons.track_changes,
-                          onTap:
-                              () => showOptionDialogGoal(
-                                goalOptions,
-                                appLocalizations.chooseGoal,
-                                (index) => setState(() => selectedGoal = index),
-                              ),
-                          height: buttonHeight,
-                          width: buttonWidth,
-                        ),
-                        SizedBox(height: spacing),
-
-                        // Intensity Button
-                        _buildConfigButton(
-                          title: appLocalizations.intensity,
-                          value:
-                              selectedIntensity == 0
-                                  ? appLocalizations.intensityLow
-                                  : selectedIntensity == 1
-                                  ? appLocalizations.intensityMedium
-                                  : appLocalizations.intensityHigh,
-                          icon: Icons.fitness_center,
-                          onTap: showIntensityDialog,
-                          height: buttonHeight,
-                          width: buttonWidth,
-                        ),
-                        SizedBox(height: spacing),
-
-                        // Download Checkbox - Disabled for non-subscribers
-                        _buildDownloadCheckbox(
-                          appLocalizations: appLocalizations,
-                          isEnabled: isSubscribed,
-                        ),
-                        SizedBox(height: spacing),
-
-                        // Start Video Button
-                        _buildStartButton(
-                          height: buttonHeight + 10,
-                          width: buttonWidth,
-                          isStarting: isStarting,
-                          onTap: _startVideo,
-                          appLocalizations: appLocalizations,
-                          canWatch: _canWatchVideo,
-                        ),
-
-                        // Subscription Status or Weekly Limit Indicator
-                        SizedBox(height: spacing),
-                        _buildStatusIndicator(
-                          isSubscribed: isSubscribed,
-                          canWatch: _canWatchVideo,
-                          appLocalizations: appLocalizations,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildConfigButton({
+  Widget _buildCardButton({
+    required IconData icon,
     required String title,
     required String value,
-    required IconData icon,
     required VoidCallback onTap,
-    required double height,
-    required double width,
   }) {
-    return Center(
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          shape: NeumorphicShape.flat,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-          depth: 4,
-          intensity: 0.7,
-          lightSource: LightSource.topLeft,
-          color: Colors.grey[100],
-        ),
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            height: height,
-            width: width,
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(
+    return Neumorphic(
+      style: NeumorphicStyle(
+        shape: NeumorphicShape.flat,
+        boxShape: NeumorphicBoxShape.roundRect(
+          BorderRadius.circular(10),
+        ), // Reduced radius
+        depth: 3, // Reduced depth from 4
+        intensity: 0.6, // Reduced intensity
+        lightSource: LightSource.topLeft,
+        color: Colors.grey[100],
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 10,
+          ), // Reduced padding
+          child: Row(
+            children: [
+              Container(
+                width: 32, // Reduced from 40
+                height: 32, // Reduced from 40
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(97, 184, 115, 0.1),
+                  borderRadius: BorderRadius.circular(8), // Reduced radius
+                ),
+                child: Icon(
                   icon,
                   color: const Color.fromRGBO(97, 184, 115, 1),
-                  size: 24,
+                  size: 20, // Reduced from 24
                 ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
-                        ),
+              ),
+              SizedBox(width: 10), // Reduced from 12
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ), // Reduced font
+                    ),
+                    SizedBox(height: 2), // Reduced from 4
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 14, // Reduced from 16
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800],
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.grey[400],
-                  size: 16,
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey[400],
+                size: 20,
+              ), // Reduced size
+            ],
           ),
         ),
       ),
@@ -751,129 +930,184 @@ class _StartPageState extends State<StartPage> {
     required AppLocalizations appLocalizations,
     required bool isEnabled,
   }) {
-    return Center(
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          shape: NeumorphicShape.flat,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-          depth: 4,
-          intensity: 0.7,
-          lightSource: LightSource.topLeft,
-          color: Colors.grey[100],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Icon(
+    return Neumorphic(
+      style: NeumorphicStyle(
+        shape: NeumorphicShape.flat,
+        boxShape: NeumorphicBoxShape.roundRect(
+          BorderRadius.circular(10),
+        ), // Reduced radius
+        depth: 3, // Reduced depth
+        intensity: 0.6, // Reduced intensity
+        lightSource: LightSource.topLeft,
+        color: Colors.grey[100],
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 10,
+        ), // Reduced padding
+        child: Row(
+          children: [
+            Container(
+              width: 32, // Reduced from 40
+              height: 32, // Reduced from 40
+              decoration: BoxDecoration(
+                color:
+                    isEnabled
+                        ? const Color.fromRGBO(97, 184, 115, 0.1)
+                        : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8), // Reduced radius
+              ),
+              child: Icon(
                 Icons.download,
                 color:
                     isEnabled
                         ? const Color.fromRGBO(97, 184, 115, 1)
                         : Colors.grey[400],
-                size: 24,
+                size: 20, // Reduced from 24
               ),
-              SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  appLocalizations.downloadVideo,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isEnabled ? Colors.grey[800] : Colors.grey[400],
-                  ),
+            ),
+            SizedBox(width: 10), // Reduced from 12
+            Expanded(
+              child: Text(
+                appLocalizations.downloadVideo,
+                style: TextStyle(
+                  fontSize: 14, // Reduced from 16
+                  fontWeight: FontWeight.bold,
+                  color: isEnabled ? Colors.grey[800] : Colors.grey[400],
                 ),
               ),
-              // Checkbox for download option - disabled for non-subscribers
-              Transform.scale(
-                scale: 1.2,
-                child: Checkbox(
-                  value: isEnabled ? shouldDownload : false,
-                  activeColor: const Color.fromRGBO(97, 184, 115, 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+            ),
+            GestureDetector(
+              onTap:
+                  isEnabled
+                      ? () {
+                        setState(() {
+                          shouldDownload = !shouldDownload;
+                        });
+                      }
+                      : null,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                width: 20, // Reduced from 24
+                height: 20, // Reduced from 24
+                decoration: BoxDecoration(
+                  color:
+                      shouldDownload && isEnabled
+                          ? const Color.fromRGBO(97, 184, 115, 1)
+                          : Colors.white,
+                  borderRadius: BorderRadius.circular(5), // Reduced from 6
+                  border: Border.all(
+                    color:
+                        isEnabled
+                            ? const Color.fromRGBO(97, 184, 115, 1)
+                            : Colors.grey[300]!,
+                    width: 1.5, // Reduced from 2
                   ),
-                  onChanged:
-                      isEnabled
-                          ? (bool? value) {
-                            setState(() {
-                              shouldDownload = value ?? false;
-                            });
-                          }
-                          : null,
+                  boxShadow:
+                      shouldDownload && isEnabled
+                          ? [
+                            BoxShadow(
+                              color: const Color.fromRGBO(97, 184, 115, 0.3),
+                              blurRadius: 3, // Reduced from 4
+                              offset: Offset(0, 1), // Reduced from (0, 2)
+                            ),
+                          ]
+                          : [],
                 ),
+                child:
+                    shouldDownload && isEnabled
+                        ? Center(
+                          child: Icon(
+                            Icons.check,
+                            size: 14, // Reduced from 16
+                            color: Colors.white,
+                          ),
+                        )
+                        : null,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildStartButton({
-    required double height,
-    required double width,
     required bool isStarting,
     required VoidCallback onTap,
     required AppLocalizations appLocalizations,
     required bool canWatch,
   }) {
-    // Get subscription info
     final bool isSubscribed =
-        Provider.of<ProfileProvider>(context).payedSubscription == true;
+        Provider.of<ProfileProvider>(context, listen: true).payedSubscription ==
+        true;
+    final bool buttonEnabled = canWatch || isSubscribed;
     final Color buttonColor =
-        canWatch ? const Color.fromRGBO(97, 184, 115, 1) : Colors.grey[400]!;
+        buttonEnabled
+            ? const Color.fromRGBO(97, 184, 115, 1)
+            : Colors.grey[400]!;
 
-    return Center(
+    return GestureDetector(
+      onTap: buttonEnabled && !isStarting ? onTap : null,
       child: Neumorphic(
         style: NeumorphicStyle(
           shape: NeumorphicShape.flat,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-          depth: 4,
-          intensity: 0.8,
+          boxShape: NeumorphicBoxShape.roundRect(
+            BorderRadius.circular(10),
+          ), // Reduced
+          depth: buttonEnabled ? 6 : 2, // Reduced from 8:2
+          intensity: 0.7, // Reduced from 0.8
           lightSource: LightSource.topLeft,
           color: buttonColor,
         ),
-        child: InkWell(
-          onTap: isStarting ? null : onTap,
-          child: Container(
-            height: height,
-            width: width,
-            child: Center(
-              child:
-                  isStarting
-                      ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                      : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.play_circle_fill,
+        child: Container(
+          height: 50, // Reduced from 60
+          child: Center(
+            child:
+                isStarting
+                    ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 3.0, // Make it a bit thinner
+                    )
+                    : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 32, // Reduced from 40
+                          height: 32, // Reduced from 40
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(
+                              8,
+                            ), // Reduced from 10
+                          ),
+                          child: Icon(
+                            Icons.play_arrow,
                             color: Colors.white,
-                            size: 28,
+                            size: 22, // Reduced from 26
                           ),
-                          SizedBox(width: 12),
-                          Text(
-                            shouldDownload && isSubscribed
-                                ? '${appLocalizations.startVideo} & ${appLocalizations.downloadVideo}'
-                                : appLocalizations.startVideo,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                        ),
+                        SizedBox(width: 10), // Reduced from 12
+                        Text(
+                          shouldDownload && isSubscribed
+                              ? '${appLocalizations.startVideo} & ${appLocalizations.downloadVideo}'
+                              : appLocalizations.startVideo,
+                          style: TextStyle(
+                            fontSize: 16, // Reduced from 18
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
-            ),
+                        ),
+                      ],
+                    ),
           ),
         ),
       ),
     );
   }
 
-  // New widget to show subscription status or weekly limit indicator
+  // Modify the _buildStatusIndicator method
   Widget _buildStatusIndicator({
     required bool isSubscribed,
     required bool canWatch,
@@ -903,47 +1137,91 @@ class _StartPageState extends State<StartPage> {
             ? Icons.timer
             : Icons.block;
 
-    return Center(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          color: statusColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: statusColor.withOpacity(0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(statusIcon, color: statusColor, size: 20),
-            SizedBox(width: 8),
-            Text(
-              statusText,
-              style: TextStyle(color: statusColor, fontWeight: FontWeight.bold),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 6), // Reduced from 8
+      padding: EdgeInsets.symmetric(
+        vertical: 8,
+        horizontal: 12,
+      ), // Reduced from 12,16
+      decoration: BoxDecoration(
+        color: statusColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10), // Reduced from 12
+        border: Border.all(color: statusColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 28, // Reduced from 32
+            height: 28, // Reduced from 32
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(6), // Reduced from 8
             ),
-            if (!isSubscribed) ...[
-              SizedBox(width: 8),
-              TextButton(
-                onPressed: () {
-                  // Navigate to subscription page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SubscriptionSettingPage(),
-                    ),
-                  );
-                },
-                child: Text(
-                  appLocalizations.upgradeNow ?? 'Upgrade',
+            child: Icon(
+              statusIcon,
+              color: statusColor,
+              size: 16,
+            ), // Reduced from 18
+          ),
+          SizedBox(width: 10), // Reduced from 12
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  statusText,
                   style: TextStyle(
                     color: statusColor,
                     fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
+                    fontSize: 12, // Reduced from 14
                   ),
                 ),
+                if (!isSubscribed)
+                  Padding(
+                    padding: EdgeInsets.only(top: 2), // Reduced from 4
+                    child: Text(
+                      appLocalizations.upgradeForUnlimited ??
+                          'Upgrade for unlimited videos',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 10,
+                      ), // Reduced from 12
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (!isSubscribed)
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: statusColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6), // Reduced from 8
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ), // Reduced from 12,8
+                minimumSize: Size(60, 28), // Add minimum size
               ),
-            ],
-          ],
-        ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SubscriptionSettingPage(),
+                  ),
+                );
+              },
+              child: Text(
+                appLocalizations.upgradeNow ?? 'Upgrade',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ), // Reduced from 12
+              ),
+            ),
+        ],
       ),
     );
   }

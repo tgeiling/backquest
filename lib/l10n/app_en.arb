@@ -98,7 +98,7 @@
   "minutes": "min",
   "downloadingVideo": "Downloading video...",
   "pleaseWait": "Please wait while the video is being downloaded",
-  "downloadStarted": "Your download has been started. You can view its progress in the downloads tab.",
+  "downloadStarted": "Your video download has started. You can track its progress in the Downloads tab. Once completed, the video will appear in the Offline tab located to the right of the Main tab. It will be saved directly to your device's internal storage, allowing you to watch it anytime—even without an internet connection. Please note: if you uninstall the app, all downloaded videos will be permanently deleted from your device.",
   "exercises": "Exercises",
   "allOurExercises": "All Our Exercises",
   "startExercise": "Start Exercise",
@@ -171,6 +171,9 @@
   "freeUserCanWatch": "Free User: 1 video available this week",
   "freeUserLimit": "Free User: Weekly limit reached",
   "upgradeNow": "Upgrade",
+  "upgradeForUnlimited": "Upgrade for unlimited videos",
+  "confirm": "Confirm",
+  "chooseMinutes": "Choose between 5 to 30 minutes",
   
   "alternatingKneeHugsName": "Alternating Knee Hugs",
   "alternatingKneeHugsText": "Warm up your body and improve mobility in your hips and lower back with this gentle movement. Alternately hug your left and right knee while standing.",
