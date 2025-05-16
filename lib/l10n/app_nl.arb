@@ -168,6 +168,8 @@
   "confirm": "Bevestigen",
   "upgradeForUnlimited": "Upgrade voor onbeperkte video's",
   "chooseMinutes": "Kies tussen 5 tot 30 minuten",
+  "downloadInProgress": "Download bezig",
+  "downloadAlreadyRunning": "Er is al een download bezig. Wacht a.u.b. tot deze is voltooid voordat u een nieuwe download start.",
   
   "alternatingKneeHugsName": "Afwisselende Knie-omhelzingen",
   "alternatingKneeHugsText": "Warm je lichaam op en verbeter de mobiliteit in je heupen en onderrug met deze zachte beweging. Omhels afwisselend je linker- en rechterknie terwijl je staat.",

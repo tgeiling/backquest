@@ -168,6 +168,8 @@
   "upgradeForUnlimited": "Actualiza para videos ilimitados",
   "confirm": "Confirmar",
   "chooseMinutes": "Elige entre 5 a 30 minutos",
+  "downloadInProgress": "Descarga en curso",
+  "downloadAlreadyRunning": "Ya hay una descarga en curso. Por favor, espere a que se complete antes de iniciar otra descarga.",
   
   "alternatingKneeHugsName": "Abrazos de Rodillas Alternados",
   "alternatingKneeHugsText": "Calienta tu cuerpo y mejora la movilidad en tus caderas y parte baja de la espalda con este suave movimiento. Abraza alternativamente tu rodilla izquierda y derecha mientras estás de pie.",

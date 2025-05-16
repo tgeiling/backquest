@@ -73,14 +73,70 @@ class DownloadManager {
     this.displayName = displayName;
   }
 
+  void resetDownloadParameters() {
+    isDownloading = false;
+    downloadProgress = 0.0;
+    sessionId = null;
+    downloadError = null;
+    currentFileName = null;
+    displayName = null;
+
+    // Clear these previously uncleared parameters
+    duration = null;
+    focus = null;
+    goal = null;
+    intensity = null;
+    selectedVideos = [];
+
+    _downloadStateController.add(false);
+    _updateDownloadInfo();
+  }
+
+  Future<bool> isDuplicateDownload() async {
+    if (sessionId == null) {
+      return false;
+    }
+
+    try {
+      // Get existing videos metadata
+      final directory = await getApplicationDocumentsDirectory();
+      final metadataFile = File('${directory.path}/video_metadata.json');
+
+      if (!metadataFile.existsSync()) {
+        return false; // No existing videos
+      }
+
+      final jsonString = await metadataFile.readAsString();
+      final List<dynamic> existingMetadata = json.decode(jsonString);
+
+      // Check if there's a video with the same sessionId
+      for (var item in existingMetadata) {
+        final video = OfflineVideo.fromJson(item);
+
+        // Skip if the file doesn't exist anymore
+        if (!File(video.filePath).existsSync()) continue;
+
+        // Check if sessionId matches - this means it's exactly the same video
+        if (video.sessionId == sessionId) {
+          return true; // Found an exact duplicate
+        }
+      }
+
+      return false; // No duplicates found
+    } catch (e) {
+      print('Error checking for duplicate downloads: $e');
+      return false; // Continue with download if check fails
+    }
+  }
+
   // Method to start download
   Future<bool> startDownload(BuildContext context) async {
     if (isDownloading) return false;
-    if (duration == null ||
-        focus == null ||
-        goal == null ||
-        intensity == null) {
-      downloadError = "Download parameters not set";
+
+    // Check for duplicate downloads
+    final isDuplicate = await isDuplicateDownload();
+    if (isDuplicate) {
+      // Return false without resetting download parameters
       return false;
     }
 
@@ -222,9 +278,7 @@ class DownloadManager {
           print('Error showing success SnackBar: $e');
         }
 
-        isDownloading = false;
-        displayName = null;
-        currentFileName = null;
+        resetDownloadParameters();
         _downloadStateController.add(false);
         _updateDownloadInfo();
         return true;
@@ -259,10 +313,8 @@ class DownloadManager {
   // Method to cancel download
   void cancelDownload() {
     if (isDownloading) {
-      isDownloading = false;
+      resetDownloadParameters();
       downloadError = "Download canceled";
-      _downloadStateController.add(false);
-      _updateDownloadInfo();
 
       // Signal cancellation to background service
       BackgroundService.cancelDownload();

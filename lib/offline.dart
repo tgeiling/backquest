@@ -128,8 +128,6 @@ class _OfflinePageState extends State<OfflinePage> {
     super.dispose();
   }
 
-  // [... existing code ...]
-
   @override
   Widget build(BuildContext context) {
     final appLocalizations = AppLocalizations.of(context)!;
@@ -262,142 +260,155 @@ class _OfflinePageState extends State<OfflinePage> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child: Neumorphic(
-        style: NeumorphicStyle(
-          shape: NeumorphicShape.flat,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-          depth: 4,
-          intensity: 0.7,
-          lightSource: LightSource.topLeft,
+      child: Container(
+        decoration: BoxDecoration(
           color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+          border: Border(left: BorderSide(color: Colors.blue[500]!, width: 4)),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Download header
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue[600],
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-              ),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with Title and Duration
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Title
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Text(
+                      displayName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+
+                  // Duration with icon
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 12,
+                        color: Colors.grey[600],
+                      ),
+                      SizedBox(width: 2),
+                      Text(
+                        "${durationInMinutes}m",
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              // Download Status
+              Text(
+                appLocalizations.downloadingVideo,
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              ),
+
+              // Progress bar
+              Container(
+                height: 4,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
+                  color: Colors.grey[200],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 4,
+                      width:
+                          MediaQuery.of(context).size.width *
+                          progress *
+                          0.8, // Approximate adjustment for padding
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2),
+                        color: Colors.blue[500],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Progress percentage
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${(progress * 100).toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      color: Colors.blue[700],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _downloadManager.cancelDownload();
+                    },
+                    child: Text(
+                      appLocalizations.cancel,
+                      style: TextStyle(
+                        color: Colors.red[500],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 8),
+
+              // Attributes as pills
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.download_rounded,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              displayName,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: isTablet ? 22 : 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                        _buildAttributeChip(
+                          icon: Icons.flag,
+                          label: _getFocusName(focus, appLocalizations),
+                          bgColor: Colors.blue[50]!,
+                          textColor: Colors.blue[800]!,
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          appLocalizations.downloadingVideo,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: isTablet ? 16 : 14,
-                          ),
+                        _buildAttributeChip(
+                          icon: Icons.track_changes,
+                          label: _getGoalName(goal, appLocalizations),
+                          bgColor: Colors.purple[50]!,
+                          textColor: Colors.purple[800]!,
+                        ),
+                        _buildAttributeChip(
+                          icon: Icons.fitness_center,
+                          label: _getIntensityName(intensity, appLocalizations),
+                          bgColor: Colors.amber[50]!,
+                          textColor: Colors.amber[800]!,
                         ),
                       ],
                     ),
                   ),
-                  Text(
-                    '${durationInMinutes} ${appLocalizations.minutes}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: isTablet ? 18 : 16,
-                    ),
-                  ),
                 ],
               ),
-            ),
-
-            // Progress bar
-            Container(
-              height: 8,
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                ),
-              ),
-            ),
-
-            // Progress percentage
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                '${(progress * 100).toStringAsFixed(0)}%',
-                style: TextStyle(
-                  color: Colors.blue[700],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-
-            // Video details
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDetailRow(
-                    icon: Icons.flag,
-                    title: appLocalizations.focusArea,
-                    value: _getFocusName(focus, appLocalizations),
-                  ),
-                  SizedBox(height: 12),
-                  _buildDetailRow(
-                    icon: Icons.track_changes,
-                    title: appLocalizations.goal,
-                    value: _getGoalName(goal, appLocalizations),
-                  ),
-                  SizedBox(height: 12),
-                  _buildDetailRow(
-                    icon: Icons.fitness_center,
-                    title: appLocalizations.intensity,
-                    value: _getIntensityName(intensity, appLocalizations),
-                  ),
-                  SizedBox(height: 16),
-
-                  // Cancel button
-                  _buildActionButton(
-                    icon: Icons.cancel,
-                    label: appLocalizations.cancel,
-                    color: Colors.red,
-                    onTap: () {
-                      _downloadManager.cancelDownload();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -566,121 +577,179 @@ class _OfflinePageState extends State<OfflinePage> {
   }) {
     final formattedDate = DateFormat('dd.MM.yyyy').format(video.savedDate);
 
-    return Neumorphic(
-      style: NeumorphicStyle(
-        shape: NeumorphicShape.flat,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-        depth: 4,
-        intensity: 0.7,
-        lightSource: LightSource.topLeft,
+    return Container(
+      decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+        border: Border(
+          left: BorderSide(
+            color: const Color.fromRGBO(97, 184, 115, 1),
+            width: 4,
+          ),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Video title and date
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(97, 184, 115, 1),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-            ),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Row: Title and Duration/Delete
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Title
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        video.displayName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isTablet ? 22 : 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        formattedDate,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: isTablet ? 16 : 14,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    video.displayName,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  '${durationInMinutes} ${appLocalizations.minutes}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isTablet ? 18 : 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          // Video details
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow(
-                  icon: Icons.flag,
-                  title: appLocalizations.focusArea,
-                  value: _getFocusName(video.focus, appLocalizations),
-                ),
-                SizedBox(height: 12),
-                _buildDetailRow(
-                  icon: Icons.track_changes,
-                  title: appLocalizations.goal,
-                  value: _getGoalName(video.goal, appLocalizations),
-                ),
-                SizedBox(height: 12),
-                _buildDetailRow(
-                  icon: Icons.fitness_center,
-                  title: appLocalizations.intensity,
-                  value: _getIntensityName(video.intensity, appLocalizations),
-                ),
-                SizedBox(height: 16),
-
-                // Buttons row
+                // Right side: Duration + Delete
                 Row(
                   children: [
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.play_arrow,
-                        label: appLocalizations.playVideo,
-                        color: const Color.fromRGBO(97, 184, 115, 1),
-                        onTap: () {
-                          _playVideo(video);
-                        },
-                      ),
+                    // Duration with icon
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 12,
+                          color: Colors.grey[600],
+                        ),
+                        SizedBox(width: 2),
+                        Text(
+                          "${durationInMinutes}m",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                      ],
                     ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.delete,
-                        label: appLocalizations.deleteVideo,
-                        color: Colors.red,
-                        onTap: () {
-                          _showDeleteConfirmation(video);
-                        },
+
+                    // Small delete button
+                    InkWell(
+                      onTap: () => _showDeleteConfirmation(video),
+                      child: Padding(
+                        padding: EdgeInsets.all(2),
+                        child: Icon(
+                          Icons.delete_outline,
+                          size: 14,
+                          color: Colors.red[400],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-          ),
+
+            // Date
+            Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 8),
+              child: Text(
+                formattedDate,
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              ),
+            ),
+
+            // Content area with tags and play button - BOTTOM ALIGNED
+            Row(
+              crossAxisAlignment:
+                  CrossAxisAlignment.end, // This aligns items to the bottom
+              children: [
+                // Tags area
+                Expanded(
+                  child: Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      _buildAttributeChip(
+                        icon: Icons.flag,
+                        label: _getFocusName(video.focus, appLocalizations),
+                        bgColor: Colors.blue[50]!,
+                        textColor: Colors.blue[800]!,
+                      ),
+                      _buildAttributeChip(
+                        icon: Icons.track_changes,
+                        label: _getGoalName(video.goal, appLocalizations),
+                        bgColor: Colors.purple[50]!,
+                        textColor: Colors.purple[800]!,
+                      ),
+                      _buildAttributeChip(
+                        icon: Icons.fitness_center,
+                        label: _getIntensityName(
+                          video.intensity,
+                          appLocalizations,
+                        ),
+                        bgColor: Colors.amber[50]!,
+                        textColor: Colors.amber[800]!,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Play button
+                Container(
+                  margin: EdgeInsets.only(left: 12),
+                  child: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () => _playVideo(video),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(97, 184, 115, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.zero,
+                        elevation: 2,
+                      ),
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttributeChip({
+    required IconData icon,
+    required String label,
+    required Color bgColor,
+    required Color textColor,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: textColor),
+          SizedBox(width: 4),
+          Text(label, style: TextStyle(fontSize: 12, color: textColor)),
         ],
       ),
     );

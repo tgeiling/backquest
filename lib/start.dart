@@ -191,6 +191,14 @@ class _StartPageState extends State<StartPage> {
 
     // If download option is selected, set download parameters and show dialog
     if (shouldDownload) {
+      if (_downloadManager.isDownloading) {
+        setState(() {
+          isStarting = false;
+        });
+        _showDownloadInProgressDialog();
+        return;
+      }
+
       _downloadManager.setDownloadParameters(
         duration: selectedDuration,
         focus: selectedFocus,
@@ -281,6 +289,59 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       isStarting = false;
     });
+  }
+
+  void _showDownloadInProgressDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Text(
+            AppLocalizations.of(context)!.downloadInProgress ??
+                "Download in Progress",
+            style: TextStyle(
+              color: const Color.fromRGBO(97, 184, 115, 1),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.downloading_rounded,
+                size: 48,
+                color: const Color.fromRGBO(97, 184, 115, 0.8),
+              ),
+              SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.downloadAlreadyRunning ??
+                    "A download is already in progress. Please wait for it to complete before starting another download.",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text(
+                AppLocalizations.of(context)!.ok,
+                style: TextStyle(
+                  color: const Color.fromRGBO(97, 184, 115, 1),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Show dialog when subscription is required
@@ -625,229 +686,259 @@ class _StartPageState extends State<StartPage> {
     // Convert duration from seconds to minutes for display
     final durationMinutes = selectedDuration ~/ 60;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Responsive layout calculations
-            final maxWidth = constraints.maxWidth;
-            final maxHeight = constraints.maxHeight;
-            final isTablet = maxWidth >= 600;
+    return Stack(
+      children: <Widget>[
+        // Background image
+        Image.asset(
+          "assets/settingsbg.PNG",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback if image fails to load
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.black,
+            );
+          },
+        ),
+        Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Responsive layout calculations
+                final maxWidth = constraints.maxWidth;
+                final maxHeight = constraints.maxHeight;
+                final isTablet = maxWidth >= 600;
 
-            // Adjust sizing based on screen dimensions
-            final circleSize = maxWidth * 0.40 > 180 ? 180.0 : maxWidth * 0.40;
-            final innerCircleSize = circleSize * 0.9;
-            final buttonHeight = isTablet ? 70.0 : 60.0;
-            final contentPadding = isTablet ? 24.0 : 16.0;
-            final buttonSpacing = isTablet ? 16.0 : 10.0;
+                // Adjust sizing based on screen dimensions
+                final circleSize =
+                    maxWidth * 0.40 > 180 ? 180.0 : maxWidth * 0.40;
+                final innerCircleSize = circleSize * 0.9;
+                final contentPadding = isTablet ? 24.0 : 16.0;
+                final buttonSpacing = isTablet ? 16.0 : 10.0;
 
-            return Center(
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Container(
-                  width: maxWidth,
-                  height: maxHeight,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: EdgeInsets.all(contentPadding),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // Title
-                                Text(
-                                  appLocalizations.configureVideo,
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[800],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: buttonSpacing),
-
-                                // Duration Circle - Simplified with direct tap
-                                Center(
-                                  child: GestureDetector(
-                                    onTap: showMinuteEditor,
-                                    child: Container(
-                                      width: circleSize,
-                                      height: circleSize,
-                                      margin: EdgeInsets.symmetric(
-                                        vertical: buttonSpacing,
+                return Center(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Container(
+                      width: maxWidth,
+                      height: maxHeight,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Padding(
+                                padding: EdgeInsets.all(contentPadding),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    // Title
+                                    Text(
+                                      appLocalizations.configureVideo,
+                                      style: TextStyle(
+                                        fontSize: isTablet ? 24 : 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[800],
                                       ),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.1,
-                                            ),
-                                            blurRadius: 10,
-                                            spreadRadius: 1,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: isTablet ? 90.0 : 100.0),
+
+                                    // Duration Circle - Simplified with direct tap
+                                    Center(
+                                      child: GestureDetector(
+                                        onTap: showMinuteEditor,
+                                        child: Container(
+                                          width: circleSize,
+                                          height: circleSize,
+                                          margin: EdgeInsets.symmetric(
+                                            vertical: buttonSpacing,
                                           ),
-                                        ],
-                                      ),
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          // Inner colored circle
-                                          Container(
-                                            width: innerCircleSize,
-                                            height: innerCircleSize,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: const Color.fromRGBO(
-                                                97,
-                                                184,
-                                                115,
-                                                0.1,
-                                              ),
-                                              border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                  97,
-                                                  184,
-                                                  115,
-                                                  0.2,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(
+                                                  0.1,
                                                 ),
-                                                width: 2,
+                                                blurRadius: 10,
+                                                spreadRadius: 1,
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                          // Time display
-                                          Column(
-                                            mainAxisSize: MainAxisSize.min,
+                                          child: Stack(
+                                            alignment: Alignment.center,
                                             children: [
-                                              Text(
-                                                durationMinutes.toString(),
-                                                style: TextStyle(
-                                                  fontSize: circleSize * 0.25,
-                                                  fontWeight: FontWeight.bold,
+                                              // Inner colored circle
+                                              Container(
+                                                width: innerCircleSize,
+                                                height: innerCircleSize,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
                                                   color: const Color.fromRGBO(
                                                     97,
                                                     184,
                                                     115,
-                                                    1,
+                                                    0.1,
+                                                  ),
+                                                  border: Border.all(
+                                                    color: const Color.fromRGBO(
+                                                      97,
+                                                      184,
+                                                      115,
+                                                      0.2,
+                                                    ),
+                                                    width: 2,
                                                   ),
                                                 ),
                                               ),
-                                              Text(
-                                                appLocalizations.minutes,
-                                                style: TextStyle(
-                                                  fontSize: circleSize * 0.08,
-                                                  color: Colors.grey[600],
-                                                ),
+                                              // Time display
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    durationMinutes.toString(),
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          circleSize * 0.25,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                            97,
+                                                            184,
+                                                            115,
+                                                            1,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    appLocalizations.minutes,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          circleSize * 0.08,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
 
-                                SizedBox(height: buttonSpacing),
+                                    SizedBox(height: buttonSpacing),
 
-                                // Options wrapped with FittedBox
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Container(
-                                    width: maxWidth * 0.9,
-                                    child: Column(
-                                      children: [
-                                        // Focus Area Button
-                                        _buildCardButton(
-                                          icon: Icons.flag,
-                                          title: appLocalizations.focusArea,
-                                          value: focusOptions[selectedFocus],
-                                          onTap:
-                                              () => showOptionDialogFocus(
-                                                focusOptions,
-                                                appLocalizations
-                                                    .chooseFocusArea,
-                                                (index) => setState(
-                                                  () => selectedFocus = index,
-                                                ),
-                                              ),
+                                    // Options wrapped with FittedBox
+                                    FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Container(
+                                        width: maxWidth * 0.9,
+                                        child: Column(
+                                          children: [
+                                            // Focus Area Button
+                                            _buildCardButton(
+                                              icon: Icons.flag,
+                                              title: appLocalizations.focusArea,
+                                              value:
+                                                  focusOptions[selectedFocus],
+                                              onTap:
+                                                  () => showOptionDialogFocus(
+                                                    focusOptions,
+                                                    appLocalizations
+                                                        .chooseFocusArea,
+                                                    (index) => setState(
+                                                      () =>
+                                                          selectedFocus = index,
+                                                    ),
+                                                  ),
+                                            ),
+                                            SizedBox(height: buttonSpacing),
+
+                                            // Goal Button
+                                            _buildCardButton(
+                                              icon: Icons.track_changes,
+                                              title: appLocalizations.goal,
+                                              value: goalOptions[selectedGoal],
+                                              onTap:
+                                                  () => showOptionDialogGoal(
+                                                    goalOptions,
+                                                    appLocalizations.chooseGoal,
+                                                    (index) => setState(
+                                                      () =>
+                                                          selectedGoal = index,
+                                                    ),
+                                                  ),
+                                            ),
+                                            SizedBox(height: buttonSpacing),
+
+                                            // Intensity Button
+                                            _buildCardButton(
+                                              icon: Icons.fitness_center,
+                                              title: appLocalizations.intensity,
+                                              value:
+                                                  selectedIntensity == 0
+                                                      ? appLocalizations
+                                                          .intensityLow
+                                                      : selectedIntensity == 1
+                                                      ? appLocalizations
+                                                          .intensityMedium
+                                                      : appLocalizations
+                                                          .intensityHigh,
+                                              onTap: showIntensityDialog,
+                                            ),
+                                            SizedBox(height: buttonSpacing),
+
+                                            // Download Checkbox
+                                            _buildDownloadCheckbox(
+                                              appLocalizations:
+                                                  appLocalizations,
+                                              isEnabled: isSubscribed,
+                                            ),
+                                            SizedBox(height: buttonSpacing),
+
+                                            // Start Video Button
+                                            _buildStartButton(
+                                              isStarting: isStarting,
+                                              onTap: _startVideo,
+                                              appLocalizations:
+                                                  appLocalizations,
+                                              canWatch: _canWatchVideo,
+                                            ),
+
+                                            // Subscription Status Indicator
+                                            SizedBox(height: buttonSpacing),
+                                            _buildStatusIndicator(
+                                              isSubscribed: isSubscribed,
+                                              canWatch: _canWatchVideo,
+                                              appLocalizations:
+                                                  appLocalizations,
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(height: buttonSpacing),
-
-                                        // Goal Button
-                                        _buildCardButton(
-                                          icon: Icons.track_changes,
-                                          title: appLocalizations.goal,
-                                          value: goalOptions[selectedGoal],
-                                          onTap:
-                                              () => showOptionDialogGoal(
-                                                goalOptions,
-                                                appLocalizations.chooseGoal,
-                                                (index) => setState(
-                                                  () => selectedGoal = index,
-                                                ),
-                                              ),
-                                        ),
-                                        SizedBox(height: buttonSpacing),
-
-                                        // Intensity Button
-                                        _buildCardButton(
-                                          icon: Icons.fitness_center,
-                                          title: appLocalizations.intensity,
-                                          value:
-                                              selectedIntensity == 0
-                                                  ? appLocalizations
-                                                      .intensityLow
-                                                  : selectedIntensity == 1
-                                                  ? appLocalizations
-                                                      .intensityMedium
-                                                  : appLocalizations
-                                                      .intensityHigh,
-                                          onTap: showIntensityDialog,
-                                        ),
-                                        SizedBox(height: buttonSpacing),
-
-                                        // Download Checkbox
-                                        _buildDownloadCheckbox(
-                                          appLocalizations: appLocalizations,
-                                          isEnabled: isSubscribed,
-                                        ),
-                                        SizedBox(height: buttonSpacing),
-
-                                        // Start Video Button
-                                        _buildStartButton(
-                                          isStarting: isStarting,
-                                          onTap: _startVideo,
-                                          appLocalizations: appLocalizations,
-                                          canWatch: _canWatchVideo,
-                                        ),
-
-                                        // Subscription Status Indicator
-                                        SizedBox(height: buttonSpacing),
-                                        _buildStatusIndicator(
-                                          isSubscribed: isSubscribed,
-                                          canWatch: _canWatchVideo,
-                                          appLocalizations: appLocalizations,
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          },
+                );
+              },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -861,10 +952,10 @@ class _StartPageState extends State<StartPage> {
       style: NeumorphicStyle(
         shape: NeumorphicShape.flat,
         boxShape: NeumorphicBoxShape.roundRect(
-          BorderRadius.circular(10),
-        ), // Reduced radius
-        depth: 3, // Reduced depth from 4
-        intensity: 0.6, // Reduced intensity
+          BorderRadius.circular(8), // Further reduced radius
+        ),
+        depth: 2, // Further reduced depth
+        intensity: 0.5, // Further reduced intensity
         lightSource: LightSource.topLeft,
         color: Colors.grey[100],
       ),
@@ -872,41 +963,44 @@ class _StartPageState extends State<StartPage> {
         onTap: onTap,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 10,
-          ), // Reduced padding
+            horizontal: 12,
+            vertical: 8, // Further reduced vertical padding
+          ),
           child: Row(
             children: [
               Container(
-                width: 32, // Reduced from 40
-                height: 32, // Reduced from 40
+                width: 28, // Further reduced width
+                height: 28, // Further reduced height
                 decoration: BoxDecoration(
                   color: const Color.fromRGBO(97, 184, 115, 0.1),
-                  borderRadius: BorderRadius.circular(8), // Reduced radius
+                  borderRadius: BorderRadius.circular(
+                    6,
+                  ), // Further reduced radius
                 ),
                 child: Icon(
                   icon,
                   color: const Color.fromRGBO(97, 184, 115, 1),
-                  size: 20, // Reduced from 24
+                  size: 16, // Further reduced size
                 ),
               ),
-              SizedBox(width: 10), // Reduced from 12
+              SizedBox(width: 8), // Further reduced spacing
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // Add this to minimize height
                   children: [
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11, // Further reduced font size
                         color: Colors.grey[600],
-                      ), // Reduced font
+                      ),
                     ),
-                    SizedBox(height: 2), // Reduced from 4
+                    SizedBox(height: 1), // Further reduced spacing
                     Text(
                       value,
                       style: TextStyle(
-                        fontSize: 14, // Reduced from 16
+                        fontSize: 13, // Further reduced font size
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[800],
                       ),
@@ -917,8 +1011,8 @@ class _StartPageState extends State<StartPage> {
               Icon(
                 Icons.chevron_right,
                 color: Colors.grey[400],
-                size: 20,
-              ), // Reduced size
+                size: 18, // Further reduced size
+              ),
             ],
           ),
         ),
@@ -934,29 +1028,31 @@ class _StartPageState extends State<StartPage> {
       style: NeumorphicStyle(
         shape: NeumorphicShape.flat,
         boxShape: NeumorphicBoxShape.roundRect(
-          BorderRadius.circular(10),
-        ), // Reduced radius
-        depth: 3, // Reduced depth
-        intensity: 0.6, // Reduced intensity
+          BorderRadius.circular(8), // Further reduced radius
+        ),
+        depth: 2, // Further reduced depth
+        intensity: 0.5, // Further reduced intensity
         lightSource: LightSource.topLeft,
         color: Colors.grey[100],
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 10,
-        ), // Reduced padding
+          horizontal: 12,
+          vertical: 8, // Further reduced vertical padding
+        ),
         child: Row(
           children: [
             Container(
-              width: 32, // Reduced from 40
-              height: 32, // Reduced from 40
+              width: 28, // Further reduced width
+              height: 28, // Further reduced height
               decoration: BoxDecoration(
                 color:
                     isEnabled
                         ? const Color.fromRGBO(97, 184, 115, 0.1)
                         : Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8), // Reduced radius
+                borderRadius: BorderRadius.circular(
+                  6,
+                ), // Further reduced radius
               ),
               child: Icon(
                 Icons.download,
@@ -964,15 +1060,15 @@ class _StartPageState extends State<StartPage> {
                     isEnabled
                         ? const Color.fromRGBO(97, 184, 115, 1)
                         : Colors.grey[400],
-                size: 20, // Reduced from 24
+                size: 16, // Further reduced size
               ),
             ),
-            SizedBox(width: 10), // Reduced from 12
+            SizedBox(width: 8), // Further reduced spacing
             Expanded(
               child: Text(
                 appLocalizations.downloadVideo,
                 style: TextStyle(
-                  fontSize: 14, // Reduced from 16
+                  fontSize: 13, // Further reduced font size
                   fontWeight: FontWeight.bold,
                   color: isEnabled ? Colors.grey[800] : Colors.grey[400],
                 ),
@@ -989,28 +1085,30 @@ class _StartPageState extends State<StartPage> {
                       : null,
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 200),
-                width: 20, // Reduced from 24
-                height: 20, // Reduced from 24
+                width: 18, // Further reduced width
+                height: 18, // Further reduced height
                 decoration: BoxDecoration(
                   color:
                       shouldDownload && isEnabled
                           ? const Color.fromRGBO(97, 184, 115, 1)
                           : Colors.white,
-                  borderRadius: BorderRadius.circular(5), // Reduced from 6
+                  borderRadius: BorderRadius.circular(
+                    4,
+                  ), // Further reduced radius
                   border: Border.all(
                     color:
                         isEnabled
                             ? const Color.fromRGBO(97, 184, 115, 1)
                             : Colors.grey[300]!,
-                    width: 1.5, // Reduced from 2
+                    width: 1, // Further reduced width
                   ),
                   boxShadow:
                       shouldDownload && isEnabled
                           ? [
                             BoxShadow(
                               color: const Color.fromRGBO(97, 184, 115, 0.3),
-                              blurRadius: 3, // Reduced from 4
-                              offset: Offset(0, 1), // Reduced from (0, 2)
+                              blurRadius: 2, // Further reduced blur
+                              offset: Offset(0, 1),
                             ),
                           ]
                           : [],
@@ -1020,7 +1118,7 @@ class _StartPageState extends State<StartPage> {
                         ? Center(
                           child: Icon(
                             Icons.check,
-                            size: 14, // Reduced from 16
+                            size: 12, // Further reduced size
                             color: Colors.white,
                           ),
                         )
@@ -1054,47 +1152,51 @@ class _StartPageState extends State<StartPage> {
         style: NeumorphicStyle(
           shape: NeumorphicShape.flat,
           boxShape: NeumorphicBoxShape.roundRect(
-            BorderRadius.circular(10),
-          ), // Reduced
-          depth: buttonEnabled ? 6 : 2, // Reduced from 8:2
-          intensity: 0.7, // Reduced from 0.8
+            BorderRadius.circular(8), // Further reduced radius
+          ),
+          depth: buttonEnabled ? 4 : 1, // Further reduced depth
+          intensity: 0.6, // Further reduced intensity
           lightSource: LightSource.topLeft,
           color: buttonColor,
         ),
         child: Container(
-          height: 50, // Reduced from 60
+          height: 44, // Further reduced height
           child: Center(
             child:
                 isStarting
-                    ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      strokeWidth: 3.0, // Make it a bit thinner
+                    ? SizedBox(
+                      height: 22, // Smaller progress indicator
+                      width: 22,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 2.5, // Further reduced stroke width
+                      ),
                     )
                     : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 32, // Reduced from 40
-                          height: 32, // Reduced from 40
+                          width: 28, // Further reduced width
+                          height: 28, // Further reduced height
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(
-                              8,
-                            ), // Reduced from 10
+                              6,
+                            ), // Further reduced radius
                           ),
                           child: Icon(
                             Icons.play_arrow,
                             color: Colors.white,
-                            size: 22, // Reduced from 26
+                            size: 18, // Further reduced size
                           ),
                         ),
-                        SizedBox(width: 10), // Reduced from 12
+                        SizedBox(width: 8), // Further reduced spacing
                         Text(
                           shouldDownload && isSubscribed
                               ? '${appLocalizations.startVideo} & ${appLocalizations.downloadVideo}'
                               : appLocalizations.startVideo,
                           style: TextStyle(
-                            fontSize: 16, // Reduced from 18
+                            fontSize: 14, // Further reduced font size
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
