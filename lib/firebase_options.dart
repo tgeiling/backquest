@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '31068949391',
     projectId: 'langobattle',
     storageBucket: 'langobattle.firebasestorage.app',
-    iosBundleId: 'com.example.lingobattle',
+    iosBundleId: 'com.tgeiling.lingobattle',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
